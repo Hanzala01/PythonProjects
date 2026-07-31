@@ -818,6 +818,7 @@ body{background:
   --tw:#F7F7F7;--ts:#A5A5B2;--tm:#6b6b7d;--tf:#4a4a5c;
   --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.13);
   --green:#22C55E;--red:#EF4444;--amber:#F59E0B;
+  --yellow:#F59E0B; /* alias — the gauges and neutral-bias labels reference --yellow */
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
@@ -1434,10 +1435,11 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
         </div>
       </div>
 
-<!-- hidden stubs so bot/scalp status writes from runAI() don't error in standalone -->
+<!-- hidden stubs so bot/scalp status writes from runAI() don't error in standalone.
+     Only ids with NO visible counterpart belong here: a stub that duplicates a real
+     element shadows it, because getElementById returns the first match in document
+     order and this block precedes the panes. -->
 <div style="display:none" aria-hidden="true">
-  <select id="xday"><option value="1">1</option></select>
-  <input id="xrise" value="06:20"><input id="xcur" value="12:00">
   <input id="bot_sound" value="0"><select id="bot_auto_scalp"><option value="0">0</option></select>
   <span id="bi_scalp"></span><span id="bs_scalp"></span><span id="bot_last"></span><span id="bot_sigs"></span>
   <span id="bot_status_badge"></span><div id="sig_log_body"></div>
@@ -1445,8 +1447,6 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   <span id="sb_sym"></span><span id="sb_pname"></span><span id="sb_pnums"></span><span id="sb_pqual"></span>
   <span id="sb_ends"></span><div id="sb_prog"></div><span id="sb_h"></span><span id="sb_p"></span>
   <span id="sb_ds"></span><span id="sb_dn"></span><span id="sb_dnu"></span><span id="sb_dq"></span>
-  <span id="sp_arc"></span><span id="sp_dir"></span><span id="sp_entry"></span><span id="sp_sl"></span>
-  <span id="sp_tp"></span><span id="sp_vib"></span><span id="sp_time"></span>
   <span id="bi_timing"></span><span id="bs_timing"></span>
 </div>
 
@@ -2202,6 +2202,8 @@ function piIdx(hi,pn){return(hi+(pn-1))%7;}
 function getAN(pl,isPos){var s=pl.nums.slice();if(!isPos)pl.nums.forEach(function(n){(INT[n]||[]).forEach(function(x){if(s.indexOf(x)<0)s.push(x);});});return s;}
 function fmtT(m){var h=Math.floor(m/60)%24,mi=m%60;return(h<10?'0':'')+h+':'+(mi<10?'0':'')+mi;}
 function fmtDate(d){return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+/* local-calendar YYYY-MM-DD. toISOString() would shift the date for anyone east/west of UTC. */
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function nearestTradingDay(d){
   var dow=d.getDay();
   if(dow===0||dow===6){
@@ -2353,7 +2355,8 @@ function calcSignalConf(gannScore,astroScore,timingMatch,levels,price){
   var gannNorm=Math.min(100,Math.round(gannScore*8)); // max level score ~12
   var sigma=levels.length?levels[0].sigma:4;
   var sigmaNorm=Math.round((1-Math.min(sigma,4)/4)*100);
-  var astroNorm=Math.round(50+astroScore*6.25);
+  /* astroScore spans roughly ±7.8, so clamp before it is weighted into the blend */
+  var astroNorm=Math.max(0,Math.min(100,Math.round(50+astroScore*6.25)));
   var timingNorm=timingMatch?100:30;
   var conf=Math.round(gannNorm*0.40+sigmaNorm*0.25+astroNorm*0.25+timingNorm*0.10);
   return Math.max(10,Math.min(95,conf));
@@ -2658,7 +2661,7 @@ function rndTrades(sig,risk){
 
   el.innerHTML='<div class="sig-card '+(dir?'bull':'bear')+'">'
     +'<div class="sig-hdr">'
-    +'<div><div class="sig-type">'+typeIcon+' '+sig.style+(sig.conf>=' 90'?' \u00b7 Premium':'')+'</div>'
+    +'<div><div class="sig-type">'+typeIcon+' '+sig.style+(sig.conf>=90?' \u00b7 Premium':'')+'</div>'
     +'<div style="font-size:10px;color:var(--muted);margin-top:2px">'+(sig.ti.hp?sig.ti.hp.n+' Hour · ':'')+sig.style+' Setup · Est: '+sig.timeStr+'</div></div>'
     +'<div style="text-align:right"><div class="sig-rr" style="color:'+col+'">'+sig.rr+'\u00d7<div style="font-size:10px;font-weight:400;color:var(--muted)">R:R</div></div></div>'
     +'</div>'
@@ -2892,7 +2895,7 @@ function runAI(){
 
     // Notify
     var notifType=astro.dir==='bull'?'bull':'bear';
-    notify(assetName+' '+sig.conf+'% '+astro.dir.toUpperCase()+' \u00b7 '+sig.style,notifType);
+    notify(assetName+' '+sig.conf+'% '+astro.dir.toUpperCase()+' \u00b7 '+(sig.style||'below threshold'),notifType);
 
     // Log to bot
     logSignal(assetName,sig.conf,astro.dir,sig.style);
@@ -2946,9 +2949,8 @@ function checkAutoScalp(){
     sndSignal(isBull);
     _sActive=true;
     notify('\u26a1 Auto Scalp: '+_lastAsset+' '+(isBull?'BUY':'SELL')+' @ $'+ep.toFixed(2),'bull');
-    logSignal(_lastAsset,'scalp',isBull?'bull':'bear','Scalp');
-    BOT_SIGS++;
-    var _bsEl=document.getElementById('bot_scalps');if(_bsEl)_bsEl.textContent=BOT_SIGS;
+    /* logSignal already increments BOT_SIGS \u2014 incrementing again double-counted every scalp */
+    logSignal(_lastAsset,null,isBull?'bull':'bear','Scalp');
   } else if(!isMatch&&_sActive){
     closeScalp();
   }
@@ -3021,14 +3023,13 @@ function confirmTakeSignal(){
   if(!sig)return;
   var amt=parseFloat(document.getElementById('ts_riskamt').value)||0;
   if(amt<=0){notify('Enter a valid risk amount','info');return;}
-  var now=new Date();
-  var dateStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  var dateStr=ymd(new Date());
   JRNL.unshift({
     d:dateStr,a:_lastAsset,t:sig.style.toLowerCase(),dir:sig.isBull?'buy':'sell',
     en:sig.entry,ex:sig.entry,lots:0,move:'0.00%',pnl:0,r:'open',
     tp:sig.tp,sl:sig.sl,riskAmt:amt,rr:sig.rr
   });
-  renderJ();renderPnlCalendar();
+  renderJ();renderPnlCalendar();updatePortStats();
   document.getElementById('take_signal_pop').classList.add('hidden');
   notify('Signal logged — OPEN position added to journal','bull');
   var refBtn=document.querySelector(".nav-item[onclick*='portfolio']");
@@ -3040,9 +3041,13 @@ function closeJournalTrade(i){
   if(!ex)return;
   ex=parseFloat(ex);
   if(!ex||isNaN(ex)){notify('Invalid exit price','info');return;}
-  var lots=j.riskAmt&&j.sl?j.riskAmt/(Math.abs(j.en-j.sl)/j.en*100):0.01;
-  var pnl=calcPnL(j.en,ex,j.dir,lots||0.01);
+  /* Size so that being stopped out loses exactly riskAmt.
+     calcPnL = move * lots * 100, so lots = riskAmt / (slDistance * 100). */
+  var slDist=j.sl?Math.abs(j.en-j.sl):0;
+  var lots=(j.riskAmt>0&&slDist>0)?j.riskAmt/(slDist*100):(j.lots||0.01);
+  var pnl=calcPnL(j.en,ex,j.dir,lots);
   j.ex=ex;
+  j.lots=+lots.toFixed(4);
   j.move=(((ex-j.en)/j.en)*100).toFixed(2)+'%';
   j.pnl=pnl;
   j.r=pnl>0?'win':pnl<0?'loss':'be';
@@ -3130,17 +3135,21 @@ function logSignal(asset,conf,dir,style){
   if(!log)return;
   var first=log.querySelector('.f10');
   if(first&&first.classList.contains('italic'))log.innerHTML='';
-  log.innerHTML='<div class="br"><span class="dim f10 mono">'+ts+'</span><span class="fw6">'+asset+'</span><span class="tag '+(dir==='bull'?'tg':'tr')+'">'+(dir==='bull'?'Bull':'Bear')+'</span><span class="f10 dim">'+style+'</span><span class="cb f10">'+conf+'%</span></div>'+log.innerHTML;
+  /* scalp entries carry no confidence score, and a sub-threshold signal has no style —
+     render a dash for either rather than printing "scalp%" or "null" */
+  var confTxt=(typeof conf==='number'&&isFinite(conf))?conf+'%':'—';
+  var styleTxt=style||'No setup';
+  log.innerHTML='<div class="br"><span class="dim f10 mono">'+ts+'</span><span class="fw6">'+asset+'</span><span class="tag '+(dir==='bull'?'tg':'tr')+'">'+(dir==='bull'?'Bull':'Bear')+'</span><span class="f10 dim">'+styleTxt+'</span><span class="cb f10">'+confTxt+'</span></div>'+log.innerHTML;
   BOT_SIGS++;
-  document.getElementById('bot_sigs').textContent=BOT_SIGS;
-  document.getElementById('bot_last').textContent=asset+' '+ts;
+  var sigsEl=document.getElementById('bot_sigs');if(sigsEl)sigsEl.textContent=BOT_SIGS;
+  var lastEl=document.getElementById('bot_last');if(lastEl)lastEl.textContent=asset+' '+ts;
 }
 
 function updateBotStatus(){
-  document.getElementById('bot_status_badge').textContent='Active';
-  document.getElementById('bot_status_badge').className='tag tg';
-  document.getElementById('bi_scalp').className='bot-indicator on';
-  document.getElementById('bs_scalp').textContent='Monitoring '+_lastAsset+' Res#'+_lastVib;
+  var badge=document.getElementById('bot_status_badge');
+  if(badge){badge.textContent='Active';badge.className='tag tg';}
+  var ind=document.getElementById('bi_scalp');if(ind)ind.className='bot-indicator on';
+  var st=document.getElementById('bs_scalp');if(st)st.textContent='Monitoring '+_lastAsset+' Res#'+_lastVib;
 }
 
 
@@ -3200,22 +3209,25 @@ var EQ_DATA=[];
 
 function updatePortStats(){
   var start=parseFloat(document.getElementById('port_start').value)||0;
-  var cur=parseFloat(document.getElementById('port_cur').value)||start;
-  // Calculate from journal
-  var totalPnL=JRNL.reduce(function(s,j){return s+(j.pnl||0);},0);
-  var wins=JRNL.filter(function(j){return j.r==='win';}).length;
-  var losses=JRNL.filter(function(j){return j.r==='loss';}).length;
-  var grossWin=JRNL.filter(function(j){return j.pnl>0;}).reduce(function(s,j){return s+j.pnl;},0);
-  var grossLoss=Math.abs(JRNL.filter(function(j){return j.pnl<0;}).reduce(function(s,j){return s+j.pnl;},0));
+  var curRaw=parseFloat(document.getElementById('port_cur').value);
+  var hasCur=!isNaN(curRaw)&&curRaw>0;
+  // Calculate from journal — open trades have no realised result yet
+  var closed=JRNL.filter(function(j){return j.r!=='open';});
+  var totalPnL=closed.reduce(function(s,j){return s+(j.pnl||0);},0);
+  var wins=closed.filter(function(j){return j.r==='win';}).length;
+  var losses=closed.filter(function(j){return j.r==='loss';}).length;
+  var grossWin=closed.filter(function(j){return j.pnl>0;}).reduce(function(s,j){return s+j.pnl;},0);
+  var grossLoss=Math.abs(closed.filter(function(j){return j.pnl<0;}).reduce(function(s,j){return s+j.pnl;},0));
   var pf=grossLoss>0?(grossWin/grossLoss).toFixed(2):grossWin>0?'∞':'0.00';
-  var wr=JRNL.length?(wins/JRNL.length*100).toFixed(1):0;
-  var actualBal=cur||(start+totalPnL);
+  var wr=closed.length?(wins/closed.length*100).toFixed(1):'0.0';
+  /* Only a manually entered current balance overrides the journal-derived equity. */
+  var actualBal=hasCur?curRaw:start+totalPnL;
   var ret=start>0?((totalPnL/start)*100).toFixed(1):'0.0';
 
   document.getElementById('port_bal').textContent='$'+actualBal.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById('port_pnl').textContent=(totalPnL>=0?'+':'')+'$'+Math.abs(totalPnL).toFixed(2);
   document.getElementById('port_pnl').style.color=totalPnL>=0?'var(--green)':'var(--red)';
-  document.getElementById('port_ret').textContent=(totalPnL>=0?'+':'')+ret+'% return · '+JRNL.length+' trades';
+  document.getElementById('port_ret').textContent=(totalPnL>=0?'+':'')+ret+'% return · '+closed.length+' closed'+(JRNL.length>closed.length?' · '+(JRNL.length-closed.length)+' open':'');
   document.getElementById('port_wr').textContent=wr+'%';
   document.getElementById('port_wr_sub').textContent=wins+'W / '+losses+'L';
   document.getElementById('port_wr_bar').style.width=wr+'%';
@@ -3226,7 +3238,7 @@ function updatePortStats(){
 
   // Best/worst day
   var dayMap={};
-  JRNL.forEach(function(j){if(!dayMap[j.d])dayMap[j.d]=0;dayMap[j.d]+=(j.pnl||0);});
+  closed.forEach(function(j){if(!dayMap[j.d])dayMap[j.d]=0;dayMap[j.d]+=(j.pnl||0);});
   var days=Object.keys(dayMap);
   if(days.length){
     var best=days.reduce(function(a,b){return dayMap[a]>dayMap[b]?a:b;});
@@ -3240,9 +3252,11 @@ function updatePortStats(){
   // Equity curve
   EQ_DATA=[];
   var running=start||0;
-  JRNL.slice().reverse().forEach(function(j){running+=(j.pnl||0);EQ_DATA.push(running);});
+  closed.slice().reverse().forEach(function(j){running+=(j.pnl||0);EQ_DATA.push(running);});
   if(start&&EQ_DATA.length===0)EQ_DATA=[start];
   drawEquityCurve();
+  /* keep the weekly/monthly report in step with every journal change */
+  try{renderReports();}catch(e){console.error('renderReports:',e);}
 }
 
 /* P&L CALENDAR HEATMAP */
@@ -3257,32 +3271,35 @@ function renderPnlCalendar(){
   document.getElementById('cal_month_lbl').textContent=months[mo]+' '+yr;
 
   // Build day P&L map
-  var dayMap={};
+  /* Compare the date string directly — new Date('YYYY-MM-DD') parses as UTC and can
+     land in the previous month for users behind UTC. Open trades have no P&L to plot. */
+  var dayMap={},monthPrefix=yr+'-'+String(mo+1).padStart(2,'0')+'-';
   JRNL.forEach(function(j){
-    var jd=new Date(j.d);
-    if(jd.getFullYear()===yr&&jd.getMonth()===mo){
-      if(!dayMap[j.d])dayMap[j.d]=0;
-      dayMap[j.d]+=(j.pnl||0);
-    }
+    if(j.r==='open'||typeof j.d!=='string'||j.d.indexOf(monthPrefix)!==0)return;
+    if(!dayMap[j.d])dayMap[j.d]=0;
+    dayMap[j.d]+=(j.pnl||0);
   });
 
   var firstDay=new Date(yr,mo,1).getDay();
   var daysInMonth=new Date(yr,mo+1,0).getDate();
-  var todayStr=now.toISOString().slice(0,10);
+  var todayStr=ymd(now);
 
   var days=['S','M','T','W','T','F','S'];
   var html=days.map(function(d){return'<div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);padding:3px 0">'+d+'</div>';}).join('');
   // Empty cells before first day
   for(var i=0;i<firstDay;i++)html+='<div></div>';
   for(var day=1;day<=daysInMonth;day++){
-    var dateStr=yr+'-'+(mo+1<10?'0':''+(mo+1))+'-'+(day<10?'0':'')+day;
+    var dateStr=ymd(new Date(yr,mo,day));
     var pnl=dayMap[dateStr];
     var isToday=dateStr===todayStr;
     var bg=pnl>0?'rgba(62,207,142,'+(Math.min(1,pnl/50)*0.6+0.2)+')':pnl<0?'rgba(224,86,102,'+(Math.min(1,Math.abs(pnl)/50)*0.6+0.2)+')':'rgba(255,255,255,.04)';
     var border=isToday?'border:1px solid rgba(124,111,224,.6);':'border:1px solid transparent;';
-    var col=pnl>0?'#3ecf8e':pnl<0?'#e05666':'#54545c';
-    html+='<div style="aspect-ratio:1;border-radius:4px;background:'+bg+';'+border+'display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;transition:.15s" title="'+dateStr+(pnl!==undefined?' P&L: '+(pnl>0?'+':'')+pnl.toFixed(2):'')+'">'+
-      '<div style="font-size:9px;color:var(--soft)">'+day+'</div>'+
+    /* traded days get a saturated background, so their text has to go light to stay legible */
+    var traded=pnl!==undefined;
+    var col=traded?'#ffffff':'#54545c';
+    var dayCol=traded?'rgba(255,255,255,.85)':'var(--soft)';
+    html+='<div style="aspect-ratio:1;border-radius:4px;background:'+bg+';'+border+'display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;transition:.15s" title="'+dateStr+(traded?' P&L: '+(pnl>0?'+':'')+pnl.toFixed(2):'')+'">'+
+      '<div style="font-size:9px;color:'+dayCol+'">'+day+'</div>'+
       (pnl!==undefined?'<div style="font-size:8px;font-weight:700;color:'+col+'">'+( pnl>0?'+':'')+pnl.toFixed(0)+'</div>':'')+
       '</div>';
   }
@@ -3394,7 +3411,9 @@ function exportJ(){
    WORD TO NUMBER
 ══════════════════════════════════════ */
 function calcName(){
-  var nm=document.getElementById('ci').value.trim();
+  var inp=document.getElementById('ci');
+  if(!inp)return; /* standalone name-calculator markup is not part of this build */
+  var nm=inp.value.trim();
   if(!nm)return;
   var r=calcNN(nm),p=plByNum(r.f);
   document.getElementById('cnum').textContent=r.f;
@@ -3413,6 +3432,7 @@ function calcName(){
    FUNDAMENTALS
 ══════════════════════════════════════ */
 function calcFund(){
+  if(!document.getElementById('f_price'))return; /* fundamentals pane not in this build */
   var p=parseFloat(document.getElementById('f_price').value)||0;
   var eps=parseFloat(document.getElementById('f_eps').value)||0;
   var bv=parseFloat(document.getElementById('f_bv').value)||0;
@@ -3542,7 +3562,7 @@ function buildEphTable(){
   var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],h='';
   [2026,2027,2028].forEach(function(yr){
     for(var mo=1;mo<=12;mo++){
-      var k=yr+'_'+mo,d=EPH_STATIC[k];if(!d)return;
+      var k=yr+'_'+mo,d=EPH_STATIC[k];if(!d)continue;
       h+='<tr><td class="fw6 soft">'+yr+' '+months[mo-1]+'</td><td class="ca">'+dz(d[0])+'</td><td class="soft">'+dz(d[1])+'</td><td class="cb">'+dz(d[2])+'</td><td class="cp">'+dz(d[3])+'</td><td class="dim">'+dz(d[4])+'</td></tr>';
     }
   });
@@ -3564,6 +3584,8 @@ function buildEphEv(){
    REFERENCE
 ══════════════════════════════════════ */
 function buildRef(){
+  /* the standalone reference pane was replaced by the embedded frames — no-op if absent */
+  if(!document.getElementById('refpl')||!document.getElementById('reftbl'))return;
   document.getElementById('refpl').innerHTML=PL.map(function(p){
     return'<div class="plc mb6"><div class="plr"><div class="plsym">'+p.s+'</div><div class="pli"><div class="pln">'+p.n+' #'+p.nums.join(',')+'</div><div class="plnum">'+p.day+'</div><div class="plq">'+p.qual+'</div></div></div></div>';
   }).join('');
@@ -3577,41 +3599,48 @@ function buildRef(){
    ANNOUNCEMENTS
 ══════════════════════════════════════ */
 function addAnn(){
-  var title=document.getElementById('ann_title').value.trim();
-  var msg=document.getElementById('ann_msg').value.trim();
-  var type=document.getElementById('ann_type').value;
+  var tEl=document.getElementById('ann_title'),mEl=document.getElementById('ann_msg'),bEl=document.getElementById('ann_body');
+  if(!tEl||!mEl||!bEl)return; /* announcements now post through the community feed */
+  var title=tEl.value.trim();
+  var msg=mEl.value.trim();
+  var typeEl=document.getElementById('ann_type'),type=typeEl?typeEl.value:'info';
   if(!title||!msg){notify('Fill title and message','info');return;}
   var now=new Date();
   var html='<div class="ann-item '+type+'"><div class="ann-title">'+title+'</div><div class="ann-body">'+msg+'</div><div class="ann-time">'+fmtDate(now)+'</div></div>';
-  document.getElementById('ann_body').insertAdjacentHTML('afterbegin',html);
-  document.getElementById('ann_title').value='';document.getElementById('ann_msg').value='';
+  bEl.insertAdjacentHTML('afterbegin',html);
+  tEl.value='';mEl.value='';
   notify('Announcement added','info');
 }
 
 /* ══════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════ */
-var TABS=['analytics','timing','fundamentals','portfolio','reference','announcements','bot'];
-/* LEFT RAIL NAVIGATION — Home + all tabs, one unified handler */
+/* Kept in step with the panes that actually exist in the markup — the old list still
+   named removed panes (fundamentals, bot) and omitted dashboard/sentiment. */
+var TABS=['dashboard','analytics','timing','sentiment','portfolio','announcements','reference'];
+/* LEFT RAIL NAVIGATION — Home + all tabs, one unified handler.
+   The home/app page split was removed from the markup; these helpers now no-op
+   safely instead of throwing on the missing pg_home / pg_app / icon_rail nodes. */
 function railNav(name,btn){
-  if(name==='home'){
-    showPage('pg_home');
-    return;
-  }
-  if(!document.getElementById('pg_app').classList.contains('on'))showPage('pg_app');
+  if(name==='home'){showPage('pg_home');return;}
+  var app=document.getElementById('pg_app');
+  if(app&&!app.classList.contains('on'))showPage('pg_app');
   goTab(name,btn);
 }
 function toggleRail(){
   var rail=document.getElementById('icon_rail');
+  if(!rail)return;
   rail.classList.toggle('expanded');
   var t=document.getElementById('rail_toggle_btn');
-  t.textContent=rail.classList.contains('expanded')?'‹':'›';
+  if(t)t.textContent=rail.classList.contains('expanded')?'‹':'›';
 }
 
 function showPage(id){
-  document.getElementById('pg_home').classList.remove('on');
-  document.getElementById('pg_app').classList.remove('on');
-  document.getElementById(id).classList.add('on');
+  var home=document.getElementById('pg_home'),app=document.getElementById('pg_app'),target=document.getElementById(id);
+  if(!target)return;
+  if(home)home.classList.remove('on');
+  if(app)app.classList.remove('on');
+  target.classList.add('on');
   document.querySelectorAll('.rail-item').forEach(function(b){b.classList.remove('on');});
   if(id==='pg_home'){
     var homeBtn=document.querySelector('.rail-home');
@@ -3626,23 +3655,36 @@ function enterApp(){showPage('pg_app');runAnalyze();}
 
 var _sbO=false;
 function togSB(){_sbO?closeSB():openSB();}
-function openSB(){document.querySelector('.sidebar').style.transform='translateX(0)';document.getElementById('sb_ov').style.display='block';_sbO=true;}
-function closeSB(){document.querySelector('.sidebar').style.transform='';document.getElementById('sb_ov').style.display='none';_sbO=false;}
+function openSB(){var s=document.querySelector('.sidebar');if(!s)return;s.style.transform='translateX(0)';var o=document.getElementById('sb_ov');if(o)o.style.display='block';_sbO=true;}
+function closeSB(){var s=document.querySelector('.sidebar');if(!s)return;s.style.transform='';var o=document.getElementById('sb_ov');if(o)o.style.display='none';_sbO=false;}
 
 /* ══════════════════════════════════════
    CLOCK
 ══════════════════════════════════════ */
+/* Local UTC offset, e.g. "UTC+5" / "UTC-3:30" — the footer used to hard-code UTC+5. */
+function tzLabel(){
+  var off=-new Date().getTimezoneOffset(),sign=off<0?'-':'+',a=Math.abs(off);
+  var h=Math.floor(a/60),m=a%60;
+  return 'UTC'+sign+h+(m?':'+String(m).padStart(2,'0'):'');
+}
+/* The "Now"/day inputs track the clock until the user edits them, so an analysis can
+   still be run for an arbitrary time without the next tick overwriting it. */
+var _timeTouched=false;
+function markTimeTouched(){_timeTouched=true;}
 function tick(){
   var n=new Date();
-  var ts=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')+':'+n.getSeconds().toString().padStart(2,'0');
-  var el=document.getElementById('clk');if(el)el.textContent=ts;
+  var hh=String(n.getHours()).padStart(2,'0'),mm=String(n.getMinutes()).padStart(2,'0');
+  var ts=hh+':'+mm+':'+String(n.getSeconds()).padStart(2,'0');
+  var el=document.getElementById('clk');if(el)el.textContent=ts+' ('+tzLabel()+')';
   var he=document.getElementById('h_clk');if(he)he.textContent=ts;
-  var tc=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');
-  var xc=document.getElementById('xcur');if(xc)xc.value=tc;
-  var xd=document.getElementById('xday');if(xd)xd.value=String(n.getDay());
-  var htd=document.getElementById('ht_d');if(htd)htd.value=String(n.getDay());
-  var twd=document.getElementById('tw_date');if(twd&&!twd.value)twd.value=n.toISOString().slice(0,10);
-  var jd=document.getElementById('j_date');if(jd&&!jd.value)jd.value=n.toISOString().slice(0,10);
+  if(!_timeTouched){
+    var xc=document.getElementById('xcur');if(xc)xc.value=hh+':'+mm;
+    var xd=document.getElementById('xday');if(xd)xd.value=String(n.getDay());
+    var htd=document.getElementById('ht_d');if(htd)htd.value=String(n.getDay());
+  }
+  var twd=document.getElementById('tw_date');if(twd&&!twd.value)twd.value=ymd(n);
+  var jd=document.getElementById('j_date');if(jd&&!jd.value)jd.value=ymd(n);
+  var cp=document.getElementById('cal_pivot');if(cp&&!cp.value)cp.value=ymd(n);
 }
 
 function shareIt(){if(navigator.share)navigator.share({title:'Celestial Alpha'}).catch(function(){window.print();});else window.print();}
@@ -3831,8 +3873,9 @@ function renderFeed(){
   if(!msgs.length&&CUR_CH==='announcements')msgs=[{u:'Celestial Alpha',t:'Welcome to the platform. Updates, cycle windows and release notes will appear here.',ts:Date.now(),sys:true}];
   el.innerHTML=msgs.map(function(m,i2){
     var d2=new Date(m.ts);
-    return '<div style="display:flex;gap:10px"><div style="width:34px;height:34px;border-radius:11px;flex-shrink:0;background:linear-gradient(135deg,#5b3fd4,var(--accent));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff">'+(m.u[0]||'A')+'</div>'
-      +'<div style="min-width:0"><div><span style="font-weight:700;color:var(--white);font-size:12px">'+m.u+'</span>'+(m.sys?' <span class="tag tb" style="font-size:8px">SYSTEM</span>':' <span class="tag tp" style="font-size:8px">OWNER</span>')+' <span class="f10 dim">'+d2.toLocaleDateString()+' '+d2.getHours()+':'+String(d2.getMinutes()).padStart(2,'0')+'</span></div>'
+    var uname=m.u||'Anon';
+    return '<div style="display:flex;gap:10px"><div style="width:34px;height:34px;border-radius:11px;flex-shrink:0;background:linear-gradient(135deg,#5b3fd4,var(--accent));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff">'+uname.charAt(0)+'</div>'
+      +'<div style="min-width:0"><div><span style="font-weight:700;color:var(--white);font-size:12px">'+uname+'</span>'+(m.sys?' <span class="tag tb" style="font-size:8px">SYSTEM</span>':' <span class="tag tp" style="font-size:8px">OWNER</span>')+' <span class="f10 dim">'+d2.toLocaleDateString()+' '+d2.getHours()+':'+String(d2.getMinutes()).padStart(2,'0')+'</span></div>'
       +'<div style="font-size:12px;color:var(--text);line-height:1.6;word-wrap:break-word">'+(m.t||'').replace(/</g,'&lt;')+'</div>'
       +(m.img?'<img class="msg-img" src="'+m.img+'" onclick="document.getElementById(\'shot_img\').src=this.src;document.getElementById(\'shot_tabs\').innerHTML=\'\';document.getElementById(\'shot_view\').classList.remove(\'hidden\')">':'')
       +'<div class="re-row">'
@@ -3878,7 +3921,7 @@ function sendMsg(){
   var inp=document.getElementById('msg_in'),t=inp.value.trim();
   if(!t&&!_CIMG)return;
   var ch=CH.filter(function(x){return x.id===CUR_CH;})[0];
-  if(ch.lock&&!IS_ADMIN){notify('Only the owner can post in #'+CUR_CH,'info');return;}
+  if(ch&&ch.lock&&!IS_ADMIN){notify('Only the owner can post in #'+CUR_CH,'info');return;}
   var d=loadComm();if(!d[CUR_CH])d[CUR_CH]=[];
   d[CUR_CH].push({u:IS_ADMIN?'Hanzala':'Guest',t:t,ts:Date.now(),img:_CIMG||null});
   _CIMG=null;document.getElementById('cimg_btn').textContent='📷';document.getElementById('cimg_in').value='';
@@ -3892,8 +3935,9 @@ function stageCImg(inp){
   r.readAsDataURL(f);
 }
 function switchCh(id){
-  CUR_CH=id;
   var ch=CH.filter(function(x){return x.id===id;})[0];
+  if(!ch)return;
+  CUR_CH=id;
   document.getElementById('ch_name').textContent=id;
   document.getElementById('ch_desc').textContent=ch.desc;
   document.getElementById('msg_in').placeholder='Message #'+id;
@@ -4104,9 +4148,13 @@ function goTab(name,btn){
   document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
   if(name==='reference')loadRefFrames();
-  if(name==='timing'){loadTimFrames();renderCycleCountdown();}
+  /* These builders populate static panels that would otherwise stay empty. */
+  if(name==='timing'){
+    loadTimFrames();renderCycleCountdown();
+    try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
+  }
   if(name==='sentiment'){renderSentiment();}
-  if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();}
+  if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();}
 }
 /* ══ ECONOMIC CALENDAR — recurring high-impact events, live countdown ══ */
 var _newsTimer=null;
@@ -4369,11 +4417,13 @@ setTimeout(function(){
   });
   document.querySelectorAll('.conf-bar div').forEach(function(b){b.style.width=b.dataset.w+'%';});
 },200);
-/* live clock */
-setInterval(function(){
-  var d=new Date();
-  document.getElementById('clk').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0')+' (UTC+5)';
-},1000);
+/* live clock — tick() also seeds the timing inputs, and guards every element it touches */
+tick();
+setInterval(tick,1000);
+['xcur','xday','ht_d'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el)el.addEventListener('change',markTimeTouched);
+});
 /* TEMP DEV: key system bypassed — auto-run unlock() so Community/Settings init same as a real login would. Remove this call + set IS_ADMIN back to false + login_gate display:flex when re-enabling the key system for final build. */
 unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
