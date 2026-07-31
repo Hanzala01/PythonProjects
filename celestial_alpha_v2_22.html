@@ -4197,11 +4197,21 @@ function buildEconEvents(){
     /* FOMC Rate — ~last Wednesday of month, but only ~every 6-7 weeks. We include a quarterly-ish set. */
   }
   /* FOMC meeting dates 2026 (scheduled, 23:00 local approx for PKT) */
+  /* Confirmed 2026 FOMC schedule. Once these are all in the past the calendar
+     would simply lose the rate decision, so later years are projected 52 weeks
+     forward (keeps the weekday) and labelled "est." — the real schedule is
+     published a year ahead, so replace FOMC_YEAR/fomc when it is announced. */
+  var FOMC_YEAR=2026;
   var fomc=[[0,28],[2,18],[3,29],[5,17],[6,29],[8,16],[9,28],[11,9]];
-  fomc.forEach(function(f){
-    var d=new Date(2026,f[0],f[1],23,0,0,0);
-    out.push({t:'Federal Funds Rate',d:d,fc:'3.75%',pv:'3.75%',impact:'High'});
-  });
+  for(var yOff=0;yOff<=2;yOff++){
+    fomc.forEach(function(f){
+      var d=new Date(FOMC_YEAR,f[0],f[1],23,0,0,0);
+      if(yOff)d=new Date(d.getTime()+yOff*52*7*86400000);
+      if(d<=now)return;
+      out.push({t:'Federal Funds Rate'+(yOff?' (est.)':''),d:d,
+                fc:yOff?'—':'3.75%',pv:yOff?'—':'3.75%',impact:'High'});
+    });
+  }
   /* keep only future events, sort ascending */
   out=out.filter(function(e){return e.d>now;}).sort(function(a,b){return a.d-b.d;});
   return out;
@@ -4479,9 +4489,11 @@ function paintIndicator(kind,res,next,setT){
   }
 }
 function loadMacroForEvent(next,setT){
-  var kind=next.t==='CPI (Inflation)'?'CPI':next.t==='Federal Funds Rate'?'rate':next.t==='Non-Farm Payrolls'?'payrolls':null;
+  /* projected FOMC entries carry an " (est.)" suffix — strip it before lookup */
+  var base=(next.t||'').replace(/ \(est\.\)$/,'');
+  var kind=base==='CPI (Inflation)'?'CPI':base==='Federal Funds Rate'?'rate':base==='Non-Farm Payrolls'?'payrolls':null;
   if(!kind)return;
-  var fmpName=FMP_MAP[next.t],fredId=FRED_MAP[next.t];
+  var fmpName=FMP_MAP[base],fredId=FRED_MAP[base];
   fetchFmpIndicator(fmpName,function(res){
     if(res){paintIndicator(kind,res,next,setT);return;}
     /* FMP unavailable → fall back to FRED through the CORS proxy */
