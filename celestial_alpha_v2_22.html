@@ -1972,9 +1972,10 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 </div>
 
 <script>
-/* candlestick chart — drawn to match mockup shape */
+/* candlestick chart — populated from EODHD daily history by loadHistory() */
 (function(){
-  document.getElementById('plot').innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">No live chart data — connect a feed to populate this view</div>';
+  var el=document.getElementById('plot');
+  if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading chart…</div>';
 })();
 
 /* REAL ENGINE demo IIFE removed — dashboard now shows placeholder zero-state until live data is wired */
@@ -2280,7 +2281,7 @@ function findAlignedLevels(price,vibNum,eph,sess){
       }
 
       // Session level confluence
-      var labs=['PWH','PWL','PDH','PDL'];
+      var labs=['PWH','PWL','PDH','PDL','Monthly High','Monthly Low'];
       sess.forEach(function(v,i){if(!v)return;if(Math.abs(v-p)/p<0.003){score+=3;reasons.push(labs[i]);}});
 
       levels.push({price:p,deg:deg,modDeg:modDeg,dir:dir,step:step,sigma:+sig.toFixed(2),
@@ -2787,6 +2788,8 @@ function renderProbReport(levels,price,vibNum){
    MAIN RUN
 ══════════════════════════════════════ */
 var _lastVib=0,_lastPrice=0,_lastAsset='';
+/* guards the EODHD history fetch so re-running the engine does not refetch/loop */
+var _lastHistAsset='';
 function togSess(){
   var el=document.getElementById('sess_inputs'),ar=document.getElementById('sess_arr');
   el.classList.toggle('hidden');
@@ -2863,11 +2866,16 @@ function runAI(){
     var vib=calcNN(assetName);
     var vibNum=vib.f;
     var eph=getEph();
+    /* Monthly High/Low are the EODHD-derived expansion boundaries. They were
+       present in the form but never read by anything until now. */
+    var mhEl=document.getElementById('ai_mh'),mlEl=document.getElementById('ai_ml');
     var sess=[
       parseFloat(document.getElementById('sl_pwh').value)||0,
       parseFloat(document.getElementById('sl_pwl').value)||0,
       parseFloat(document.getElementById('sl_pdh').value)||0,
       parseFloat(document.getElementById('sl_pdl').value)||0,
+      mhEl?parseFloat(mhEl.value)||0:0,
+      mlEl?parseFloat(mlEl.value)||0:0,
     ];
 
     var astro=calcAstroBias(assetName,eph);
@@ -2899,6 +2907,13 @@ function runAI(){
 
     // Log to bot
     logSignal(assetName,sig.conf,astro.dir,sig.style);
+
+    // EODHD daily history → candlestick chart + monthly expansion boundaries.
+    // Re-runs the engine once the boundaries land so they feed the confluence check.
+    if(_lastHistAsset!==assetName){
+      _lastHistAsset=assetName;
+      loadHistory(assetName,function(rng){if(rng)runAI();});
+    }
 
     // Check auto scalp
     setTimeout(checkAutoScalp,300);
@@ -4201,46 +4216,210 @@ function fmtCountdown(ms){
 function fmtEventTime(d){
   return d.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'})+' at '+d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
 }
-/* == NEWS API — live market headlines == */
-var NEWS_KEY='f07ea77c6d4f4c0ab350da41c656e78e';
+/* ══════════════════════════════════════
+   EODHD — daily history (candles + monthly expansion boundaries)
+   Free plan is end-of-day only (intraday returns 403) and the API sends no
+   Access-Control-Allow-Origin, so a browser cannot call it directly. We try
+   direct first (works if you later serve this behind your own proxy), then
+   fall through public CORS relays, and degrade to a clear message.
+══════════════════════════════════════ */
+var EODHD_KEY='6a6b15cba8da09.26382267';
+var EOD_SYM={
+  GOLD:'XAUUSD.FOREX',XAU:'XAUUSD.FOREX',XAUUSD:'XAUUSD.FOREX',
+  SILVER:'XAGUSD.FOREX',XAG:'XAGUSD.FOREX',XAGUSD:'XAGUSD.FOREX',
+  EURUSD:'EURUSD.FOREX',GBPUSD:'GBPUSD.FOREX',USDJPY:'USDJPY.FOREX',
+  AUDUSD:'AUDUSD.FOREX',USDCAD:'USDCAD.FOREX',NZDUSD:'NZDUSD.FOREX',
+  BITCOIN:'BTC-USD.CC',BTC:'BTC-USD.CC',BTCUSD:'BTC-USD.CC',
+  ETHEREUM:'ETH-USD.CC',ETH:'ETH-USD.CC',ETHUSD:'ETH-USD.CC',
+  SOLANA:'SOL-USD.CC',SOL:'SOL-USD.CC',RIPPLE:'XRP-USD.CC',XRP:'XRP-USD.CC',
+  CARDANO:'ADA-USD.CC',ADA:'ADA-USD.CC',LITECOIN:'LTC-USD.CC',LTC:'LTC-USD.CC',
+  DOGECOIN:'DOGE-USD.CC',DOGE:'DOGE-USD.CC',
+  APPLE:'AAPL.US',AAPL:'AAPL.US',TESLA:'TSLA.US',TSLA:'TSLA.US',
+  MICROSOFT:'MSFT.US',MSFT:'MSFT.US',NVIDIA:'NVDA.US',NVDA:'NVDA.US',
+  AMAZON:'AMZN.US',AMZN:'AMZN.US',NETFLIX:'NFLX.US',NFLX:'NFLX.US'
+  /* Oil intentionally unmapped: this plan exposes no WTI/Brent contract, and
+     substituting the USO ETF would feed a different price scale into the
+     Gann/sigma engine. */
+};
+function eodhdSymbol(sym){return EOD_SYM[sym]||null;}
+function eodhdFetch(path,cb){
+  var direct='https://eodhd.com/api/'+path+(path.indexOf('?')>=0?'&':'?')+'api_token='+EODHD_KEY+'&fmt=json';
+  var routes=[direct,
+    'https://corsproxy.io/?url='+encodeURIComponent(direct),
+    'https://api.allorigins.win/raw?url='+encodeURIComponent(direct)];
+  var i=0;
+  (function attempt(){
+    if(i>=routes.length){cb(null,'blocked');return;}
+    var u=routes[i++];
+    fetch(u).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(d&&!d.error&&(Array.isArray(d)?d.length:true))cb(d);
+      else attempt();
+    }).catch(attempt);
+  })();
+}
+/* daily candles for the last n days */
+function eodhdDaily(sym,days,cb){
+  var s=eodhdSymbol(sym);
+  if(!s){cb(null,'unmapped');return;}
+  var from=new Date(Date.now()-(days||120)*86400000);
+  eodhdFetch('eod/'+s+'?period=d&from='+ymd(from),function(d,err){
+    if(!d||!Array.isArray(d)||!d.length){cb(null,err||'empty');return;}
+    cb(d);
+  });
+}
+/* Fill the Monthly High / Monthly Low inputs — they exist in the form and are
+   labelled "powers the Dual Engine", but nothing ever read or populated them. */
+function applyMonthlyRange(rows){
+  var mhEl=document.getElementById('ai_mh'),mlEl=document.getElementById('ai_ml');
+  if(!mhEl||!mlEl||!rows||!rows.length)return null;
+  var cutoff=ymd(new Date(Date.now()-30*86400000));
+  var recent=rows.filter(function(r){return r.date>=cutoff;});
+  if(!recent.length)recent=rows.slice(-22);
+  var hi=Math.max.apply(null,recent.map(function(r){return +r.high;}));
+  var lo=Math.min.apply(null,recent.map(function(r){return +r.low;}));
+  if(!isFinite(hi)||!isFinite(lo))return null;
+  var dp=hi<10?4:2;
+  mhEl.value=hi.toFixed(dp);mlEl.value=lo.toFixed(dp);
+  return{high:hi,low:lo};
+}
+/* Candlestick chart into #plot, which until now held a hard-coded
+   "No live chart data — connect a feed" placeholder. */
+function drawCandles(rows,label){
+  var el=document.getElementById('plot');
+  if(!el)return;
+  if(!rows||rows.length<2){
+    el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Chart data unavailable for this asset</div>';
+    return;
+  }
+  var data=rows.slice(-90);
+  var W=900,H=280,padL=8,padR=58,padB=18,padT=10;
+  var hi=Math.max.apply(null,data.map(function(r){return +r.high;}));
+  var lo=Math.min.apply(null,data.map(function(r){return +r.low;}));
+  var span=(hi-lo)||(hi*0.01)||1;hi+=span*0.06;lo-=span*0.06;
+  var iw=W-padL-padR,ih=H-padT-padB;
+  function X(i){return padL+(i+0.5)*(iw/data.length);}
+  function Y(v){return padT+ih-((v-lo)/(hi-lo))*ih;}
+  var cw=Math.max(1.2,Math.min(9,iw/data.length*0.62));
+  var dp=hi<10?4:2;
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:280px;display:block">';
+  for(var g=0;g<=4;g++){
+    var gv=lo+(hi-lo)*g/4,gy=Y(gv);
+    svg+='<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'" stroke="rgba(255,255,255,.05)" stroke-width="1"/>';
+    svg+='<text x="'+(W-padR+6)+'" y="'+(gy+3).toFixed(1)+'" fill="rgba(255,255,255,.32)" font-size="10" font-family="Inter">'+gv.toFixed(dp)+'</text>';
+  }
+  data.forEach(function(r,i){
+    var o=+r.open,c=+r.close,h=+r.high,l=+r.low,up=c>=o;
+    var col=up?'#22C55E':'#EF4444',x=X(i);
+    svg+='<line x1="'+x.toFixed(1)+'" y1="'+Y(h).toFixed(1)+'" x2="'+x.toFixed(1)+'" y2="'+Y(l).toFixed(1)+'" stroke="'+col+'" stroke-width="1"/>';
+    var yT=Y(Math.max(o,c)),yB=Y(Math.min(o,c));
+    svg+='<rect x="'+(x-cw/2).toFixed(1)+'" y="'+yT.toFixed(1)+'" width="'+cw.toFixed(1)+'" height="'+Math.max(1,yB-yT).toFixed(1)+'" fill="'+col+'"/>';
+  });
+  svg+='</svg>';
+  var first=data[0],last=data[data.length-1];
+  var chg=((+last.close-+first.close)/+first.close*100);
+  el.innerHTML=svg
+    +'<div style="display:flex;justify-content:space-between;padding:4px 10px 0;font-size:10px;color:var(--tm)">'
+    +'<span>'+escHtml(label||'')+' · '+data.length+'D daily · EODHD</span>'
+    +'<span>'+first.date+' → '+last.date+' <b style="color:'+(chg>=0?'var(--green)':'var(--red)')+'">'+(chg>=0?'+':'')+chg.toFixed(2)+'%</b></span></div>';
+}
+/* Pull history for whatever asset is in the Analyze box */
+function loadHistory(assetName,cb){
+  var sym=(assetName||'').toUpperCase().replace(/[^A-Z]/g,'');
+  var el=document.getElementById('plot');
+  if(!eodhdSymbol(sym)){
+    if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No EODHD history mapped for "'+escHtml(assetName)+'" — supported: metals, major FX, top crypto and US stocks</div>';
+    if(cb)cb(null);return;
+  }
+  if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history…</div>';
+  eodhdDaily(sym,150,function(rows,err){
+    if(!rows){
+      if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">'
+        +(err==='blocked'?'EODHD blocked by CORS — it sends no cross-origin header. Serve this page behind your own proxy to enable charts.':'Chart data unavailable right now.')+'</div>';
+      if(cb)cb(null);return;
+    }
+    drawCandles(rows,assetName);
+    var rng=applyMonthlyRange(rows);
+    if(cb)cb(rng);
+  });
+}
+
+/* == NEWS — newsdata.io (primary) merged with Finnhub market news ==
+   Both send CORS headers, so neither needs the corsproxy hop the old
+   newsapi.org path relied on. Either source failing still leaves a feed. */
+var NEWSDATA_KEY='pub_9b776a016e3848c4a2f6b2ca3b81d8ec';
+var NEWS_KEY='f07ea77c6d4f4c0ab350da41c656e78e'; /* legacy newsapi.org — unused fallback */
 var _newsLoaded=false;
+function escHtml(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+/* simple keyword sentiment tag */
+function newsMood(t){
+  t=(t||'').toLowerCase();
+  var bull=['surge','rally','soar','gain','jump','rise','high','boost','bullish','climb','up '];
+  var bear=['fall','drop','plunge','crash','slump','sink','loss','bearish','decline','tumble','down '];
+  var b=bull.some(function(w){return t.indexOf(w)>=0;}),s=bear.some(function(w){return t.indexOf(w)>=0;});
+  return b&&!s?'bull':s&&!b?'bear':'flat';
+}
+/* newsdata.io -> [{title,url,source,ts}] */
+function fetchNewsdata(cb){
+  var q=encodeURIComponent('gold OR bitcoin OR forex OR "federal reserve" OR "interest rate"');
+  var url='https://newsdata.io/api/1/latest?apikey='+NEWSDATA_KEY+'&q='+q+'&language=en&category=business&size=10';
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    if(!d||d.status!=='success'||!d.results){cb([]);return;}
+    cb(d.results.map(function(a){
+      return{title:a.title,url:a.link,source:a.source_id||'newsdata',
+             ts:a.pubDate?new Date(a.pubDate.replace(' ','T')+'Z').getTime():0};
+    }));
+  }).catch(function(){cb([]);});
+}
+/* Finnhub market news across the categories this app cares about */
+function fetchFinnhubNews(cb){
+  var cats=['forex','crypto','general'],out=[],done=0;
+  cats.forEach(function(c){
+    fetch('https://finnhub.io/api/v1/news?category='+c+'&token='+FINNHUB_KEY)
+      .then(function(r){return r.json();}).then(function(d){
+        if(Array.isArray(d))d.slice(0,8).forEach(function(a){
+          out.push({title:a.headline,url:a.url,source:a.source||'Finnhub',ts:(a.datetime||0)*1000});
+        });
+      }).catch(function(){}).then(function(){ if(++done===cats.length)cb(out); });
+  });
+}
+function renderNewsList(items){
+  var el=document.getElementById('news_feed');
+  if(!el)return;
+  if(!items.length){el.innerHTML='<div class="f10 dim italic tc" style="padding:14px">No recent headlines found — check your connection or API quota</div>';return;}
+  el.innerHTML=items.slice(0,12).map(function(a){
+    var m=newsMood(a.title);
+    var mc=m==='bull'?'var(--green)':m==='bear'?'var(--red)':'var(--ts)';
+    var ml=m==='bull'?'▲':m==='bear'?'▼':'●';
+    var when=a.ts?timeAgo(new Date(a.ts)):'';
+    /* single style attribute — the old markup had two, so the second was ignored */
+    return '<a href="'+escHtml(a.url||'#')+'" target="_blank" rel="noopener" class="br" '
+      +'onmouseover="this.style.background=\'rgba(139,92,246,.06)\'" onmouseout="this.style.background=\'transparent\'" '
+      +'style="text-decoration:none;display:flex;align-items:flex-start;padding:11px 8px;border-radius:8px;transition:.15s">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--tw);line-height:1.5;margin-bottom:4px">'+escHtml(a.title)+'</div>'
+      +'<div style="font-size:10px;color:var(--tm)">'+escHtml(a.source)+(when?' · '+when:'')+'</div></div>'
+      +'<span style="margin-left:10px;flex-shrink:0;color:'+mc+';font-size:12px;font-weight:700">'+ml+'</span></a>';
+  }).join('');
+}
 function loadNewsFeed(){
   if(_newsLoaded)return;
   _newsLoaded=true;
-  var q=encodeURIComponent('gold OR bitcoin OR "federal reserve" OR forex OR "interest rate"');
-  var newsUrl='https://newsapi.org/v2/everything?q='+q+'&language=en&sortBy=publishedAt&pageSize=12&apiKey='+NEWS_KEY;
-  var url='https://corsproxy.io/?url='+encodeURIComponent(newsUrl);
   var el=document.getElementById('news_feed');
-  fetch(url).then(function(r){return r.json();}).then(function(d){
-    if(!el)return;
-    if(d.status==='error'||!d.articles){
-      el.innerHTML='<div class="f10 dim italic tc" style="padding:14px">News feed temporarily unavailable — '+(d.message?d.message.slice(0,60):'try again shortly')+'</div>';
-      return;
-    }
-    if(!d.articles.length){el.innerHTML='<div class="f10 dim italic tc" style="padding:14px">No recent headlines found</div>';return;}
-    /* simple keyword sentiment tag */
-    function mood(t){
-      t=t.toLowerCase();
-      var bull=['surge','rally','soar','gain','jump','rise','high','boost','bullish','climb','up '];
-      var bear=['fall','drop','plunge','crash','slump','sink','loss','bearish','decline','tumble','down '];
-      var b=bull.some(function(w){return t.indexOf(w)>=0;}),s=bear.some(function(w){return t.indexOf(w)>=0;});
-      return b&&!s?'bull':s&&!b?'bear':'flat';
-    }
-    el.innerHTML=d.articles.slice(0,10).map(function(a){
-      var m=mood(a.title||'');
-      var mc=m==='bull'?'var(--green)':m==='bear'?'var(--red)':'var(--ts)';
-      var ml=m==='bull'?'▲':m==='bear'?'▼':'●';
-      var when=a.publishedAt?timeAgo(new Date(a.publishedAt)):'';
-      return '<a href="'+(a.url||'#')+'" target="_blank" rel="noopener" style="text-decoration:none;display:block" class="br" '
-        +'onmouseover="this.style.background=\'rgba(139,92,246,.06)\'" onmouseout="this.style.background=\'transparent\'" '
-        +'style="align-items:flex-start;padding:11px 8px;border-radius:8px;transition:.15s">'
-        +'<div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--tw);line-height:1.5;margin-bottom:4px">'+(a.title||'').replace(/</g,'&lt;')+'</div>'
-        +'<div style="font-size:10px;color:var(--tm)">'+((a.source&&a.source.name)||'')+' · '+when+'</div></div>'
-        +'<span style="margin-left:10px;flex-shrink:0;color:'+mc+';font-size:12px;font-weight:700">'+ml+'</span></a>';
-    }).join('');
-  }).catch(function(){
-    if(el)el.innerHTML='<div class="f10 dim italic tc" style="padding:14px">News feed unreachable — check your internet connection</div>';
-  });
+  if(el)el.innerHTML='<div class="f10 dim italic tc" style="padding:14px">Loading headlines…</div>';
+  var merged=[],pending=2;
+  function join(list){
+    merged=merged.concat(list||[]);
+    if(--pending)return;
+    /* newsdata.io repeats the same story across syndicated sources — dedupe on title */
+    var seen={},uniq=[];
+    merged.filter(function(a){return a&&a.title;}).forEach(function(a){
+      var k=a.title.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,60);
+      if(seen[k])return;seen[k]=1;uniq.push(a);
+    });
+    uniq.sort(function(x,y){return (y.ts||0)-(x.ts||0);});
+    renderNewsList(uniq);
+  }
+  fetchNewsdata(join);
+  fetchFinnhubNews(join);
 }
 function timeAgo(d){
   var s=Math.floor((Date.now()-d)/1000);
@@ -4249,12 +4428,26 @@ function timeAgo(d){
   if(s<86400)return Math.floor(s/3600)+'h ago';
   return Math.floor(s/86400)+'d ago';
 }
-/* == FRED — Federal Reserve Economic Data (real indicator values) == */
+/* == MACRO INDICATORS — Financial Modeling Prep ==
+   FMP's economic *calendar* is a paid endpoint on this key (HTTP 402), but
+   economic-indicators is available and serves the same numbers the hero panel
+   needs. It also sends Access-Control-Allow-Origin:*, so unlike the old FRED
+   path it needs no third-party CORS proxy. FRED stays as a fallback below. */
+var FMP_KEY='IO43kBiJ7ZymeLdmrlX3NlOyIAXCKbzA';
+var FMP_MAP={'Federal Funds Rate':'federalFunds','CPI (Inflation)':'CPI','Non-Farm Payrolls':'totalNonfarmPayroll'};
+function fetchFmpIndicator(name,cb){
+  fetch('https://financialmodelingprep.com/stable/economic-indicators?name='+encodeURIComponent(name)+'&apikey='+FMP_KEY)
+    .then(function(r){return r.json();}).then(function(d){
+      if(!Array.isArray(d)||!d.length){cb(null);return;}
+      /* newest first; guard in case the API ever returns ascending */
+      var rows=d.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+      cb({latest:parseFloat(rows[0].value),prev:rows[1]?parseFloat(rows[1].value):null,date:rows[0].date});
+    }).catch(function(){cb(null,'net');});
+}
+/* == FRED — kept as a secondary source (needs a CORS proxy, so tried second) == */
 var FRED_KEY='c430d00ac1788cdd16434956b4d08699';
-/* series IDs: DFF=Fed Funds Rate, CPIAUCSL=CPI, UNRATE=Unemployment */
 var FRED_MAP={'Federal Funds Rate':'DFF','CPI (Inflation)':'CPIAUCSL','Non-Farm Payrolls':'PAYEMS'};
 function fetchFredValue(seriesId,cb){
-  /* FRED blocks browser CORS directly — route through a public CORS proxy */
   var fredUrl='https://api.stlouisfed.org/fred/series/observations?series_id='+seriesId
     +'&api_key='+FRED_KEY+'&file_type=json&sort_order=desc&limit=2';
   var url='https://corsproxy.io/?url='+encodeURIComponent(fredUrl);
@@ -4266,30 +4459,41 @@ function fetchFredValue(seriesId,cb){
     }else cb(null);
   }).catch(function(){cb(null,'cors');});
 }
-function loadFredForEvent(next,setT){
-  var sid=FRED_MAP[next.t];
-  if(!sid)return;
-  fetchFredValue(sid,function(res,err){
-    if(err==='cors'){
-      setT('nh_cmp','Live economic data temporarily unavailable — retrying on next open');
-      return;
-    }
-    if(!res)return;
-    if(sid==='CPIAUCSL'&&res.prev){
-      /* CPI index → show YoY-ish MoM % change since raw index isn't a rate */
-      var moM=((res.latest-res.prev)/res.prev*100).toFixed(2);
-      setT('nh_pv','Latest index '+res.latest.toFixed(1)+' ('+(moM>=0?'+':'')+moM+'% MoM)');
-      setT('nh_fc','Forecast —');
-    }else if(sid==='DFF'){
-      setT('nh_pv','Current rate '+res.latest.toFixed(2)+'%');
-      setT('nh_fc','Forecast '+next.fc);
-      setT('nh_cmp','Live Fed Funds Rate: '+res.latest.toFixed(2)+'% (as of '+res.date+')');
-    }else if(sid==='PAYEMS'&&res.prev){
-      var chg=(res.latest-res.prev).toFixed(0);
-      setT('nh_pv','Latest '+(res.latest/1000).toFixed(0)+'K jobs ('+(chg>=0?'+':'')+chg+'K)');
-    }
+function paintIndicator(kind,res,next,setT){
+  if(!res||isNaN(res.latest))return;
+  if(kind==='CPI'&&res.prev){
+    var moM=((res.latest-res.prev)/res.prev*100).toFixed(2);
+    setT('nh_pv','Latest index '+res.latest.toFixed(1)+' ('+(moM>=0?'+':'')+moM+'% MoM)');
+    setT('nh_fc','Forecast —');
+    setT('nh_cmp','Live CPI index '+res.latest.toFixed(1)+' (as of '+res.date+')');
+  }else if(kind==='rate'){
+    setT('nh_pv','Current rate '+res.latest.toFixed(2)+'%');
+    setT('nh_fc','Forecast '+next.fc);
+    setT('nh_cmp','Live Fed Funds Rate: '+res.latest.toFixed(2)+'% (as of '+res.date+')');
+  }else if(kind==='payrolls'&&res.prev){
+    /* series is in thousands of jobs: total reads as millions, the MoM delta is
+       the headline NFP print. The old label divided by 1000 and still said "K". */
+    var chg=Math.round(res.latest-res.prev);
+    setT('nh_pv','Total '+(res.latest/1000).toFixed(1)+'M jobs ('+(chg>=0?'+':'')+chg+'K MoM)');
+    setT('nh_cmp','Live payrolls as of '+res.date);
+  }
+}
+function loadMacroForEvent(next,setT){
+  var kind=next.t==='CPI (Inflation)'?'CPI':next.t==='Federal Funds Rate'?'rate':next.t==='Non-Farm Payrolls'?'payrolls':null;
+  if(!kind)return;
+  var fmpName=FMP_MAP[next.t],fredId=FRED_MAP[next.t];
+  fetchFmpIndicator(fmpName,function(res){
+    if(res){paintIndicator(kind,res,next,setT);return;}
+    /* FMP unavailable → fall back to FRED through the CORS proxy */
+    if(!fredId)return;
+    fetchFredValue(fredId,function(r2,err){
+      if(err||!r2){setT('nh_cmp','Live economic data temporarily unavailable — retrying on next open');return;}
+      paintIndicator(kind,r2,next,setT);
+    });
   });
 }
+/* back-compat alias — renderSentiment used to call this name */
+function loadFredForEvent(next,setT){loadMacroForEvent(next,setT);}
 function renderSentiment(){
   var events=buildEconEvents();
   if(!events.length)return;
