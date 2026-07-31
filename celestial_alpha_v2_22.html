@@ -3986,23 +3986,67 @@ function finnhubQuote(symbol,cb){
       else cb(null);
     }).catch(function(){cb(null,'err');});
 }
-/* resolve a user asset to a Finnhub symbol */
+/* Finnhub symbol map — FREE TIER ONLY.
+   OANDA:* (forex, metals, oil) returns {"error":"You don't have access to this
+   resource."} on the free plan, which is why every ticker except BTC used to
+   read 0.00. Only BINANCE crypto and US equities are kept here; metals go to
+   gold-api.com and forex/oil go to FMP (see getQuote below). */
 function finnhubSymbol(sym){
   var MAP={
-    GOLD:'OANDA:XAU_USD',XAU:'OANDA:XAU_USD',XAUUSD:'OANDA:XAU_USD',
-    SILVER:'OANDA:XAG_USD',XAG:'OANDA:XAG_USD',XAGUSD:'OANDA:XAG_USD',
-    EURUSD:'OANDA:EUR_USD',GBPUSD:'OANDA:GBP_USD',USDJPY:'OANDA:USD_JPY',
-    AUDUSD:'OANDA:AUD_USD',USDCAD:'OANDA:USD_CAD',NZDUSD:'OANDA:NZD_USD',
-    OIL:'OANDA:BCO_USD',USOIL:'OANDA:WTICO_USD',WTI:'OANDA:WTICO_USD',BRENT:'OANDA:BCO_USD',
     BITCOIN:'BINANCE:BTCUSDT',BTC:'BINANCE:BTCUSDT',BTCUSD:'BINANCE:BTCUSDT',
     ETHEREUM:'BINANCE:ETHUSDT',ETH:'BINANCE:ETHUSDT',ETHUSD:'BINANCE:ETHUSDT',
     SOLANA:'BINANCE:SOLUSDT',SOL:'BINANCE:SOLUSDT',
     DOGECOIN:'BINANCE:DOGEUSDT',DOGE:'BINANCE:DOGEUSDT',
     RIPPLE:'BINANCE:XRPUSDT',XRP:'BINANCE:XRPUSDT',
     CARDANO:'BINANCE:ADAUSDT',ADA:'BINANCE:ADAUSDT',
-    LITECOIN:'BINANCE:LTCUSDT',LTC:'BINANCE:LTCUSDT',BNB:'BINANCE:BNBUSDT'
+    LITECOIN:'BINANCE:LTCUSDT',LTC:'BINANCE:LTCUSDT',BNB:'BINANCE:BNBUSDT',
+    APPLE:'AAPL',AAPL:'AAPL',TESLA:'TSLA',TSLA:'TSLA',MICROSOFT:'MSFT',MSFT:'MSFT',
+    NVIDIA:'NVDA',NVDA:'NVDA',AMAZON:'AMZN',AMZN:'AMZN',NETFLIX:'NFLX',NFLX:'NFLX'
   };
   return MAP[sym]||null;
+}
+/* == FMP quote — covers forex, crypto, US equities and Brent on the free tier.
+   XAUUSD / WTI are premium-only there, so metals use gold-api.com instead. == */
+function fmpSymbol(sym){
+  var MAP={
+    EURUSD:'EURUSD',GBPUSD:'GBPUSD',USDJPY:'USDJPY',AUDUSD:'AUDUSD',
+    USDCAD:'USDCAD',NZDUSD:'NZDUSD',USDCHF:'USDCHF',
+    BITCOIN:'BTCUSD',BTC:'BTCUSD',BTCUSD:'BTCUSD',ETHEREUM:'ETHUSD',ETH:'ETHUSD',ETHUSD:'ETHUSD',
+    SOLANA:'SOLUSD',SOL:'SOLUSD',DOGECOIN:'DOGEUSD',DOGE:'DOGEUSD',
+    RIPPLE:'XRPUSD',XRP:'XRPUSD',CARDANO:'ADAUSD',ADA:'ADAUSD',LITECOIN:'LTCUSD',LTC:'LTCUSD',
+    OIL:'BZUSD',BRENT:'BZUSD',USOIL:'BZUSD',WTI:'BZUSD',CL:'BZUSD',
+    APPLE:'AAPL',AAPL:'AAPL',TESLA:'TSLA',TSLA:'TSLA',MICROSOFT:'MSFT',MSFT:'MSFT',
+    NVIDIA:'NVDA',NVDA:'NVDA',AMAZON:'AMZN',AMZN:'AMZN',NETFLIX:'NFLX',NFLX:'NFLX'
+  };
+  return MAP[sym]||null;
+}
+function fmpQuote(symbol,cb){
+  fetch('https://financialmodelingprep.com/stable/quote?symbol='+encodeURIComponent(symbol)+'&apikey='+FMP_KEY)
+    .then(function(r){return r.json();}).then(function(d){
+      var q=Array.isArray(d)?d[0]:null;
+      if(q&&typeof q.price==='number'&&q.price>0)cb(q.price,q.previousClose);
+      else cb(null);
+    }).catch(function(){cb(null,'err');});
+}
+function metalKey(sym){
+  if(sym==='GOLD'||sym==='XAU'||sym==='XAUUSD')return'XAU';
+  if(sym==='SILVER'||sym==='XAG'||sym==='XAGUSD')return'XAG';
+  return null;
+}
+/* Ordered provider chain per asset — first one that answers wins.
+   Every provider here was verified to work on its free tier AND to send
+   cross-origin headers, so this works even from a file:// page. */
+function getQuote(sym,cb){
+  sym=(sym||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  var chain=[];
+  var mk=metalKey(sym);
+  if(mk)chain.push(function(next){metalPrice(mk,function(p){p?cb(p,null):next();});});
+  var fm=fmpSymbol(sym);
+  if(fm)chain.push(function(next){fmpQuote(fm,function(p,pc){p?cb(p,pc):next();});});
+  var fh=finnhubSymbol(sym);
+  if(fh)chain.push(function(next){finnhubQuote(fh,function(p,pc){p?cb(p,pc):next();});});
+  var i=0;
+  (function next(){ if(i>=chain.length){cb(null);return;} chain[i++](next); })();
 }
 /* == LEGACY Alpha Vantage (fallback only) == */
 function avPrice(from,to,cb){
@@ -4029,11 +4073,16 @@ function setTick(pid,cid,val,pc){
   pe.dataset.prev=val;
 }
 function loadTickers(){
-  /* All via Finnhub — reliable for gold/forex/crypto/oil, CORS-open, 60 calls/min free */
-  finnhubQuote('OANDA:XAU_USD',function(p,pc){if(p)setTick('tk_xau','tkc_xau',p,pc);else metalPrice('XAU',function(g){if(g)setTick('tk_xau','tkc_xau',g);});});
-  finnhubQuote('BINANCE:BTCUSDT',function(p,pc){if(p)setTick('tk_btc','tkc_btc',p,pc);});
-  finnhubQuote('OANDA:EUR_USD',function(p,pc){if(p)setTick('tk_eur','tkc_eur',p,pc);});
-  finnhubQuote('OANDA:WTICO_USD',function(p,pc){if(p)setTick('tk_oil','tkc_oil',p,pc);});
+  /* Routed through getQuote so each asset uses a provider that actually serves
+     it on the free tier. The previous all-Finnhub version asked OANDA for gold,
+     EUR and oil, which the free plan rejects — three of four tickers sat at 0.00. */
+  [['GOLD','tk_xau','tkc_xau'],['BTC','tk_btc','tkc_btc'],
+   ['EURUSD','tk_eur','tkc_eur'],['OIL','tk_oil','tkc_oil']].forEach(function(t){
+    getQuote(t[0],function(p,pc){
+      if(p)setTick(t[1],t[2],p,pc);
+      else{var el=document.getElementById(t[1]);if(el&&el.textContent==='0.00')el.textContent='—';}
+    });
+  });
 }
 /* map user asset name -> Alpha Vantage query type + symbols */
 function avResolve(sym){
@@ -4054,25 +4103,23 @@ function avResolve(sym){
 }
 function fetchLivePrice(cb){
   var a=document.getElementById('ai_asset_txt').value.trim()||'Gold';
-  var sym=a.toUpperCase().replace(/[^A-Z]/g,'');
-  var fh=finnhubSymbol(sym);
-  var done=function(p){
+  var sym=a.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!metalKey(sym)&&!fmpSymbol(sym)&&!finnhubSymbol(sym)){
+    notify('No live feed for "'+a+'" \u2014 try Gold, Silver, Bitcoin, EURUSD, Oil or a US stock','info');
+    if(cb)cb(false);return;
+  }
+  notify('Fetching '+a+' live price...','info');
+  /* getQuote picks a provider that actually serves this asset on its free tier */
+  getQuote(sym,function(p){
     if(p&&!isNaN(p)){
       document.getElementById('ai_price').value=(p<10?p.toFixed(4):p.toFixed(2));
       if(cb){notify(sym+' \u2192 '+p.toLocaleString()+' (live)','bull');cb(true);}
       else{notify(sym+' \u2192 '+p.toLocaleString()+' (live) \u2014 re-running','bull');if(!document.getElementById('ai_out').classList.contains('hidden'))runAI();}
-    }else{notify('Could not fetch a live price for "'+a+'" — type it manually or try another name','info');if(cb)cb(false);}
-  };
-  notify('Fetching '+a+' live price...','info');
-  if(fh){
-    finnhubQuote(fh,function(p){
-      if(p)done(p);
-      else if(sym==='GOLD'||sym==='XAU'||sym==='XAUUSD')metalPrice('XAU',done);
-      else if(sym==='SILVER'||sym==='XAG'||sym==='XAGUSD')metalPrice('XAG',done);
-      else done(null);
-    });
-  }else if(sym==='GOLD'||sym==='XAU'){metalPrice('XAU',done);}
-  else{notify('Unknown asset "'+a+'" — try Gold, Bitcoin, EURUSD, USOIL, etc.','info');if(cb)cb(false);}
+    }else{
+      notify('Could not fetch a live price for "'+a+'" \u2014 type it manually or try another name','info');
+      if(cb)cb(false);
+    }
+  });
 }
 /* Smart Analyze: asset name is enough — auto-fetch live price if the price box is empty, then analyze */
 function smartAnalyze(){
