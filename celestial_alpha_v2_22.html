@@ -4033,18 +4033,56 @@ function metalKey(sym){
   if(sym==='SILVER'||sym==='XAG'||sym==='XAGUSD')return'XAG';
   return null;
 }
+/* == TWELVE DATA — metals/forex/crypto/equities, CORS *, gives previous close ==
+   Free tier is 8 credits per MINUTE (800/day), so it is used as the primary only
+   for gold (where it is the one source that returns a % change) and as a
+   last-resort fallback elsewhere — spraying every ticker at it would 429.
+   Note it reports errors as HTTP 200 with a {"code":...} body, so a numeric
+   price must be confirmed rather than assuming success. XAG/USD needs a paid
+   plan on this key, so silver stays on gold-api.com. */
+var TWELVE_KEY='999d566e01a4447da5338469a44e3281';
+function twelveSymbol(sym){
+  var MAP={
+    GOLD:'XAU/USD',XAU:'XAU/USD',XAUUSD:'XAU/USD',
+    EURUSD:'EUR/USD',GBPUSD:'GBP/USD',USDJPY:'USD/JPY',AUDUSD:'AUD/USD',
+    USDCAD:'USD/CAD',NZDUSD:'NZD/USD',USDCHF:'USD/CHF',
+    BITCOIN:'BTC/USD',BTC:'BTC/USD',BTCUSD:'BTC/USD',
+    ETHEREUM:'ETH/USD',ETH:'ETH/USD',ETHUSD:'ETH/USD',
+    SOLANA:'SOL/USD',SOL:'SOL/USD',RIPPLE:'XRP/USD',XRP:'XRP/USD',
+    CARDANO:'ADA/USD',ADA:'ADA/USD',LITECOIN:'LTC/USD',LTC:'LTC/USD',
+    DOGECOIN:'DOGE/USD',DOGE:'DOGE/USD',
+    APPLE:'AAPL',AAPL:'AAPL',TESLA:'TSLA',TSLA:'TSLA',MICROSOFT:'MSFT',MSFT:'MSFT',
+    NVIDIA:'NVDA',NVDA:'NVDA',AMAZON:'AMZN',AMZN:'AMZN',NETFLIX:'NFLX',NFLX:'NFLX'
+  };
+  return MAP[sym]||null;
+}
+function twelveQuote(symbol,cb){
+  fetch('https://api.twelvedata.com/quote?symbol='+encodeURIComponent(symbol)+'&apikey='+TWELVE_KEY)
+    .then(function(r){return r.json();}).then(function(d){
+      /* {"code":429|404,...} arrives with HTTP 200 — treat as a miss, not a price */
+      if(!d||d.code||d.status==='error'){cb(null,'limit');return;}
+      var px=parseFloat(d.close),pc=parseFloat(d.previous_close);
+      if(isFinite(px)&&px>0)cb(px,isFinite(pc)?pc:null);
+      else cb(null);
+    }).catch(function(){cb(null,'err');});
+}
 /* Ordered provider chain per asset — first one that answers wins.
    Every provider here was verified to work on its free tier AND to send
    cross-origin headers, so this works even from a file:// page. */
 function getQuote(sym,cb){
   sym=(sym||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   var chain=[];
-  var mk=metalKey(sym);
+  var mk=metalKey(sym),td=twelveSymbol(sym),fm=fmpSymbol(sym),fh=finnhubSymbol(sym);
+  /* Gold first from Twelve Data: it is the only free source here that returns a
+     previous close for XAU, so the ticker can show a real % change. */
+  if(mk==='XAU'&&td)chain.push(function(next){twelveQuote(td,function(p,pc){p?cb(p,pc):next();});});
+  /* Silver (and gold if Twelve Data is rate-limited) via the keyless metals feed */
   if(mk)chain.push(function(next){metalPrice(mk,function(p){p?cb(p,null):next();});});
-  var fm=fmpSymbol(sym);
   if(fm)chain.push(function(next){fmpQuote(fm,function(p,pc){p?cb(p,pc):next();});});
-  var fh=finnhubSymbol(sym);
   if(fh)chain.push(function(next){finnhubQuote(fh,function(p,pc){p?cb(p,pc):next();});});
+  /* Twelve Data last for everything else — its 8-credit/minute cap means it
+     cannot carry the whole dashboard, but it is a solid final fallback. */
+  if(td&&mk!=='XAU')chain.push(function(next){twelveQuote(td,function(p,pc){p?cb(p,pc):next();});});
   var i=0;
   (function next(){ if(i>=chain.length){cb(null);return;} chain[i++](next); })();
 }
