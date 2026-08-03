@@ -4442,7 +4442,28 @@ function loadHistory(assetName,cb){
    Both send CORS headers, so neither needs the corsproxy hop the old
    newsapi.org path relied on. Either source failing still leaves a feed. */
 var NEWSDATA_KEY='pub_9b776a016e3848c4a2f6b2ca3b81d8ec';
+var GNEWS_KEY='81180942d08e459faa71a2d910d2becd';
 var NEWS_KEY='f07ea77c6d4f4c0ab350da41c656e78e'; /* legacy newsapi.org — unused fallback */
+/* "gold" alone matches Commonwealth/Olympic medal coverage, so every provider
+   gets filtered: a headline must carry a market term and must not look like
+   sport or entertainment. Cheap insurance against loose keyword matching. */
+var NEWS_WANT=/\b(gold|silver|bitcoin|btc|crypto|ethereum|forex|fx|dollar|usd|eur|yen|oil|crude|opec|fed|federal reserve|inflation|cpi|rate|rates|yield|treasury|stocks?|equit|market|trading|bullion|commodit)\b/i;
+var NEWS_JUNK=/\b(commonwealth|olympic|medal|medals|athlet|football|cricket|tennis|judo|swimming|ceremony|singer|movie|film|celebrity|album)\b/i;
+function newsRelevant(t){t=t||'';return NEWS_WANT.test(t)&&!NEWS_JUNK.test(t);}
+/* GNews — quoted phrases restricted to the title give by far the cleanest
+   market headlines of the three providers, so it leads the merge. */
+function fetchGnews(cb){
+  var q='"gold price" OR "bitcoin" OR "federal reserve" OR "crude oil" OR "interest rate" OR "stock market"';
+  var url='https://gnews.io/api/v4/search?q='+encodeURIComponent(q)
+    +'&in=title&lang=en&max=10&sortby=publishedAt&apikey='+GNEWS_KEY;
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.articles){cb([]);return;}
+    cb(d.articles.map(function(a){
+      return{title:a.title,url:a.url,source:(a.source&&a.source.name)||'GNews',
+             ts:a.publishedAt?new Date(a.publishedAt).getTime():0};
+    }));
+  }).catch(function(){cb([]);});
+}
 var _newsLoaded=false;
 function escHtml(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 /* simple keyword sentiment tag */
@@ -4500,19 +4521,20 @@ function loadNewsFeed(){
   _newsLoaded=true;
   var el=document.getElementById('news_feed');
   if(el)el.innerHTML='<div class="f10 dim italic tc" style="padding:14px">Loading headlines…</div>';
-  var merged=[],pending=2;
+  var merged=[],pending=3;
   function join(list){
     merged=merged.concat(list||[]);
     if(--pending)return;
     /* newsdata.io repeats the same story across syndicated sources — dedupe on title */
     var seen={},uniq=[];
-    merged.filter(function(a){return a&&a.title;}).forEach(function(a){
+    merged.filter(function(a){return a&&a.title&&newsRelevant(a.title);}).forEach(function(a){
       var k=a.title.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,60);
       if(seen[k])return;seen[k]=1;uniq.push(a);
     });
     uniq.sort(function(x,y){return (y.ts||0)-(x.ts||0);});
     renderNewsList(uniq);
   }
+  fetchGnews(join);
   fetchNewsdata(join);
   fetchFinnhubNews(join);
 }
