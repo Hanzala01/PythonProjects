@@ -4414,28 +4414,62 @@ function drawCandles(rows,label){
   var chg=((+last.close-+first.close)/+first.close*100);
   el.innerHTML=svg
     +'<div style="display:flex;justify-content:space-between;padding:4px 10px 0;font-size:10px;color:var(--tm)">'
-    +'<span>'+escHtml(label||'')+' · '+data.length+'D daily · EODHD</span>'
+    /* the caller appends the actual provider to label — do not hard-code one */
+    +'<span>'+escHtml(label||'')+' · '+data.length+'D daily</span>'
     +'<span>'+first.date+' → '+last.date+' <b style="color:'+(chg>=0?'var(--green)':'var(--red)')+'">'+(chg>=0?'+':'')+chg.toFixed(2)+'%</b></span></div>';
 }
 /* Pull history for whatever asset is in the Analyze box */
+/* Twelve Data daily candles — normalised to the EODHD row shape
+   {date,open,high,low,close} so drawCandles/applyMonthlyRange are unchanged.
+   Unlike EODHD this sends CORS *, so it is the only one of the two that a
+   browser can actually reach. */
+function twelveDaily(sym,days,cb){
+  var s=twelveSymbol(sym);
+  if(!s){cb(null,'unmapped');return;}
+  var url='https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(s)
+    +'&interval=1day&outputsize='+Math.min(500,days||150)+'&order=ASC&apikey='+TWELVE_KEY;
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    /* errors arrive as HTTP 200 with a {"code":...} body */
+    if(!d||d.code||d.status==='error'||!d.values||!d.values.length){
+      cb(null,d&&d.code===429?'limit':'empty');return;
+    }
+    cb(d.values.map(function(v){
+      return{date:v.datetime,open:+v.open,high:+v.high,low:+v.low,close:+v.close};
+    }).filter(function(r){return isFinite(r.close);}));
+  }).catch(function(){cb(null,'err');});
+}
 function loadHistory(assetName,cb){
-  var sym=(assetName||'').toUpperCase().replace(/[^A-Z]/g,'');
+  var sym=(assetName||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   var el=document.getElementById('plot');
-  if(!eodhdSymbol(sym)){
-    if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No EODHD history mapped for "'+escHtml(assetName)+'" — supported: metals, major FX, top crypto and US stocks</div>';
+  var hasTD=!!twelveSymbol(sym),hasEOD=!!eodhdSymbol(sym);
+  if(!hasTD&&!hasEOD){
+    if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No daily history mapped for "'+escHtml(assetName)+'" \u2014 supported: metals, major FX, top crypto and US stocks</div>';
     if(cb)cb(null);return;
   }
-  if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history…</div>';
-  eodhdDaily(sym,150,function(rows,err){
-    if(!rows){
-      if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">'
-        +(err==='blocked'?'EODHD blocked by CORS — it sends no cross-origin header. Serve this page behind your own proxy to enable charts.':'Chart data unavailable right now.')+'</div>';
-      if(cb)cb(null);return;
-    }
-    drawCandles(rows,assetName);
+  if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history\u2026</div>';
+  function done(rows,src){
+    drawCandles(rows,assetName+' \u00b7 '+src);
     var rng=applyMonthlyRange(rows);
     if(cb)cb(rng);
-  });
+  }
+  function fail(why){
+    if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">'
+      +(why==='limit'
+        ? 'Twelve Data rate limit reached (8 requests/minute on the free tier) \u2014 the chart will fill in shortly.'
+        : 'Chart data unavailable. EODHD sends no cross-origin header, so serve this page behind your own proxy to use it as a source.')+'</div>';
+    if(cb)cb(null);
+  }
+  /* Twelve Data first because it is CORS-open; EODHD second for anyone
+     serving this behind a proxy, where it gives longer history. */
+  if(hasTD){
+    twelveDaily(sym,150,function(rows,err){
+      if(rows&&rows.length>1){done(rows,'Twelve Data');return;}
+      if(!hasEOD){fail(err);return;}
+      eodhdDaily(sym,150,function(r2){ r2?done(r2,'EODHD'):fail(err); });
+    });
+  }else{
+    eodhdDaily(sym,150,function(r2,err2){ r2?done(r2,'EODHD'):fail(err2); });
+  }
 }
 
 /* == NEWS — newsdata.io (primary) merged with Finnhub market news ==
