@@ -1030,6 +1030,35 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:1180px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row}.side-card{display:none}
 .hero-row,.chart-shell,.row2,.row3{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.tick-grid{grid-template-columns:repeat(2,1fr)}
 .chart-shell>.card:first-child,.row2>.card:last-child{grid-column:auto}}
+/* ══ unified engine (ported from the standalone Analytics build) ══ */
+/* ══ unified engine ══ */
+.wblk{margin-bottom:12px}
+.wbt{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:6px}
+.work{background:#07070f;border:1px solid var(--rim);border-radius:10px;padding:12px;
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;line-height:1.75;
+  color:var(--soft);white-space:pre-wrap;overflow-x:auto}
+.work b{color:var(--white);font-weight:700}
+.work i{color:var(--gold);font-style:normal}
+.tw{overflow-x:auto}
+.tw table{width:100%;border-collapse:collapse;font-size:11.5px}
+.tw th{text-align:left;font-size:9px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.08em;font-weight:700;padding:7px 8px;border-bottom:1px solid var(--rim);white-space:nowrap}
+.tw td{padding:8px;border-bottom:1px solid rgba(167,139,250,.05);color:var(--soft);white-space:nowrap}
+.tw td.p{color:var(--white);font-weight:700}
+.tw tr:last-child td{border-bottom:none}
+.lvl{display:flex;align-items:center;gap:10px;background:var(--s3);border:1px solid var(--rim);
+  border-left:3px solid var(--accent);border-radius:10px;padding:10px 12px;margin-bottom:7px}
+.lvl .mt{flex:1;font-size:10.5px;color:var(--mid);line-height:1.6}
+.lvl .mt b{color:var(--soft)}
+.lvl .sc{font-size:19px;font-weight:900;min-width:42px;text-align:right}
+.bar{height:5px;border-radius:99px;background:var(--s4);overflow:hidden;margin-top:5px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.ca2{color:var(--amber,#fbbf24)}
+#ca_cv{width:100%;display:block;border-radius:12px;background:#07070f;border:1px solid var(--rim)}
+#ca_pine{width:100%;background:#07070f;border:1px solid var(--rim);color:var(--soft);
+  border-radius:10px;padding:11px;font-family:ui-monospace,monospace;font-size:10.5px;
+  line-height:1.6;min-height:170px;outline:none;resize:vertical}
 /* === SCROLL FIX: merged legacy+v2 CSS had conflicting html/body/pane rules === */
 html{height:100%;overflow-y:auto}
 body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:hidden}
@@ -1352,11 +1381,138 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
                 <div class="fg"><label>Low Date</label><input type="date" id="sl2_date"></div>
               </div>
             </div>
+                        <!-- ══ UNIFIED ENGINE INPUTS ══ -->
+            <div class="flex-sb mb6" style="cursor:pointer;margin-top:10px" onclick="var e=document.getElementById('ca_inputs');e.classList.toggle('hidden');this.querySelector('span').textContent=e.classList.contains('hidden')?'▼':'▲'">
+              <div class="f10 fw7 dim" style="text-transform:uppercase;letter-spacing:.08em">Engine Inputs — anchors · pressure · sigma data</div>
+              <span class="cb f12">▼</span>
+            </div>
+            <div id="ca_inputs" class="hidden">
+              <div class="sb-lbl mb6">Anchors — ladder sources</div>
+              <div class="fr" style="grid-template-columns:repeat(4,1fr);margin-bottom:8px">
+                <div class="fg"><label>ATH</label><input type="number" id="ca_ath" step="0.01" placeholder="All-time high"></div>
+                <div class="fg"><label>ATL</label><input type="number" id="ca_atl" step="0.01" placeholder="All-time low"></div>
+                <div class="fg"><label>Weekly High</label><input type="number" id="ca_wh" step="0.01"></div>
+                <div class="fg"><label>Weekly Low</label><input type="number" id="ca_wl" step="0.01"></div>
+              </div>
+              <div class="fr" style="grid-template-columns:repeat(4,1fr);margin-bottom:8px">
+                <div class="fg"><label>Pressure A — low</label><input type="number" id="ca_a" step="0.01"></div>
+                <div class="fg"><label>Pressure B — high</label><input type="number" id="ca_b" step="0.01"></div>
+                <div class="fg"><label>Pressure C — pullback</label><input type="number" id="ca_c" step="0.01"></div>
+                <div class="fg"><label>Swing trigger</label><select id="ca_trig">
+                  <option value="0">Not present</option>
+                  <option value="1">Bullish — sweep low + hidden div</option>
+                  <option value="-1">Bearish — sweep high + hidden div</option></select></div>
+              </div>
+              <div class="sb-lbl mb6">Settings</div>
+              <div class="fr" style="grid-template-columns:repeat(4,1fr);margin-bottom:8px">
+                <div class="fg"><label>Square of 9 increment</label><select id="ca_sq9">
+                  <option value="0.5">Standard — 0.5 / 1.0</option>
+                  <option value="4.5">Bitcoin — 4.5 / 9.5</option>
+                  <option value="auto">Auto from price</option></select></div>
+                <div class="fg"><label>Cycle increments</label><select id="ca_cyc">
+                  <option value="std">0.25 · 0.50 · 0.75 · 1.00</option>
+                  <option value="ext">Extended — to 2.00</option>
+                  <option value="fine">Fine — eighths</option></select></div>
+                <div class="fg"><label>Reaction window</label><select id="ca_win">
+                  <option value="5">5 candles</option><option value="10" selected>10 candles</option>
+                  <option value="20">20 candles</option></select></div>
+                <div class="fg"><label>Confluence tolerance</label><select id="ca_tol">
+                  <option value="0.15">0.15% tight</option><option value="0.30" selected>0.30% normal</option>
+                  <option value="0.60">0.60% wide</option></select></div>
+              </div>
+              <div style="margin-bottom:8px"><label class="flex g8 f11 soft" style="cursor:pointer;align-items:center">
+                <input type="checkbox" id="ca_lows" checked style="width:15px;height:15px;accent-color:var(--accent)"> Use lows as ladder anchors too</label></div>
+              <div class="sb-lbl mb6">Sigma data — Twelve Data historical candles</div>
+              <div class="fr" style="grid-template-columns:repeat(4,1fr);margin-bottom:8px">
+                <div class="fg"><label>API key</label><input type="password" id="ca_key" placeholder="Twelve Data key"></div>
+                <div class="fg"><label>Symbol</label><input type="text" id="ca_sym" value="XAU/USD"></div>
+                <div class="fg"><label>Interval</label><select id="ca_int">
+                  <option>1min</option><option>5min</option><option>15min</option><option>30min</option>
+                  <option>1h</option><option>2h</option><option>4h</option>
+                  <option selected>1day</option><option>1week</option><option>1month</option></select></div>
+                <div class="fg"><label>Lookback</label><select id="ca_look">
+                  <option value="100">100</option><option value="200">200</option>
+                  <option value="500" selected>500</option><option value="1000">1000</option></select></div>
+              </div>
+              <div class="fr" style="grid-template-columns:repeat(4,1fr);margin-bottom:8px">
+                <div class="fg"><label>Price series</label><select id="ca_series">
+                  <option value="close" selected>Close</option><option value="high">High</option>
+                  <option value="low">Low</option><option value="typical">Typical (H+L+C)/3</option></select></div>
+                <div class="fg"><label>&nbsp;</label><button class="btn btn-a btn-sm" style="width:100%" onclick="CA.load(false)">Fetch history</button></div>
+                <div class="fg"><label>&nbsp;</label><button class="btn btn-g btn-sm" style="width:100%" onclick="CA.load(true)">Update new candles</button></div>
+                <div class="fg"><label>&nbsp;</label><button class="btn btn-g btn-sm" style="width:100%" onclick="CA.clearCache()">Clear cache</button></div>
+              </div>
+              <div class="flex g8" style="align-items:center;flex-wrap:wrap">
+                <label class="flex g8 f11 soft" style="cursor:pointer;align-items:center">
+                  <input type="checkbox" id="ca_auto" onchange="CA.autoTimer()" style="width:15px;height:15px;accent-color:var(--accent)"> Auto-update on candle close</label>
+                <span class="f10 dim" id="ca_data_msg">Cache empty</span>
+              </div>
+            </div>
             <div class="f10 dim italic">Live cycle data auto-calculated in real time. Asset name + price → full analysis.</div>
           </div>
         </div>
 
         <!-- OUTPUT -->
+                  <div id="ca_out" class="hidden">
+
+            <div class="card">
+              <div class="ch">
+                <div class="ct"><div class="dot" style="background:var(--acc2)"></div>Merged Verdict — 8-method confluence</div>
+                <div class="cs">probability · cycle · phase · momentum · volatility</div>
+              </div>
+              <div class="cb" id="ca_verdict"></div>
+            </div>
+
+            <div class="card">
+              <div class="ch">
+                <div class="ct"><div class="dot" style="background:var(--gold)"></div>Calculation Working — every method</div>
+                <div class="cs">INPUT · WORKING · AVERAGE · OUTPUT</div>
+              </div>
+              <div class="cb" id="ca_work"></div>
+            </div>
+
+            <div id="ca_sigma_blk" class="hidden">
+              <div class="card">
+                <div class="ch">
+                  <div class="ct"><div class="dot" style="background:var(--green)"></div>Sigma Dashboard</div>
+                  <div class="cs">historical candles only</div>
+                </div>
+                <div class="cb"><div class="g4" id="ca_sig_dash"></div></div>
+              </div>
+
+              <div class="card">
+                <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Chart — sigma bands · major cycle levels</div></div>
+                <div class="cb"><canvas id="ca_cv" height="380"></canvas></div>
+              </div>
+
+              <div class="card">
+                <div class="ch"><div class="ct"><div class="dot" style="background:var(--amber,#fbbf24)"></div>Statistical Sigma Levels</div>
+                  <div class="cs">theoretical vs measured</div></div>
+                <div class="cb"><div id="ca_sig_tbl"></div>
+                  <div class="f10 dim lh" id="ca_sig_warn" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--rim)"></div></div>
+              </div>
+
+              <div class="card">
+                <div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Level Reasoning</div>
+                  <div class="cs">measured from cached candles</div></div>
+                <div class="cb" id="ca_reason"></div>
+              </div>
+
+              <div class="card">
+                <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Confluence Sources</div></div>
+                <div class="cb" id="ca_conf_tbl"></div>
+              </div>
+
+              <div class="card">
+                <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>TradingView Export</div>
+                  <div class="cs">Pine Script v5</div></div>
+                <div class="cb"><textarea id="ca_pine" readonly></textarea>
+                  <button class="btn btn-g btn-sm mt10" onclick="CA.copyPine()">Copy Pine Script</button></div>
+              </div>
+            </div>
+
+          </div>
+
         <div id="ai_out" class="hidden">
 
           <!-- 2. ASTRO CONFIDENCE -->
@@ -2915,6 +3071,10 @@ function runAI(){
       loadHistory(assetName,function(rng){if(rng)runAI();});
     }
 
+    // Unified engine — Methods 1-7 + sigma + merged verdict
+    try{ CA.run({asset:assetName,price:price,astro:astro,sig:sig,vib:vibNum,eph:eph}); }
+    catch(ce){ console.error('CA engine:',ce); }
+
     // Check auto scalp
     setTimeout(checkAutoScalp,300);
 
@@ -4471,6 +4631,707 @@ function loadHistory(assetName,cb){
     eodhdDaily(sym,150,function(r2,err2){ r2?done(r2,'EODHD'):fail(err2); });
   }
 }
+
+/* ══════════════════════════════════════
+   UNIFIED ENGINE (CA) — 8-method confluence
+   Ported from the standalone Analytics build. Its own helpers live
+   inside the IIFE, so it does not collide with the page globals.
+══════════════════════════════════════ */
+var CA=(function(){
+
+/* ─── helpers ─── */
+function E(id){return document.getElementById(id);}
+function V(id){var e=E(id);return e?e.value:'';}
+function N(id){var v=parseFloat(V(id));return isFinite(v)?v:null;}
+function DEC(p){p=Math.abs(p);return p>=1000?2:p>=100?2:p>=10?3:p>=1?4:5;}
+function f(x,d){return x==null||!isFinite(x)?'\u2014':Number(x).toFixed(d===undefined?DEC(x):d);}
+function pc(x){return (x>=0?'+':'')+x.toFixed(2)+'%';}
+function cl(x,a,b){return Math.max(a,Math.min(b,x));}
+function esc(s){return String(s).replace(/</g,'&lt;');}
+
+/* ═══ Twelve Data client ═══ */
+var TD={
+  base:'https://api.twelvedata.com/time_series',
+  fetch:function(key,sym,itv,size){
+    if(!key) return Promise.reject(new Error('Twelve Data API key required (free at twelvedata.com).'));
+    var url=this.base+'?symbol='+encodeURIComponent(sym)+'&interval='+encodeURIComponent(itv)+
+            '&outputsize='+size+'&order=ASC&format=JSON&apikey='+encodeURIComponent(key);
+    return fetch(url).then(function(r){return r.json();}).then(function(j){
+      if(j.status==='error'||j.code){
+        if(j.code===429) throw new Error('Rate limit (429). Free tier = 8 req/min, 800/day.');
+        if(j.code===401) throw new Error('API key rejected (401).');
+        throw new Error('Twelve Data: '+(j.message||'unknown error'));
+      }
+      if(!j.values||!j.values.length) throw new Error('No candles for '+sym+' @ '+itv+'.');
+      return j.values.map(function(v){
+        return{t:v.datetime,o:+v.open,h:+v.high,l:+v.low,c:+v.close,v:+(v.volume||0)};
+      }).filter(function(c){return isFinite(c.c);}).sort(function(a,b){return a.t<b.t?-1:1;});
+    },function(){ throw new Error('Network blocked. Serve this file over http:// rather than opening from disk.'); });
+  }
+};
+
+/* ═══ candle cache — always historical, never live-only ═══ */
+var Store={
+  k:function(s,i){return 'ca_candles_'+s+'_'+i;},
+  get:function(s,i){try{var r=localStorage.getItem(this.k(s,i));return r?JSON.parse(r):null;}catch(e){return null;}},
+  put:function(s,i,c){try{localStorage.setItem(this.k(s,i),JSON.stringify({saved:Date.now(),candles:c}));return true;}catch(e){return false;}},
+  merge:function(a,b){var m={};(a||[]).forEach(function(c){m[c.t]=c;});(b||[]).forEach(function(c){m[c.t]=c;});
+    return Object.keys(m).sort().map(function(t){return m[t];});},
+  clear:function(){var d=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);
+    if(k&&k.indexOf('ca_candles_')===0)d.push(k);}d.forEach(function(k){localStorage.removeItem(k);});return d.length;},
+  info:function(s,i){var d=this.get(s,i);return d?d.candles.length+' candles cached \u00b7 through '+d.candles[d.candles.length-1].t:'Cache empty';}
+};
+
+/* ═══ model registry ═══ */
+var MODELS={};
+function model(id,fn){MODELS[id]=fn;return fn;}
+
+/* Method 1 — square root cycle (÷100 scaling → major levels) */
+model('sqrtcycle',function(ctx){
+  var P=ctx.price, scaled=P/100, root=Math.sqrt(scaled), steps=[], levels=[];
+  ctx.increments.forEach(function(o){
+    var up=Math.pow(root+o.inc,2)*100, dn=root-o.inc>0?Math.pow(root-o.inc,2)*100:null;
+    steps.push({inc:o.inc,deg:o.deg,up:up,dn:dn});
+    levels.push({price:up,label:'+'+o.deg+'\u00b0'});
+    if(dn!=null) levels.push({price:dn,label:'\u2212'+o.deg+'\u00b0'});
+  });
+  return{scaled:scaled,root:root,steps:steps,levels:levels};
+});
+
+/* Sigma — historical candles only */
+model('sigma',function(ctx){
+  var x=ctx.series,n=x.length,s=0,i;
+  for(i=0;i<n;i++)s+=x[i];
+  var mean=s/n,sq=0;
+  for(i=0;i<n;i++){var d=x[i]-mean;sq+=d*d;}
+  var variance=sq/(n-1),sd=Math.sqrt(variance),levels=[];
+  [1,2,3,4].forEach(function(k){
+    levels.push({k:k,sign:1,price:mean+k*sd,label:'+'+k+'\u03c3'});
+    levels.push({k:k,sign:-1,price:mean-k*sd,label:'\u2212'+k+'\u03c3'});
+  });
+  return{mean:mean,variance:variance,sd:sd,n:n,levels:levels};
+});
+
+/* ═══ Methods 2-7 ═══ */
+var DEGS=[90,135,180,225,256,270,360];
+
+function ladder(anchor,label){
+  var r=Math.sqrt(anchor),out=[];
+  DEGS.forEach(function(d){var s=d/180;
+    out.push({price:Math.pow(r-s,2),deg:d,dir:'down',src:label,root:r});
+    if(r+s>0)out.push({price:Math.pow(r+s,2),deg:d,dir:'up',src:label,root:r});});
+  return out;
+}
+function refine(base){
+  var r=Math.sqrt(base),rj=Math.pow(r+0.1,2),bn=Math.pow(r-0.1,2);
+  return{base:base,root:r,rejRaw:rj,bncRaw:bn,rejection:(base+rj)/2,bounce:(base+bn)/2};
+}
+function clusters(pool,limit){
+  var s=pool.slice().sort(function(a,b){return a.price-b.price;}),pairs=[],i;
+  for(i=0;i<s.length-1;i++){
+    if(s[i].src===s[i+1].src&&s[i].deg===s[i+1].deg)continue;
+    pairs.push({a:s[i],b:s[i+1],gap:s[i+1].price-s[i].price,mid:(s[i].price+s[i+1].price)/2});}
+  pairs.sort(function(x,y){return x.gap-y.gap;});
+  var out=[],used=[];
+  for(i=0;i<pairs.length&&out.length<limit;i++){
+    var m=pairs[i].mid,clash=false;
+    used.forEach(function(u){if(Math.abs(u-m)/m<0.004)clash=true;});
+    if(clash)continue; used.push(m); out.push(pairs[i]);}
+  return out;
+}
+function sq9(price,inc90){
+  var r=Math.sqrt(price),i180=Math.abs(inc90-4.5)<0.01?9.5:inc90*2;
+  return{inc90:inc90,inc180:i180,root:r,
+    d90:Math.pow(r-inc90,2),u90:Math.pow(r+inc90,2),
+    d180:Math.pow(r-i180,2),u180:Math.pow(r+i180,2)};
+}
+function eighths(hi,lo){var p=(hi-lo)/8,o=[];for(var i=0;i<=8;i++)o.push({i:i,label:i+'/8',price:lo+i*p});return o;}
+function fibs(hi,lo){var r=hi-lo;return [0.236,0.382,0.5,0.618,0.786].map(function(v){
+  return{price:hi-r*v,label:(v*100).toFixed(1)+'%'};});}
+function vwapOf(C){var pv=0,vv=0,hv=false;C.forEach(function(c){var tp=(c.h+c.l+c.c)/3;
+  if(c.v>0)hv=true;var w=c.v>0?c.v:1;pv+=tp*w;vv+=w;});return{price:vv?pv/vv:null,weighted:hv};}
+function swings(C,n){var hi=[],lo=[];
+  for(var i=n;i<C.length-n;i++){var H=true,L=true;
+    for(var j=i-n;j<=i+n;j++){if(j===i)continue;
+      if(C[j].h>=C[i].h)H=false; if(C[j].l<=C[i].l)L=false;}
+    if(H)hi.push({price:C[i].h,t:C[i].t}); if(L)lo.push({price:C[i].l,t:C[i].t});}
+  return{highs:hi,lows:lo};}
+function srZones(sw,tol){
+  var pts=sw.highs.concat(sw.lows).map(function(p){return p.price;}).sort(function(a,b){return a-b;});
+  var z=[],cur=[];
+  for(var i=0;i<pts.length;i++){
+    if(!cur.length){cur=[pts[i]];continue;}
+    var avg=cur.reduce(function(a,b){return a+b;},0)/cur.length;
+    if(Math.abs(pts[i]-avg)/avg*100<=tol)cur.push(pts[i]);
+    else{if(cur.length>=2)z.push({price:cur.reduce(function(a,b){return a+b;},0)/cur.length,touches:cur.length});cur=[pts[i]];}}
+  if(cur.length>=2)z.push({price:cur.reduce(function(a,b){return a+b;},0)/cur.length,touches:cur.length});
+  return z.sort(function(a,b){return b.touches-a.touches;});}
+
+var SRCW={sr:26,swing:22,gann:16,sqrt:18,fib:10,vwap:8};
+function confluence(level,sources,tolPct){
+  var tol=level*tolPct/100,hits=[],score=0;
+  Object.keys(sources).forEach(function(k){
+    var best=null;
+    sources[k].forEach(function(s){var d=Math.abs(s.price-level);
+      if(d<=tol&&(!best||d<best.d))best={d:d,s:s};});
+    if(best){score+=(SRCW[k]||8)*(1-(best.d/tol)*0.5);
+      hits.push({key:k,label:best.s.label||k,price:best.s.price});}});
+  return{score:Math.round(cl(score,0,100)),hits:hits};
+}
+function levelStats(C,level,tolPct,win){
+  var tol=level*tolPct/100,t=0,cont=0,rev=0,react=[],last=null;
+  for(var i=1;i<C.length-1;i++){
+    var c=C[i];
+    if(c.l-tol<=level&&c.h+tol>=level){
+      if(last!==null&&i-last<3)continue;
+      last=i;t++;
+      var end=Math.min(i+win,C.length-1);
+      react.push(Math.abs(C[end].c-level)/level*100);
+      var bu=false,bd=false;
+      for(var j=i+1;j<=end;j++){if(C[j].c>level+tol)bu=true;if(C[j].c<level-tol)bd=true;}
+      var fromBelow=C[i-1].c<level;
+      if(fromBelow){if(bu&&!bd)cont++;else if(bd)rev++;}
+      else{if(bd&&!bu)cont++;else if(bu)rev++;}}}
+  var tot=cont+rev;
+  return{touches:t,cont:cont,rev:rev,
+    contPct:tot?Math.round(cont/tot*100):null,revPct:tot?Math.round(rev/tot*100):null,
+    avg:react.length?react.reduce(function(a,b){return a+b;},0)/react.length:0};
+}
+function containment(x,mean,sd,k){var n=0;for(var i=0;i<x.length;i++)if(Math.abs(x[i]-mean)<=k*sd)n++;return n/x.length*100;}
+
+/* ═══ state ═══ */
+var S={candles:[],sym:'',itv:'',timer:null,last:null};
+
+function incs(mode){
+  var std=[{inc:0.25,deg:90},{inc:0.50,deg:180},{inc:0.75,deg:270},{inc:1.00,deg:360}];
+  if(mode==='ext')return std.concat([{inc:1.25,deg:450},{inc:1.50,deg:540},{inc:1.75,deg:630},{inc:2.00,deg:720}]);
+  if(mode==='fine')return [{inc:0.125,deg:45},{inc:0.25,deg:90},{inc:0.375,deg:135},{inc:0.50,deg:180},
+    {inc:0.625,deg:225},{inc:0.75,deg:270},{inc:0.875,deg:315},{inc:1.00,deg:360}];
+  return std;
+}
+
+function blk(title,input,working,average,output){
+  return '<div class="wblk"><div class="wbt">'+esc(title)+'</div><div class="work">'+
+    '<b>INPUT</b>     '+input+'\n\n<b>WORKING</b>   '+working+
+    '\n\n<b>AVERAGE</b>   '+average+'\n\n<b>OUTPUT</b>    '+output+'</div></div>';
+}
+
+/* ═══════════════ MAIN ═══════════════ */
+function run(o){
+  o=o||{};
+  var P=o.price||N('ai_price');
+  if(!P||P<=0)return;
+  var D=DEC(P), asset=o.asset||V('ai_asset_txt')||'Asset';
+  var tolPct=parseFloat(V('ca_tol'))||0.30;
+  var win=parseInt(V('ca_win'),10)||10;
+  var out=[];
+
+  /* ── anchors ── */
+  var AN=[
+    {v:N('ca_ath'),n:'ATH',hi:1},{v:N('ca_atl'),n:'ATL',hi:0},
+    {v:N('ai_mh'), n:'M.High',hi:1},{v:N('ai_ml'),n:'M.Low',hi:0},
+    {v:N('ca_wh'), n:'W.High',hi:1},{v:N('ca_wl'),n:'W.Low',hi:0},
+    {v:N('sh_price'),n:'S.High',hi:1},{v:N('sl2_price'),n:'S.Low',hi:0}
+  ].filter(function(a){return a.v&&a.v>0;});
+
+  var his=AN.filter(function(a){return a.hi;}).map(function(a){return a.v;});
+  var los=AN.filter(function(a){return !a.hi;}).map(function(a){return a.v;});
+  /* No anchors → the range below is a placeholder centred on price (P*1.02 /
+     P*0.98). Every range-derived method then lands exactly mid-range and votes
+     0, which is an artefact of the fabricated range, not a real "no edge"
+     reading. SYNTH_RANGE marks that so those methods abstain instead of
+     dragging the merged verdict to 50%. */
+  var SYNTH_RANGE=!(his.length&&los.length);
+  var HI=his.length?Math.max.apply(null,his):P*1.02;
+  var LO=los.length?Math.min.apply(null,los):P*0.98;
+  if(HI<=LO){HI=Math.max(HI,P*1.01);LO=Math.min(LO,P*0.99);SYNTH_RANGE=true;}
+  var RANGE=HI-LO;
+
+  /* ═══ METHOD 1 — square root cycle ═══ */
+  var M1=MODELS.sqrtcycle({price:P,increments:incs(V('ca_cyc'))});
+  var w1='step 1  '+f(P,D)+' \u00f7 100 = <i>'+f(M1.scaled,4)+'</i>\n'+
+         '          step 2  \u221a'+f(M1.scaled,4)+' = <i>'+M1.root.toFixed(6)+'</i>\n';
+  M1.steps.forEach(function(s){
+    w1+='\n          '+s.inc.toFixed(3)+' = '+s.deg+'\u00b0\n'+
+        '            up  ('+M1.root.toFixed(4)+' + '+s.inc.toFixed(3)+')\u00b2 \u00d7 100 = <i>'+f(s.up,D)+'</i>\n';
+    if(s.dn!=null)w1+='            dn  ('+M1.root.toFixed(4)+' \u2212 '+s.inc.toFixed(3)+')\u00b2 \u00d7 100 = <i>'+f(s.dn,D)+'</i>\n';
+  });
+  out.push(blk('Method 1 \u00b7 Square root cycle \u2014 major levels',
+    'Current price = '+f(P,D),
+    w1,
+    'none \u2014 each cycle level is a direct projection',
+    M1.levels.length+' major cycle levels. \u00f7100 before the root scales every\n'+
+    '            increment 10\u00d7: 0.25 here = 2.5 root units on raw price, so the\n'+
+    '            90\u00b0 level lands at '+f(M1.steps[0].up,D)+' not '+f(Math.pow(Math.sqrt(P)+0.5,2),D)+'.'));
+
+  var m1tbl='<div class="tw"><table><thead><tr><th>Cycle</th><th>Deg</th><th>Down</th><th>Up</th>'+
+    '<th style="text-align:right">Dn dist</th><th style="text-align:right">Up dist</th>'+
+    '<th style="text-align:right">Width</th></tr></thead><tbody>';
+  M1.steps.forEach(function(s){
+    m1tbl+='<tr><td class="p">'+s.inc.toFixed(3)+'</td><td>'+s.deg+'\u00b0</td>'+
+      '<td class="cr">'+(s.dn!=null?f(s.dn,D):'\u2014')+'</td><td class="cg">'+f(s.up,D)+'</td>'+
+      '<td style="text-align:right">'+(s.dn!=null?pc((s.dn-P)/P*100):'\u2014')+'</td>'+
+      '<td style="text-align:right">'+pc((s.up-P)/P*100)+'</td>'+
+      '<td style="text-align:right">'+(s.dn!=null?f(s.up-s.dn,D):'\u2014')+'</td></tr>';});
+  out.push(m1tbl+'</tbody></table></div>');
+
+  /* ═══ METHOD 2 — degree confluence, 8 steps ═══ */
+  var anchors=AN.filter(function(a){return a.hi||E('ca_lows').checked;});
+  var m1res=null,m1sup=null,refined=[],near=[],band=4,pool=[];
+  if(anchors.length){
+    anchors.forEach(function(a){pool=pool.concat(ladder(a.v,a.n));});
+    while(band<=12){near=pool.filter(function(l){return Math.abs(l.price-P)/(P*0.01)<=band;});
+      if(near.length>=6)break; band+=2;}
+    if(near.length<3)near=pool.slice();
+    refined=clusters(near,5).map(function(c){var r=refine(c.mid);r.gap=c.gap;r.a=c.a;r.b=c.b;return r;});
+    refined.forEach(function(r){
+      if(r.base>P&&(!m1res||r.base<m1res.base))m1res=r;
+      if(r.base<P&&(!m1sup||r.base>m1sup.base))m1sup=r;});
+  }
+  if(refined.length){
+    var t=refined[0];
+    out.push(blk('Method 2 \u00b7 Degree level confluence \u2014 manipulation band',
+      'Price '+f(P,D)+' \u00b7 '+anchors.length+' anchors \u00b7 degrees '+DEGS.join(' ')+'\n'+
+      '          '+pool.length+' levels built \u2192 '+near.length+' inside '+band+'\u03c3',
+      'L1  '+t.a.deg+'\u00b0 '+t.a.dir+' from '+t.a.src+'\n'+
+      '              \u221a'+f(t.a.root*t.a.root,D)+' = '+t.a.root.toFixed(4)+'\n'+
+      '              ('+t.a.root.toFixed(4)+' '+(t.a.dir==='up'?'+':'\u2212')+' '+(t.a.deg/180).toFixed(3)+')\u00b2 = <i>'+f(t.a.price,D)+'</i>\n'+
+      '          L2  '+t.b.deg+'\u00b0 '+t.b.dir+' from '+t.b.src+'\n'+
+      '              \u221a'+f(t.b.root*t.b.root,D)+' = '+t.b.root.toFixed(4)+'\n'+
+      '              ('+t.b.root.toFixed(4)+' '+(t.b.dir==='up'?'+':'\u2212')+' '+(t.b.deg/180).toFixed(3)+')\u00b2 = <i>'+f(t.b.price,D)+'</i>\n'+
+      '          gap = '+t.gap.toFixed(2)+'  \u2190 tightest pair in the band',
+      'avg 1   ('+f(t.a.price,D)+' + '+f(t.b.price,D)+') \u00f7 2 = <i>'+f(t.base,D)+'</i>   base\n'+
+      '          \u221abase   \u221a'+f(t.base,D)+' = '+t.root.toFixed(4)+'\n'+
+      '          adj +   ('+t.root.toFixed(4)+' + 0.1)\u00b2 = '+f(t.rejRaw,D)+'\n'+
+      '          adj \u2212   ('+t.root.toFixed(4)+' \u2212 0.1)\u00b2 = '+f(t.bncRaw,D)+'\n'+
+      '          avg 2   ('+f(t.base,D)+' + '+f(t.rejRaw,D)+') \u00f7 2 = <i>'+f(t.rejection,D)+'</i>  rejection\n'+
+      '          avg 2   ('+f(t.base,D)+' + '+f(t.bncRaw,D)+') \u00f7 2 = <i>'+f(t.bounce,D)+'</i>  bounce',
+      'Base '+f(t.base,D)+'\n'+
+      '            Manipulation band '+f(t.bounce,D)+' \u2192 '+f(t.rejection,D)+
+      '  (width '+(t.rejection-t.bounce).toFixed(2)+')\n'+
+      '            Close beyond the band = real break. Wick in and back = sweep, fade it.'));
+
+    var ct='<div class="tw"><table><thead><tr><th>Cluster</th><th>Base</th><th>\u221aBase</th>'+
+      '<th>Bounce</th><th>Rejection</th><th style="text-align:right">Gap</th></tr></thead><tbody>';
+    refined.forEach(function(r){
+      ct+='<tr><td>'+r.a.deg+'\u00b0 '+r.a.src+' / '+r.b.deg+'\u00b0 '+r.b.src+'</td>'+
+        '<td class="p">'+f(r.base,D)+'</td><td class="mono">'+r.root.toFixed(4)+'</td>'+
+        '<td class="cg">'+f(r.bounce,D)+'</td><td class="cr">'+f(r.rejection,D)+'</td>'+
+        '<td style="text-align:right">'+r.gap.toFixed(2)+'</td></tr>';});
+    out.push(ct+'</tbody></table></div>');
+  }
+
+  /* ═══ METHOD 3 — Square of 9 ═══ */
+  var inc90=V('ca_sq9')==='auto'?Math.max(0.25,Math.round(Math.sqrt(P)/130*4)/4):parseFloat(V('ca_sq9'));
+  var S9=sq9(P,inc90);
+  out.push(blk('Method 3 \u00b7 Square of 9 root moves',
+    'Price '+f(P,D)+' \u00b7 increment '+S9.inc90+' / '+S9.inc180,
+    '\u221a'+f(P,D)+' = '+S9.root.toFixed(4)+'\n'+
+    '          90\u00b0  up   ('+S9.root.toFixed(4)+' + '+S9.inc90+')\u00b2 = <i>'+f(S9.u90,D)+'</i>\n'+
+    '          90\u00b0  down ('+S9.root.toFixed(4)+' \u2212 '+S9.inc90+')\u00b2 = <i>'+f(S9.d90,D)+'</i>\n'+
+    '          180\u00b0 up   ('+S9.root.toFixed(4)+' + '+S9.inc180+')\u00b2 = <i>'+f(S9.u180,D)+'</i>\n'+
+    '          180\u00b0 down ('+S9.root.toFixed(4)+' \u2212 '+S9.inc180+')\u00b2 = <i>'+f(S9.d180,D)+'</i>',
+    'band mid = ('+f(S9.d90,D)+' + '+f(S9.u90,D)+') \u00f7 2 = '+f((S9.d90+S9.u90)/2,D)+'\n'+
+    '          price sits '+f(P-(S9.d90+S9.u90)/2,D)+' from that mid',
+    '90\u00b0 band '+f(S9.d90,D)+' \u2013 '+f(S9.u90,D)+'\n'+
+    '            180\u00b0 band '+f(S9.d180,D)+' \u2013 '+f(S9.u180,D)));
+
+  /* ═══ METHOD 4 — Gann eighths ═══ */
+  var E8=eighths(HI,LO), pos8=cl((P-LO)/RANGE*8,0,8);
+  var w4='range = '+f(HI,D)+' \u2212 '+f(LO,D)+' = '+f(RANGE,D)+'\n'+
+         '          part  = '+f(RANGE,D)+' \u00f7 8 = '+f(RANGE/8,D)+'\n';
+  E8.forEach(function(e){w4+='          '+e.label+'  '+f(e.price,D)+'\n';});
+  out.push(blk('Method 4 \u00b7 Gann eighths',
+    'High '+f(HI,D)+' \u00b7 Low '+f(LO,D),
+    w4,
+    'position = ('+f(P,D)+' \u2212 '+f(LO,D)+') \u00f7 '+f(RANGE,D)+' \u00d7 8 = <i>'+pos8.toFixed(2)+'/8</i>',
+    'Trading at '+pos8.toFixed(2)+'/8 \u2014 '+
+      (pos8>7?'top eighth, exhaustion zone':pos8>6?'upper quarter':pos8>4?'above the half':
+       pos8>2?'below the half':'lower quarter, washed out')));
+
+  /* ═══ METHOD 5 — resistance pressure ═══ */
+  var a5=N('ca_a'),b5=N('ca_b'),c5=N('ca_c'),press=null;
+  if(a5&&b5&&c5&&a5>0){
+    press=(b5*c5)/a5;
+    out.push(blk('Method 5 \u00b7 Resistance pressure',
+      'A '+f(a5,D)+' (low) \u00b7 B '+f(b5,D)+' (high) \u00b7 C '+f(c5,D)+' (pullback)',
+      'B \u00d7 C = '+f(b5,D)+' \u00d7 '+f(c5,D)+' = '+f(b5*c5,2)+'\n'+
+      '          \u00f7 A   = '+f(b5*c5,2)+' \u00f7 '+f(a5,D)+' = <i>'+f(press,D)+'</i>',
+      'none \u2014 single projection',
+      'Pressure point '+f(press,D)+' \u2014 '+f(Math.abs(press-P),D)+' '+
+        (press>P?'above price, caps the advance':'below price, holds the decline')));
+  }
+
+  /* ═══ METHOD 6 — time cycle ═══ */
+  /* Price can sit outside the supplied anchors (e.g. the anchor high/low come
+     from monthly data while the price box holds something older). Unclamped
+     this produced readings like "-1379.8° of 360 travelled"; pos8 was already
+     clamped, so only the degree and the range percentage were escaping. */
+  var degRaw=RANGE>0?(P-LO)/RANGE*360:null;
+  var OUT_OF_RANGE=degRaw!=null&&(degRaw<0||degRaw>360);
+  var deg=degRaw==null?null:cl(degRaw,0,360);
+  if(deg!=null){
+    var CARD=[90,180,270,360],cardTxt='';
+    CARD.forEach(function(c){var pr=LO+(c/360)*RANGE;
+      cardTxt+='            '+c+'\u00b0 = '+f(pr,D)+'  '+(deg>=c?'passed':'ahead')+'\n';});
+    out.push(blk('Method 6 \u00b7 Time cycle degree',
+      'Price '+f(P,D)+' \u00b7 top '+f(HI,D)+' \u00b7 bottom '+f(LO,D),
+      f(P,D)+' \u2212 '+f(LO,D)+' = '+f(P-LO,D)+'\n'+
+      '          '+f(HI,D)+' \u2212 '+f(LO,D)+' = '+f(RANGE,D)+'\n'+
+      '          '+f(P-LO,D)+' \u00f7 '+f(RANGE,D)+' = '+((P-LO)/RANGE).toFixed(4)+'\n'+
+      '          \u00d7 360 = <i>'+f(deg,1)+'\u00b0</i>',
+      'big-cycle read '+f(deg,1)+' \u00f7 100 = '+(deg/100).toFixed(2),
+      f(deg,1)+'\u00b0 of 360 travelled \u2014 '+
+        (deg<90?'base quarter':deg<180?'advance quarter':deg<270?'test quarter':'exhaustion quarter')+
+        '\n'+cardTxt));
+  }
+
+  /* ═══ METHOD 7 — sigma (historical candles) ═══ */
+  var SG=null,series=null,use=null,meas={},sources={},vw={price:null};
+  if(S.candles.length>=20){
+    var look=parseInt(V('ca_look'),10)||500;
+    use=S.candles.slice(-look);
+    var mode=V('ca_series');
+    series=use.map(function(c){return mode==='high'?c.h:mode==='low'?c.l:
+      mode==='typical'?(c.h+c.l+c.c)/3:c.c;});
+    SG=MODELS.sigma({series:series});
+    [1,2,3,4].forEach(function(k){meas[k]=containment(series,SG.mean,SG.sd,k);});
+    var z=(P-SG.mean)/SG.sd;
+    out.push(blk('Method 7 \u00b7 Statistical sigma \u2014 '+use.length+' historical candles',
+      S.sym+' \u00b7 '+S.itv+' \u00b7 series = '+mode+'\n'+
+      '          '+use[0].t+'  \u2192  '+use[use.length-1].t,
+      '\u03a3x         = '+f(series.reduce(function(a,b){return a+b;},0),2)+'\n'+
+      '          mean       = \u03a3x \u00f7 '+SG.n+' = <i>'+f(SG.mean,D)+'</i>\n'+
+      '          \u03a3(x\u2212mean)\u00b2 = '+f(SG.variance*(SG.n-1),2)+'\n'+
+      '          variance   = \u03a3(x\u2212mean)\u00b2 \u00f7 ('+SG.n+'\u22121) = '+f(SG.variance,4)+'\n'+
+      '          \u03c3          = \u221avariance = <i>'+f(SG.sd,D)+'</i>',
+      'mean is the average of every candle in the series\n'+
+      '          \u03c3 is the average distance of each candle from that mean',
+      'price '+f(P,D)+' is '+f(P-SG.mean,D)+' from mean\n'+
+      '            '+f(P-SG.mean,D)+' \u00f7 '+f(SG.sd,D)+' = <i>'+(z>=0?'+':'')+z.toFixed(2)+'\u03c3</i>\n'+
+      '            \u00b11\u03c3 contained '+meas[1].toFixed(1)+'% of candles (theory says 68.27%)\n'+
+      '            \u00b12\u03c3 contained '+meas[2].toFixed(1)+'% of candles (theory says 95.45%)'));
+
+    /* confluence sources */
+    var hi2=Math.max.apply(null,use.map(function(c){return c.h;}));
+    var lo2=Math.min.apply(null,use.map(function(c){return c.l;}));
+    var sw=swings(use,5);
+    vw=vwapOf(use);
+    sources={
+      sr:srZones(sw,tolPct).slice(0,14).map(function(z2){return{price:z2.price,label:z2.touches+' touches'};}),
+      swing:sw.highs.concat(sw.lows).slice(-30).map(function(s2){return{price:s2.price,label:'swing'};}),
+      gann:eighths(hi2,lo2),
+      sqrt:M1.levels,
+      fib:fibs(hi2,lo2),
+      vwap:vw.price?[{price:vw.price,label:'VWAP'}]:[]
+    };
+  }
+
+  E('ca_work').innerHTML=out.join('');
+
+  /* ═══ SIGMA PANELS ═══ */
+  if(SG){
+    var zz=(P-SG.mean)/SG.sd,az=Math.abs(zz);
+    var CLS={1:'Normal Market Range',2:'Strong Extension',3:'Extreme Extension',4:'Rare Statistical Event'};
+    var THEO={1:68.27,2:95.45,3:99.73,4:99.9937};
+    var lastC=use[use.length-1];
+    E('ca_sig_dash').innerHTML=
+      ['<div class="sb"><div class="l">Mean</div><div class="v">'+f(SG.mean,D)+'</div><div class="n">n = '+SG.n+'</div></div>',
+       '<div class="sb"><div class="l">\u03c3</div><div class="v">'+f(SG.sd,D)+'</div><div class="n">'+(SG.sd/SG.mean*100).toFixed(2)+'% of mean</div></div>',
+       '<div class="sb"><div class="l">Sigma position</div><div class="v '+(az>2?'cr':az>1?'':'cg')+'">'+(zz>=0?'+':'')+zz.toFixed(2)+'\u03c3</div><div class="n">'+(az<=1?CLS[1]:az<=2?CLS[2]:az<=3?CLS[3]:CLS[4])+'</div></div>',
+       '<div class="sb"><div class="l">Distance from mean</div><div class="v">'+f(P-SG.mean,D)+'</div><div class="n">'+pc((P-SG.mean)/SG.mean*100)+'</div></div>',
+       '<div class="sb"><div class="l">Probability zone</div><div class="v">'+(az<=1?'\u00b11\u03c3':az<=2?'\u00b12\u03c3':az<=3?'\u00b13\u03c3':az<=4?'\u00b14\u03c3':'>4\u03c3')+'</div><div class="n">price '+f(P,D)+'</div></div>',
+       '<div class="sb"><div class="l">Candle sigma score</div><div class="v">'+((lastC.c-lastC.o)/SG.sd>=0?'+':'')+((lastC.c-lastC.o)/SG.sd).toFixed(3)+'</div><div class="n">body \u00f7 \u03c3</div></div>',
+       '<div class="sb"><div class="l">Variance</div><div class="v">'+f(SG.variance,2)+'</div><div class="n">\u03c3\u00b2</div></div>',
+       '<div class="sb"><div class="l">VWAP</div><div class="v">'+(vw.price?f(vw.price,D):'\u2014')+'</div><div class="n">'+(vw.weighted?'volume weighted':'time weighted')+'</div></div>'
+      ].join('');
+
+    var st='<div class="tw"><table><thead><tr><th>Level</th><th>Price</th><th>Classification</th>'+
+      '<th>Theory</th><th>Measured</th><th style="text-align:right">Dist</th>'+
+      '<th style="text-align:right">Confluence</th></tr></thead><tbody>';
+    var COLS={1:'#34d399',2:'#fbbf24',3:'#fb923c',4:'#f87171'};
+    SG.levels.slice().sort(function(a,b){return b.price-a.price;}).forEach(function(L){
+      var cf=confluence(L.price,sources,tolPct),d=(L.price-P)/P*100;
+      st+='<tr><td class="p" style="color:'+COLS[L.k]+'">'+L.label+'</td><td class="p">'+f(L.price,D)+'</td>'+
+        '<td>'+CLS[L.k]+'</td><td>'+THEO[L.k]+'%</td>'+
+        '<td'+(Math.abs(meas[L.k]-THEO[L.k])>6?' class="ca2"':'')+'>'+meas[L.k].toFixed(2)+'%</td>'+
+        '<td style="text-align:right" class="'+(d>0?'cg':'cr')+'">'+pc(d)+'</td>'+
+        '<td style="text-align:right"><b>'+cf.score+'</b></td></tr>';});
+    E('ca_sig_tbl').innerHTML=st+'</tbody></table></div>';
+
+    var sdPct=SG.sd/SG.mean*100;
+    var net=Math.abs(series[series.length-1]-series[0])/SG.mean*100;
+    var guard='';
+    if(SG.levels.some(function(L){return L.price<=0;}))
+      guard='<b>Some sigma levels fall at or below zero.</b> \u03c3 is larger than the mean allows \u2014 that happens on a strongly trending series. Those levels are arithmetic artefacts, not targets. Shorten the lookback. ';
+    else if(sdPct>18||net>60)
+      guard='<b>Trend distortion.</b> \u03c3 is '+sdPct.toFixed(1)+'% of the mean and the series moved '+net.toFixed(0)+'% end to end, so \u03c3 is measuring the trend rather than dispersion around a stable centre. A shorter lookback reads truer. ';
+    E('ca_sig_warn').innerHTML=guard+'<b>Read the measured column, not the theoretical one.</b> The 68/95/99.7 figures assume a normal distribution; price series are trending and non-stationary. Yours held '+meas[1].toFixed(1)+'% inside \u00b11\u03c3 and '+meas[2].toFixed(1)+'% inside \u00b12\u03c3.';
+
+    var rs='';
+    SG.levels.slice().sort(function(a,b){return Math.abs(a.price-P)-Math.abs(b.price-P);}).forEach(function(L){
+      var ls=levelStats(use,L.price,tolPct,win),cf=confluence(L.price,sources,tolPct);
+      var above=0;for(var q=0;q<series.length;q++)if(series[q]>L.price)above++;
+      rs+='<div class="lvl" style="border-left-color:'+COLS[L.k]+'">'+
+        '<div style="min-width:96px"><div style="font-size:15px;font-weight:800;color:'+COLS[L.k]+'">'+L.label+'</div>'+
+        '<div style="font-size:13px;font-weight:800;color:var(--white)">'+f(L.price,D)+'</div></div>'+
+        '<div class="mt"><b>Why</b> '+(L.sign>0?'Mean + ':'Mean \u2212 ')+L.k+'\u03c3, '+(L.sign>0?'upper':'lower')+
+        ' edge of the '+CLS[L.k].toLowerCase()+' band. Series traded above it in '+
+        (above/series.length*100).toFixed(1)+'% of candles ('+above+' of '+series.length+').<br>'+
+        '<b>History</b> '+(ls.touches?ls.touches+' touch'+(ls.touches>1?'es':'')+' \u00b7 average move '+ls.avg.toFixed(2)+'% within '+win+' candles'
+          :'Never tested in this lookback \u2014 no measured edge.')+'<br>'+
+        '<b>Odds</b> '+(ls.contPct==null?'Not enough resolved touches to measure.'
+          :'Continuation '+ls.contPct+'% \u00b7 reversal '+ls.revPct+'% (from '+(ls.cont+ls.rev)+' resolved touches)')+
+        (cf.hits.length?'<br><b>Confluence</b> '+cf.hits.map(function(h){return h.key+' '+f(h.price,D);}).join(' \u00b7 '):'')+
+        '<div class="bar"><i style="width:'+cf.score+'%"></i></div></div>'+
+        '<div class="sc" style="color:'+COLS[L.k]+'">'+cf.score+'</div></div>';});
+    E('ca_reason').innerHTML=rs;
+
+    var NAME={sr:'Historical S/R',swing:'Swing highs/lows',gann:'Gann eighths',
+      sqrt:'Square root levels',fib:'Fibonacci',vwap:'VWAP'};
+    var cft='<div class="tw"><table><thead><tr><th>Source</th><th>Count</th><th>Nearest</th>'+
+      '<th style="text-align:right">Dist</th><th style="text-align:right">Weight</th></tr></thead><tbody>';
+    Object.keys(sources).forEach(function(k){
+      var arr=sources[k];
+      if(!arr.length){cft+='<tr><td class="p">'+NAME[k]+'</td><td>0</td><td>\u2014</td><td style="text-align:right">\u2014</td><td style="text-align:right">'+SRCW[k]+'</td></tr>';return;}
+      var nr=arr.reduce(function(a,b){return Math.abs(b.price-P)<Math.abs(a.price-P)?b:a;});
+      cft+='<tr><td class="p">'+NAME[k]+'</td><td>'+arr.length+'</td>'+
+        '<td>'+f(nr.price,D)+' <span class="tag td">'+(nr.label||'')+'</span></td>'+
+        '<td style="text-align:right">'+pc((nr.price-P)/P*100)+'</td>'+
+        '<td style="text-align:right">'+SRCW[k]+'</td></tr>';});
+    E('ca_conf_tbl').innerHTML=cft+'</tbody></table></div>';
+
+    chart(use,SG,M1,P,D);
+    pine(SG,M1,P,D);
+    E('ca_sigma_blk').classList.remove('hidden');
+  }else{
+    E('ca_sigma_blk').classList.add('hidden');
+  }
+
+  /* ═══ MERGED VERDICT ═══ */
+  /* na:true = this method has no real input, so it abstains from the average */
+  var votes=[];
+  var v1=0,r1='No cluster resolved',na1=true;
+  if(m1res&&m1sup){var dR=m1res.base-P,dS=P-m1sup.base;v1=(dR-dS)/(dR+dS);na1=false;
+    r1='Support '+f(m1sup.base,D)+' \u00b7 resistance '+f(m1res.base,D);}
+  else if(m1sup){v1=0.5;na1=false;r1='Only support below at '+f(m1sup.base,D);}
+  else if(m1res){v1=-0.5;na1=false;r1='Only resistance above at '+f(m1res.base,D);}
+  votes.push({n:'Degree level',w:20,s:cl(v1,-1,1),r:r1,na:na1});
+
+  var dU=S9.u90-P,dD=P-S9.d90;
+  votes.push({n:'Square of 9',w:15,s:cl((dU-dD)/(dU+dD),-1,1),
+    r:'90\u00b0 band '+f(S9.d90,D)+' \u2013 '+f(S9.u90,D)});
+
+  var v3=(pos8-4)/4;
+  if(pos8>7.5)v3=-Math.abs(v3)*0.5; if(pos8<0.5)v3=Math.abs(v3)*0.5;
+  votes.push({n:'Gann eighths',w:15,s:cl(v3,-1,1),na:SYNTH_RANGE,
+    r:SYNTH_RANGE?'Needs a high/low anchor':pos8.toFixed(2)+'/8'+(pos8>7.5?' \u2014 exhaustion':pos8<0.5?' \u2014 washed out':'')});
+
+  votes.push({n:'Pressure',w:15,s:press?cl((press-P)/(RANGE*0.5),-1,1):0,na:!press,
+    r:press?'Target '+f(press,D):'A / B / C not supplied'});
+
+  votes.push({n:'Time cycle',w:15,s:deg==null?0:cl(1-2*(deg/360),-1,1),na:(deg==null||SYNTH_RANGE),
+    r:deg==null?'Range unavailable':SYNTH_RANGE?'Needs a high/low anchor'
+      :OUT_OF_RANGE?('Price is '+(P<LO?'below the anchor low':'above the anchor high')+' \u2014 clamped to '+f(deg,1)+'\u00b0')
+      :f(deg,1)+'\u00b0 of 360 travelled'});
+
+  var zr=SG?cl(-((P-SG.mean)/SG.sd)*0.35,-1,1):cl(-((P-(HI+LO)/2)/(RANGE/2))*0.6,-1,1);
+  votes.push({n:'Sigma extension',w:12,s:zr,na:(!SG&&SYNTH_RANGE),
+    r:SG?((P-SG.mean)/SG.sd>=0?'+':'')+((P-SG.mean)/SG.sd).toFixed(2)+'\u03c3 from historical mean'
+        :SYNTH_RANGE?'No candles and no anchor':'no candles \u2014 using range mid'});
+
+  var trig=parseInt(V('ca_trig'),10)||0;
+  votes.push({n:'Swing trigger',w:8,s:trig,na:(trig===0),
+    r:trig===0?'Not present':trig>0?'Bullish sweep confirmed':'Bearish sweep confirmed'});
+
+  var astroS=0,astroR='Not available',naA=true;
+  if(o.astro){astroS=cl(o.astro.score/7.8,-1,1);naA=false;
+    astroR=(o.astro.bull||50)+'% bull \u00b7 score '+o.astro.score.toFixed(2);}
+  votes.push({n:'Astro bias',w:10,s:astroS,r:astroR,na:naA});
+
+  /* Average only over methods that actually had data. Counting abstaining
+     methods as 0 used to pin the verdict near 50% no matter what the live
+     ones said. */
+  var wS=0,sS=0,nActive=0;
+  votes.forEach(function(v){if(v.na)return;wS+=v.w;sS+=v.w*v.s;nActive++;});
+  var net2=wS>0?sS/wS:0;
+  var pUp=Math.round(cl(50+net2*45,5,95)), pDn=100-pUp;
+
+  /* cycle / phase / momentum / volatility */
+  var rt=Math.sqrt(P),cycNo=Math.floor(rt/2)+1,wheel=((rt%2)/2)*360;
+  var pdh=N('sl_pdh'),pdl=N('sl_pdl'),pwh=N('sl_pwh'),pwl=N('sl_pwl');
+  var dP=(pdh&&pdl&&pdh>pdl)?cl((P-pdl)/(pdh-pdl),0,1):null;
+  var wP=(pwh&&pwl&&pwh>pwl)?cl((P-pwl)/(pwh-pwl),0,1):null;
+  var mom = (dP!=null&&wP!=null)?((dP-.5)*2)*.6+((wP-.5)*2)*.4
+          : dP!=null?(dP-.5)*2 : wP!=null?(wP-.5)*2 : (pos8-4)/4;
+  mom=cl(mom,-1,1);
+  var momL=mom>0.5?'Strong up':mom>0.15?'Up':mom>-0.15?'Flat':mom>-0.5?'Down':'Strong down';
+  var phase,phaseN;
+  if(pos8<2){phase=mom>0.15?'Accumulation':'Markdown late';phaseN='Lower quarter';}
+  else if(pos8<4){phase=mom>0.15?'Markup early':'Markdown';phaseN='Below the half';}
+  else if(pos8<6.5){phase=mom>-0.15?'Markup':'Distribution early';phaseN='Upper half';}
+  else{phase=mom>0.35?'Markup late':'Distribution';phaseN='Top quarter';}
+  var dayRng=(pdh&&pdl)?pdh-pdl:null;
+  var volPct=dayRng!=null?dayRng/P*100:(SG?SG.sd/SG.mean*100/3:RANGE/P*100/5);
+  var volL=volPct<0.6?'Low':volPct<1.2?'Normal':volPct<2?'High':'Extreme';
+
+  E('ca_verdict').innerHTML=
+    '<div style="text-align:center;padding:4px 0 2px">'+
+    '<div style="font-size:46px;font-weight:900;line-height:1;letter-spacing:-.04em" class="'+
+      (pUp>55?'cg':pUp<45?'cr':'')+'">'+pUp+'%</div>'+
+    '<div class="f10 dim" style="text-transform:uppercase;letter-spacing:.14em;margin-top:6px">'+
+      (pUp>58?'Upside favoured':pUp<42?'Downside favoured':'Balanced \u2014 no edge')+'</div></div>'+
+    '<div style="height:9px;border-radius:99px;background:var(--s4);overflow:hidden;display:flex;margin:14px 0 6px">'+
+    '<i style="display:block;height:100%;width:'+pUp+'%;background:var(--green)"></i>'+
+    '<i style="display:block;height:100%;width:'+pDn+'%;background:var(--red)"></i></div>'+
+    '<div class="flex-sb f11 fw7"><span class="cg">Up '+pUp+'%</span><span class="cr">'+pDn+'% Down</span></div>'+
+    '<div class="g4" style="margin-top:14px">'+
+    '<div class="sb"><div class="l">Cycle</div><div class="v">#'+cycNo+'</div><div class="n">'+f(wheel,1)+'\u00b0 wheel</div></div>'+
+    '<div class="sb"><div class="l">Range degree</div><div class="v">'+(deg==null?'\u2014':f(deg,1)+'\u00b0')+'</div><div class="n">'+
+      (deg==null?'\u2014':deg<90?'Base quarter':deg<180?'Advance quarter':deg<270?'Test quarter':'Exhaustion quarter')+'</div></div>'+
+    '<div class="sb"><div class="l">Phase</div><div class="v">'+phase+'</div><div class="n">'+phaseN+'</div></div>'+
+    '<div class="sb"><div class="l">Momentum</div><div class="v">'+momL+'</div><div class="n">'+(mom>=0?'+':'')+mom.toFixed(2)+'</div></div>'+
+    '</div>'+
+    '<div class="g4" style="margin-top:8px">'+
+    '<div class="sb"><div class="l">Volatility</div><div class="v">'+volL+'</div><div class="n">'+volPct.toFixed(2)+'%/day</div></div>'+
+    '<div class="sb"><div class="l">Range position</div><div class="v">'+pos8.toFixed(2)+'/8</div><div class="n">'+
+      (OUT_OF_RANGE?(P<LO?'below the anchor low':'above the anchor high'):Math.round(cl((P-LO)/RANGE*100,0,100))+'% of range')+'</div></div>'+
+    '<div class="sb"><div class="l">Conviction</div><div class="v">'+(o.sig&&o.sig.conf?o.sig.conf:'\u2014')+'</div><div class="n">old engine composite</div></div>'+
+    '<div class="sb"><div class="l">Manipulation band</div><div class="v" style="font-size:12px">'+
+      (m1res?f(m1res.bounce,D)+' \u2013 '+f(m1res.rejection,D):'\u2014')+'</div><div class="n">nearest resistance</div></div>'+
+    '</div>'+
+    '<div class="tw" style="margin-top:12px"><table><thead><tr><th>Method</th><th>Reading</th>'+
+    '<th style="text-align:right">Weight</th><th style="text-align:right">Vote</th></tr></thead><tbody>'+
+    votes.map(function(v){
+      if(v.na)return '<tr style="opacity:.45"><td class="p">'+v.n+'</td><td>'+v.r+'</td>'+
+        '<td style="text-align:right">'+v.w+'</td>'+
+        '<td style="text-align:right" title="excluded from the average">abstains</td></tr>';
+      var c=v.s>0.12?'cg':v.s<-0.12?'cr':'';
+      return '<tr><td class="p">'+v.n+'</td><td>'+v.r+'</td>'+
+        '<td style="text-align:right">'+v.w+'</td>'+
+        '<td style="text-align:right" class="'+c+'">'+(v.s>=0?'+':'')+v.s.toFixed(2)+'</td></tr>';}).join('')+
+    '</tbody></table></div>'+
+    (nActive===0
+      ? '<div class="work" style="margin-top:10px"><b>AVERAGE</b>   no method had usable input \u2014 '+
+        'add a high/low anchor, load candles, or supply pressure levels to get a reading</div>'
+      : '<div class="work" style="margin-top:10px"><b>AVERAGE</b>   '+nActive+' of '+votes.length+' methods voting'+
+        '\n          weighted sum = '+sS.toFixed(1)+
+        '\n          weight total = '+wS+
+        '\n          net          = '+sS.toFixed(1)+' \u00f7 '+wS+' = '+net2.toFixed(3)+
+        '\n          probability  = 50 + ('+net2.toFixed(3)+' \u00d7 45) = <i>'+(50+net2*45).toFixed(1)+'</i></div>');
+
+  E('ca_out').classList.remove('hidden');
+}
+
+/* ═══ chart ═══ */
+function chart(C,SG,M1,P,D){
+  var cv=E('ca_cv');if(!cv)return;
+  var dpr=window.devicePixelRatio||1,W=cv.clientWidth||900,H=380;
+  cv.width=W*dpr;cv.height=H*dpr;
+  var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+  var pL=8,pR=72,pT=14,pB=22;
+  var mn=Math.min.apply(null,C.map(function(c){return c.l;}));
+  var mx=Math.max.apply(null,C.map(function(c){return c.h;}));
+  mn=Math.min(mn,SG.mean-4.2*SG.sd);mx=Math.max(mx,SG.mean+4.2*SG.sd);
+  var pad=(mx-mn)*0.04;mn-=pad;mx+=pad;
+  var y=function(p){return pT+(mx-p)/(mx-mn)*(H-pT-pB);};
+  var x=function(i){return pL+i/(C.length-1)*(W-pL-pR);};
+  function band(p,col,lbl,dash){
+    var yy=y(p);if(yy<pT-2||yy>H-pB+2)return;
+    g.save();g.strokeStyle=col;g.lineWidth=1;if(dash)g.setLineDash(dash);g.globalAlpha=.85;
+    g.beginPath();g.moveTo(pL,yy);g.lineTo(W-pR,yy);g.stroke();g.restore();
+    g.fillStyle=col;g.font='600 9.5px monospace';g.fillText(lbl,W-pR+5,yy+3);
+    g.globalAlpha=.6;g.font='500 8.5px monospace';g.fillText(f(p,D),W-pR+5,yy+12);g.globalAlpha=1;
+  }
+  [[4,'rgba(248,113,113,.03)'],[3,'rgba(251,146,60,.035)'],[2,'rgba(251,191,36,.04)'],[1,'rgba(52,211,153,.05)']]
+    .forEach(function(fl){var t=y(SG.mean+fl[0]*SG.sd),b=y(SG.mean-fl[0]*SG.sd);
+      g.fillStyle=fl[1];g.fillRect(pL,Math.max(t,pT),W-pL-pR,Math.min(b,H-pB)-Math.max(t,pT));});
+  M1.levels.forEach(function(l){band(l.price,'rgba(212,175,122,.5)',l.label,[2,4]);});
+  var COL={1:'#34d399',2:'#fbbf24',3:'#fb923c',4:'#f87171'};
+  [1,2,3,4].forEach(function(k){band(SG.mean+k*SG.sd,COL[k],'+'+k+'\u03c3');
+    band(SG.mean-k*SG.sd,COL[k],'\u2212'+k+'\u03c3');});
+  band(SG.mean,'#a78bfa','Mean');
+  g.beginPath();C.forEach(function(c,i){i?g.lineTo(x(i),y(c.c)):g.moveTo(x(i),y(c.c));});
+  g.strokeStyle='#dcdcf2';g.lineWidth=1.4;g.stroke();
+  g.beginPath();g.arc(x(C.length-1),y(P),3.2,0,7);g.fillStyle='#fff';g.fill();
+  g.fillStyle='#3d3d5c';g.font='500 9px sans-serif';
+  g.fillText(C[0].t,pL,H-7);
+  var lt=C[C.length-1].t;g.fillText(lt,W-pR-g.measureText(lt).width,H-7);
+}
+
+/* ═══ Pine export ═══ */
+function pine(SG,M1,P,D){
+  var s='//@version=5\nindicator("Celestial Alpha \u2014 Sigma & Major Levels", overlay=true)\n\n'+
+    '// '+S.sym+' '+S.itv+' \u00b7 n='+SG.n+' \u00b7 mean='+f(SG.mean,D)+' sigma='+f(SG.sd,D)+'\n\n'+
+    'mean = '+SG.mean.toFixed(4)+'\nsd   = '+SG.sd.toFixed(4)+'\n\n'+
+    'plot(mean, "Mean", color=color.new(#a78bfa,0), linewidth=2)\n';
+  [[1,'#34d399'],[2,'#fbbf24'],[3,'#fb923c'],[4,'#f87171']].forEach(function(k){
+    s+='plot(mean + '+k[0]+'*sd, "+'+k[0]+'sigma", color=color.new('+k[1]+',0))\n'+
+       'plot(mean - '+k[0]+'*sd, "-'+k[0]+'sigma", color=color.new('+k[1]+',0))\n';});
+  s+='\n// Major cycle levels \u2014 Method 1 from price '+f(P,D)+'\n';
+  M1.steps.forEach(function(st){
+    s+='hline('+st.up.toFixed(4)+', "+'+st.deg+'deg", color=color.new(#d4af7a,20), linestyle=hline.style_dashed)\n';
+    if(st.dn!=null)s+='hline('+st.dn.toFixed(4)+', "-'+st.deg+'deg", color=color.new(#d4af7a,20), linestyle=hline.style_dashed)\n';});
+  s+='\nz = (close - mean) / sd\nvar label lb = na\nlabel.delete(lb)\n'+
+     'lb := label.new(bar_index, close, str.tostring(z, "+0.00") + " sigma",\n'+
+     '     style=label.style_label_left, color=color.new(#141428,20), textcolor=#f4f2ff, size=size.small)\n';
+  E('ca_pine').value=s;
+}
+
+/* ═══ data loading ═══ */
+function load(incremental){
+  var key=V('ca_key').trim(),sym=V('ca_sym').trim(),itv=V('ca_int'),look=parseInt(V('ca_look'),10);
+  if(!sym){notify('Enter a Twelve Data symbol','info');return;}
+  var cached=Store.get(sym,itv),have=cached?cached.candles:[];
+  E('ca_data_msg').textContent='Loading\u2026';
+  var p;
+  if(incremental&&have.length) p=TD.fetch(key,sym,itv,30).then(function(r){return{c:Store.merge(have,r),m:'Merged '+r.length+' recent candles.'};});
+  else if(have.length>=look&&!incremental) p=Promise.resolve({c:have,m:'Loaded '+have.length+' candles from cache \u2014 no API call used.'});
+  else p=TD.fetch(key,sym,itv,look).then(function(r){return{c:Store.merge(have,r),m:'Downloaded '+r.length+' candles.'};});
+  p.then(function(res){
+    if(res.c.length<20)throw new Error('Only '+res.c.length+' candles \u2014 need 20+.');
+    Store.put(sym,itv,res.c);
+    S.candles=res.c;S.sym=sym;S.itv=itv;
+    E('ca_data_msg').textContent=res.m+' Through '+res.c[res.c.length-1].t+'.';
+    notify('Sigma data ready \u2014 '+res.c.length+' candles','bull');
+    autoTimer();
+    if(typeof runAI==='function')runAI();
+  }).catch(function(e){
+    E('ca_data_msg').textContent=e.message;
+    notify(e.message,'info');
+  });
+}
+
+function autoTimer(){
+  if(S.timer){clearInterval(S.timer);S.timer=null;}
+  var box=E('ca_auto');
+  if(!box||!box.checked)return;
+  var MS={'1min':6e4,'5min':3e5,'15min':9e5,'30min':18e5,'1h':36e5,'2h':72e5,
+          '4h':144e5,'1day':864e5,'1week':6048e5,'1month':2592e6};
+  var poll=Math.max(60000,Math.min(MS[S.itv]||36e5,9e5));
+  S.timer=setInterval(function(){
+    if(!E('ca_auto').checked){clearInterval(S.timer);S.timer=null;return;}
+    load(true);
+  },poll);
+}
+
+function clearCache(){
+  var n=Store.clear();
+  E('ca_data_msg').textContent='Cleared '+n+' cached series.';
+  S.candles=[];
+}
+function copyPine(){
+  var t=E('ca_pine');t.select();t.setSelectionRange(0,99999);
+  try{document.execCommand('copy');notify('Pine Script copied','bull');}catch(e){notify('Select and copy manually','info');}
+}
+function cacheInfo(){
+  var e=E('ca_data_msg');
+  if(e)e.textContent=Store.info(V('ca_sym'),V('ca_int'));
+}
+
+return{run:run,load:load,clearCache:clearCache,copyPine:copyPine,
+       cacheInfo:cacheInfo,autoTimer:autoTimer,MODELS:MODELS,Store:Store,state:S};
+})();
 
 /* == NEWS — newsdata.io (primary) merged with Finnhub market news ==
    Both send CORS headers, so neither needs the corsproxy hop the old

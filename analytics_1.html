@@ -2243,6 +2243,7 @@ var JRNL=[],PORT=[],CNTS={sc:0,id:0,sw:0};
 var EQ_DATA=[];
 
 function updatePortStats(){
+  if(!document.getElementById('port_start'))return; /* portfolio pane not in this build */
   var start=parseFloat(document.getElementById('port_start').value)||0;
   var curRaw=parseFloat(document.getElementById('port_cur').value);
   var hasCur=!isNaN(curRaw)&&curRaw>0;
@@ -2297,6 +2298,7 @@ var CAL_OFFSET=0;
 function calPrev(){CAL_OFFSET--;renderPnlCalendar();}
 function calNext(){CAL_OFFSET++;renderPnlCalendar();}
 function renderPnlCalendar(){
+  if(!document.getElementById('cal_month_lbl'))return; /* calendar not in this build */
   var now=new Date();
   var target=new Date(now.getFullYear(),now.getMonth()+CAL_OFFSET,1);
   var yr=target.getFullYear(),mo=target.getMonth();
@@ -2586,6 +2588,7 @@ function buildHT(){
   document.getElementById('htout').innerHTML=html;
 }
 function buildEphTable(){
+  if(!document.getElementById('eph_tbl'))return; /* table not present in this build */
   var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],h='';
   [2026,2027,2028].forEach(function(yr){
     for(var mo=1;mo<=12;mo++){
@@ -2727,6 +2730,28 @@ try {
    Every block renders INPUT / WORKING / AVERAGE / OUTPUT.
    Modular: push into CA.MODELS to add a statistical model.
 ═══════════════════════════════════════════════════════════════════ */
+/* The "LIVE" link calls fetchLivePrice(), but this standalone build ships no
+   price layer, so clicking it threw "fetchLivePrice is not defined". Pull the
+   price from Twelve Data using the key already entered for candles. */
+function fetchLivePrice(){
+  var symEl=document.getElementById('ca_sym'), keyEl=document.getElementById('ca_key');
+  var sym=(symEl&&symEl.value)||'XAU/USD';
+  var key=(keyEl&&keyEl.value||'').trim();
+  if(!key){notify('Enter your Twelve Data key in Engine Inputs to fetch a live price','info');return;}
+  notify('Fetching '+sym+' live price...','info');
+  fetch('https://api.twelvedata.com/quote?symbol='+encodeURIComponent(sym)+'&apikey='+encodeURIComponent(key))
+    .then(function(r){return r.json();}).then(function(d){
+      /* Twelve Data returns errors as HTTP 200 with a {"code":...} body */
+      if(!d||d.code||d.status==='error'){notify('Live price unavailable: '+((d&&d.message)||'request rejected'),'info');return;}
+      var px=parseFloat(d.close);
+      if(!isFinite(px)||px<=0){notify('No price returned for '+sym,'info');return;}
+      var pEl=document.getElementById('ai_price');
+      if(pEl){pEl.value=px<10?px.toFixed(4):px.toFixed(2);}
+      notify(sym+' \u2192 '+px+' (live)','bull');
+      if(typeof runAI==='function')runAI();
+    }).catch(function(){notify('Network blocked \u2014 serve this page over http:// rather than opening from disk','info');});
+}
+
 var CA=(function(){
 
 /* ─── helpers ─── */
@@ -3053,7 +3078,11 @@ function run(o){
   }
 
   /* ═══ METHOD 6 — time cycle ═══ */
-  var deg=RANGE>0?(P-LO)/RANGE*360:null;
+  /* price can sit outside the supplied anchors; unclamped this produced
+     readings like "-1379.8 degrees of 360 travelled" */
+  var degRaw=RANGE>0?(P-LO)/RANGE*360:null;
+  var OUT_OF_RANGE=degRaw!=null&&(degRaw<0||degRaw>360);
+  var deg=degRaw==null?null:cl(degRaw,0,360);
   if(deg!=null){
     var CARD=[90,180,270,360],cardTxt='';
     CARD.forEach(function(c){var pr=LO+(c/360)*RANGE;
@@ -3215,7 +3244,9 @@ function run(o){
     r:press?'Target '+f(press,D):'A / B / C not supplied'});
 
   votes.push({n:'Time cycle',w:15,s:deg==null?0:cl(1-2*(deg/360),-1,1),na:(deg==null||SYNTH_RANGE),
-    r:deg==null?'Range unavailable':SYNTH_RANGE?'Needs a high/low anchor':f(deg,1)+'\u00b0 of 360 travelled'});
+    r:deg==null?'Range unavailable':SYNTH_RANGE?'Needs a high/low anchor'
+      :OUT_OF_RANGE?('Price is '+(P<LO?'below the anchor low':'above the anchor high')+' \u2014 clamped to '+f(deg,1)+'\u00b0')
+      :f(deg,1)+'\u00b0 of 360 travelled'});
 
   var zr=SG?cl(-((P-SG.mean)/SG.sd)*0.35,-1,1):cl(-((P-(HI+LO)/2)/(RANGE/2))*0.6,-1,1);
   votes.push({n:'Sigma extension',w:12,s:zr,na:(!SG&&SYNTH_RANGE),
