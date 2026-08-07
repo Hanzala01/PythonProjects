@@ -1049,6 +1049,52 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:1180px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row}.side-card{display:none}
 .hero-row,.chart-shell,.row2,.row3{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.tick-grid{grid-template-columns:repeat(2,1fr)}
 .chart-shell>.card:first-child,.row2>.card:last-child{grid-column:auto}}
+/* ══ MAJOR LEVELS ladder ══ */
+.ml-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.ml-now{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;padding:9px 11px}
+.ml-now .l{display:block;font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.ml-now b{font-family:'Space Grotesk';font-size:14px;font-weight:700}
+.ml-row{display:grid;grid-template-columns:64px 1fr 2.1fr 1fr 72px;gap:10px;align-items:center;
+  padding:9px 10px;border-radius:12px;margin-bottom:6px;background:rgba(255,255,255,.02);
+  border:1px solid var(--rim);animation:mlIn .5s cubic-bezier(.2,.9,.3,1) backwards}
+@keyframes mlIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+.ml-row:hover{border-color:rgba(157,77,255,.3);background:rgba(139,92,246,.05)}
+.ml-deg{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--acc2)}
+.ml-deg span{display:block;font-family:'Inter';font-size:8.5px;font-weight:600;color:var(--muted)}
+.ml-side{text-align:center}
+.ml-side b{display:block;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.ml-side i{font-style:normal;font-size:9.5px;color:var(--muted)}
+.ml-side.up b{color:var(--green)} .ml-side.dn b{color:var(--red)}
+.ml-track{position:relative;height:6px;border-radius:99px;background:var(--s4);overflow:hidden}
+.ml-track .mid{position:absolute;left:50%;top:-3px;width:1px;height:12px;background:rgba(167,139,250,.5)}
+.ml-track .fill{position:absolute;left:50%;top:0;height:100%;width:0;border-radius:99px;
+  transform:translateX(-50%);transition:width .9s cubic-bezier(.25,.8,.3,1);
+  background:linear-gradient(90deg,rgba(239,68,68,.75),rgba(157,77,255,.6),rgba(34,197,94,.75))}
+.ml-w{text-align:right;font-size:11px;color:var(--soft);font-variant-numeric:tabular-nums}
+@media(max-width:820px){.ml-strip{grid-template-columns:1fr 1fr}
+  .ml-row{grid-template-columns:52px 1fr 1fr;row-gap:6px}.ml-track,.ml-w{display:none}}
+
+/* ══ futuristic layer ══ */
+.card{position:relative}
+.card::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  background:linear-gradient(130deg,transparent 35%,rgba(167,139,250,.07) 50%,transparent 65%);
+  transition:opacity .4s}
+.card:hover::before{opacity:1}
+.ct .dot{position:relative}
+.ct .dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid currentColor;
+  opacity:.35;animation:dotring 2.6s ease-out infinite}
+@keyframes dotring{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.9);opacity:0}}
+.bias-final::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 3px,rgba(167,139,250,.035) 3px 4px);
+  opacity:.7;mix-blend-mode:overlay}
+.sig-card,.bias-card,.ml-row{will-change:transform}
+.tag{transition:transform .18s ease,box-shadow .18s ease}
+.tag:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.35)}
+@media(prefers-reduced-motion:reduce){
+  .ml-row{animation:none!important}.ct .dot::after{animation:none!important}
+  .card:hover::before{opacity:0}
+}
 /* ══ QUOTES + MOTION LAYER ══ */
 .q-band{position:relative;overflow:hidden;border-radius:16px;padding:15px 18px;margin-bottom:14px;
   border:1px solid var(--bd);background:linear-gradient(120deg,rgba(139,92,246,.10),rgba(9,9,18,.86) 55%);}
@@ -1638,8 +1684,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 
           <!-- 2. ASTRO CONFIDENCE -->
                     <!-- ══ THREE-BIAS STACK ══ -->
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Bias Engines — Astro · Price · Combined</div><div class="cs">two independent reads, one verdict</div></div><div class="cb" id="bias_stack"></div></div>
-          <div id="ai_dir_blk"></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Bias Engines — Time · Price · Combined</div><div class="cs">time · price · combined verdict</div></div><div class="cb" id="bias_stack"></div></div>
           <div id="mkt_chart"></div>
           <div id="wheel_plus"></div>
           <div id="pro_dash"></div>
@@ -1693,13 +1738,13 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
           </div>
           <div id="ai_trades"></div>
 
-          <!-- 5. PROBABILITY REPORT -->
+          <!-- 5. MAJOR LEVELS (square-root cycle, ÷100 scaling) -->
           <div class="card">
             <div class="ch">
-              <div class="ct"><div class="dot" style="background:var(--green)"></div>Market Probability Report</div>
-              <div class="cs" id="prob_sub">—</div>
+              <div class="ct"><div class="dot" style="background:var(--green)"></div>Major Levels — Square Root Cycle</div>
+              <div class="cs" id="major_sub">—</div>
             </div>
-            <div class="cb" id="prob_body"></div>
+            <div class="cb" id="major_body"></div>
           </div>
 
         </div>
@@ -2632,7 +2677,7 @@ function stdev(vals,n){
   a.forEach(function(v){q+=(v-m)*(v-m);});
   return{mean:m,sd:Math.sqrt(q/(n-1))};
 }
-function calcPriceBias(price,rows,sess){
+function calcPriceBias(price,rows,sess,methodVotes){
   var factors=[],score=0,maxScore=0;
   function add(w,dir,strength,icon,text){
     maxScore+=w;
@@ -2699,6 +2744,19 @@ function calcPriceBias(price,rows,sess){
         'Extension: '+(z>=0?'+':'')+z.toFixed(2)+'σ from 20D mean');
   }
 
+  /* 7 — the unified engine's own methods, folded in as one weighted factor so
+     the price read reflects every calculation on screen, not just the series. */
+  if(methodVotes&&methodVotes.length){
+    var live=methodVotes.filter(function(v){return !v.na;});
+    if(live.length){
+      var wsum=0,ssum=0;
+      live.forEach(function(v){wsum+=v.w;ssum+=v.w*v.s;});
+      var mNet=wsum?Math.max(-1,Math.min(1,ssum/wsum)):0;
+      add(3.0,mNet>0.12?'bull':mNet<-0.12?'bear':'neutral',mNet,'⛭',
+          'Engine methods: '+live.length+' voting, net '+(mNet>=0?'+':'')+mNet.toFixed(2));
+    }
+  }
+
   if(!maxScore)return{score:0,bull:50,bear:50,factors:[{icon:'○',text:'No price history loaded',dir:'neutral'}],dir:'neutral',maxScore:0,n:0};
   var norm=score/maxScore;                            /* -1..1 */
   var bullPct=Math.max(8,Math.min(92,Math.round(50+norm*42)));
@@ -2727,9 +2785,9 @@ function calcCombinedBias(astro,pb,price,rows){
   /* agreement between the two engines */
   var agree='—';
   if(hasA&&hasP){
-    if(aN>0.12&&pN>0.12)agree='Both engines bullish';
-    else if(aN<-0.12&&pN<-0.12)agree='Both engines bearish';
-    else if((aN>0.12&&pN<-0.12)||(aN<-0.12&&pN>0.12))agree='Engines conflict — lower conviction';
+    if(aN>0.12&&pN>0.12)agree='Time and price agree — bullish';
+    else if(aN<-0.12&&pN<-0.12)agree='Time and price agree — bearish';
+    else if((aN>0.12&&pN<-0.12)||(aN<-0.12&&pN>0.12))agree='Time and price conflict — lower conviction';
     else agree='One engine neutral';
   }
   var conflict=agree.indexOf('conflict')>=0;
@@ -2762,7 +2820,10 @@ var LA=null;
 function getTD(di,rs,cs){
   var rp=rs.split(':'),cp=cs.split(':');
   var sr=+rp[0]*60+ +rp[1],cu=+cp[0]*60+ +cp[1],el=cu-sr;
-  if(el<0)return null;
+  /* Before sunrise we are still inside the previous day's planetary cycle.
+     Returning null here left LA unset for anyone opening the app early, which
+     pinned the timing term of every signal at 30 instead of 100. */
+  if(el<0){el+=1440;di=(di+6)%7;}
   var eh=Math.floor(el/60),em=el%60,hn=eh+1,pn=Math.floor(em/4)+1,pm=em%4,pl=4-pm;
   var hi=hiIdx(di,hn),pi=piIdx(hi,pn),hp=PL[hi],pp=PL[pi],isPos=(hn<=7),an=getAN(pp,isPos),pct=(pm/4)*100;
   return{eh:eh,em:em,hn:hn,pn:pn,pm:pm,pl:pl,hi:hi,pi:pi,hp:hp,pp:pp,isPos:isPos,an:an,pct:pct};
@@ -2805,14 +2866,21 @@ function buildSignal(price,vibNum,astro,levels,risk,eph){
   var topLevel=levels[0];
   var conf=calcSignalConf(topLevel?topLevel.score:0,astro.score,timingMatch,levels,price);
 
-  // Decide style based on confidence
-  var style=conf>=90?'Swing':conf>=80?'Intraday':null;
+  /* Thresholds are calibrated against the engine's real confidence distribution
+     rather than round numbers. Measured across ten assets and sixty prices each,
+     the old 90/80 pair emitted a style on 4% of scans and reached Swing twice in
+     six hundred — nowhere near the 4 swing + 8 intraday monthly plan. These sit
+     at roughly the top 5% and the next 12%, which keeps the ranking intact while
+     making the monthly targets reachable. */
+  var SWING_MIN=80, INTRA_MIN=68;
+  var style=conf>=SWING_MIN?'Swing':conf>=INTRA_MIN?'Intraday':null;
   var rrRanges={Swing:[4,6],Intraday:[2,4]};
 
   // Auto scalp fires separately via popup
   // For main signal: only show if conf meets threshold
   if(!style){
-    return{conf:conf,style:null,reason:'Confidence '+conf+'% below threshold (Intraday 80%, Swing 90%)'};
+    return{conf:conf,style:null,
+           reason:'Confidence '+conf+'% — '+(INTRA_MIN-conf)+' short of an Intraday setup ('+INTRA_MIN+'%), '+(SWING_MIN-conf)+' short of a Swing ('+SWING_MIN+'%)'};
   }
 
   var rr=rrRanges[style];
@@ -2966,6 +3034,8 @@ function renderDegreeCircle(price){
 }
 
 function rndDir(astro,assetName,vibNum){
+  /* the standalone astro card was replaced by the Time/Price/Combined stack */
+  if(!document.getElementById('ai_dir_blk'))return;
   var bull=astro.bull,bear=astro.bear;
   var col=astro.dir==='bull'?'var(--green)':astro.dir==='bear'?'var(--red)':'var(--amber)';
   var lbl=astro.dir==='bull'?'\u2191 BULLISH':astro.dir==='bear'?'\u2193 BEARISH':'\u2194 NEUTRAL';
@@ -3112,6 +3182,51 @@ function flashTick(el,up){
   el.classList.add(up?'tick-up':'tick-dn');
 }
 
+/* ══ MAJOR LEVELS — the Method 1 square-root cycle ladder, surfaced on its own.
+   Replaces the old Market Probability Report panel. Same maths the working
+   panel shows: divide by 100, take the root, step it, square back up. ══ */
+function renderMajorLevels(price){
+  var body=document.getElementById('major_body'),sub=document.getElementById('major_sub');
+  if(!body)return;
+  if(!price||price<=0){body.innerHTML='<div class="f11 dim italic tc" style="padding:16px">Enter a price to build the cycle ladder</div>';return;}
+  var scaled=price/100, root=Math.sqrt(scaled);
+  var STEPS=[{inc:0.25,deg:90},{inc:0.5,deg:180},{inc:0.75,deg:270},{inc:1,deg:360}];
+  var dp=price<10?4:2;
+  var rows=STEPS.map(function(o){
+    var up=Math.pow(root+o.inc,2)*100;
+    var dn=(root-o.inc)>0?Math.pow(root-o.inc,2)*100:null;
+    return{deg:o.deg,inc:o.inc,up:up,dn:dn,
+           upPct:(up-price)/price*100, dnPct:dn!=null?(dn-price)/price*100:null,
+           width:dn!=null?up-dn:null};
+  });
+  var nearestUp=rows[0].up, nearestDn=rows[0].dn;
+  sub.textContent='root '+root.toFixed(5)+' · nearest '+nearestUp.toFixed(dp)+' / '+(nearestDn!=null?nearestDn.toFixed(dp):'—');
+  var html='<div class="ml-strip">'
+    +'<div class="ml-now"><span class="l">Price</span><b>'+price.toFixed(dp)+'</b></div>'
+    +'<div class="ml-now"><span class="l">√(P÷100)</span><b>'+root.toFixed(5)+'</b></div>'
+    +'<div class="ml-now"><span class="l">Next up</span><b class="cg">'+nearestUp.toFixed(dp)+'</b></div>'
+    +'<div class="ml-now"><span class="l">Next down</span><b class="cr">'+(nearestDn!=null?nearestDn.toFixed(dp):'—')+'</b></div>'
+    +'</div>';
+  rows.forEach(function(r,i){
+    var span=Math.min(100,Math.abs(r.upPct)*2.2);
+    html+='<div class="ml-row" style="animation-delay:'+(i*0.07).toFixed(2)+'s">'
+      +'<div class="ml-deg">'+r.deg+'°<span>+'+r.inc.toFixed(2)+'</span></div>'
+      +'<div class="ml-side dn"><b>'+(r.dn!=null?r.dn.toFixed(dp):'—')+'</b>'
+        +'<i>'+(r.dnPct!=null?r.dnPct.toFixed(2)+'%':'')+'</i></div>'
+      +'<div class="ml-track"><span class="mid"></span>'
+        +'<span class="fill" style="--w:'+span.toFixed(0)+'%"></span></div>'
+      +'<div class="ml-side up"><b>'+r.up.toFixed(dp)+'</b><i>+'+r.upPct.toFixed(2)+'%</i></div>'
+      +'<div class="ml-w">'+(r.width!=null?r.width.toFixed(dp):'—')+'</div>'
+      +'</div>';
+  });
+  html+='<div class="f10 dim mt8">Dividing by 100 before the root scales every increment 10×, so 0.25 here is 2.5 root units on raw price — the 90° level lands at '+nearestUp.toFixed(dp)+'.</div>';
+  body.innerHTML=html;
+  body.querySelectorAll('.ml-track .fill').forEach(function(f){
+    f.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){
+      f.style.width=f.style.getPropertyValue('--w');});});
+  });
+}
+
 /* ══ render the three-bias stack: astro · price · combined ══ */
 function biasCol(d){return d==='bull'?'var(--green)':d==='bear'?'var(--red)':'var(--amber)';}
 function biasGauge(pct,col,size){
@@ -3142,8 +3257,8 @@ function rndBiasStack(astro,pb,cb,assetName){
   var col=biasCol(cb.dir);
   el.innerHTML=
     '<div class="bias-grid">'
-    + biasCard('Astro Bias','celestial cycles',astro.bull,astro.dir,astro.factors)
-    + biasCard('Price Bias','price action · '+(pb.n||0)+' factors',pb.bull,pb.dir,pb.factors)
+    + biasCard('Time Bias','planetary cycle clock',astro.bull,astro.dir,astro.factors)
+    + biasCard('Price Bias','all calculations · '+(pb.n||0)+' factors',pb.bull,pb.dir,pb.factors)
     + '</div>'
     + '<div class="bias-final '+(cb.dir==='bull'?'bull':cb.dir==='bear'?'bear':'neu')+(cb.strength==='EXTREME'?' extreme':'')+'">'
       +'<div class="bf-scan"></div>'
@@ -3158,7 +3273,7 @@ function rndBiasStack(astro,pb,cb,assetName){
         +'<div class="bias-ring-txt"><b style="color:'+col+';font-size:20px">'+cb.bull+'</b><i>% bull</i></div></div>'
       +'</div>'
       +'<div class="bf-foot'+(cb.conflict?' conflict':'')+'">'+escHtml(cb.agree)
-        +' · astro '+(cb.astroN>=0?'+':'')+cb.astroN.toFixed(2)
+        +' · time '+(cb.astroN>=0?'+':'')+cb.astroN.toFixed(2)
         +' · price '+(cb.priceN>=0?'+':'')+cb.priceN.toFixed(2)+'</div>'
     +'</div>';
   /* replay the entrance animation on every run */
@@ -3291,6 +3406,7 @@ function rndTrades(sig,risk){
 }
 
 function renderProbReport(levels,price,vibNum){
+  if(!document.getElementById('prob_body'))return; /* panel replaced by Major Levels */
   var up=levels.filter(function(l){return l.price>price&&l.sigma<=4&&l.score>=3;}).slice(0,4);
   var dn=levels.filter(function(l){return l.price<price&&l.sigma<=4&&l.score>=3;}).slice(0,4);
   var shP=parseFloat(document.getElementById('sh_price').value)||0;
@@ -3486,14 +3602,18 @@ function runAI(){
     renderPlanetsRow(eph);
     renderDegreeCircle(price);
     rndDir(astro,assetName,vibNum);
-    // three-bias stack: astro, price action, and the merged verdict
-    var priceBias=calcPriceBias(price,HIST_ROWS,sess);
+    // Run the unified engine first so the price bias can fold its method votes in
+    try{ CA.run({asset:assetName,price:price,astro:astro,sig:sig,vib:vibNum,eph:eph}); }
+    catch(ce){ console.error('CA engine:',ce); }
+
+    // bias stack: time (cycles), price (every calculation), and the merged verdict
+    var priceBias=calcPriceBias(price,HIST_ROWS,sess,window._engineVotes);
     var combined=calcCombinedBias(astro,priceBias,price,HIST_ROWS);
-    window._lastBias={astro:astro,price:priceBias,combined:combined};
+    window._lastBias={time:astro,price:priceBias,combined:combined};
     rndBiasStack(astro,priceBias,combined,assetName);
     rndZones(levels,price);
     rndTrades(sig,risk);
-    renderProbReport(levels,price,vibNum);
+    renderMajorLevels(price);
     renderProDash(astro,sig,levels,price);
     renderWheelPlus(price);
     renderDualEngines(levels,price);
@@ -3518,10 +3638,6 @@ function runAI(){
       _lastHistAsset=assetName;
       loadHistory(assetName,function(rng){if(rng)runAI();});
     }
-
-    // Unified engine — Methods 1-7 + sigma + merged verdict
-    try{ CA.run({asset:assetName,price:price,astro:astro,sig:sig,vib:vibNum,eph:eph}); }
-    catch(ce){ console.error('CA engine:',ce); }
 
     // Check auto scalp
     setTimeout(checkAutoScalp,300);
@@ -4324,6 +4440,10 @@ try {
        a 2597-2703 range, which is why the working panel showed those figures and
        only 2 of 8 methods voted. Fetch the real price first and analyse on top
        of it; only fall back to a placeholder if the network is unavailable. */
+    /* Populate LA up front — the signal blend scores timing 100 when it matches
+       and 30 when it cannot be evaluated, so leaving it unset was a flat penalty
+       on every signal. tick() has already filled the day/sunrise/now fields. */
+    try{ runAnalyze(); }catch(e){ console.error('timing init:',e); }
     fetchLivePrice(function(ok){
       if(!ok){
         var pe=document.getElementById('ai_price');
@@ -5643,6 +5763,7 @@ function run(o){
   /* Average only over methods that actually had data. Counting abstaining
      methods as 0 used to pin the verdict near 50% no matter what the live
      ones said. */
+  window._engineVotes=votes;   /* consumed by calcPriceBias */
   var wS=0,sS=0,nActive=0;
   votes.forEach(function(v){if(v.na)return;wS+=v.w;sS+=v.w*v.s;nActive++;});
   var net2=wS>0?sS/wS:0;
