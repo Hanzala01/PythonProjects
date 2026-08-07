@@ -1045,6 +1045,61 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:1180px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row}.side-card{display:none}
 .hero-row,.chart-shell,.row2,.row3{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.tick-grid{grid-template-columns:repeat(2,1fr)}
 .chart-shell>.card:first-child,.row2>.card:last-child{grid-column:auto}}
+/* ══ QUOTES + MOTION LAYER ══ */
+.q-band{position:relative;overflow:hidden;border-radius:16px;padding:15px 18px;margin-bottom:14px;
+  border:1px solid var(--bd);background:linear-gradient(120deg,rgba(139,92,246,.10),rgba(9,9,18,.86) 55%);}
+.q-band::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(240px 90px at 10% 0%,rgba(157,77,255,.16),transparent 70%)}
+.q-band::after{content:'';position:absolute;top:0;left:-45%;width:45%;height:100%;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(196,181,253,.10),transparent);animation:qsheen 5.2s ease-in-out infinite}
+@keyframes qsheen{0%{left:-45%}55%,100%{left:115%}}
+.q-mark{position:absolute;right:14px;top:2px;font-family:'Space Grotesk';font-size:56px;line-height:1;
+  color:rgba(167,139,250,.13);pointer-events:none;user-select:none}
+.q-text{position:relative;z-index:1;font-size:13.5px;line-height:1.65;color:var(--tw);font-weight:500;min-height:44px}
+.q-text .cur{display:inline-block;width:2px;height:1em;background:var(--acc2);margin-left:2px;
+  vertical-align:-2px;animation:qblink 1s steps(1) infinite}
+@keyframes qblink{0%,50%{opacity:1}51%,100%{opacity:0}}
+.q-by{position:relative;z-index:1;margin-top:7px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.q-dots{position:absolute;right:16px;bottom:12px;display:flex;gap:5px;z-index:1}
+.q-dots i{width:5px;height:5px;border-radius:50%;background:rgba(167,139,250,.25);transition:.35s}
+.q-dots i.on{background:var(--acc2);box-shadow:0 0 8px var(--acc2);transform:scale(1.25)}
+
+/* sidebar micro-quote cycling */
+.sc-rot{position:relative;min-height:74px}
+.sc-rot p{position:absolute;inset:0;margin:0;opacity:0;transform:translateY(8px);
+  transition:opacity .7s ease,transform .7s cubic-bezier(.25,.8,.3,1)}
+.sc-rot p.on{opacity:1;transform:none}
+
+/* ── next-level motion ── */
+.pane.on>*{animation:paneIn .5s cubic-bezier(.2,.9,.3,1) backwards}
+.pane.on>*:nth-child(1){animation-delay:.02s}
+.pane.on>*:nth-child(2){animation-delay:.07s}
+.pane.on>*:nth-child(3){animation-delay:.12s}
+.pane.on>*:nth-child(4){animation-delay:.17s}
+.pane.on>*:nth-child(5){animation-delay:.22s}
+.pane.on>*:nth-child(n+6){animation-delay:.26s}
+@keyframes paneIn{from{opacity:0;transform:translateY(14px) scale(.995);filter:blur(3px)}
+  to{opacity:1;transform:none;filter:none}}
+.card{transition:transform .28s cubic-bezier(.25,.8,.3,1),box-shadow .28s,border-color .28s}
+.card:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(0,0,0,.45),0 0 0 1px rgba(157,77,255,.16)}
+.nav-item{position:relative;overflow:hidden}
+.nav-item::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(90px 40px at var(--mx,50%) 50%,rgba(157,77,255,.20),transparent 70%);transition:opacity .3s}
+.nav-item:hover::after{opacity:1}
+.btn{position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;
+  background:rgba(255,255,255,.28);transform:translate(-50%,-50%);pointer-events:none}
+.btn.rippling::after{animation:ripple .55s ease-out}
+@keyframes ripple{from{width:0;height:0;opacity:.55}to{width:240px;height:240px;opacity:0}}
+.tick-up{animation:tickUp .5s ease}
+.tick-dn{animation:tickDn .5s ease}
+@keyframes tickUp{0%{color:var(--green);text-shadow:0 0 14px rgba(34,197,94,.6);transform:translateY(2px)}100%{transform:none}}
+@keyframes tickDn{0%{color:var(--red);text-shadow:0 0 14px rgba(239,68,68,.6);transform:translateY(-2px)}100%{transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .pane.on>*,.bias-fx .tag,.bias-final.pop{animation:none!important}
+  .q-band::after,.bf-scan,.bias-final.extreme{animation:none!important}
+  .card:hover{transform:none}
+}
 /* ══ THREE-BIAS STACK (astro · price · combined) ══ */
 .bias-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 @media(max-width:900px){.bias-grid{grid-template-columns:1fr}}
@@ -1156,7 +1211,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   </nav>
   <div class="side-card rise" style="animation-delay:.1s;flex:1;min-height:236px">
     <div class="sc-badge"><div class="b">CA</div><div class="n">Celestial Alpha</div></div>
-    <p>Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</p>
+    <div class="sc-rot"></div>
     <div style="position:absolute;right:6px;bottom:36px;width:74px;height:38px;border:1px solid rgba(157,77,255,.4);border-radius:50%;transform:rotate(-14deg);pointer-events:none;box-shadow:0 0 14px rgba(157,77,255,.3)"></div>
     <svg width="120" height="150" style="position:absolute;right:0;bottom:20px;pointer-events:none" viewBox="0 0 120 150">
       <g fill="#e9defc"><circle cx="14" cy="20" r="1.1"/><circle cx="100" cy="14" r="1.3"/><circle cx="8" cy="80" r="1"/><circle cx="106" cy="100" r="1.2"/></g>
@@ -1168,6 +1223,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 <!-- ═══════════ MAIN ═══════════ -->
 <main class="main">
   <div class="pane on" id="pane_dashboard">
+    <div class="q-band" id="quote_band"></div>
 
   <!-- HERO ROW -->
   <section class="hero-row rise">
@@ -2952,6 +3008,106 @@ function rndDir(astro,assetName,vibNum){
     +'</div>';
 }
 
+/* ══════════════════════════════════════
+   QUOTES — a typed rotator on the dashboard plus the sidebar micro-cycle
+══════════════════════════════════════ */
+var QUOTES=[
+ {t:"The market is never wrong — opinions often are.",     b:"Jesse Livermore"},
+ {t:"Time is more important than price. When time is up, price will reverse.", b:"W. D. Gann"},
+ {t:"Patience is the rarest edge. Most traders pay for impatience daily.",     b:"Celestial Alpha"},
+ {t:"Nature works in cycles; markets are nature wearing a ticker.",            b:"Celestial Alpha"},
+ {t:"Risk comes from not knowing what you are doing.",     b:"Warren Buffett"},
+ {t:"The trend is your friend until the end when it bends.", b:"Ed Seykota"},
+ {t:"A setup you must argue for is a setup you should skip.", b:"Celestial Alpha"},
+ {t:"Amateurs think about how much they can make. Professionals think about how much they can lose.", b:"Jack Schwager"},
+ {t:"Every number has a rhythm. Find the rhythm, and the level finds you.", b:"Celestial Alpha"},
+ {t:"Cut your losses short and let your profits run.",     b:"David Ricardo"},
+ {t:"The four most dangerous words in investing are: this time it's different.", b:"Sir John Templeton"},
+ {t:"Plan the trade, trade the plan — the chart owes you nothing.", b:"Celestial Alpha"}
+];
+var QUOTE_DOTS=6;   /* progress pips; the deck is longer than the row */
+var _qi=-1,_qTimer=null,_qType=null;
+function typeQuote(el,txt,done){
+  if(_qType)clearInterval(_qType);
+  el.innerHTML='';
+  var cur=document.createElement('span');cur.className='cur';
+  var span=document.createElement('span');
+  el.appendChild(span);el.appendChild(cur);
+  var i=0;
+  _qType=setInterval(function(){
+    span.textContent=txt.slice(0,++i);
+    if(i>=txt.length){clearInterval(_qType);_qType=null;setTimeout(function(){if(cur.parentNode)cur.remove();},900);if(done)done();}
+  },18);
+}
+function showQuote(idx){
+  var band=document.getElementById('quote_band');
+  if(!band)return;
+  _qi=(idx==null?_qi+1:idx)%QUOTES.length;
+  var q=QUOTES[_qi];
+  var t=band.querySelector('.q-text'),by=band.querySelector('.q-by'),dots=band.querySelector('.q-dots');
+  if(by){by.style.opacity=0;setTimeout(function(){by.textContent='— '+q.b;by.style.transition='opacity .5s';by.style.opacity=1;},260);}
+  if(t)typeQuote(t,q.t);
+  if(dots)[...dots.children].forEach(function(d,i){d.classList.toggle('on',i===_qi%dots.children.length);});
+}
+function startQuotes(){
+  var band=document.getElementById('quote_band');
+  if(!band)return;
+  if(!band.dataset.built){
+    band.innerHTML='<div class="q-mark">"</div><div class="q-text"></div><div class="q-by"></div>'
+      +'<div class="q-dots">'+new Array(QUOTE_DOTS+1).join('<i></i>')+'</div>';
+    band.dataset.built='1';
+    band.addEventListener('click',function(){showQuote();resetQuoteTimer();});
+    band.style.cursor='pointer';band.title='Click for another';
+  }
+  showQuote(Math.floor(Math.random()*QUOTES.length));
+  resetQuoteTimer();
+}
+function resetQuoteTimer(){
+  if(_qTimer)clearInterval(_qTimer);
+  _qTimer=setInterval(function(){showQuote();},11000);
+}
+/* sidebar micro-quote cycle */
+var SIDE_LINES=[
+  "Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.",
+  "Read the cycle.<br>Respect the level.<br>Size the risk.<br>Let time do the rest.",
+  "No noise. No hype.<br>Only structure,<br>timing and<br>probability."
+];
+function startSideRotator(){
+  var host=document.querySelector('.side-card .sc-rot');
+  if(!host)return;
+  if(!host.dataset.built){
+    host.innerHTML=SIDE_LINES.map(function(l,i){return '<p'+(i===0?' class="on"':'')+'>'+l+'</p>';}).join('');
+    host.dataset.built='1';
+  }
+  var ps=host.querySelectorAll('p'),k=0;
+  setInterval(function(){
+    ps[k].classList.remove('on');
+    k=(k+1)%ps.length;
+    ps[k].classList.add('on');
+  },7000);
+}
+/* button ripple + nav pointer glow */
+function initMotion(){
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.btn');
+    if(!b)return;
+    b.classList.remove('rippling');void b.offsetWidth;b.classList.add('rippling');
+    setTimeout(function(){b.classList.remove('rippling');},600);
+  },true);
+  document.addEventListener('mousemove',function(e){
+    var n=e.target.closest('.nav-item');
+    if(!n)return;
+    var r=n.getBoundingClientRect();
+    n.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+  },{passive:true});
+}
+/* flash tickers when their value moves */
+function flashTick(el,up){
+  if(!el)return;
+  el.classList.remove('tick-up','tick-dn');void el.offsetWidth;
+  el.classList.add(up?'tick-up':'tick-dn');
+}
+
 /* ══ render the three-bias stack: astro · price · combined ══ */
 function biasCol(d){return d==='bull'?'var(--green)':d==='bear'?'var(--red)':'var(--amber)';}
 function biasGauge(pct,col,size){
@@ -4556,6 +4712,7 @@ function setTick(pid,cid,val,pc){
   /* prefer previous-close from API for %change; else compare to last poll */
   var base=(typeof pc==='number'&&pc>0)?pc:parseFloat(pe.dataset.prev||'0');
   if(ce&&base>0){var chg=((val-base)/base*100);ce.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';ce.style.color=chg>=0?'var(--green)':'var(--red)';}
+  if(pe.dataset.prev&&+pe.dataset.prev!==val)flashTick(pe,val>+pe.dataset.prev);
   pe.dataset.prev=val;
 }
 function loadTickers(){
@@ -5961,6 +6118,7 @@ setInterval(tick,1000);
 unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
 setTimeout(loadTickers,800);
+try{initMotion();startQuotes();startSideRotator();}catch(e){console.error("motion init:",e);}
 /* refresh live tickers every 60s (Finnhub free = 60 calls/min) */
 setInterval(loadTickers,60000);
 /* nav active */
