@@ -844,6 +844,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   max-width:1560px;margin:0 auto;padding:18px}
 /* ═══ SIDEBAR ═══ */
 .side{display:flex;flex-direction:column;gap:16px;position:sticky;top:18px;height:calc(100vh - 36px)}
+/* the nav keeps its natural height — letting the brand card flex was squeezing
+   every nav row from 41px to 22px and cutting the last item off */
+.side>nav{flex:0 0 auto}
+.side-card{flex:0 0 auto}
 .side-nav{background:linear-gradient(175deg,rgba(18,16,34,.9),rgba(10,8,20,.94));border:1px solid var(--bd);
   border-radius:22px;padding:20px 14px;backdrop-filter:blur(20px);box-shadow:0 18px 50px rgba(0,0,0,.55);flex:1;
   display:flex;flex-direction:column;overflow-y:auto}
@@ -1209,7 +1213,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
     <div class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</div>
     <div class="nav-item" onclick='goTab("reference",this)'><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v18H6a2 2 0 01-2-2zM19 17H6a2 2 0 000 4"/></svg>Reference</div>
   </nav>
-  <div class="side-card rise" style="animation-delay:.1s;flex:1;min-height:236px">
+  <div class="side-card rise" style="animation-delay:.1s;min-height:236px">
     <div class="sc-badge"><div class="b">CA</div><div class="n">Celestial Alpha</div></div>
     <div class="sc-rot"></div>
     <div style="position:absolute;right:6px;bottom:36px;width:74px;height:38px;border:1px solid rgba(157,77,255,.4);border-radius:50%;transform:rotate(-14deg);pointer-events:none;box-shadow:0 0 14px rgba(157,77,255,.3)"></div>
@@ -4314,9 +4318,24 @@ document.addEventListener('DOMContentLoaded', function(){
 try {
   try{
     document.getElementById('ai_asset_txt').value='Gold';
-    document.getElementById('ai_price').value='2650';
     renderPlanetsRow(getEph());
-    runAI();
+    /* The price used to be hard-coded to 2650. That number is years stale, and
+       because the anchor fallback is price*1.02 / price*0.98 it also fabricated
+       a 2597-2703 range, which is why the working panel showed those figures and
+       only 2 of 8 methods voted. Fetch the real price first and analyse on top
+       of it; only fall back to a placeholder if the network is unavailable. */
+    fetchLivePrice(function(ok){
+      if(!ok){
+        var pe=document.getElementById('ai_price');
+        if(pe&&!pe.value){
+          pe.value='';
+          pe.placeholder='enter a price — live feed unreachable';
+        }
+        notify('Live price unavailable — type a price to analyse','info');
+        return;
+      }
+      runAI();
+    });
   }catch(e){console.error('analytics init:',e);}
 } catch(e) { console.error('INIT error:', e); }
 });
