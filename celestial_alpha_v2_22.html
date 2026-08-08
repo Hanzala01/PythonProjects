@@ -1049,6 +1049,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:1180px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row}.side-card{display:none}
 .hero-row,.chart-shell,.row2,.row3{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.tick-grid{grid-template-columns:repeat(2,1fr)}
 .chart-shell>.card:first-child,.row2>.card:last-child{grid-column:auto}}
+.verdict-note{font-size:11px;color:var(--soft);border-top:1px solid var(--rim);padding-top:9px}
 /* ══ MAJOR LEVELS ladder ══ */
 .ml-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .ml-now{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;padding:9px 11px}
@@ -1094,6 +1095,72 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(prefers-reduced-motion:reduce){
   .ml-row{animation:none!important}.ct .dot::after{animation:none!important}
   .card:hover::before{opacity:0}
+}
+/* ══ MOTION v2 — applied across every surface ══ */
+:root{--ease:cubic-bezier(.22,.9,.28,1)}
+
+/* numbers roll when they change */
+@keyframes numRoll{0%{opacity:0;transform:translateY(9px) scale(.96);filter:blur(2px)}
+  100%{opacity:1;transform:none;filter:none}}
+.num-roll{animation:numRoll .45s var(--ease)}
+
+/* every stat / metric tile */
+.sb,.stat,.mx-item,.cs-stat,.ml-now,.bias-card{position:relative;overflow:hidden}
+.sb::after,.stat::after,.ml-now::after{content:'';position:absolute;top:0;left:-60%;width:60%;height:100%;
+  pointer-events:none;background:linear-gradient(90deg,transparent,rgba(196,181,253,.07),transparent);
+  animation:tileSheen 6.5s var(--ease) infinite}
+@keyframes tileSheen{0%{left:-60%}45%,100%{left:120%}}
+.sb:hover,.stat:hover,.ml-now:hover{border-color:rgba(157,77,255,.34);transform:translateY(-2px)}
+.sb,.stat,.ml-now{transition:transform .26s var(--ease),border-color .26s}
+
+/* tables reveal row by row */
+.tw tbody tr,.trades-t tbody tr,#jtbl tr,#ptbl tr{animation:rowIn .42s var(--ease) backwards}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.tw tbody tr:nth-child(2){animation-delay:.04s}.tw tbody tr:nth-child(3){animation-delay:.08s}
+.tw tbody tr:nth-child(4){animation-delay:.12s}.tw tbody tr:nth-child(5){animation-delay:.16s}
+.tw tbody tr:nth-child(6){animation-delay:.20s}.tw tbody tr:nth-child(n+7){animation-delay:.24s}
+.tw tbody tr{transition:background .2s}
+.tw tbody tr:hover{background:rgba(139,92,246,.07)}
+
+/* inputs come alive */
+input,select,textarea{transition:border-color .22s,box-shadow .22s,background .22s}
+input:focus,select:focus,textarea:focus{border-color:rgba(157,77,255,.55)!important;
+  box-shadow:0 0 0 3px rgba(139,92,246,.13),0 0 18px rgba(139,92,246,.10)!important;outline:none}
+
+/* nav active marker glides */
+.nav-item.on::before{animation:markerIn .4s var(--ease)}
+@keyframes markerIn{from{transform:scaleY(.2);opacity:0}to{transform:none;opacity:1}}
+
+/* working blocks fade up as they render */
+.wblk{animation:wblkIn .5s var(--ease) backwards}
+.wblk:nth-child(2){animation-delay:.05s}.wblk:nth-child(3){animation-delay:.1s}
+.wblk:nth-child(4){animation-delay:.15s}.wblk:nth-child(n+5){animation-delay:.2s}
+@keyframes wblkIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* signal card entrance + breathing edge */
+.sig-card{animation:sigIn .55s var(--ease)}
+@keyframes sigIn{from{opacity:0;transform:scale(.97) translateY(12px)}to{opacity:1;transform:none}}
+.sig-card::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(157,77,255,.16);animation:sigBreath 3.6s ease-in-out infinite}
+@keyframes sigBreath{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* the live dot actually pulses */
+.cs-live b,.dot{animation:livePulse 2.2s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* toast slides in and out */
+.notif{animation:toastIn .4s var(--ease)}
+@keyframes toastIn{from{opacity:0;transform:translateX(26px) scale(.96)}to{opacity:1;transform:none}}
+
+/* chart draws itself */
+#plot svg rect{animation:candleIn .5s var(--ease) backwards}
+@keyframes candleIn{from{opacity:0;transform:scaleY(.15)}to{opacity:1;transform:none}}
+#plot svg{transform-box:fill-box}
+
+@media(prefers-reduced-motion:reduce){
+  .sb::after,.stat::after,.ml-now::after,.sig-card::after,.dot,.cs-live b{animation:none!important}
+  .tw tbody tr,.wblk,.sig-card,.notif,#plot svg rect,.num-roll{animation:none!important}
+  .sb:hover,.stat:hover,.ml-now:hover{transform:none}
 }
 /* ══ QUOTES + MOTION LAYER ══ */
 .q-band{position:relative;overflow:hidden;border-radius:16px;padding:15px 18px;margin-bottom:14px;
@@ -1630,13 +1697,6 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
               <div class="cb" id="ca_verdict"></div>
             </div>
 
-            <div class="card">
-              <div class="ch">
-                <div class="ct"><div class="dot" style="background:var(--gold)"></div>Calculation Working — every method</div>
-                <div class="cs">INPUT · WORKING · AVERAGE · OUTPUT</div>
-              </div>
-              <div class="cb" id="ca_work"></div>
-            </div>
 
             <div id="ca_sigma_blk" class="hidden">
               <div class="card">
@@ -2179,6 +2239,15 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 
 
       <div class="pane hidden" id="pane_reference">
+        <!-- moved here from Analytics: the per-method derivation belongs in
+             Reference so the Analytics tab shows results, not the workings -->
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><div class="dot" style="background:var(--gold)"></div>Calculation Working — every method</div>
+            <div class="cs" id="ca_work_sub">INPUT · WORKING · AVERAGE · OUTPUT</div>
+          </div>
+          <div class="cb" id="ca_work"><div class="f11 dim italic tc" style="padding:18px">Run an analysis on the Analytics tab — every method's derivation appears here.</div></div>
+        </div>
         <div class="card">
           <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Reference — Astra Ledger Toolkit</div><div class="cs">Full original terminology — internal use only</div></div>
           <div class="cb0">
@@ -3182,6 +3251,15 @@ function flashTick(el,up){
   el.classList.add(up?'tick-up':'tick-dn');
 }
 
+/* Re-trigger a roll on any stat number whose text changed since the last render. */
+function rollNumbers(root){
+  (root||document).querySelectorAll('.sb .v,.stat .v,.ml-now b,.bias-ring-txt b,.bf-dir').forEach(function(el){
+    var t=el.textContent;
+    if(el.dataset.prevTxt===t)return;
+    el.dataset.prevTxt=t;
+    el.classList.remove('num-roll');void el.offsetWidth;el.classList.add('num-roll');
+  });
+}
 /* ══ MAJOR LEVELS — the Method 1 square-root cycle ladder, surfaced on its own.
    Replaces the old Market Probability Report panel. Same maths the working
    panel shows: divide by 100, take the root, step it, square back up. ══ */
@@ -3611,6 +3689,7 @@ function runAI(){
     var combined=calcCombinedBias(astro,priceBias,price,HIST_ROWS);
     window._lastBias={time:astro,price:priceBias,combined:combined};
     rndBiasStack(astro,priceBias,combined,assetName);
+    setTimeout(function(){rollNumbers();},60);
     rndZones(levels,price);
     rndTrades(sig,risk);
     renderMajorLevels(price);
@@ -5638,7 +5717,9 @@ function run(o){
     };
   }
 
-  E('ca_work').innerHTML=out.join('');
+  E('ca_work').innerHTML=(window._verdictMath||'')+out.join('');
+  var wsub=E('ca_work_sub');
+  if(wsub)wsub.textContent=(o.asset||'')+' · '+f(P,D)+' · INPUT · WORKING · AVERAGE · OUTPUT';
 
   /* ═══ SIGMA PANELS ═══ */
   if(SG){
@@ -5823,14 +5904,17 @@ function run(o){
         '<td style="text-align:right">'+v.w+'</td>'+
         '<td style="text-align:right" class="'+c+'">'+(v.s>=0?'+':'')+v.s.toFixed(2)+'</td></tr>';}).join('')+
     '</tbody></table></div>'+
+    /* the arithmetic lives on the Reference tab now — Analytics keeps the verdict */
     (nActive===0
-      ? '<div class="work" style="margin-top:10px"><b>AVERAGE</b>   no method had usable input \u2014 '+
-        'add a high/low anchor, load candles, or supply pressure levels to get a reading</div>'
-      : '<div class="work" style="margin-top:10px"><b>AVERAGE</b>   '+nActive+' of '+votes.length+' methods voting'+
-        '\n          weighted sum = '+sS.toFixed(1)+
-        '\n          weight total = '+wS+
-        '\n          net          = '+sS.toFixed(1)+' \u00f7 '+wS+' = '+net2.toFixed(3)+
-        '\n          probability  = 50 + ('+net2.toFixed(3)+' \u00d7 45) = <i>'+(50+net2*45).toFixed(1)+'</i></div>');
+      ? '<div class="f10 dim italic mt8">No method had usable input \u2014 add a high/low anchor, load candles, or supply pressure levels.</div>'
+      : '<div class="verdict-note mt8">'+nActive+' of '+votes.length+' methods voting \u00b7 net '+net2.toFixed(3)
+        +' <span class="dim">\u2014 full arithmetic on the Reference tab</span></div>');
+  window._verdictMath='<div class="wblk"><div class="wbt">Merged verdict \u2014 weighted average</div>'
+    +'<div class="work"><b>AVERAGE</b>   '+nActive+' of '+votes.length+' methods voting'
+    +'\n          weighted sum = '+sS.toFixed(1)
+    +'\n          weight total = '+wS
+    +'\n          net          = '+sS.toFixed(1)+' \u00f7 '+wS+' = '+net2.toFixed(3)
+    +'\n          probability  = 50 + ('+net2.toFixed(3)+' \u00d7 45) = <i>'+(50+net2*45).toFixed(1)+'</i></div></div>';
 
   E('ca_out').classList.remove('hidden');
 }
