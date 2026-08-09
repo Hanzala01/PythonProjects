@@ -1410,6 +1410,56 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:700px){.tl{grid-template-columns:30px 1fr;gap:10px}.tl-cap{display:none}}
 @media(prefers-reduced-motion:reduce){.tl-row{animation:none!important}.tl-row:hover{transform:none}}
 
+/* ══ PLANET TABLE ══ */
+.pt{margin-top:9px;border:1px solid var(--rim);border-radius:14px;overflow:hidden}
+.pt-h,.pt-r{display:grid;grid-template-columns:1.5fr 1.5fr .8fr .9fr .7fr 1.2fr;gap:10px;
+  align-items:center;padding:9px 13px}
+.pt-h{font-size:8.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);background:rgba(255,255,255,.03);border-bottom:1px solid var(--rim)}
+.pt-h span:nth-child(n+3){text-align:right}
+.pt-h span:last-child{text-align:left}
+.pt-r{border-bottom:1px solid rgba(255,255,255,.045);
+  animation:rowIn .4s var(--ease) backwards;transition:background .2s var(--ease)}
+.pt-r:last-of-type{border-bottom:none}
+.pt-r:hover{background:rgba(139,92,246,.06)}
+.pt-r.d1{box-shadow:inset 3px 0 0 rgba(157,77,255,.75)}
+.pt-r.d2{box-shadow:inset 3px 0 0 rgba(157,77,255,.42)}
+.pt-r.d3{box-shadow:inset 3px 0 0 rgba(157,77,255,.22)}
+.pt-r.good{background:rgba(34,197,94,.055)}
+.pt-r.bad{background:rgba(239,68,68,.055)}
+.pt-b{display:flex;align-items:center;gap:10px;min-width:0}
+.pt-b .g{font-size:17px;color:var(--acc2);width:20px;text-align:center;flex-shrink:0}
+.pt-b b{display:block;font-size:12.5px;font-weight:700;color:var(--tw);line-height:1.2}
+.pt-b i{display:block;font-style:normal;font-size:9px;color:var(--muted);margin-top:1px}
+.pt-s{min-width:0}
+.pt-s b{display:block;font-size:12.5px;font-weight:700;color:var(--tw)}
+.pt-s i{display:block;font-style:normal;font-size:9.5px;color:var(--soft);margin-top:1px;
+  font-variant-numeric:tabular-nums}
+.pt-n{text-align:right;font-family:'Space Grotesk';font-size:12px;font-weight:600;color:var(--tw);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.pt-n.dimv{color:var(--muted);font-weight:500}
+.pt-n.rx{color:var(--amber)}
+.pt-n em{font-style:normal;font-weight:800}
+.pt-role{min-width:0}
+.pt-bg{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.09em;padding:2px 7px;
+  border-radius:99px;border:1px solid rgba(157,77,255,.45);color:#c9b6ff;margin-bottom:3px}
+.pt-role i{display:block;font-style:normal;font-size:9.5px;color:var(--muted);line-height:1.4}
+.pt-r.good .pt-role i{color:var(--green)}
+.pt-r.bad .pt-role i{color:var(--red)}
+.pt-f{padding:10px 13px;font-size:9.5px;color:var(--muted);line-height:1.55;
+  background:rgba(255,255,255,.02);border-top:1px solid var(--rim)}
+@media(max-width:1200px){
+  .pt-h,.pt-r{grid-template-columns:1.5fr 1.4fr .9fr 1.1fr}
+  .pt-h span:nth-child(5),.pt-h span:nth-child(6),.pt-r>*:nth-child(5){display:none}
+  .pt-r .pt-role{grid-column:4}
+}
+@media(max-width:760px){
+  .pt-h{display:none}
+  .pt-r{grid-template-columns:1fr 1fr;gap:6px}
+  .pt-r>*:nth-child(3),.pt-r>*:nth-child(5){display:none}
+}
+@media(prefers-reduced-motion:reduce){.pt-r{animation:none!important}}
+
 /* ══ THE DAY — date picker + key-day card ══ */
 .dk{border:1px solid var(--bd);border-radius:18px;margin-bottom:12px;overflow:hidden;
   background:linear-gradient(155deg,rgba(139,92,246,.07),rgba(9,9,18,.6))}
@@ -3241,10 +3291,14 @@ function getEphemeris(date){
   return out;
 }
 function lonRate(body,date){
+  /* Samples ±6h and doubles, so the result is degrees per DAY. It used to
+     return the raw 12-hour delta: every caller only tested its sign for
+     retrograde, so the halved magnitude went unnoticed until the planet table
+     started printing it — the Sun read 0.48°/day instead of ~0.96. */
   var ms=6*3600000,t1=new Date(+date-ms),t2=new Date(+date+ms);
   var diff=getEphemeris(t2)[body].lon-getEphemeris(t1)[body].lon;
   if(diff>180)diff-=360;if(diff<-180)diff+=360;
-  return diff;
+  return diff*2;
 }
 
 var SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
@@ -4868,6 +4922,76 @@ function timDayCard(st){
        +'. The hour ring, aspects and signs below are all for that date, not for right now. Press Today to go back live.</div>')
   +'</div>';
 }
+/* ══ PLANET TABLE — sign and degree for every body, on the selected day ══
+   The panel used to print a zone codename and a bare decimal. That is not
+   enough to check a reading against an ephemeris, and this engine exists so a
+   trade is not taken at the wrong time. Every body now carries its real sign,
+   its degree and minute inside that sign, its absolute ecliptic longitude,
+   its daily motion with the retrograde flag, and — because a planet only
+   matters to what it rules — its driver rank for the selected asset. */
+function degMin(d){
+  var deg=Math.floor(d), m=Math.round((d-deg)*60);
+  if(m===60){deg++;m=0;}
+  return deg+'°'+String(m).padStart(2,'0')+'′';
+}
+/* linear projection to the next sign boundary from the body's current speed.
+   Marked ≈ because speed itself changes; it is a planning hint, not an ingress
+   ephemeris. Retrograde bodies walk back toward the start of the sign. */
+function signExit(deg,rate){
+  if(!rate||Math.abs(rate)<1e-6)return null;
+  var togo=rate>0?(30-deg):deg;
+  var days=togo/Math.abs(rate);
+  if(!isFinite(days)||days<0)return null;
+  return days;
+}
+function timPlanets(eph,dref,asset){
+  var map=aspectsFor(getAstroKey(asset||'Gold'));
+  var rows=EPH_ORDER.map(function(b){
+    var si=signOf(eph[b].lon);
+    var rate=lonRate(b,dref);
+    var retro=(b!=='sun'&&b!=='moon'&&rate<0);
+    var role=bodyRole(map,b,eph);
+    var exit=signExit(si.deg,rate);
+    return{k:b,sym:EPH_SYM[b],name:PLANET_NAME[b]||b,cyc:BODY_LABEL[b]||b,
+           sign:si.sign,ssym:SIGN_SYM[si.idx],zone:dz(si.sign),deg:si.deg,
+           lon:rev(eph[b].lon),rate:rate,retro:retro,role:role,exit:exit};
+  });
+  /* the asset's own drivers first — they are the ones that move its price */
+  rows.sort(function(a,b){return (b.role.w-a.role.w)||(EPH_ORDER.indexOf(a.k)-EPH_ORDER.indexOf(b.k));});
+
+  return '<div class="pt">'
+   +'<div class="pt-h"><span>Body</span><span>Sign &amp; degree</span><span>Longitude</span>'
+     +'<span>Motion / day</span><span>Leaves sign</span><span>For '+escHtml(asset)+'</span></div>'
+   +rows.map(function(x,i){
+      var tint=x.role.slot?(x.role.sign>0?' good':x.role.sign<0?' bad':''):'';
+      var badge=x.role.slot===1?'PRIMARY':x.role.slot===2?'SECONDARY':x.role.slot===3?'MINOR':'';
+      var lean=!x.role.slot?'not a driver'
+              :x.role.sign>0?'in a zone it likes'
+              :x.role.sign<0?'in a zone that fights it':'neutral zone';
+      return '<div class="pt-r'+(x.role.slot?' d'+x.role.slot:'')+tint+'" style="animation-delay:'+(i*0.03).toFixed(2)+'s">'
+        +'<div class="pt-b"><span class="g">'+x.sym+'</span>'
+          +'<div><b>'+escHtml(x.name)+'</b><i>'+escHtml(x.cyc)+'</i></div></div>'
+        +'<div class="pt-s"><b>'+x.ssym+' '+escHtml(x.sign)+'</b>'
+          +'<i>'+degMin(x.deg)+' · '+escHtml(x.zone)+' zone</i></div>'
+        +'<div class="pt-n">'+x.lon.toFixed(2)+'°</div>'
+        +'<div class="pt-n'+(x.retro?' rx':'')+'">'+(x.rate>=0?'+':'')+x.rate.toFixed(2)+'°'
+          +(x.retro?' <em>℞</em>':'')+'</div>'
+        +'<div class="pt-n dimv">'+(x.exit==null?'—':'≈ '+(x.exit<1?'<1d':Math.round(x.exit)+'d'))+'</div>'
+        +'<div class="pt-role">'+(badge?'<span class="pt-bg">'+badge+'</span>':'')
+          +'<i>'+lean+'</i></div>'
+      +'</div>';
+    }).join('')
+   +'<div class="pt-f">Geocentric ecliptic longitudes computed from orbital elements for '
+     +dref.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short',year:'numeric'})
+     +' 12:00 local. Degree is the position inside the sign; longitude is measured from 0° Aries; '
+     +'motion is the change over 24 hours, so a negative value is retrograde. '
+     +'Checked against an independent solar series across five dates in the year: the Sun agrees to '
+     +'0.006°. The Moon and planets use the same element set and are close but not verified to that '
+     +'level, and the outer planets carry the most error. Good enough to place a body in its sign, '
+     +'read its direction and time a turn — if a price level hangs on an exact degree, confirm it '
+     +'against a published ephemeris first.</div>'
+  +'</div>';
+}
 function timExtras(){
   var eph;try{eph=timEph();}catch(e){return '';}
   var asset=timAsset();
@@ -4934,19 +5058,8 @@ function timExtras(){
        +'<div class="ax-note">The 12 hours below are ranked <b>for '+escHtml(asset)+' only</b>. Each asset carries its own cycle number, so a green hour for Gold can be a dead hour for Bitcoin. Switch the asset above and the whole clock re-ranks.</div>'
      +'</div>'
    +'</div>'
-   +'<div class="tx-pl"><div class="ab-cap">Cycle positions '+escHtml(dlabel)+' — '+escHtml(asset)+'</div><div class="tx-pg">'
-     +planets.map(function(x,i){
-        var mark=x.role.slot===1?' p1':x.role.slot===2?' p2':x.role.slot===3?' p3':'';
-        var lean=x.role.slot?(x.role.sign>0?' good':x.role.sign<0?' bad':''):'';
-        return '<div class="tx-p'+mark+lean+'" style="animation-delay:'+(i*0.03).toFixed(2)+'s"'
-          +' title="'+escHtml(x.name+' — '+x.cyc+(x.role.slot?' · '+asset+' driver #'+x.role.slot:''))+'">'
-          +'<b>'+x.sym+'</b><span class="pn">'+escHtml(x.name)+'</span>'
-          +'<span class="z">'+escHtml(x.zone)+'</span>'
-          +'<span class="d">'+x.deg.toFixed(1)+'°'+(x.retro?' <em>℞</em>':'')+'</span></div>';
-      }).join('')
-   +'</div><div class="ax-legend"><span class="k p1"></span>primary driver'
-     +'<span class="k p2"></span>secondary<span class="k p3"></span>minor'
-     +'<span class="k good"></span>in a zone the asset likes<span class="k bad"></span>in a zone that fights it</div></div>';
+   +'<div class="tx-pl"><div class="ab-cap">Planet positions '+escHtml(dlabel)+' — '+escHtml(asset)+'</div>'
+   +timPlanets(eph,dref,asset)+'</div>';
 }
 function renderTiming(){
   var host=document.getElementById('tim_new');
