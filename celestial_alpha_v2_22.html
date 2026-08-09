@@ -1105,6 +1105,35 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jz-crow .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .8s var(--ease)}
 .jz-crow b{text-align:right;font-family:'Space Grotesk';font-size:11.5px}
 @media(prefers-reduced-motion:reduce){.jz-card,.jz-draw{animation:none!important}}
+/* ══ TIMING VERDICT — the plain answer ══ */
+.tv{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;
+  border-radius:18px;padding:16px 18px;margin-bottom:14px;position:relative;overflow:hidden;
+  border:1px solid var(--bd);background:linear-gradient(140deg,rgba(18,16,34,.94),rgba(9,9,18,.94))}
+.tv:empty{display:none}
+.tv.go{border-color:rgba(34,197,94,.4);box-shadow:inset 0 0 50px rgba(34,197,94,.08)}
+.tv.ok{border-color:rgba(245,158,11,.35);box-shadow:inset 0 0 50px rgba(245,158,11,.07)}
+.tv.wait{border-color:rgba(239,68,68,.35);box-shadow:inset 0 0 50px rgba(239,68,68,.06)}
+.tv-badge{width:54px;height:54px;border-radius:50%;border:2px solid;display:flex;align-items:center;
+  justify-content:center;font-size:26px;font-weight:800;flex-shrink:0}
+.tv.go .tv-badge{animation:livePulse 2s ease-in-out infinite}
+.tv-title{font-family:'Space Grotesk';font-size:22px;font-weight:800;line-height:1.2}
+.tv-sub{font-size:11px;color:var(--soft);margin-top:2px}
+.tv-why{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid var(--rim);padding-top:10px}
+.tv-why .tag{animation:biasfx .45s ease backwards}
+.tv-why .tag:nth-child(2){animation-delay:.06s}.tv-why .tag:nth-child(3){animation-delay:.12s}
+.tv-why .tag:nth-child(4){animation-delay:.18s}.tv-why .tag:nth-child(5){animation-delay:.24s}
+/* ══ BROKER ══ */
+.brk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.brk-grid label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.brk-grid input{width:100%;margin-top:4px;padding:8px 10px;font-size:12px}
+.brk-row{display:flex;gap:8px;margin-bottom:10px}
+.brk-state{font-size:11px;color:var(--mid);border-top:1px solid var(--rim);padding-top:9px;margin-bottom:9px}
+.brk-state.good{color:var(--green)}.brk-state.bad{color:var(--red)}
+.brk-note{font-size:10px;color:var(--muted);line-height:1.7}
+.brk-note b{color:var(--soft)}
+.brk-note code{background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;font-size:9.5px}
+@media(max-width:700px){.brk-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.tv.go .tv-badge,.tv-why .tag{animation:none!important}}
 /* ══ TIMING — animated cycle hero ══ */
 .cyc-hero{position:relative;overflow:hidden;border-radius:22px;padding:22px;margin-bottom:14px;
   display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;
@@ -1459,7 +1488,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
     <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7M10 20a2.2 2.2 0 004 0"/></svg>Alerts</div>
-    <div class="nav-item"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M8 4h8"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/></svg>Bot</div>
+    <div class="nav-item" onclick='goTab("bot",this)'><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M8 4h8"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/></svg>Bot</div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</div>
     <div class="nav-item" onclick='goTab("reference",this)'><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v18H6a2 2 0 01-2-2zM19 17H6a2 2 0 000 4"/></svg>Reference</div>
   </nav>
@@ -2011,6 +2040,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       </div>
 
       <div class="pane hidden" id="pane_timing">
+        <div class="tv" id="time_verdict"></div>
         <!-- animated cycle hero: orbit dial + live planetary hour rail -->
         <div class="cyc-hero" id="cyc_hero">
           <div class="cyc-stars"></div>
@@ -2317,13 +2347,6 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
           </div>
         </div>
 
-        <div class="g2">
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Execution Bot</div><div class="cs">paper · demo · live via bridge</div></div>
-            <div class="cb" id="bot_panel"></div></div>
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Bot Activity</div><div class="cs">signals the bot evaluated</div></div>
-            <div class="cb" id="sig_log_body"><div class="f10 dim italic">No signals evaluated yet</div></div></div>
-        </div>
-
         <div id="pnl_charts"></div>
 
         <!-- AI REVIEW + REPORTS -->
@@ -2356,6 +2379,17 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       </div>
 
 <!-- removed a stray </div> that closed <main> early, dropping the Community and Reference panes out of the layout grid -->
+
+      <div class="pane hidden" id="pane_bot">
+        <div class="g2">
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Execution Bot</div><div class="cs">paper · demo · live via bridge</div></div>
+            <div class="cb" id="bot_panel"></div></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Bot Activity</div><div class="cs">signals the bot evaluated</div></div>
+            <div class="cb" id="sig_log_body"><div class="f10 dim italic">No signals evaluated yet</div></div></div>
+        </div>
+        <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Broker Connection</div><div class="cs">demo and live route through your local bridge</div></div>
+          <div class="cb" id="broker_panel"></div></div>
+      </div>
 
       <div class="pane hidden" id="pane_announcements">
         <div class="card" style="overflow:hidden">
@@ -3250,11 +3284,38 @@ function buildSignal(price,vibNum,astro,levels,risk,eph,trend){
     return l.price>price&&l.sigma<=4&&l.score>=2;
   });
 
+  /* With the trend, a counter-trend rally is where the entry belongs, not a
+     reason to flip. In a downtrend wait for price to push UP into a strong
+     high and sell from there; in an uptrend wait for a dip into a strong low.
+     So the entry pool is inverted relative to price while the trend holds. */
+  var rallyEntry=null,rallyNote='';
+  if(trend&&(trend.dir==='bull'||trend.dir==='bear')&&!trend.broken&&HIST_ROWS&&HIST_ROWS.length>20){
+    var sp=swingPoints(HIST_ROWS,3);
+    if(!isBull&&sp.hi.length){
+      /* sell side: nearest confirmed swing high at or above price, capped 6% out */
+      var ups=sp.hi.map(function(x){return x.p;}).filter(function(v){return v>=price&&(v-price)/price<=0.06;});
+      if(!ups.length&&trend.keyLevel!=null&&trend.keyLevel>price)ups=[trend.keyLevel];
+      if(ups.length){rallyEntry=Math.min.apply(null,ups);
+        rallyNote='Sell into the rally at the strong high '+rallyEntry.toFixed(2);}
+    }else if(isBull&&sp.lo.length){
+      var dns=sp.lo.map(function(x){return x.p;}).filter(function(v){return v<=price&&(price-v)/price<=0.06;});
+      if(!dns.length&&trend.keyLevel!=null&&trend.keyLevel<price)dns=[trend.keyLevel];
+      if(dns.length){rallyEntry=Math.max.apply(null,dns);
+        rallyNote='Buy the dip at the strong low '+rallyEntry.toFixed(2);}
+    }
+  }
+  /* an aligned Gann level within reach of that swing sharpens the entry */
+  if(rallyEntry!=null){
+    var near=levels.filter(function(l){return Math.abs(l.price-rallyEntry)/rallyEntry<0.004&&l.score>=3;})
+                   .sort(function(a,b){return b.score-a.score;})[0];
+    if(near){rallyEntry=near.price;rallyNote+=' (aligned '+near.deg+'°)';}
+  }
+
   var eLvl=entryPool[0];
   var tpLvl=tpPool[0];
   var slLvl=slPool[0];
 
-  var ep=eLvl?eLvl.price:price;
+  var ep=rallyEntry!=null?rallyEntry:(eLvl?eLvl.price:price);
   var er=Math.sqrt(ep);
   var tp=tpLvl?tpLvl.price:(isBull?+((er+2*0.25)*(er+2*0.25)).toFixed(2):+((er-2*0.25)*(er-2*0.25)).toFixed(2));
   var sl=slLvl?slLvl.price:(isBull?+((er-1*0.25)*(er-1*0.25)).toFixed(2):+((er+1*0.25)*(er+1*0.25)).toFixed(2));
@@ -3298,7 +3359,7 @@ function buildSignal(price,vibNum,astro,levels,risk,eph,trend){
     tDistPct:tpDistPct,
     cycleNote:cycleNote,
     vibNum:vibNum,
-    trend:trend,dirSrc:dirSrc,counter:counter,
+    trend:trend,dirSrc:dirSrc,counter:counter,rallyNote:rallyNote,fromRally:rallyEntry!=null,
   };
 }
 
@@ -3532,6 +3593,99 @@ function rollNumbers(root){
     el.classList.remove('num-roll');void el.offsetWidth;el.classList.add('num-roll');
   });
 }
+/* ══ BROKER CONNECTION — everything routes through the local bridge, because a
+   browser cannot hold broker credentials safely. This panel configures and
+   tests that link; it never asks for a password in the page itself. ══ */
+function renderBroker(){
+  var el=document.getElementById('broker_panel');
+  if(!el)return;
+  var url=bridgeURL();
+  el.innerHTML=
+    '<div class="brk-grid">'
+     +'<label>Bridge URL<input id="brk_url" value="'+escHtml(url)+'" placeholder="http://127.0.0.1:7823"></label>'
+     +'<label>Bridge PIN<input id="brk_pin" type="password" value="'+escHtml(localStorage.getItem('ca_pin')||'')+'" placeholder="set in the bridge file"></label>'
+    +'</div>'
+    +'<div class="brk-row"><button class="btn btn-a btn-sm" onclick="brokerSave()">Save</button>'
+      +'<button class="btn btn-g btn-sm" onclick="brokerTest()">Test connection</button></div>'
+    +'<div class="brk-state" id="brk_state">Not tested yet</div>'
+    +'<div class="brk-note"><b>How this works.</b> Your broker credentials live in '
+      +'<code>celestial_bridge.py</code> on your own machine — never in this page, which anyone '
+      +'who opens the file could read. Start the bridge, point this at it, and Demo/Live orders '
+      +'post there. Paper mode needs none of this.</div>';
+}
+function brokerSave(){
+  var u=(document.getElementById('brk_url')||{}).value||'';
+  var pin=(document.getElementById('brk_pin')||{}).value||'';
+  localStorage.setItem('ca_bridge',u.replace(/\/+$/,''));
+  localStorage.setItem('ca_pin',pin);
+  brokerState('Saved — press Test connection','');
+  notify('Bridge settings saved','info');
+}
+function brokerState(msg,kind){
+  var e=document.getElementById('brk_state');
+  if(e){e.className='brk-state '+(kind||'');e.textContent=msg;}
+}
+function brokerTest(){
+  brokerState('Contacting bridge…','');
+  var pin=encodeURIComponent(localStorage.getItem('ca_pin')||'');
+  fetch(bridgeURL()+'/status?pin='+pin)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d&&d.error){brokerState('Bridge reachable but rejected the PIN','bad');return;}
+      var acct=d&&(d.account||d.login);
+      brokerState('Connected'+(acct?' — account '+acct:'')+(d&&d.balance!=null?' · balance '+d.balance:''),'good');
+      notify('Bridge connected','bull');
+    })
+    .catch(function(){
+      brokerState('No response — start celestial_bridge.py on this machine, then retry','bad');
+    });
+}
+
+/* ══ TIMING VERDICT — one plain answer: is this a window to trade or not? ══ */
+function tradeWindow(){
+  var td=LA;
+  var out={ok:false,level:'wait',title:'Not a trading window',why:[],mins:null};
+  if(!td){out.why.push('Session times not set');return out;}
+  out.mins=td.pl;
+  var vib=_lastVib||0;
+  var exact=vib&&td.pp.nums.indexOf(vib)>=0;
+  var inter=vib&&!exact&&td.an.indexOf(vib)>=0;
+  var trend=window._lastTrend;
+  var pos=td.isPos;
+  var score=0;
+  if(exact){score+=3;out.why.push({t:'Period matches your asset number (#'+vib+')',good:true});}
+  else if(inter){score+=2;out.why.push({t:'Period supports #'+vib+' indirectly',good:true});}
+  else if(vib){out.why.push({t:'Period does not carry #'+vib,good:false});}
+  if(pos){score+=1;out.why.push({t:'Positive half of the day',good:true});}
+  else out.why.push({t:'Negative half — momentum is weaker',good:false});
+  if(td.pl>=2){score+=1;out.why.push({t:td.pl+' min left in this period',good:true});}
+  else out.why.push({t:'Only '+td.pl+' min left — period closing',good:false});
+  if(trend&&(trend.dir==='bull'||trend.dir==='bear')&&!trend.broken){
+    score+=1;out.why.push({t:'Major trend is '+trend.label+' — trade that way',good:true});
+  }else if(trend&&trend.broken){
+    out.why.push({t:'Major level broken — direction unconfirmed',good:false});
+  }
+  if(score>=5){out.ok=true;out.level='go';out.title='Good window to trade';}
+  else if(score>=3){out.ok=true;out.level='ok';out.title='Tradeable — be selective';}
+  else{out.level='wait';out.title='Wait — not a good window';}
+  return out;
+}
+function rndTimingVerdict(){
+  var el=document.getElementById('time_verdict');
+  if(!el)return;
+  var v=tradeWindow();
+  var col=v.level==='go'?'var(--green)':v.level==='ok'?'var(--amber)':'var(--red)';
+  var icon=v.level==='go'?'✓':v.level==='ok'?'!':'✕';
+  el.className='tv '+v.level;
+  el.innerHTML=
+    '<div class="tv-badge" style="color:'+col+';border-color:'+col+'">'+icon+'</div>'
+   +'<div class="tv-main"><div class="tv-title" style="color:'+col+'">'+v.title+'</div>'
+     +'<div class="tv-sub">'+(v.mins!=null?v.mins+' minutes left in this period':'Set sunrise and current time below')+'</div></div>'
+   +'<div class="tv-why">'+v.why.map(function(w){
+       if(typeof w==='string')return '<span class="tag td">'+escHtml(w)+'</span>';
+       return '<span class="tag '+(w.good?'tg':'tr')+'">'+(w.good?'✓':'✕')+' '+escHtml(w.t)+'</span>';
+     }).join('')+'</div>';
+}
 /* ══ animated cycle hero — orbit dial + planetary hour rail ══ */
 function renderCycleHero(){
   var arc=document.getElementById('cyc_arc');
@@ -3562,6 +3716,7 @@ function renderCycleHero(){
   var te=document.getElementById('cd_turn');
   if(te)te.textContent=new Date(now.getTime()+daysLeft*86400000).toLocaleDateString('en',{month:'short',day:'numeric'});
   renderHourRail();
+  try{rndTimingVerdict();}catch(e){}
 }
 /* twelve planetary hours from the current session, the live one highlighted */
 function renderHourRail(){
@@ -4051,6 +4206,7 @@ function rndTrades(sig,risk){
     +'</div></div>'
     +'<div class="br"><span class="dim">Risk \u2192 Profit</span><span class="ca fw7">$'+sig.risk+' \u2192 <span class="cg">$'+sig.profit+'</span></span></div>'
     +'<div class="flex fw g4 mt8">'+sig.reasons.map(function(r){return'<span class="tag td">'+r+'</span>';}).join('')+'</div>'
+    +(sig.rallyNote?'<div class="f10 ca mt8">\u21b3 '+escHtml(sig.rallyNote)+'</div>':'')
     +(sig.cycleNote?'<div class="f10 cb mt8">\u2609 '+sig.cycleNote+'</div>':'')
     +'<div style="margin-top:12px;display:flex;gap:8px"><button onclick="openTakeSignal()" class="btn btn-a btn-sm" style="flex:1">\u2713 Take This Signal</button><button onclick="openShareWithSig()" class="btn btn-g btn-sm" style="flex:1">\u2b06 Share</button></div>'
     +'</div></div>';
@@ -4588,6 +4744,7 @@ function runAnalyze(){
   setC('bi_timing','on',true);
   setT('bs_timing','H'+td.hn+' · P'+td.pn+' · '+td.pp.n+' cycle');
   try{renderCycleCountdown();}catch(e){}
+  try{rndTimingVerdict();}catch(e){}
   checkAutoScalp();
 }
 
@@ -5017,7 +5174,7 @@ function addAnn(){
 ══════════════════════════════════════ */
 /* Kept in step with the panes that actually exist in the markup — the old list still
    named removed panes (fundamentals, bot) and omitted dashboard/sentiment. */
-var TABS=['dashboard','analytics','timing','sentiment','portfolio','announcements','reference'];
+var TABS=['dashboard','analytics','timing','sentiment','portfolio','bot','announcements','reference'];
 /* LEFT RAIL NAVIGATION — Home + all tabs, one unified handler.
    The home/app page split was removed from the markup; these helpers now no-op
    safely instead of throwing on the missing pg_home / pg_app / icon_rail nodes. */
@@ -5644,7 +5801,7 @@ renderJ=function(){
 };
 
 /* == MULTI-PANE SHELL == */
-var TABS_LIST=['dashboard','analytics','timing','sentiment','portfolio','announcements','reference'];
+var TABS_LIST=['dashboard','analytics','timing','sentiment','portfolio','bot','announcements','reference'];
 function goTab(name,btn){
   TABS_LIST.forEach(function(t){
     var el=document.getElementById('pane_'+t);
@@ -5660,6 +5817,7 @@ function goTab(name,btn){
   }
   if(name==='sentiment'){renderSentiment();}
   if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();}
+  if(name==='bot'){renderBot();renderBroker();}
 }
 /* ══ ECONOMIC CALENDAR — recurring high-impact events, live countdown ══ */
 var _newsTimer=null;
@@ -6852,7 +7010,48 @@ function renderCycleCountdown(){
 var _refLoaded=false;
 var REF_B64_MAP=[MOON_HTML_B64,PLANETS_HTML_B64,BIAS_HTML_B64,ASPECTS_HTML_B64,CALENDAR_HTML_B64];
 var _refFrameLoaded=[false,false,false,false,false];
-function b64dec(s){return decodeURIComponent(escape(window.atob(s)));}
+/* The embedded toolkit pages link to sibling files (moon-tab.html, bias-tab.html,
+   …) that do not exist here. Inside a srcdoc iframe those resolve to nothing, so
+   clicking the inner nav dropped the frame onto a blank error page — the white
+   screen with a broken-image icon. Rather than deleting the nav, intercept it and
+   let it drive the real toolkit tabs. */
+var CA_FRAME_ROUTES={'moon-tab.html':'moon','dashboard-tab.html':'planets','bias-tab.html':'bias',
+  'aspects-tab.html':'aspects','calendar-tab.html':'calendar','signal-tab.html':'signal',
+  'calc-tab.html':'calc','index.html':'home'};
+function frameShim(){
+  return '<script>(function(){document.addEventListener("click",function(e){'
+    +'var a=e.target.closest&&e.target.closest("a[href]");if(!a)return;'
+    +'var h=(a.getAttribute("href")||"").split("/").pop();'
+    +'if(!/\\.html$/i.test(h))return;'
+    +'e.preventDefault();'
+    +'try{parent.postMessage({caFrameNav:h},"*");}catch(err){}'
+    +'},true);})();<\/script>';
+}
+function b64dec(s){
+  var html=decodeURIComponent(escape(window.atob(s)));
+  return html.replace(/<\/body>/i, frameShim()+'</body>');
+}
+/* map an intercepted inner link onto the outer tab that shows that page */
+window.addEventListener('message',function(ev){
+  var d=ev&&ev.data;
+  if(!d||!d.caFrameNav)return;
+  var key=CA_FRAME_ROUTES[d.caFrameNav];
+  if(!key)return;
+  var refIdx={moon:0,planets:1,bias:2,aspects:3,calendar:4}[key];
+  var timIdx={aspects:0,planets:1,calendar:2}[key];
+  var onTiming=document.getElementById('pane_timing')&&document.getElementById('pane_timing').classList.contains('on');
+  if(onTiming&&timIdx!=null){
+    var tb=document.querySelectorAll('#pane_timing .tf')[timIdx];
+    if(tb)timTab(timIdx,tb);
+  }else if(refIdx!=null){
+    var rb=document.querySelectorAll('#pane_reference .tf')[refIdx];
+    if(rb){ if(!document.getElementById('pane_reference').classList.contains('on'))
+              goTab('reference',document.querySelector('.nav-item[onclick*="reference"]'));
+            refTab(refIdx,rb); }
+  }else{
+    notify('That view is not part of this build','info');
+  }
+});
 function loadRefFrames(){
   if(!_refFrameLoaded[0]){
     document.getElementById('ref_frame_0').srcdoc=b64dec(REF_B64_MAP[0]);
