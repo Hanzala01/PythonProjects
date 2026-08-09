@@ -1310,10 +1310,25 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ab-call.sell{border-color:rgba(239,68,68,.42);box-shadow:inset 0 0 60px rgba(239,68,68,.08)}
 .ab-call.none{border-color:rgba(245,158,11,.3)}
 .ab-cap{font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
-.ab-dir{font-family:'Space Grotesk';font-size:44px;font-weight:800;line-height:1.05;margin:3px 0 7px}
+.ab-dir{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:5px 0 9px}
+.ab-dir .w{font-family:'Space Grotesk';font-size:37px;font-weight:500;line-height:1.02;
+  letter-spacing:-.02em;animation:callIn .55s var(--ease) backwards}
+.ab-dir .w.none{color:var(--amber);font-size:32px}
+.ab-dir .arw{font-size:24px;line-height:1;opacity:.85;animation:arwIn .6s var(--ease) .12s backwards}
+.ab-dir .sep{width:1px;height:26px;background:var(--rim);align-self:center}
+.ab-dir .a{font-family:'Space Grotesk';font-size:26px;font-weight:300;color:var(--tw);
+  letter-spacing:.005em;opacity:.88;animation:callIn .55s var(--ease) .08s backwards}
+@keyframes callIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes arwIn{from{opacity:0;transform:translateY(6px) scale(.8)}to{opacity:.85;transform:none}}
+/* a single sheen crosses the card once when a new call lands */
+.ab-call::after{content:'';position:absolute;top:0;bottom:0;width:38%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.055),transparent);
+  animation:callSheen 1.5s var(--ease) .15s 1 both}
+@keyframes callSheen{from{left:-40%}to{left:115%}}
+.ab-call.buy .ab-cap,.ab-call.sell .ab-cap{letter-spacing:.16em}
 .ab-why{font-size:12.5px;color:var(--soft);line-height:1.6}
 .ab-c-r{text-align:right}
-.ab-conf{font-family:'Space Grotesk';font-size:46px;font-weight:800;line-height:1}
+.ab-conf{font-family:'Space Grotesk';font-size:44px;font-weight:600;line-height:1;letter-spacing:-.02em}
 .ab-conf i{font-style:normal;font-size:16px;opacity:.6}
 .ab-style{font-size:10.5px;color:var(--soft);margin-top:6px}
 .ab-reads{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
@@ -1347,11 +1362,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:900px){.ab-reads{grid-template-columns:1fr}.ab-call{grid-template-columns:1fr}
   .ab-c-r{text-align:left}.ab-e-in{margin-left:0;width:100%}}
 @media(prefers-reduced-motion:reduce){
-  .tk-seg,.tk-nrow,.tk-slot,.ab-read,.ab-lv{animation:none!important}
+  .tk-seg,.tk-nrow,.tk-slot,.ab-read,.ab-lv,.ab-dir .w,.ab-dir .a,.ab-dir .arw{animation:none!important}
+  .ab-call::after{display:none}
   .tk-slot:hover,.tk-slot.live{transform:none}
 }
 /* ══ THE CALL — extra lines under the direction ══ */
-.ab-order{font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--tw);margin-bottom:7px}
+.ab-order{font-family:'Space Grotesk';font-size:14px;font-weight:500;color:var(--tw);
+  letter-spacing:.005em;margin-bottom:7px}
 .ab-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .ab-ch{font-size:9.5px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:99px;
   border:1px solid var(--rim);background:rgba(255,255,255,.02);color:var(--soft)}
@@ -1409,6 +1426,50 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:1100px){.tl-sum{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.tl{grid-template-columns:30px 1fr;gap:10px}.tl-cap{display:none}}
 @media(prefers-reduced-motion:reduce){.tl-row{animation:none!important}.tl-row:hover{transform:none}}
+
+/* ══ BEST DAY TO TRADE ══ */
+.bd{border:1px solid var(--bd);border-radius:18px;margin-bottom:12px;overflow:hidden;
+  background:linear-gradient(158deg,rgba(139,92,246,.07),rgba(9,9,18,.6))}
+.bd-hero{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:15px 17px;
+  border-bottom:1px solid var(--rim)}
+.bd-l{min-width:0}
+.bd-day{font-family:'Space Grotesk';font-size:26px;font-weight:700;color:var(--tw);
+  line-height:1.1;margin:4px 0 6px;letter-spacing:-.02em}
+.bd-day span{font-size:14px;font-weight:400;color:var(--soft);margin-left:10px;letter-spacing:0}
+.bd-line{font-size:12px;color:var(--soft);line-height:1.6}
+.bd-line b{font-weight:800}
+.bd-do{font-size:12.5px;color:var(--tw);line-height:1.6;margin:7px 0 11px}
+.bd-score{width:96px;height:96px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;border:2px solid var(--c);
+  box-shadow:0 0 26px -8px var(--c),inset 0 0 26px -12px var(--c);
+  animation:bdPop .6s var(--ease) backwards}
+@keyframes bdPop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+.bd-score b{font-family:'Space Grotesk';font-size:32px;font-weight:800;color:var(--tw);line-height:1}
+.bd-score i{font-style:normal;font-size:8px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-top:4px}
+.bd-grid{display:grid;grid-template-columns:repeat(14,1fr);gap:5px;padding:13px 15px}
+.bd-c{border-radius:11px;border:1px solid var(--rim);background:rgba(255,255,255,.02);
+  padding:8px 3px 7px;text-align:center;cursor:pointer;transition:.22s var(--ease);
+  animation:railIn .45s var(--ease) backwards}
+.bd-c:hover{transform:translateY(-3px);border-color:rgba(157,77,255,.45)}
+.bd-c .w{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bd-c .n{font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--tw);margin:1px 0 5px}
+.bd-c .bar{height:34px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:5px}
+.bd-c .bar i{display:block;width:7px;border-radius:99px;min-height:3px;opacity:.85;
+  transition:height .8s var(--ease)}
+.bd-c .l{font-size:7.5px;font-weight:800;letter-spacing:.06em}
+.bd-c .s{font-size:9px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.bd-c.wk{opacity:.4}
+.bd-c.best{border-color:rgba(157,77,255,.7);background:rgba(139,92,246,.14);
+  box-shadow:0 0 0 1px rgba(157,77,255,.35)}
+.bd-c.sel{outline:1px solid var(--acc2);outline-offset:1px}
+.bd-f{padding:10px 15px;font-size:9.5px;color:var(--muted);line-height:1.55;
+  background:rgba(255,255,255,.02);border-top:1px solid var(--rim)}
+.bd-f em{font-style:italic;color:var(--soft)}
+@media(max-width:1100px){.bd-hero{grid-template-columns:1fr;justify-items:start}
+  .bd-grid{grid-template-columns:repeat(7,1fr)}}
+@media(prefers-reduced-motion:reduce){.bd-c,.bd-score{animation:none!important}
+  .bd-c:hover{transform:none}}
 
 /* ══ PLANET TABLE ══ */
 .pt{margin-top:9px;border:1px solid var(--rim);border-radius:14px;overflow:hidden}
@@ -3548,34 +3609,36 @@ function bodyDegreeStrength(lon){
   var distFromMid=Math.abs(degInSign-15);
   return 1-(distFromMid/15)*0.45;
 }
-function bodyBiasScore(bodyKey,eph,biasDef,weight){
+function bodyBiasScore(bodyKey,eph,biasDef,weight,refDate){
   if(!eph||!eph[bodyKey])return{contrib:0,dir:'neutral',sign:null};
   var lon=eph[bodyKey].lon;
   var s=signOf(lon).sign;
   var strength=bodyDegreeStrength(lon);
-  if(biasDef.retro&&bodyKey==='mercury'&&lonRate('mercury',new Date())<0){
+  /* the retro test has to run on the day being scored — scanning next week for
+     the best day used to check today's Mercury for every one of those days */
+  if(biasDef.retro&&bodyKey==='mercury'&&lonRate('mercury',refDate||new Date())<0){
     return{contrib:-weight*strength,dir:'bear',sign:s+' (Retrograde)'};
   }
   var dir=biasDef.b.indexOf(s)>=0?'bull':biasDef.s.indexOf(s)>=0?'bear':'neutral';
   var contrib=dir==='bull'?weight*strength:dir==='bear'?-weight*strength:0;
   return{contrib:contrib,dir:dir,sign:s};
 }
-function calcAstroBias(assetName,eph){
+function calcAstroBias(assetName,eph,refDate){
   var mk=getAstroKey(assetName);
   var d=ABIAS[mk];
   if(!d)d=ABIAS['default'];
   var score=0,factors=[];
-  var r2=bodyBiasScore(d.p2,eph,d.p2b,3);
+  var r2=bodyBiasScore(d.p2,eph,d.p2b,3,refDate);
   score+=r2.contrib;
   if(r2.sign)factors.push({icon:EPH_SYM[d.p2]||'\u25cb',text:(BODY_LABEL[d.p2]||d.p2)+': '+dz(r2.sign),dir:r2.dir});
-  var r1=bodyBiasScore(d.p1,eph,d.p1b,2.5);
+  var r1=bodyBiasScore(d.p1,eph,d.p1b,2.5,refDate);
   score+=r1.contrib;
   if(r1.sign)factors.push({icon:EPH_SYM[d.p1]||'\u25cb',text:(BODY_LABEL[d.p1]||d.p1)+': '+dz(r1.sign),dir:r1.dir});
-  var r3=bodyBiasScore(d.p3,eph,d.p3b,1.5);
+  var r3=bodyBiasScore(d.p3,eph,d.p3b,1.5,refDate);
   score+=r3.contrib;
   if(r3.sign)factors.push({icon:EPH_SYM[d.p3]||'\u25cb',text:(BODY_LABEL[d.p3]||d.p3)+': '+dz(r3.sign),dir:r3.dir});
   var toneBias={b:['Aries','Leo','Sagittarius','Cancer','Taurus','Gemini'],s:['Capricorn','Virgo','Scorpio','Libra']};
-  var r4=bodyBiasScore('saturn',eph,toneBias,0.8);
+  var r4=bodyBiasScore('saturn',eph,toneBias,0.8,refDate);
   score+=r4.contrib;
   var maxScore=7.8;
   var bullPct=Math.max(8,Math.min(92,Math.round(50+(score/maxScore)*42)));
@@ -4657,7 +4720,12 @@ function renderAnalytics(){
    +'<div class="ab-call '+(dir==='BUY'?'buy':dir==='SELL'?'sell':'none')+'">'
      +'<div class="ab-c-l">'
        +'<div class="ab-cap">The call</div>'
-       +'<div class="ab-dir" style="color:'+col+'">'+(dir?dir+' '+escHtml(asset.toUpperCase()):'NO TRADE')+'</div>'
+       +'<div class="ab-dir">'
+         +(dir?'<span class="w" style="color:'+col+'">'+(dir==='BUY'?'Buy':'Sell')+'</span>'
+              +'<span class="arw" style="color:'+col+'">'+(dir==='BUY'?'↗':'↘')+'</span>'
+              +'<span class="sep"></span><span class="a">'+escHtml(asset)+'</span>'
+           :'<span class="w none">No trade</span>')
+       +'</div>'
        +(S&&S.style
           ?'<div class="ab-order">'+escHtml(anaOrderLine(S,price,dp))+'</div>'
            +'<div class="ab-why">'+escHtml(anaPlanLine(S,asset,dp))+'</div>'
@@ -4992,6 +5060,105 @@ function timPlanets(eph,dref,asset){
      +'against a published ephemeris first.</div>'
   +'</div>';
 }
+/* ══ BEST DAY TO TRADE — scored, per asset, with the lean for that day ══
+   Everything the engine already knows about a day, folded into one number so
+   the question "which day should I trade Gold, and long or short?" has an
+   answer instead of a shrug. Nothing here is a guess: the window counts come
+   from the planetary hours for that weekday, the key-day bonus from whether
+   the day's ruling cycle is the asset's own, and the lean from the bias
+   engine run on that day's ephemeris — not on today's. */
+function timDayScore(date,asset,vib){
+  var di=date.getDay();
+  var key=PL[DS[di]], aCyc=plByNum(vib);
+  var own=!!(aCyc&&key&&aCyc.n===key.n);
+  var strong=0,support=0;
+  for(var h=1;h<=12;h++){
+    var hp=PL[hiIdx(di,h)], isPos=(h<=7), an=getAN(hp,isPos);
+    if(hp.nums.indexOf(vib)>=0)strong++;
+    else if(an.indexOf(vib)>=0)support++;
+  }
+  var noon=new Date(date.getFullYear(),date.getMonth(),date.getDate(),12,0,0,0);
+  var astro=calcAstroBias(asset,getEphemeris(noon),noon);
+  var conviction=Math.abs(astro.bull-50)/42;             /* 0..1 */
+  /* windows say WHEN you may trade, conviction says whether there is anything
+     worth trading. A day needs both, so they multiply rather than add. */
+  var timeScore=Math.min(1,(strong*1.0+support*0.35)/3.5);
+  var raw=timeScore*0.55+conviction*0.30+(own?0.15:0);
+  var weekend=(di===0||di===6);
+  return{date:new Date(noon),di:di,key:key,own:own,strong:strong,support:support,
+         astro:astro,weekend:weekend,
+         score:Math.round(Math.max(0,Math.min(100,raw*100))*(weekend?0.45:1))};
+}
+function timBestDays(asset,vib,n){
+  n=n||14;
+  var out=[], base=timDate();
+  base=new Date(base.getFullYear(),base.getMonth(),base.getDate(),12,0,0,0);
+  for(var i=0;i<n;i++){
+    var d=new Date(base.getTime()); d.setDate(d.getDate()+i);
+    out.push(timDayScore(d,asset,vib));
+  }
+  return out;
+}
+function timBestPanel(st){
+  var asset=timAsset(), vib=st.vib;
+  var days=timBestDays(asset,vib,14);
+  var open=days.filter(function(d){return !d.weekend;});
+  var ranked=open.slice().sort(function(a,b){return b.score-a.score;});
+  var top=ranked[0];
+  if(!top)return '';
+  var lean=function(a){return a.dir==='bull'?'BULL':a.dir==='bear'?'BEAR':'FLAT';};
+  var lcol=function(a){return a.dir==='bull'?'var(--green)':a.dir==='bear'?'var(--red)':'var(--amber)';};
+  var max=Math.max.apply(null,days.map(function(d){return d.score;}))||1;
+  var dayNm=function(d){return d.date.toLocaleDateString('en',{weekday:'short'});};
+
+  var verdict=top.astro.dir==='bull'
+      ?'buy the dips into support — the sky leans up that day'
+      :top.astro.dir==='bear'
+      ?'sell the rallies into resistance — the sky leans down that day'
+      :'trade the level either way — no directional edge that day, so take only clean structure';
+
+  return '<div class="bd">'
+   +'<div class="bd-hero">'
+     +'<div class="bd-l">'
+       +'<div class="ab-cap">Best day to trade '+escHtml(asset)+' · next 14</div>'
+       +'<div class="bd-day">'+top.date.toLocaleDateString('en',{weekday:'long'})
+         +'<span>'+top.date.toLocaleDateString('en',{day:'numeric',month:'short'})+'</span></div>'
+       +'<div class="bd-line">'+top.strong+' strong window'+(top.strong===1?'':'s')
+         +(top.support?' + '+top.support+' supporting':'')
+         +(top.own?' · '+escHtml(asset)+'’s own '+escHtml(top.key.n)+' day':'')
+         +' · sky leans <b style="color:'+lcol(top.astro)+'">'+lean(top.astro)+' '+top.astro.bull+'%</b></div>'
+       +'<div class="bd-do">On that day: '+verdict+'.</div>'
+       +'<button class="btn btn-a btn-sm" onclick="setTimDate(\''+ymd(top.date)+'\')">Open '
+         +top.date.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'})+'</button>'
+     +'</div>'
+     +'<div class="bd-score" style="--c:'+lcol(top.astro)+'">'
+       +'<b>'+top.score+'</b><i>day score</i></div>'
+   +'</div>'
+   +'<div class="bd-grid">'
+     +days.map(function(d,i){
+        var sel=ymd(d.date)===ymd(timDate());
+        var best=d===top;
+        return '<div class="bd-c'+(d.weekend?' wk':'')+(best?' best':'')+(sel?' sel':'')+'"'
+          +' style="animation-delay:'+(i*0.03).toFixed(2)+'s"'
+          +' onclick="setTimDate(\''+ymd(d.date)+'\')"'
+          +' title="'+escHtml(d.key?d.key.n+' day':'')+(d.own?' · '+asset+'’s own day':'')
+            +' · '+d.strong+' strong / '+d.support+' supporting windows'
+            +' · sky '+lean(d.astro)+' '+d.astro.bull+'%'+(d.weekend?' · market closed':'')+'">'
+          +'<div class="w">'+dayNm(d)+'</div>'
+          +'<div class="n">'+d.date.getDate()+'</div>'
+          +'<div class="bar"><i style="height:'+(d.score/max*100).toFixed(0)+'%;background:'+lcol(d.astro)+'"></i></div>'
+          +'<div class="l" style="color:'+lcol(d.astro)+'">'+(d.weekend?'—':lean(d.astro))+'</div>'
+          +'<div class="s">'+(d.weekend?'closed':d.score)+'</div>'
+        +'</div>';
+      }).join('')
+   +'</div>'
+   +'<div class="bd-f">Score blends the hours that carry '+escHtml(asset)+'’s number that day (55%), how '
+     +'far the sky leans from neutral (30%) and whether it is the asset’s own cycle day (15%). Weekends '
+     +'are scored but discounted — most of these markets are shut. BULL/BEAR is that day’s own ephemeris, '
+     +'not today’s. A high score means a good day to <em>look</em>; the level and the trend still decide '
+     +'the trade.</div>'
+  +'</div>';
+}
 function timExtras(){
   var eph;try{eph=timEph();}catch(e){return '';}
   var asset=timAsset();
@@ -5120,6 +5287,7 @@ function renderTiming(){
       }).join('')
    +'</div>'
    +timDayCard(st)
+   +timBestPanel(st)
    +timExtras()
    +'<details class="sec"><summary><b>Reference tools</b><span>full toolkit · calendars</span></summary>'
      +'<div class="tk-tools">'
