@@ -1410,6 +1410,53 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:700px){.tl{grid-template-columns:30px 1fr;gap:10px}.tl-cap{display:none}}
 @media(prefers-reduced-motion:reduce){.tl-row{animation:none!important}.tl-row:hover{transform:none}}
 
+/* ══ THE DAY — date picker + key-day card ══ */
+.dk{border:1px solid var(--bd);border-radius:18px;margin-bottom:12px;overflow:hidden;
+  background:linear-gradient(155deg,rgba(139,92,246,.07),rgba(9,9,18,.6))}
+.dk-top{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+  padding:12px 14px;border-bottom:1px solid var(--rim)}
+.dk-nav{display:flex;align-items:center;gap:5px}
+.dk-b{width:30px;height:32px;border-radius:9px;border:1px solid var(--rim);cursor:pointer;
+  background:rgba(255,255,255,.03);color:var(--soft);font-size:15px;line-height:1;
+  transition:.2s var(--ease)}
+.dk-b.wide{width:auto;padding:0 12px;font-size:10.5px;font-weight:700;letter-spacing:.05em}
+.dk-b:hover{color:var(--tw);border-color:rgba(157,77,255,.45);transform:translateY(-1px)}
+.dk-b.on{background:rgba(139,92,246,.2);border-color:rgba(157,77,255,.55);color:#c9b6ff}
+.dk-in{padding:7px 10px;font-size:12px;border-radius:9px;min-width:132px}
+.dk-when{min-width:0}
+.dk-when b{display:block;font-family:'Space Grotesk';font-size:19px;font-weight:800;color:var(--tw);line-height:1.15}
+.dk-when span{font-size:10.5px;color:var(--muted)}
+.dk-times{display:flex;align-items:flex-end;gap:9px}
+.dk-times label{font-size:8.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.dk-times input{display:block;margin-top:4px;padding:7px 9px;font-size:12px;border-radius:9px}
+.dk-times input:disabled{opacity:.45;cursor:not-allowed}
+.dk-row{display:grid;grid-template-columns:1.15fr 1.35fr .9fr;gap:0;align-items:stretch}
+.dk-row>*{padding:13px 15px}
+.dk-row>*+*{border-left:1px solid var(--rim)}
+.dk-key{display:flex;gap:12px;align-items:flex-start;min-width:0}
+.dk-key .sym{font-size:24px;color:var(--acc2);line-height:1.1;flex-shrink:0}
+.dk-key i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.dk-key b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--tw)}
+.dk-key>div>span{display:block;font-size:10px;color:var(--soft);margin-top:2px;line-height:1.45}
+.dk-match{min-width:0}
+.dk-match b{display:block;font-size:12.5px;font-weight:700;margin-bottom:3px}
+.dk-match span{font-size:10px;color:var(--muted);line-height:1.5}
+.dk-match.ok{background:rgba(34,197,94,.07)}
+.dk-match.ok b{color:var(--green)}
+.dk-match.no b{color:var(--ts)}
+.dk-sky{min-width:0}
+.dk-sky i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.dk-sk{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--tw);
+  font-variant-numeric:tabular-nums;margin-bottom:4px}
+.dk-sk span{font-size:14px;color:var(--acc2);width:16px;text-align:center;flex-shrink:0}
+.dk-plan{padding:10px 15px;font-size:10.5px;color:var(--amber);line-height:1.55;
+  background:rgba(245,158,11,.09);border-top:1px solid rgba(245,158,11,.25)}
+@media(max-width:1100px){.dk-top{grid-template-columns:1fr;gap:10px}
+  .dk-times{flex-wrap:wrap}.dk-row{grid-template-columns:1fr}
+  .dk-row>*+*{border-left:none;border-top:1px solid var(--rim)}}
+
 /* ══ TIMING — asset picker + aspect reader ══ */
 .tk-asset{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:11px 14px;margin-bottom:12px;
   border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
@@ -4632,13 +4679,23 @@ function timState(){
     hours.push({h:h,name:hp.n,sym:hp.s,start:srMin+(h-1)*60,
                 rank:exact?2:inter?1:0, isPos:isPos});
   }
+  var planning=!timIsToday();
+  if(planning){cur=null;}
   var live=cur!=null?Math.floor(cur/60)+1:null;
   var minsLeft=cur!=null?60-(cur%60):null;
-  return{di:di,srMin:srMin,cur:cur,vib:vib,hours:hours,live:live,minsLeft:minsLeft};
+  return{di:di,srMin:srMin,cur:cur,vib:vib,hours:hours,live:live,minsLeft:minsLeft,planning:planning};
 }
 function timVerdict(st){
   var a=timAsset(), cyc=plByNum(st.vib);
   var who=a+' runs on cycle #'+st.vib+(cyc?' ('+cyc.n+', its day is '+cyc.day+')':'');
+  if(st.planning){
+    var n=st.hours.filter(function(x){return x.rank>0;}).length;
+    var d=timDate();
+    return{level:n?'ok':'wait',word:n+' window'+(n===1?'':'s'),
+           line:d.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'short'})+' has '
+             +(n?n+' hour'+(n===1?'':'s')+' that carry '+a+'’s number — they are lit on the ring.'
+                :'no hour that carries '+a+'’s number. Nothing to plan here.')+' '+who+'.'};
+  }
   if(st.live==null||st.live<1||st.live>12)
     return{level:'off',word:'Outside session',
            line:'The trading day runs 12 hours from sunrise. '+who+'.'};
@@ -4734,9 +4791,87 @@ function timAsset(){return _timAsset||_lastAsset||'Gold';}
 function setTimAsset(n){_timAsset=n;renderTiming();}
 var TIM_PICKS=['Gold','Silver','Bitcoin','Ethereum','EURUSD','GBPUSD','Oil','Apple','Tesla','Nvidia'];
 
+/* ══ THE DAY — pick a date, and the whole screen moves to it ══
+   The old build let you choose a day and read that day's key cycle, its
+   aspects and its signs together. The v3 rebuild kept only a weekday
+   dropdown, which changed the hour ranking but left the sky stuck on today —
+   so the aspects and signs never matched the day you had selected. A real
+   date now drives all three: the planetary hours, the ephemeris the aspects
+   are read from, and the zodiac positions. */
+var _timDate=null;                       /* null = live, follow today */
+function timDate(){return _timDate?new Date(_timDate):new Date();}
+function timIsToday(){
+  if(!_timDate)return true;
+  var n=new Date();
+  return _timDate.getFullYear()===n.getFullYear()&&_timDate.getMonth()===n.getMonth()
+      &&_timDate.getDate()===n.getDate();
+}
+/* the aspects and signs come from the SELECTED day, not from the wall clock */
+function timEph(){return timIsToday()?getEph():getEphemeris(timDate());}
+function setTimDate(v){
+  if(!v){_timDate=null;}
+  else{var q=String(v).split('-');
+       if(q.length!==3)return;
+       _timDate=new Date(+q[0],+q[1]-1,+q[2],12,0,0,0);}
+  var x=document.getElementById('xday');
+  if(x){x.value=String(timDate().getDay());try{markTimeTouched();}catch(e){}}
+  try{runAnalyze();}catch(e){}
+  renderTiming();
+}
+function shiftTimDate(k){var d=timDate();d.setDate(d.getDate()+k);setTimDate(ymd(d));}
+function timToday(){setTimDate(null);}
+
+/* the cycle that rules a weekday, and whether it is the asset's own day */
+function timDayCard(st){
+  var d=timDate(), di=d.getDay(), asset=timAsset();
+  var key=PL[DS[di]];
+  var aCyc=plByNum(st.vib);
+  var own=aCyc&&key&&aCyc.n===key.n;
+  var eph=timEph();
+  var sun=signOf(eph.sun.lon), moon=signOf(eph.moon.lon);
+  var live=timIsToday();
+  return '<div class="dk">'
+   +'<div class="dk-top">'
+     +'<div class="dk-nav">'
+       +'<button class="dk-b" onclick="shiftTimDate(-1)" title="Previous day">‹</button>'
+       +'<input type="date" class="dk-in" value="'+ymd(d)+'" onchange="setTimDate(this.value)">'
+       +'<button class="dk-b" onclick="shiftTimDate(1)" title="Next day">›</button>'
+       +'<button class="dk-b wide'+(live?' on':'')+'" onclick="timToday()">Today</button>'
+     +'</div>'
+     +'<div class="dk-when"><b>'+d.toLocaleDateString('en',{weekday:'long'})+'</b>'
+       +'<span>'+d.toLocaleDateString('en',{day:'numeric',month:'long',year:'numeric'})+'</span></div>'
+     +'<div class="dk-times">'
+       +'<label>Sunrise<input type="time" id="tk_rise" value="'+fmtT(st.srMin)+'" onchange="timSync(this,\'xrise\')"></label>'
+       +'<label>Now<input type="time" id="tk_now" value="'+(st.cur!=null?fmtT((st.srMin+st.cur)%1440):'')+'"'
+         +(live?'':' disabled')+' onchange="timSync(this,\'xcur\')"></label>'
+       +'<button class="btn btn-a btn-sm" onclick="runAnalyze();renderTiming()">Refresh</button>'
+     +'</div>'
+   +'</div>'
+   +'<div class="dk-row">'
+     +'<div class="dk-key">'
+       +'<span class="sym">'+(key?key.s:'·')+'</span>'
+       +'<div><i>Key day — the cycle that rules it</i>'
+         +'<b>'+escHtml(key?key.n:'—')+'</b>'
+         +'<span>'+escHtml(key?key.qual:'')+'</span></div>'
+     +'</div>'
+     +'<div class="dk-match '+(own?'ok':'no')+'">'
+       +(own?'<b>'+escHtml(asset)+'’s own day</b><span>'+escHtml(asset)+' runs on #'+st.vib+' '+escHtml(aCyc?aCyc.n:'')+' — the strongest day of its week.</span>'
+            :'<b>Not '+escHtml(asset)+'’s day</b><span>'+escHtml(asset)+' runs on #'+st.vib+(aCyc?' '+escHtml(aCyc.n)+', its day is '+aCyc.day:'')+'. Today belongs to '+escHtml(key?key.n:'—')+'.</span>')
+     +'</div>'
+     +'<div class="dk-sky">'
+       +'<i>Sky on this day</i>'
+       +'<div class="dk-sk"><span>'+EPH_SYM.sun+'</span>'+escHtml(dz(sun.sign))+' '+sun.deg.toFixed(1)+'°</div>'
+       +'<div class="dk-sk"><span>'+EPH_SYM.moon+'</span>'+escHtml(dz(moon.sign))+' '+moon.deg.toFixed(1)+'°</div>'
+     +'</div>'
+   +'</div>'
+   +(live?'':'<div class="dk-plan">Planning mode — showing '+d.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'short'})
+       +'. The hour ring, aspects and signs below are all for that date, not for right now. Press Today to go back live.</div>')
+  +'</div>';
+}
 function timExtras(){
-  var eph;try{eph=getEph();}catch(e){return '';}
+  var eph;try{eph=timEph();}catch(e){return '';}
   var asset=timAsset();
+  var dref=timDate(), dlabel=timIsToday()?'today':dref.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'short'});
   var all=liveAspects(eph).map(function(x){
     var r=aspectRead(x,asset,eph);
     return{x:x,r:r};
@@ -4767,7 +4902,7 @@ function timExtras(){
   var now=new Date(), epoch=new Date(2026,0,1);
   var pos=(Math.floor((now-epoch)/86400000)%9)+1, left=9-pos;
   var planets=EPH_ORDER.map(function(b){
-    var si=signOf(eph[b].lon), rate=lonRate(b,new Date());
+    var si=signOf(eph[b].lon), rate=lonRate(b,dref);
     var map=aspectsFor(getAstroKey(asset)), role=bodyRole(map,b,eph);
     return{k:b,sym:EPH_SYM[b],name:PLANET_NAME[b]||b,cyc:BODY_LABEL[b]||b,
            zone:dz(si.sign),deg:si.deg,retro:(b!=='sun'&&b!=='moon'&&rate<0),role:role};
@@ -4775,7 +4910,7 @@ function timExtras(){
 
   return ''
    +'<div class="ax-box">'
-     +'<div class="ax-head"><b>Live aspects — '+escHtml(asset)+'</b>'
+     +'<div class="ax-head"><b>Aspects '+escHtml(dlabel)+' — '+escHtml(asset)+'</b>'
        +'<span style="color:'+verdict.c+'">'+escHtml(verdict.t)+'</span></div>'
      +(rel.length?rel.map(function(o){return row(o,false);}).join('')
                  :'<div class="ab-none">No tight aspect is touching '+escHtml(asset)+'’s planets right now — the sky is quiet for it.</div>')
@@ -4799,7 +4934,7 @@ function timExtras(){
        +'<div class="ax-note">The 12 hours below are ranked <b>for '+escHtml(asset)+' only</b>. Each asset carries its own cycle number, so a green hour for Gold can be a dead hour for Bitcoin. Switch the asset above and the whole clock re-ranks.</div>'
      +'</div>'
    +'</div>'
-   +'<div class="tx-pl"><div class="ab-cap">Cycle positions — '+escHtml(asset)+'</div><div class="tx-pg">'
+   +'<div class="tx-pl"><div class="ab-cap">Cycle positions '+escHtml(dlabel)+' — '+escHtml(asset)+'</div><div class="tx-pg">'
      +planets.map(function(x,i){
         var mark=x.role.slot===1?' p1':x.role.slot===2?' p2':x.role.slot===3?' p3':'';
         var lean=x.role.slot?(x.role.sign>0?' good':x.role.sign<0?' bad':''):'';
@@ -4871,15 +5006,7 @@ function renderTiming(){
           +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
       }).join('')
    +'</div>'
-   +'<div class="tk-set">'
-     +'<label>Day<select id="tk_day" onchange="timSync(this,\'xday\')">'
-       +['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].map(function(d,i){
-          return '<option value="'+i+'"'+(i===st.di?' selected':'')+'>'+d+'</option>';}).join('')
-     +'</select></label>'
-     +'<label>Sunrise<input type="time" id="tk_rise" value="'+fmtT(st.srMin)+'" onchange="timSync(this,\'xrise\')"></label>'
-     +'<label>Now<input type="time" id="tk_now" value="'+(st.cur!=null?fmtT((st.srMin+st.cur)%1440):'')+'" onchange="timSync(this,\'xcur\')"></label>'
-     +'<button class="btn btn-a btn-sm" onclick="runAnalyze();renderTiming()">Refresh</button>'
-   +'</div>'
+   +timDayCard(st)
    +timExtras()
    +'<details class="sec"><summary><b>Reference tools</b><span>full toolkit · calendars</span></summary>'
      +'<div class="tk-tools">'
