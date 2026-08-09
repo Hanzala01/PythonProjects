@@ -1050,6 +1050,61 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hero-row,.chart-shell,.row2,.row3{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.tick-grid{grid-template-columns:repeat(2,1fr)}
 .chart-shell>.card:first-child,.row2>.card:last-child{grid-column:auto}}
 .verdict-note{font-size:11px;color:var(--soft);border-top:1px solid var(--rim);padding-top:9px}
+/* ══ EXECUTION BOT ══ */
+.bot-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.bot-state{display:flex;align-items:center;gap:10px}
+.bot-state b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--mid)}
+.bot-state i{font-style:normal;font-size:9.5px;letter-spacing:.1em;color:var(--muted)}
+.bot-state.on b{color:var(--green)}
+.bot-led{width:11px;height:11px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.bot-state.on .bot-led{background:var(--green);box-shadow:0 0 12px var(--green);animation:livePulse 1.6s ease-in-out infinite}
+.bot-modes{display:flex;gap:6px;margin-bottom:9px}
+.bot-mode{flex:1;padding:7px 0;border-radius:10px;font-size:10px;font-weight:800;letter-spacing:.08em;
+  border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--mid);cursor:pointer;transition:.2s var(--ease)}
+.bot-mode:hover{color:var(--tw);border-color:rgba(157,77,255,.35)}
+.bot-mode.on{background:rgba(139,92,246,.18);border-color:rgba(157,77,255,.5);color:#c9b6ff}
+.bot-mode.live.on{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.5);color:#ffb4b4}
+.bot-note{font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.bot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.bot-grid label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.bot-grid input{width:100%;margin-top:4px;padding:7px 9px;font-size:12px}
+.bot-target{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.bt-h{display:flex;justify-content:space-between;align-items:baseline;font-size:10px;color:var(--muted)}
+.bt-h b{font-family:'Space Grotesk';font-size:16px}
+.bt-track{height:6px;border-radius:99px;background:var(--s4);overflow:hidden;margin:7px 0 6px}
+.bt-track i{display:block;height:100%;width:0;border-radius:99px;transition:width .9s var(--ease)}
+.bt-f{font-size:9.5px;color:var(--muted)}
+.bot-msg{font-size:10.5px;color:var(--mid);border-top:1px solid var(--rim);padding-top:9px;min-height:30px}
+.bot-msg.good{color:var(--green)}.bot-msg.warn{color:var(--amber)}.bot-msg.bad{color:var(--red)}
+/* ══ JOURNAL ANALYTICS ══ */
+.jz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.jz-card{background:linear-gradient(165deg,rgba(139,92,246,.06),rgba(9,9,18,.72));
+  border:1px solid var(--bd);border-radius:14px;padding:12px 13px;animation:wblkIn .5s var(--ease) backwards}
+.jz-card:nth-child(2){animation-delay:.05s}.jz-card:nth-child(3){animation-delay:.1s}
+.jz-card:nth-child(4){animation-delay:.15s}.jz-card:nth-child(5){animation-delay:.2s}
+.jz-card:nth-child(6){animation-delay:.25s}
+.jz-h{font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.jz-empty{font-size:10.5px;color:var(--mid);font-style:italic;padding:14px 2px}
+.jz-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;
+  font-size:10px;color:var(--muted);border-top:1px solid var(--rim);padding-top:7px}
+.jz-foot b{font-family:'Space Grotesk';font-size:13px}
+.jz-draw{stroke-dasharray:1400;stroke-dashoffset:1400;animation:drawLine 1.4s var(--ease) forwards}
+@keyframes drawLine{to{stroke-dashoffset:0}}
+.jz-bars{display:flex;align-items:flex-end;gap:5px;height:92px}
+.jz-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.jz-bar i{position:relative;display:block;width:100%;height:0;border-radius:5px 5px 0 0;
+  transition:height .8s var(--ease)}
+.jz-bar i em{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-style:normal;
+  font-size:9px;color:var(--soft)}
+.jz-bar span{font-size:8px;color:var(--muted);margin-top:5px;white-space:nowrap}
+.jz-cut{display:flex;flex-direction:column;gap:6px}
+.jz-crow{display:grid;grid-template-columns:1fr auto 64px 52px;gap:8px;align-items:center;font-size:10.5px}
+.jz-crow .k{color:var(--soft);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jz-crow .n{color:var(--muted);font-size:9.5px}
+.jz-crow .track{height:6px;border-radius:99px;background:var(--s4);overflow:hidden}
+.jz-crow .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .8s var(--ease)}
+.jz-crow b{text-align:right;font-family:'Space Grotesk';font-size:11.5px}
+@media(prefers-reduced-motion:reduce){.jz-card,.jz-draw{animation:none!important}}
 /* ══ TIMING — animated cycle hero ══ */
 .cyc-hero{position:relative;overflow:hidden;border-radius:22px;padding:22px;margin-bottom:14px;
   display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;
@@ -1910,7 +1965,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 <div style="display:none" aria-hidden="true">
   <input id="bot_sound" value="0"><select id="bot_auto_scalp"><option value="0">0</option></select>
   <span id="bi_scalp"></span><span id="bs_scalp"></span><span id="bot_last"></span><span id="bot_sigs"></span>
-  <span id="bot_status_badge"></span><div id="sig_log_body"></div>
+  <span id="bot_status_badge"></span>
   <span id="pol_p"></span><span id="pol_n"></span>
   <span id="sb_sym"></span><span id="sb_pname"></span><span id="sb_pnums"></span><span id="sb_pqual"></span>
   <span id="sb_ends"></span><div id="sb_prog"></div><span id="sb_h"></span><span id="sb_p"></span>
@@ -2260,6 +2315,13 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
               <tbody id="jtbl"><tr><td colspan="10" style="padding:24px;text-align:center;color:var(--muted);font-size:12px;font-style:italic">No trades yet. Add your first trade above.</td></tr></tbody>
             </table>
           </div>
+        </div>
+
+        <div class="g2">
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Execution Bot</div><div class="cs">paper · demo · live via bridge</div></div>
+            <div class="cb" id="bot_panel"></div></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Bot Activity</div><div class="cs">signals the bot evaluated</div></div>
+            <div class="cb" id="sig_log_body"><div class="f10 dim italic">No signals evaluated yet</div></div></div>
         </div>
 
         <div id="pnl_charts"></div>
@@ -3524,6 +3586,231 @@ function renderHourRail(){
     ? 'Now: <b style="color:var(--acc2)">'+td.pp.n+'</b> period · H'+td.hn+' P'+td.pn+' · '+td.pl+' min left · active #'+td.an.join(', ')
     : 'Set sunrise and current time to read the active period';
 }
+/* ══════════════════════════════════════
+   EXECUTION BOT
+   Three modes. Paper is the default and never leaves the browser. Demo and
+   Live both post to the local bridge (celestial_bridge.py) — a browser cannot
+   hold broker credentials safely, so the bridge is the only route, and Live is
+   never entered without an explicit confirmation.
+
+   The monthly target is a budget the bot sizes toward, NOT a promise. Nothing
+   here can guarantee a return; the panel reports progress honestly, including
+   when it is behind, and stops trading once the daily loss cap is hit.
+══════════════════════════════════════ */
+var BOT={
+  on:false, mode:'paper',
+  riskPct:0.5,          /* per trade, % of balance */
+  dailyStopPct:2,       /* stop trading for the day after this loss */
+  targetPct:10,         /* monthly aim — midpoint of the 8-12% band */
+  minConf:68,
+  takenToday:0, dayKey:'', dayPnL:0, halted:false
+};
+function botKey(){return 'ca_bot_cfg';}
+function botLoad(){try{var d=JSON.parse(localStorage.getItem(botKey())||'{}');Object.keys(d).forEach(function(k){if(k in BOT)BOT[k]=d[k];});}catch(e){}}
+function botSave(){try{localStorage.setItem(botKey(),JSON.stringify({on:BOT.on,mode:BOT.mode,riskPct:BOT.riskPct,dailyStopPct:BOT.dailyStopPct,targetPct:BOT.targetPct,minConf:BOT.minConf}));}catch(e){}}
+function botBalance(){
+  var cur=parseFloat((document.getElementById('port_cur')||{}).value);
+  var st=parseFloat((document.getElementById('port_start')||{}).value)||0;
+  return (!isNaN(cur)&&cur>0)?cur:st;
+}
+function botMonthStats(){
+  var now=new Date(), pre=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-';
+  var mo=JRNL.filter(function(j){return typeof j.d==='string'&&j.d.indexOf(pre)===0&&j.r!=='open';});
+  var pnl=mo.reduce(function(a,j){return a+(j.pnl||0);},0);
+  var bal=botBalance();
+  var startBal=parseFloat((document.getElementById('port_start')||{}).value)||bal||0;
+  return{n:mo.length,pnl:pnl,pct:startBal>0?pnl/startBal*100:0,target:BOT.targetPct,bal:bal};
+}
+function botDayRoll(){
+  var k=ymd(new Date());
+  if(BOT.dayKey!==k){BOT.dayKey=k;BOT.takenToday=0;BOT.dayPnL=0;BOT.halted=false;}
+}
+/* post an order to the local bridge; paper mode short-circuits */
+function botSend(order,cb){
+  if(BOT.mode==='paper'){cb({ok:true,paper:true});return;}
+  fetch(bridgeURL()+'/order',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(Object.assign({mode:BOT.mode,pin:localStorage.getItem('ca_pin')||''},order))})
+    .then(function(r){return r.json();}).then(function(d){cb(d&&!d.error?{ok:true,id:d.id}:{ok:false,err:(d&&d.error)||'rejected'});})
+    .catch(function(){cb({ok:false,err:'bridge offline — start celestial_bridge.py'});});
+}
+/* called after every analysis; decides whether this signal is actionable */
+function botConsider(sig,assetName,trend){
+  if(!BOT.on||!sig||!sig.style)return;
+  botDayRoll();
+  var bal=botBalance();
+  if(bal<=0){botStatus('Set an account balance before the bot can size a trade','warn');return;}
+  if(BOT.halted){botStatus('Daily loss cap reached — trading paused until tomorrow','warn');return;}
+  if(sig.conf<BOT.minConf){return;}
+  /* the bot only takes with-trend swings; counter-trend is intraday/scalp only */
+  if(sig.counter&&sig.style==='Swing'){botStatus('Skipped — counter-trend swing','warn');return;}
+  var riskAmt=+(bal*BOT.riskPct/100).toFixed(2);
+  var slDist=Math.abs(sig.entry-sig.sl);
+  if(!(slDist>0)){botStatus('Skipped — no valid stop distance','warn');return;}
+  var lots=+(riskAmt/(slDist*100)).toFixed(4);
+  var order={symbol:assetName,side:sig.isBull?'buy':'sell',entry:sig.entry,sl:sig.sl,tp:sig.tp,
+             lots:lots,risk:riskAmt,style:sig.style,conf:sig.conf};
+  botSend(order,function(res){
+    if(!res.ok){botStatus('Order rejected — '+res.err,'bad');return;}
+    JRNL.unshift({d:ymd(new Date()),a:assetName,t:sig.style.toLowerCase(),dir:sig.isBull?'buy':'sell',
+      en:sig.entry,ex:sig.entry,lots:lots,move:'0.00%',pnl:0,r:'open',tp:sig.tp,sl:sig.sl,
+      riskAmt:riskAmt,rr:sig.rr,session:'Bot',bot:BOT.mode});
+    BOT.takenToday++;
+    renderJ();renderPnlCalendar();updatePortStats();renderBot();
+    botStatus((BOT.mode==='paper'?'Paper':BOT.mode==='demo'?'Demo':'LIVE')+' order placed — '
+      +assetName+' '+(sig.isBull?'BUY':'SELL')+' '+lots+' lots, risk $'+riskAmt,'good');
+    notify('Bot: '+assetName+' '+(sig.isBull?'BUY':'SELL')+' @ '+sig.entry+' ('+BOT.mode+')', sig.isBull?'bull':'bear');
+  });
+}
+function botStatus(msg,kind){
+  var el=document.getElementById('bot_msg');
+  if(!el)return;
+  el.className='bot-msg '+(kind||'');
+  el.textContent=msg;
+}
+function botToggle(){
+  if(!BOT.on&&BOT.mode==='live'){
+    if(!confirm('LIVE mode places real orders through your bridge.\n\nNo engine can guarantee a return, and losses are real.\n\nStart live trading?'))return;
+  }
+  BOT.on=!BOT.on;botSave();renderBot();
+  botStatus(BOT.on?('Bot armed in '+BOT.mode.toUpperCase()+' mode — waiting for a qualifying signal'):'Bot stopped',BOT.on?'good':'');
+}
+function botSetMode(m){
+  BOT.mode=m;
+  if(m==='live'&&BOT.on){BOT.on=false;botStatus('Switched to LIVE — press Start to arm it','warn');}
+  botSave();renderBot();
+}
+function botSetNum(k,v){var n=parseFloat(v);if(isFinite(n)&&n>=0){BOT[k]=n;botSave();renderBot();}}
+function renderBot(){
+  var el=document.getElementById('bot_panel');
+  if(!el)return;
+  botDayRoll();
+  var m=botMonthStats();
+  var prog=m.target>0?Math.max(-100,Math.min(100,m.pct/m.target*100)):0;
+  var onTrack=m.pct>=0;
+  el.innerHTML=
+    '<div class="bot-top">'
+      +'<div class="bot-state '+(BOT.on?'on':'')+'"><span class="bot-led"></span>'
+        +'<div><b>'+(BOT.on?'ARMED':'STOPPED')+'</b><i>'+BOT.mode.toUpperCase()+' mode</i></div></div>'
+      +'<button class="btn '+(BOT.on?'btn-g':'btn-a')+' btn-sm" onclick="botToggle()">'+(BOT.on?'Stop':'Start')+'</button>'
+    +'</div>'
+    +'<div class="bot-modes">'+['paper','demo','live'].map(function(x){
+        return '<button class="bot-mode'+(BOT.mode===x?' on':'')+(x==='live'?' live':'')+'" onclick="botSetMode(\''+x+'\')">'+x.toUpperCase()+'</button>';
+      }).join('')+'</div>'
+    +'<div class="bot-note">'+(BOT.mode==='paper'
+        ? 'Paper mode logs to your journal only — nothing leaves the browser.'
+        : 'Orders post to your local bridge at '+escHtml(bridgeURL())+'. Start celestial_bridge.py first; a browser cannot hold broker credentials safely.')
+      +'</div>'
+    +'<div class="bot-grid">'
+      +'<label>Risk / trade %<input type="number" step="0.1" value="'+BOT.riskPct+'" onchange="botSetNum(\'riskPct\',this.value)"></label>'
+      +'<label>Daily stop %<input type="number" step="0.5" value="'+BOT.dailyStopPct+'" onchange="botSetNum(\'dailyStopPct\',this.value)"></label>'
+      +'<label>Monthly aim %<input type="number" step="1" value="'+BOT.targetPct+'" onchange="botSetNum(\'targetPct\',this.value)"></label>'
+      +'<label>Min confidence<input type="number" step="1" value="'+BOT.minConf+'" onchange="botSetNum(\'minConf\',this.value)"></label>'
+    +'</div>'
+    +'<div class="bot-target">'
+      +'<div class="bt-h"><span>Month to date</span><b class="'+(onTrack?'cg':'cr')+'">'+(m.pct>=0?'+':'')+m.pct.toFixed(2)+'%</b></div>'
+      +'<div class="bt-track"><i style="--w:'+Math.abs(prog).toFixed(0)+'%;background:'+(onTrack?'var(--green)':'var(--red)')+'"></i></div>'
+      +'<div class="bt-f">'+m.n+' closed this month · aim '+m.target+'% · '
+        +(m.pct>=m.target?'target met':'this is an aim, not a guarantee')+'</div>'
+    +'</div>'
+    +'<div class="bot-msg" id="bot_msg">'+(BOT.on?'Waiting for a qualifying signal':'Bot is stopped')+'</div>';
+  el.querySelectorAll('.bt-track i').forEach(function(i){
+    i.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){i.style.width=i.style.getPropertyValue('--w');});});
+  });
+}
+/* ══════════════════════════════════════
+   JOURNAL ANALYTICS — drawdown, R-multiples, and cuts by session/setup/day.
+   All derived from closed trades only; each panel says so when it has too
+   little to be meaningful rather than drawing a misleading chart.
+══════════════════════════════════════ */
+function rMultiple(j){
+  /* R = realised P&L divided by what was risked on the trade */
+  if(j.riskAmt>0)return j.pnl/j.riskAmt;
+  if(j.en&&j.sl){var risk=Math.abs(j.en-j.sl)*(j.lots||0.01)*100;if(risk>0)return j.pnl/risk;}
+  return null;
+}
+function svgWrap(w,h,inner,cls){
+  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" class="'+(cls||'')+'" '
+    +'style="width:100%;height:'+h+'px;display:block">'+inner+'</svg>';
+}
+function drawDrawdown(closed,start){
+  if(closed.length<2)return '<div class="jz-empty">Needs at least two closed trades</div>';
+  var eq=start||0,peak=eq,pts=[],dd=[];
+  closed.slice().reverse().forEach(function(j){eq+=(j.pnl||0);peak=Math.max(peak,eq);
+    pts.push(eq);dd.push(peak>0?((eq-peak)/peak*100):0);});
+  var w=560,h=90,mn=Math.min.apply(null,dd),mx=0;
+  if(mn===0)mn=-1;
+  var X=function(i){return dd.length>1?i/(dd.length-1)*w:0;};
+  var Y=function(v){return 4+(1-(v-mn)/(mx-mn||1))*(h-8);};
+  var path=dd.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+','+Y(v).toFixed(1);}).join(' ');
+  var area=path+' L'+w+','+Y(0).toFixed(1)+' L0,'+Y(0).toFixed(1)+' Z';
+  var worst=mn.toFixed(1);
+  return svgWrap(w,h,
+      '<path d="'+area+'" fill="rgba(239,68,68,.16)"/>'
+     +'<path d="'+path+'" fill="none" stroke="#EF4444" stroke-width="1.6" class="jz-draw"/>')
+   +'<div class="jz-foot"><span>Max drawdown</span><b class="cr">'+worst+'%</b></div>';
+}
+function drawRHist(closed){
+  var rs=closed.map(rMultiple).filter(function(v){return v!=null&&isFinite(v);});
+  if(rs.length<3)return '<div class="jz-empty">Needs at least three trades with a defined risk</div>';
+  var buckets=[{l:'≤-2R',min:-1e9,max:-2},{l:'-2..-1',min:-2,max:-1},{l:'-1..0',min:-1,max:0},
+               {l:'0..1',min:0,max:1},{l:'1..2',min:1,max:2},{l:'2..3',min:2,max:3},{l:'3R+',min:3,max:1e9}];
+  var counts=buckets.map(function(b){return rs.filter(function(v){return v>b.min&&v<=b.max;}).length;});
+  var mxc=Math.max.apply(null,counts)||1;
+  var avg=rs.reduce(function(a,b){return a+b;},0)/rs.length;
+  var html='<div class="jz-bars">'+buckets.map(function(b,i){
+    var neg=b.max<=0;
+    return '<div class="jz-bar"><i style="--h:'+(counts[i]/mxc*100).toFixed(0)+'%;background:'
+      +(neg?'var(--red)':'var(--green)')+'"><em>'+counts[i]+'</em></i><span>'+b.l+'</span></div>';
+  }).join('')+'</div>';
+  return html+'<div class="jz-foot"><span>Average R</span><b class="'+(avg>=0?'cg':'cr')+'">'
+    +(avg>=0?'+':'')+avg.toFixed(2)+'R</b></div>';
+}
+function cutTable(closed,keyFn,label){
+  var g={};
+  closed.forEach(function(j){
+    var k=keyFn(j)||'—';
+    if(!g[k])g[k]={n:0,w:0,pnl:0};
+    g[k].n++;g[k].pnl+=(j.pnl||0);if(j.r==='win')g[k].w++;
+  });
+  var keys=Object.keys(g);
+  if(!keys.length)return '<div class="jz-empty">No closed trades yet</div>';
+  keys.sort(function(a,b){return g[b].pnl-g[a].pnl;});
+  var mx=Math.max.apply(null,keys.map(function(k){return Math.abs(g[k].pnl);}))||1;
+  return '<div class="jz-cut">'+keys.slice(0,6).map(function(k){
+    var o=g[k],wr=o.n?Math.round(o.w/o.n*100):0,pos=o.pnl>=0;
+    return '<div class="jz-crow"><span class="k">'+escHtml(k)+'</span>'
+      +'<span class="n">'+o.w+'/'+o.n+' · '+wr+'%</span>'
+      +'<span class="track"><i style="--w:'+(Math.abs(o.pnl)/mx*100).toFixed(0)+'%;background:'
+        +(pos?'var(--green)':'var(--red)')+'"></i></span>'
+      +'<b class="'+(pos?'cg':'cr')+'">'+(pos?'+':'')+o.pnl.toFixed(0)+'</b></div>';
+  }).join('')+'</div>';
+}
+function renderJournalCharts(){
+  var host=document.getElementById('pnl_charts');
+  if(!host)return;
+  var closed=JRNL.filter(function(j){return j.r!=='open';});
+  var start=parseFloat((document.getElementById('port_start')||{}).value)||0;
+  if(!closed.length){
+    host.innerHTML='<div class="jz-grid"><div class="jz-card"><div class="jz-h">Journal Analytics</div>'
+      +'<div class="jz-empty">Close a few trades and the drawdown curve, R-multiple spread and your best sessions appear here.</div></div></div>';
+    return;
+  }
+  var dow=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  host.innerHTML='<div class="jz-grid">'
+   +'<div class="jz-card"><div class="jz-h">Drawdown from peak</div>'+drawDrawdown(closed,start)+'</div>'
+   +'<div class="jz-card"><div class="jz-h">R-multiple spread</div>'+drawRHist(closed)+'</div>'
+   +'<div class="jz-card"><div class="jz-h">By session</div>'+cutTable(closed,function(j){return j.session;})+'</div>'
+   +'<div class="jz-card"><div class="jz-h">By setup</div>'+cutTable(closed,function(j){return j.t;})+'</div>'
+   +'<div class="jz-card"><div class="jz-h">By weekday</div>'
+     +cutTable(closed,function(j){var d=j.d&&j.d.length>=10?new Date(j.d+'T00:00:00'):null;return d?dow[d.getDay()]:null;})+'</div>'
+   +'<div class="jz-card"><div class="jz-h">By asset</div>'+cutTable(closed,function(j){return j.a;})+'</div>'
+   +'</div>';
+  host.querySelectorAll('.jz-bar i,.jz-crow .track i').forEach(function(el){
+    var t=el.style.getPropertyValue('--h')||el.style.getPropertyValue('--w');
+    if(el.closest('.jz-bar')){el.style.height='0';requestAnimationFrame(function(){requestAnimationFrame(function(){el.style.height=t;});});}
+    else{el.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){el.style.width=t;});});}
+  });
+}
 /* ══ MAJOR TREND banner — the regime every trade view is anchored to ══ */
 function rndTrend(t,price){
   var el=document.getElementById('trend_band');
@@ -3979,6 +4266,7 @@ function runAI(){
     var priceBias=calcPriceBias(price,HIST_ROWS,sess,window._engineVotes);
     var combined=calcCombinedBias(astro,priceBias,price,HIST_ROWS);
     window._lastBias={time:astro,price:priceBias,combined:combined};
+    try{ botConsider(sig,assetName,trend); }catch(e){ console.error("bot:",e); }
     rndTrend(trend,price);
     rndBiasStack(astro,priceBias,combined,assetName);
     setTimeout(function(){rollNumbers();},60);
@@ -4367,6 +4655,8 @@ function updatePortStats(){
   drawEquityCurve();
   /* keep the weekly/monthly report in step with every journal change */
   try{renderReports();}catch(e){console.error('renderReports:',e);}
+  try{renderJournalCharts();}catch(e){console.error('journal charts:',e);}
+  try{renderBot();}catch(e){console.error('bot panel:',e);}
 }
 
 /* P&L CALENDAR HEATMAP */
@@ -6636,7 +6926,7 @@ setInterval(tick,1000);
 unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
 setTimeout(loadTickers,800);
-try{initMotion();startQuotes();startSideRotator();}catch(e){console.error("motion init:",e);}
+try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
 /* refresh live tickers every 60s (Finnhub free = 60 calls/min) */
 setInterval(loadTickers,60000);
 /* nav active */
