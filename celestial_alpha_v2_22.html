@@ -1013,6 +1013,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .mx-item .k{font-size:8.5px;color:var(--tm);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
 .mx-item .s{font-size:9.5px;font-weight:700;margin-top:7px}
 .cyc-meta{font-size:10.5px;color:var(--ts);line-height:2}
+.ces{display:flex;flex-direction:column;gap:12px}
+.ces-top{display:flex;align-items:center;gap:14px}
+.ces-name{min-width:0}
+.ces-name b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:700;color:var(--tw);line-height:1.25}
+.ces-name span{display:inline-block;margin-top:5px;font-size:9px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--rim);color:var(--ts)}
+.ces-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ces-grid>div{padding:8px 10px;border-radius:11px;border:1px solid var(--rim);background:rgba(255,255,255,.02);min-width:0}
+.ces-grid .wide{grid-column:1/-1}
+.ces-grid i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--tm);margin-bottom:3px}
+.ces-grid b{font-family:'Space Grotesk';font-size:13px;font-weight:700;color:var(--tw);
+  display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cyc-meta b{color:var(--tw)}
 .cyc-meta .gr{color:var(--green);font-weight:700}
 /* row3 */
@@ -1336,6 +1349,70 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .tk-seg,.tk-nrow,.tk-slot,.ab-read,.ab-lv{animation:none!important}
   .tk-slot:hover,.tk-slot.live{transform:none}
 }
+/* ══ TIMING — asset picker + aspect reader ══ */
+.tk-asset{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:11px 14px;margin-bottom:12px;
+  border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.tk-asset .lb{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-right:5px}
+.tk-anum{margin-left:auto;font-family:'Space Grotesk';font-size:11.5px;font-weight:700;color:var(--acc2);
+  padding-left:10px;white-space:nowrap}
+.ax-box{padding:14px 16px;border-radius:18px;border:1px solid var(--bd);margin-bottom:12px;
+  background:linear-gradient(160deg,rgba(139,92,246,.06),rgba(9,9,18,.55))}
+.ax-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.ax-head b{font-size:12.5px;color:var(--tw)}
+.ax-head span{font-size:11px;font-weight:700}
+.ax-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;
+  padding:11px 12px;border-radius:13px;border:1px solid var(--rim);margin-bottom:7px;
+  background:rgba(255,255,255,.02);animation:rowIn .45s var(--ease) backwards;position:relative;overflow:hidden}
+.ax-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--mid)}
+.ax-row.bull::before{background:var(--green)}
+.ax-row.bear::before{background:var(--red)}
+.ax-row.dim{opacity:.62}
+.ax-glyph{display:flex;align-items:center;gap:5px;font-size:15px;color:var(--acc2);
+  padding:6px 9px;border-radius:10px;background:rgba(139,92,246,.10);white-space:nowrap}
+.ax-glyph b{font-size:14px;color:var(--tw)}
+.ax-mid{min-width:0}
+.ax-h{font-size:13px;font-weight:700;color:var(--tw)}
+.ax-h em{font-style:normal;font-weight:600;font-size:11px;color:var(--acc2);margin-left:6px}
+.ax-c{font-size:9.5px;color:var(--muted);margin:2px 0 5px}
+.ax-w{font-size:11px;color:var(--soft);line-height:1.55}
+.ax-tag{font-size:8.5px;font-weight:800;letter-spacing:.09em;padding:4px 9px;border-radius:99px;
+  border:1px solid var(--rim);color:var(--mid);white-space:nowrap;align-self:center}
+.ax-row.bull .ax-tag{color:var(--green);border-color:rgba(34,197,94,.42)}
+.ax-row.bear .ax-tag{color:var(--red);border-color:rgba(239,68,68,.42)}
+.ax-more{margin-top:4px}
+.ax-more>summary{list-style:none;cursor:pointer;font-size:10.5px;color:var(--muted);
+  padding:8px 2px;transition:color .2s var(--ease)}
+.ax-more>summary::-webkit-details-marker{display:none}
+.ax-more>summary:hover{color:var(--tw)}
+.ax-key{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:11px;
+  padding-top:11px;border-top:1px solid var(--rim)}
+.ax-k{padding:9px 10px;border-radius:11px;border:1px solid var(--rim);background:rgba(255,255,255,.015)}
+.ax-k b{display:block;font-size:10.5px;margin-bottom:3px;color:var(--mid)}
+.ax-k.bull b{color:var(--green)} .ax-k.bear b{color:var(--red)} .ax-k.flat b{color:var(--amber)}
+.ax-k span{font-size:9.5px;color:var(--muted);line-height:1.5}
+.ax-note{font-size:11px;color:var(--soft);line-height:1.6;margin-top:7px}
+.ax-note b{color:var(--tw)}
+.tx-p .pn{display:block;font-size:9px;color:var(--tw);font-weight:600;margin-top:2px}
+.tx-p.p1{border-color:rgba(157,77,255,.6);box-shadow:0 0 0 1px rgba(157,77,255,.25) inset}
+.tx-p.p2{border-color:rgba(157,77,255,.34)}
+.tx-p.p3{border-color:rgba(157,77,255,.2)}
+.tx-p.good{background:rgba(34,197,94,.07)}
+.tx-p.bad{background:rgba(239,68,68,.07)}
+.ax-legend{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;
+  font-size:9.5px;color:var(--muted)}
+.ax-legend .k{width:11px;height:11px;border-radius:4px;border:1px solid var(--rim);
+  background:rgba(255,255,255,.02);margin-left:9px}
+.ax-legend .k:first-child{margin-left:0}
+.ax-legend .k.p1{border-color:rgba(157,77,255,.6)}
+.ax-legend .k.p2{border-color:rgba(157,77,255,.34)}
+.ax-legend .k.p3{border-color:rgba(157,77,255,.2)}
+.ax-legend .k.good{background:rgba(34,197,94,.18)}
+.ax-legend .k.bad{background:rgba(239,68,68,.18)}
+@media(max-width:1100px){.ax-key{grid-template-columns:repeat(2,1fr)}
+  .ax-row{grid-template-columns:auto 1fr}.ax-tag{grid-column:2;justify-self:start}}
+@media(prefers-reduced-motion:reduce){.ax-row{animation:none!important}}
+
 /* ══════════ SENTIMENT v3 — RISK RADAR ══════════
    The pane answers one question before anything else: is it safe to be in a
    trade right now, or is a release about to move price for reasons no chart
@@ -1951,17 +2028,18 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
     </div>
 
     <div class="card">
-      <div class="chd">Trade Setup</div>
+      <div class="chd">Trade Setup <span id="v_ts_asset" style="font-family:'Space Grotesk';font-size:11px;font-weight:700;color:var(--acc2);margin-left:8px">— run an analysis</span></div>
       <div class="cbd">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <div>
             <div style="font-size:10px;color:var(--tm);font-weight:600">Cycle Alignment</div>
-            <div style="font-size:10px;color:var(--tm);font-weight:600;margin-top:14px">Bias</div>
+            <div id="v_cyc_lbl" style="font-size:11px;font-weight:700;color:var(--ts)">—</div>
+            <div style="font-size:10px;color:var(--tm);font-weight:600;margin-top:10px">Bias</div>
             <div id="v_bias" style="font-family:'Space Grotesk';font-size:17px;font-weight:700;color:var(--ts)">—</div>
           </div>
           <div class="ring-wrap">
             <svg width="86" height="86"><circle cx="43" cy="43" r="35" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="7"/>
-            <circle class="ring" data-p="87" cx="43" cy="43" r="35" fill="none" stroke="url(#rg1)" stroke-width="7" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220"/>
+            <circle class="ring" id="v_ring_cyc" data-p="0" cx="43" cy="43" r="35" fill="none" stroke="url(#rg1)" stroke-width="7" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220"/>
             <defs><linearGradient id="rg1"><stop offset="0" stop-color="#7C3AED"/><stop offset="1" stop-color="#9D4DFF"/></linearGradient></defs></svg>
             <div class="ring-txt" id="v_cyc_t" style="font-size:17px">0%</div>
           </div>
@@ -1975,7 +2053,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
           <div class="ts-row"><span class="k" style="color:var(--green)">Take Profit</span><span class="v" style="font-size:11px;text-align:right;line-height:1.9"><span id="v_tps">—</span></span></div>
           <div class="ts-row"><span class="k">Risk to Reward</span><span class="v" id="v_rr" style="color:#c9b6ff">—</span></div>
         </div>
-        <button class="cta">View Full Analysis</button>
+        <button class="cta" onclick="goTab('analytics',document.querySelector('.nav-item[onclick*=&quot;analytics&quot;]'))">View Full Analysis</button>
       </div>
     </div>
 
@@ -1993,14 +2071,14 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
             <div class="orb-center"></div>
           </div>
           <div class="mp-grid">
-            <div class="mp-cell"><div class="k">Market Strength</div><div class="v">Strong</div></div>
+            <div class="mp-cell"><div class="k">Market Strength</div><div class="v" id="v_mstr" style="color:var(--ts)">—</div></div>
             <div class="mp-cell"><div class="k">Momentum</div><div class="v" id="v_momo" style="color:var(--ts)">—</div></div>
-            <div class="mp-cell"><div class="k">Volatility</div><div class="v">Moderate</div></div>
+            <div class="mp-cell"><div class="k">Volatility</div><div class="v" id="v_vol" style="color:var(--ts)">—</div></div>
             <div class="mp-cell"><div class="k">Trend</div><div class="v" id="v_trend" style="color:var(--ts)">—</div></div>
           </div>
-          <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:9px;color:var(--tm);font-weight:700;letter-spacing:.1em">NEWS IMPACT FILTER<span>Low Impact</span></div>
-          <div style="font-size:11px;color:var(--ts);line-height:2.1;margin-top:5px">• FED Speaks<span style="float:right;color:var(--tm)">in 2h 15m</span><br>• CPI Data<span style="float:right;color:var(--tm)">in 1d 4h</span></div>
-          <button class="cta ghost" style="margin-top:10px">View Calendar</button>
+          <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:9px;color:var(--tm);font-weight:700;letter-spacing:.1em">NEWS IMPACT FILTER<span id="v_news_imp">—</span></div>
+          <div id="v_news_line" style="font-size:11px;color:var(--ts);line-height:2.1;margin-top:5px">—</div>
+          <button class="cta ghost" style="margin-top:10px" onclick="goTab('sentiment',document.querySelector('.nav-item[onclick*=&quot;sentiment&quot;]'))">View Calendar</button>
         </div>
       </div>
     </div>
@@ -2010,19 +2088,23 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   <section class="row2 rise" style="animation-delay:.2s">
     <div class="card">
       <div class="chd">Cycle Engine Status</div>
-      <div class="cbd" style="display:flex;gap:16px;align-items:center">
-        <div class="orbit-box" style="height:120px;width:110px;flex-shrink:0">
-          <div class="orb-ring" style="width:104px;height:104px"></div>
-          <div class="orb-ring" style="width:70px;height:70px"></div>
-          <div class="orb-path" style="width:104px;height:104px;animation-duration:18s"><div class="orb-dot"></div></div>
-          <div id="v_vibbig" style="position:absolute;font-family:'Space Grotesk';font-size:26px;font-weight:700">0</div>
+      <div class="cbd ces">
+        <div class="ces-top">
+          <div class="orbit-box" style="height:104px;width:104px;flex-shrink:0">
+            <div class="orb-ring" style="width:98px;height:98px"></div>
+            <div class="orb-ring" style="width:66px;height:66px"></div>
+            <div class="orb-path" style="width:98px;height:98px;animation-duration:18s"><div class="orb-dot"></div></div>
+            <div id="v_vibbig" style="position:absolute;font-family:'Space Grotesk';font-size:26px;font-weight:700">0</div>
+          </div>
+          <div class="ces-name">
+            <b id="v_cycname">Core Cycle</b>
+            <span id="v_cycstate">Idle</span>
+          </div>
         </div>
-        <div class="cyc-meta">
-          Core Cycle <span style="color:var(--ts)">Idle</span><br>
-          Cycle: <b id="v_vibn">0</b><br>
-          Strength: <b id="v_str">0%</b><br>
-          <span style="color:var(--tm)">Next Turn Window ▾</span><br>
-          <b id="v_window">—</b>
+        <div class="ces-grid">
+          <div><i>Cycle</i><b id="v_vibn">0</b></div>
+          <div><i>Strength</i><b id="v_str">0%</b></div>
+          <div class="wide"><i>Next turn window</i><b id="v_window">—</b></div>
         </div>
       </div>
     </div>
@@ -2032,20 +2114,20 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       <div class="cbd">
         <div class="mx-strip">
           <div class="mx-item"><div class="k">Trend Alignment</div>
-            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" style="font-size:13px">0%</div></div>
-            <div class="s" style="color:var(--ts)">—</div></div>
+            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" id="mx_r1" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" id="mx_t1" style="font-size:13px">0%</div></div>
+            <div class="s" id="mx_s1" style="color:var(--ts)">—</div></div>
           <div class="mx-item"><div class="k">Cycle Alignment</div>
-            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" style="font-size:13px">0%</div></div>
-            <div class="s" style="color:var(--ts)">—</div></div>
+            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" id="mx_r2" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" id="mx_t2" style="font-size:13px">0%</div></div>
+            <div class="s" id="mx_s2" style="color:var(--ts)">—</div></div>
           <div class="mx-item"><div class="k">Structure</div>
-            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" style="font-size:13px">0%</div></div>
-            <div class="s" style="color:var(--ts)">—</div></div>
+            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" id="mx_r3" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" id="mx_t3" style="font-size:13px">0%</div></div>
+            <div class="s" id="mx_s3" style="color:var(--ts)">—</div></div>
           <div class="mx-item"><div class="k">Liquidity</div>
-            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" style="font-size:13px">0%</div></div>
-            <div class="s" style="color:var(--ts)">—</div></div>
+            <div class="ring-wrap"><svg width="62" height="62"><circle cx="31" cy="31" r="25" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/><circle class="ring" id="mx_r4" data-p="0" cx="31" cy="31" r="25" fill="none" stroke="#9D4DFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/></svg><div class="ring-txt" id="mx_t4" style="font-size:13px">0%</div></div>
+            <div class="s" id="mx_s4" style="color:var(--ts)">—</div></div>
           <div class="mx-item" style="border-left:1px solid var(--bd)">
             <div class="k" style="font-size:9.5px;color:var(--ts)">Overall Probability</div>
-            <div class="ring-wrap"><svg width="92" height="92"><circle cx="46" cy="46" r="38" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="7"/><circle class="ring" data-p="0" cx="46" cy="46" r="38" fill="none" stroke="url(#rg1)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/></svg><div class="ring-txt" style="font-size:19px">0%</div></div></div>
+            <div class="ring-wrap"><svg width="92" height="92"><circle cx="46" cy="46" r="38" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="7"/><circle class="ring" id="mx_r0" data-p="0" cx="46" cy="46" r="38" fill="none" stroke="url(#rg1)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/></svg><div class="ring-txt" id="mx_t0" style="font-size:19px">0%</div></div><div class="s" id="mx_s0" style="color:var(--ts);font-size:10px;margin-top:4px">—</div></div>
         </div>
       </div>
     </div>
@@ -2059,9 +2141,9 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
           <path d="M0 60 30 44 60 52 90 30 120 40 150 22 180 34 210 16 240 28 270 12 300 20" fill="none" stroke="#9D4DFF" stroke-width="1.6"/>
         </svg>
         <div style="font-size:10.5px;line-height:2.3;flex:1;min-width:0">
-          <div><span style="color:var(--ts)">High Liquidity</span></div><div style="font-weight:700;margin-bottom:6px;color:var(--ts)">—</div>
-          <div><span style="color:var(--ts)">Medium Liquidity</span></div><div style="font-weight:700;margin-bottom:6px;color:var(--ts)">—</div>
-          <div><span style="color:var(--ts)">Low Liquidity</span></div><div style="font-weight:700;color:var(--ts)">—</div>
+          <div><span style="color:var(--ts)">High Liquidity</span></div><div id="v_lq_h" style="font-weight:700;margin-bottom:6px;color:var(--ts)">—</div>
+          <div><span style="color:var(--ts)">Medium Liquidity</span></div><div id="v_lq_m" style="font-weight:700;margin-bottom:6px;color:var(--ts)">—</div>
+          <div><span style="color:var(--ts)">Low Liquidity</span></div><div id="v_lq_l" style="font-weight:700;color:var(--ts)">—</div>
         </div>
       </div>
     </div>
@@ -4394,7 +4476,9 @@ function timState(){
   var rp=rs.split(':'), srMin=+rp[0]*60+ +rp[1];
   var cur=null;
   if(cs){var cp=cs.split(':');cur=(+cp[0]*60+ +cp[1])-srMin;if(cur<0)cur+=1440;}
-  var vib=_lastVib||0;
+  /* the cycle number is per asset — this is why the good hours differ by asset */
+  var vib=0;
+  try{vib=(calcNN(timAsset())||{}).f||0;}catch(e){vib=_lastVib||0;}
   var hours=[];
   for(var h=1;h<=12;h++){
     var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
@@ -4407,26 +4491,84 @@ function timState(){
   return{di:di,srMin:srMin,cur:cur,vib:vib,hours:hours,live:live,minsLeft:minsLeft};
 }
 function timVerdict(st){
+  var a=timAsset(), cyc=plByNum(st.vib);
+  var who=a+' runs on cycle #'+st.vib+(cyc?' ('+cyc.n+', its day is '+cyc.day+')':'');
   if(st.live==null||st.live<1||st.live>12)
-    return{level:'off',word:'Outside session',line:'The trading day runs 12 hours from sunrise'};
+    return{level:'off',word:'Outside session',
+           line:'The trading day runs 12 hours from sunrise. '+who+'.'};
   var cur=st.hours[st.live-1];
-  var trend=window._lastTrend;
   if(cur.rank===2)
-    return{level:'go',word:'Trade now',line:cur.name+' carries your number — this is a prime window'};
+    return{level:'go',word:'Trade '+a+' now',
+           line:cur.name+' carries '+a+'’s number — this is a prime window. '+who+'.'};
   if(cur.rank===1)
-    return{level:'ok',word:'Tradeable',line:cur.name+' supports your number — take only clean setups'};
-  return{level:'wait',word:'Wait',line:cur.name+' does not carry your number — sit this hour out'};
+    return{level:'ok',word:'Tradeable',
+           line:cur.name+' supports '+a+'’s number — take only clean setups. '+who+'.'};
+  return{level:'wait',word:'Wait',
+         line:cur.name+' does not carry '+a+'’s number — sit this hour out for '+a+'. '+who+'.'};
 }
 function fmtIn(mins){
   if(mins<=0)return'now';
   var h=Math.floor(mins/60),m=mins%60;
   return (h?h+'h ':'')+m+'m';
 }
-/* Live planetary picture + aspects, computed here rather than pulled from the
-   embedded pages, so the Timing screen carries them in its own language. */
-var ASPECTS=[{a:0,n:'Conjunction',s:'☌',t:'charged'},{a:60,n:'Sextile',s:'⚹',t:'easy'},
-             {a:90,n:'Square',s:'□',t:'tension'},{a:120,n:'Trine',s:'△',t:'flow'},
-             {a:180,n:'Opposition',s:'☍',t:'pull'}];
+/* ══ ASPECTS — what is actually happening in the sky, and what it does ══
+   The old panel printed six rows of "Square · Micro Cycle · Outer Cycle" and
+   left you to guess. Every row now says which two real planets are involved,
+   whether that angle is bullish, bearish or neutral, and — because a planet
+   only matters to an asset it rules — what it means for the asset you are
+   trading. An angle between two bodies that have nothing to do with your
+   asset is labelled background and pushed to the bottom. */
+var PLANET_NAME={sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',
+  jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'};
+var ASPECTS=[
+  {a:0,  n:'Conjunction',s:'☌',tone:0, plain:'Two bodies sit on the same degree — whatever they rule is amplified. Direction comes from where they are, not from the angle itself.'},
+  {a:60, n:'Sextile',    s:'⚹',tone:1, plain:'An easy, supportive angle. Moves tend to be steady and to follow through rather than snap back.'},
+  {a:90, n:'Square',     s:'□',tone:-1,plain:'Friction. Expect sharp, choppy price, levels fought over, and stops taken on both sides.'},
+  {a:120,n:'Trine',      s:'△',tone:1, plain:'The smoothest angle. Trends run with the least resistance — the best backdrop for holding a winner.'},
+  {a:180,n:'Opposition', s:'☍',tone:-1,plain:'A tug of war. Reversals and false breaks cluster around it — good for fading, bad for chasing.'}
+];
+function aspectsFor(key){var m=ABIAS[key]||ABIAS.default;return m;}
+/* how much a given body matters to this asset, and whether it currently sits
+   in a zone the asset likes (both come from the same map the bias engine uses) */
+function bodyRole(map,body,eph){
+  var slot=map.p1===body?1:map.p2===body?2:map.p3===body?3:0;
+  if(!slot)return{slot:0,w:0,sign:0,zone:''};
+  var bands=map['p'+slot+'b']||{b:[],s:[]};
+  var si=signOf(eph[body].lon);
+  var sign=bands.b.indexOf(si.sign)>=0?1:(bands.s||[]).indexOf(si.sign)>=0?-1:0;
+  return{slot:slot,w:slot===1?3:slot===2?2:1,sign:sign,zone:dz(si.sign)};
+}
+function aspectRead(x,assetName,eph){
+  var map=aspectsFor(getAstroKey(assetName||'Gold'));
+  var ra=bodyRole(map,x.a,eph), rb=bodyRole(map,x.b,eph);
+  var w=ra.w+rb.w;
+  var signNet=ra.sign*ra.w+rb.sign*rb.w;
+  var base=x.asp.tone;
+  var tone;
+  if(!w)                     tone='flat';
+  else if(base===0)          tone=signNet>0?'bull':signNet<0?'bear':'flat';
+  else if(base>0)            tone=signNet<0?'flat':'bull';
+  else                       tone=signNet>0?'flat':'bear';
+
+  var na=PLANET_NAME[x.a]||x.a, nb=PLANET_NAME[x.b]||x.b;
+  var lead=ra.w>=rb.w?{b:x.a,n:na,r:ra}:{b:x.b,n:nb,r:rb};
+  var why;
+  if(!w){
+    why='Neither body rules '+assetName+' — background noise for this asset, though it still colours the wider tape.';
+  }else{
+    var rank=lead.r.slot===1?'primary driver':lead.r.slot===2?'secondary driver':'minor driver';
+    var placed=lead.r.sign>0?'sits in '+lead.r.zone+', a zone it likes'
+             :lead.r.sign<0?'sits in '+lead.r.zone+', a zone that works against it'
+             :'sits in '+lead.r.zone+', a neutral zone';
+    var eff=tone==='bull'?'net bullish pressure on '+assetName
+           :tone==='bear'?'net bearish pressure on '+assetName
+           :'pressure that cancels out — treat it as neutral for '+assetName;
+    why=lead.n+' is '+assetName+'’s '+rank+' and '+placed+'. With this angle that gives '+eff+'.';
+  }
+  return{tone:tone,w:w,na:na,nb:nb,why:why,
+    head:na+' '+x.asp.s+' '+nb,
+    cyc:(BODY_LABEL[x.a]||x.a)+' × '+(BODY_LABEL[x.b]||x.b)};
+}
 function liveAspects(eph,orb){
   orb=orb||5;
   var ks=EPH_ORDER, out=[];
@@ -4437,19 +4579,69 @@ function liveAspects(eph,orb){
       if(diff<=orb){out.push({a:ks[i],b:ks[j],asp:ASPECTS[k],orb:diff});break;}
     }
   }
-  return out.sort(function(x,y){return x.orb-y.orb;}).slice(0,6);
+  return out.sort(function(x,y){return x.orb-y.orb;});
 }
+/* which asset the Timing screen is reading — defaults to whatever was last
+   analysed, because a cycle number (and therefore the good hours) is per asset */
+var _timAsset='';
+function timAsset(){return _timAsset||_lastAsset||'Gold';}
+function setTimAsset(n){_timAsset=n;renderTiming();}
+var TIM_PICKS=['Gold','Silver','Bitcoin','Ethereum','EURUSD','GBPUSD','Oil','Apple','Tesla','Nvidia'];
+
 function timExtras(){
   var eph;try{eph=getEph();}catch(e){return '';}
-  var asp=liveAspects(eph);
-  var planets=EPH_ORDER.map(function(b){
-    var si=signOf(eph[b].lon), rate=lonRate(b,new Date());
-    var retro=b!=='sun'&&b!=='moon'&&rate<0;
-    return{k:b,sym:EPH_SYM[b],name:BODY_LABEL[b]||b,zone:dz(si.sign),deg:si.deg,retro:retro};
+  var asset=timAsset();
+  var all=liveAspects(eph).map(function(x){
+    var r=aspectRead(x,asset,eph);
+    return{x:x,r:r};
   });
+  /* the ones that touch this asset first, tightest orb inside each group */
+  all.sort(function(p,q){return (q.r.w-p.r.w)||(p.x.orb-q.x.orb);});
+  var rel=all.filter(function(o){return o.r.w>0;}).slice(0,5);
+  var bg =all.filter(function(o){return o.r.w===0;}).slice(0,4);
+  var bull=rel.filter(function(o){return o.r.tone==='bull';}).length;
+  var bear=rel.filter(function(o){return o.r.tone==='bear';}).length;
+  var verdict=bull>bear?{t:'Sky leans bullish for '+asset,c:'var(--green)'}
+             :bear>bull?{t:'Sky leans bearish for '+asset,c:'var(--red)'}
+             :{t:'Sky is balanced for '+asset,c:'var(--amber)'};
+
+  function row(o,dim){
+    var t=o.r.tone;
+    var tag=t==='bull'?'BULLISH':t==='bear'?'BEARISH':dim?'BACKGROUND':'NEUTRAL';
+    return '<div class="ax-row '+t+(dim?' dim':'')+'">'
+      +'<div class="ax-glyph"><span>'+EPH_SYM[o.x.a]+'</span><b>'+o.x.asp.s+'</b><span>'+EPH_SYM[o.x.b]+'</span></div>'
+      +'<div class="ax-mid">'
+        +'<div class="ax-h">'+escHtml(o.r.head)+' <em>'+o.x.asp.n+'</em></div>'
+        +'<div class="ax-c">'+escHtml(o.r.cyc)+' · orb '+o.x.orb.toFixed(1)+'°</div>'
+        +'<div class="ax-w">'+escHtml(o.r.why)+'</div>'
+      +'</div>'
+      +'<span class="ax-tag">'+tag+'</span></div>';
+  }
+
   var now=new Date(), epoch=new Date(2026,0,1);
   var pos=(Math.floor((now-epoch)/86400000)%9)+1, left=9-pos;
+  var planets=EPH_ORDER.map(function(b){
+    var si=signOf(eph[b].lon), rate=lonRate(b,new Date());
+    var map=aspectsFor(getAstroKey(asset)), role=bodyRole(map,b,eph);
+    return{k:b,sym:EPH_SYM[b],name:PLANET_NAME[b]||b,cyc:BODY_LABEL[b]||b,
+           zone:dz(si.sign),deg:si.deg,retro:(b!=='sun'&&b!=='moon'&&rate<0),role:role};
+  });
+
   return ''
+   +'<div class="ax-box">'
+     +'<div class="ax-head"><b>Live aspects — '+escHtml(asset)+'</b>'
+       +'<span style="color:'+verdict.c+'">'+escHtml(verdict.t)+'</span></div>'
+     +(rel.length?rel.map(function(o){return row(o,false);}).join('')
+                 :'<div class="ab-none">No tight aspect is touching '+escHtml(asset)+'’s planets right now — the sky is quiet for it.</div>')
+     +(bg.length?'<details class="ax-more"><summary>Background angles ('+bg.length+') — not '+escHtml(asset)+'’s planets</summary>'
+         +bg.map(function(o){return row(o,true);}).join('')+'</details>':'')
+     +'<div class="ax-key">'
+       +ASPECTS.map(function(A){
+          var c=A.tone>0?'bull':A.tone<0?'bear':'flat';
+          return '<div class="ax-k '+c+'"><b>'+A.s+' '+A.n+'</b><span>'+escHtml(A.plain)+'</span></div>';
+        }).join('')
+     +'</div>'
+   +'</div>'
    +'<div class="tx-grid">'
      +'<div class="tx-card"><div class="ab-cap">9-day cycle</div>'
        +'<div class="tx-cyc"><div class="tx-dots">'
@@ -4457,22 +4649,23 @@ function timExtras(){
             return '<i class="'+(i<pos?'on':'')+(i===pos-1?' now':'')+'" style="animation-delay:'+(i*0.04).toFixed(2)+'s"></i>';
           }).join('')
        +'</div><div class="tx-cnum">Day <b>'+pos+'</b> of 9 · '+left+' to the turn</div></div></div>'
-     +'<div class="tx-card"><div class="ab-cap">Live aspects</div>'
-       +(asp.length?asp.map(function(x){
-          return '<div class="tx-asp"><span class="g">'+EPH_SYM[x.a]+'</span>'
-            +'<span class="s">'+x.asp.s+'</span><span class="g">'+EPH_SYM[x.b]+'</span>'
-            +'<span class="n">'+x.asp.n+'<i>'+escHtml((BODY_LABEL[x.a]||x.a)+' · '+(BODY_LABEL[x.b]||x.b))+'</i></span>'
-            +'<span class="o">'+x.orb.toFixed(1)+'°</span></div>';
-        }).join(''):'<div class="ab-none">No tight aspects right now</div>')
+     +'<div class="tx-card"><div class="ab-cap">Reading this screen</div>'
+       +'<div class="ax-note">The 12 hours below are ranked <b>for '+escHtml(asset)+' only</b>. Each asset carries its own cycle number, so a green hour for Gold can be a dead hour for Bitcoin. Switch the asset above and the whole clock re-ranks.</div>'
      +'</div>'
    +'</div>'
-   +'<div class="tx-pl"><div class="ab-cap">Cycle positions</div><div class="tx-pg">'
+   +'<div class="tx-pl"><div class="ab-cap">Cycle positions — '+escHtml(asset)+'</div><div class="tx-pg">'
      +planets.map(function(x,i){
-        return '<div class="tx-p" style="animation-delay:'+(i*0.03).toFixed(2)+'s" title="'+escHtml(x.name)+'">'
-          +'<b>'+x.sym+'</b><span class="z">'+escHtml(x.zone)+'</span>'
+        var mark=x.role.slot===1?' p1':x.role.slot===2?' p2':x.role.slot===3?' p3':'';
+        var lean=x.role.slot?(x.role.sign>0?' good':x.role.sign<0?' bad':''):'';
+        return '<div class="tx-p'+mark+lean+'" style="animation-delay:'+(i*0.03).toFixed(2)+'s"'
+          +' title="'+escHtml(x.name+' — '+x.cyc+(x.role.slot?' · '+asset+' driver #'+x.role.slot:''))+'">'
+          +'<b>'+x.sym+'</b><span class="pn">'+escHtml(x.name)+'</span>'
+          +'<span class="z">'+escHtml(x.zone)+'</span>'
           +'<span class="d">'+x.deg.toFixed(1)+'°'+(x.retro?' <em>℞</em>':'')+'</span></div>';
       }).join('')
-   +'</div></div>';
+   +'</div><div class="ax-legend"><span class="k p1"></span>primary driver'
+     +'<span class="k p2"></span>secondary<span class="k p3"></span>minor'
+     +'<span class="k good"></span>in a zone the asset likes<span class="k bad"></span>in a zone that fights it</div></div>';
 }
 function renderTiming(){
   var host=document.getElementById('tim_new');
@@ -4496,9 +4689,16 @@ function renderTiming(){
   /* the next two windows that still lie ahead */
   var ahead=st.hours.filter(function(x){return x.rank>0&&(st.live==null||x.h>st.live);}).slice(0,3);
 
+  var aNow=timAsset(), aCyc=plByNum(st.vib);
+  var chips='<div class="tk-asset"><span class="lb">Asset</span>'
+    +TIM_PICKS.map(function(n){
+        return '<span class="ab-pick'+(n===aNow?' on':'')+'" onclick="setTimAsset(\''+n+'\')">'+n+'</span>';
+      }).join('')
+    +'<span class="tk-anum">#'+st.vib+(aCyc?' · '+aCyc.n+' · '+aCyc.day:'')+'</span></div>';
+
   host.className='tk';
-  host.innerHTML=
-   '<div class="tk-hero '+v.level+'">'
+  host.innerHTML=chips
+   +'<div class="tk-hero '+v.level+'">'
     +'<div class="tk-dial">'+ring
       +'<div class="tk-core">'
         +'<div class="tk-word" style="color:'+col+'">'+v.word+'</div>'
@@ -5344,6 +5544,7 @@ function runAI(){
     renderWheelPlus(price);
     renderDualEngines(levels,price);
     renderJrnlSnap();
+    renderDashLive(assetName,price,sig,astro,priceBias,combined,trend,levels);
 
     document.getElementById('ai_out').classList.remove('hidden');
     document.getElementById('ai_ph').classList.add('hidden');
@@ -8143,6 +8344,170 @@ function renderSentimentV3(){
 
   senPaintNews();
   if(next)_senTimer=setInterval(senTick,1000);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DASHBOARD — LIVE WIRING
+   Trade Setup, Cycle Engine Status and the Probability Matrix were static
+   markup: the matrix sat at 0% and the setup rows at "—" no matter what
+   had been analysed. They now read from the same objects the Analytics
+   board uses, and the Trade Setup names the asset it belongs to.
+══════════════════════════════════════════════════════════════════════ */
+function dashRing(ringId,txtId,pct,col){
+  pct=Math.max(0,Math.min(100,pct||0));
+  var r=document.getElementById(ringId);
+  if(r){
+    var dash=parseFloat(r.getAttribute('stroke-dasharray'))||0;
+    r.dataset.p=pct;
+    r.style.transition='stroke-dashoffset 1s cubic-bezier(.25,.8,.3,1)';
+    r.setAttribute('stroke-dashoffset',(dash*(1-pct/100)).toFixed(1));
+    /* the overall ring paints from a gradient — leave its stroke alone */
+    if(col&&(r.getAttribute('stroke')||'').indexOf('url(')<0)r.setAttribute('stroke',col);
+  }
+  var t=document.getElementById(txtId);
+  if(t){t.textContent=Math.round(pct)+'%';if(col)t.style.color=col;}
+}
+function dashSet(id,txt,col){
+  var e=document.getElementById(id);
+  if(!e)return;
+  e.textContent=txt;
+  if(col)e.style.color=col;
+}
+/* realised volatility from the daily bars: current ATR14 against its own
+   60-day average, so "Moderate" means moderate *for this asset*. */
+function dashVol(rows){
+  if(!rows||rows.length<30)return{label:'—',col:'var(--ts)'};
+  function atr(end,n){
+    var s=0,c=0;
+    for(var i=Math.max(1,end-n+1);i<=end;i++){
+      var h=+rows[i].high,l=+rows[i].low,pc=+rows[i-1].close;
+      s+=Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc));c++;
+    }
+    return c?s/c:0;
+  }
+  var last=rows.length-1, now=atr(last,14);
+  var hist=[],k;
+  for(k=Math.max(14,last-60);k<=last;k++)hist.push(atr(k,14));
+  var avg=hist.reduce(function(a,b){return a+b;},0)/hist.length;
+  if(!avg)return{label:'—',col:'var(--ts)'};
+  var ratio=now/avg;
+  if(ratio>=1.35)return{label:'High',col:'var(--red)',ratio:ratio};
+  if(ratio>=0.8) return{label:'Moderate',col:'var(--amber)',ratio:ratio};
+  return{label:'Low',col:'var(--green)',ratio:ratio};
+}
+function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
+  try{
+    var dp=price>=1000?2:price>=10?2:4;
+    var f=function(v){return v==null||isNaN(v)?'—':'$'+(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp});};
+    var dirCol=function(d){return d==='bull'?'var(--green)':d==='bear'?'var(--red)':'var(--yellow)';};
+
+    /* ── Trade Setup ── */
+    var vibNum=(calcNN(assetName)||{}).f||0;
+    var cyc=plByNum(vibNum);
+    dashSet('v_ts_asset',assetName+' · '+f(price));
+    dashSet('v_cyc_lbl',cyc?(cyc.n+' #'+vibNum+' · '+cyc.day):'#'+vibNum,'var(--acc2)');
+    if(cb){
+      dashSet('v_bias',cb.label+(cb.dir==='bull'?' ↗':cb.dir==='bear'?' ↘':' →'),dirCol(cb.dir));
+      dashRing('v_ring_cyc','v_cyc_t',cb.bull,dirCol(cb.dir));
+    }
+    var conf=sig&&sig.conf!=null?sig.conf:0;
+    dashSet('v_conf',conf+'%',conf>=80?'var(--green)':conf>=65?'var(--amber)':'var(--ts)');
+    document.querySelectorAll('.conf-bar div').forEach(function(b){b.dataset.w=conf;b.style.width=conf+'%';});
+    if(sig&&sig.style){
+      dashSet('v_ez',f(sig.entry)+(sig.isPending?' (limit)':''),sig.isBull?'var(--green)':'var(--red)');
+      dashSet('v_sl',f(sig.sl));
+      dashSet('v_tps',f(sig.tp)+'  ·  '+sig.tDistPct.toFixed(2)+'%');
+      dashSet('v_rr',sig.rr+'×  ·  risk $'+sig.risk+' → $'+sig.profit);
+    }else{
+      var why=sig&&sig.reason?sig.reason:'Confidence below the entry threshold';
+      dashSet('v_ez','No setup','var(--ts)');
+      dashSet('v_sl','—');dashSet('v_tps',why);dashSet('v_rr','—');
+    }
+
+    /* ── Cycle Engine Status ── */
+    dashSet('v_vibn',vibNum);dashSet('v_vibbig',vibNum);
+    dashSet('v_cycname',cyc?cyc.n:'Core Cycle');
+    var st=null;try{st=timState();}catch(e){}
+    var liveH=st&&st.live?st.hours[st.live-1]:null;
+    var state=!liveH?'Outside session':liveH.rank===2?'Active':liveH.rank===1?'Supporting':'Idle';
+    dashSet('v_cycstate',state,liveH&&liveH.rank===2?'var(--green)':liveH&&liveH.rank===1?'var(--acc2)':'var(--ts)');
+    dashSet('v_str',(cb?cb.bull:astro?astro.bull:0)+'%');
+    var nextW=st?st.hours.filter(function(x){return x.rank>0&&(st.live==null||x.h>st.live);})[0]:null;
+    dashSet('v_window',nextW?(nextW.name+' · '+fmtT(nextW.start))
+      :(cyc?cyc.day+' is this cycle’s day':'—'));
+
+    /* ── Probability & Confirmation Matrix ── */
+    var tScore=trend&&trend.score!=null?Math.min(100,Math.abs(trend.score)/5*100):0;
+    dashRing('mx_r1','mx_t1',tScore,trend?dirCol(trend.dir):null);
+    dashSet('mx_s1',trend?(trend.label+(trend.relief?' · relief':trend.broken?' · broken':'')):'—',
+      trend?dirCol(trend.dir):null);
+
+    var cAlign=astro?Math.abs(astro.bull-50)*2:0;
+    dashRing('mx_r2','mx_t2',cAlign,astro?dirCol(astro.dir):null);
+    dashSet('mx_s2',astro?(astro.dir==='bull'?'Time bullish':astro.dir==='bear'?'Time bearish':'Time neutral'):'—');
+
+    var struct=pb?Math.abs(pb.bull-50)*2:0;
+    dashRing('mx_r3','mx_t3',struct,pb?dirCol(pb.dir):null);
+    dashSet('mx_s3',cb&&cb.phase?cb.phase:'—');
+
+    /* liquidity = how close price sits to the strongest aligned level */
+    var liq=0,liqNote='No level in range';
+    if(levels&&levels.length){
+      var near=levels.slice().sort(function(a,b){return Math.abs(a.price-price)-Math.abs(b.price-price);})[0];
+      var distPct=Math.abs(near.price-price)/price*100;
+      liq=Math.max(0,Math.min(100,100-distPct*35))*Math.min(1,(near.score||0)/8+0.35);
+      liqNote=near.price.toFixed(dp)+' · '+distPct.toFixed(2)+'% away';
+    }
+    dashRing('mx_r4','mx_t4',liq,'#9D4DFF');
+    dashSet('mx_s4',liqNote);
+
+    /* ── Liquidity Zones — the strongest levels, bucketed by score ── */
+    (function(){
+      var buckets={v_lq_h:[],v_lq_m:[],v_lq_l:[]};
+      (levels||[]).slice(0,12).forEach(function(l){
+        var k=l.score>=7?'v_lq_h':l.score>=4?'v_lq_m':'v_lq_l';
+        if(buckets[k].length<2)buckets[k].push(l);
+      });
+      Object.keys(buckets).forEach(function(k){
+        var b=buckets[k], e=document.getElementById(k);
+        if(!e)return;
+        /* colour each level by which side of price it sits on, not the bucket */
+        e.innerHTML=b.length
+          ? b.map(function(l){
+              return '<span style="color:'+(l.price>price?'var(--red)':'var(--green)')+'">'
+                +l.price.toFixed(dp)+'</span>';
+            }).join('<span style="color:var(--tm)"> · </span>')
+          : '<span style="color:var(--ts)">none in range</span>';
+      });
+    })();
+
+    dashRing('mx_r0','mx_t0',conf);
+    dashSet('mx_s0',sig&&sig.style?sig.style+' setup':'Below entry threshold');
+
+    /* ── Market Pulse ── */
+    dashSet('v_mstr',cb?({EXTREME:'Extreme',STRONG:'Strong',MODERATE:'Moderate',WEAK:'Weak'}[cb.strength]||'—'):'—',
+      cb&&(cb.strength==='EXTREME'||cb.strength==='STRONG')?'var(--green)':'var(--ts)');
+    var vol=dashVol(HIST_ROWS);
+    dashSet('v_vol',vol.label,vol.col);
+    if(cb){
+      dashSet('v_momo',cb.dir==='bull'?'Bullish':cb.dir==='bear'?'Bearish':'Flat',dirCol(cb.dir));
+      dashSet('v_trend',trend?(trend.dir==='bull'?'Uptrend':trend.dir==='bear'?'Downtrend':'Range'):'—',
+        trend?dirCol(trend.dir):null);
+    }
+    renderDashNews();
+  }catch(e){console.error('dash live:',e);}
+}
+/* the two nearest releases, shown with the same risk wording as the Sentiment tab */
+function renderDashNews(){
+  try{
+    var evs=buildEconEvents(); if(!evs.length)return;
+    var risk=senRisk(evs[0]);
+    dashSet('v_news_imp',risk.word,risk.col);
+    var el=document.getElementById('v_news_line');
+    if(el)el.innerHTML=evs.slice(0,2).map(function(e){
+      return '• '+escHtml(e.t)+'<span style="float:right;color:var(--tm)">in '+fmtCountdown(e.d-new Date()).replace(/:\d\d$/,'')+'</span>';
+    }).join('<br>');
+  }catch(e){}
 }
 
 function renderCycleCountdown(){
