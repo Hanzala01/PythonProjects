@@ -1117,6 +1117,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ab-pick:hover{color:var(--tw);border-color:rgba(157,77,255,.4);transform:translateY(-1px)}
 .ab-pick.on{background:rgba(139,92,246,.2);border-color:rgba(157,77,255,.55);color:#c9b6ff}
 .ab-sr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.zn{padding:15px 16px;border-radius:18px;border:1px solid var(--bd);background:rgba(255,255,255,.02);
+  position:relative;overflow:hidden;animation:wblkIn .45s var(--ease) backwards}
+.zn.sell{border-color:rgba(239,68,68,.3);background:linear-gradient(160deg,rgba(239,68,68,.07),rgba(9,9,18,.55))}
+.zn.buy{border-color:rgba(34,197,94,.3);background:linear-gradient(160deg,rgba(34,197,94,.07),rgba(9,9,18,.55));animation-delay:.06s}
+.zn-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px}
+.zn-deg{font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--acc2)}
+.zn-deg i{font-style:normal;font-size:9px;color:var(--muted);font-weight:400}
+.zn-band{border-radius:12px;overflow:hidden;border:1px solid var(--rim)}
+.zn-row,.zn-mid{display:flex;justify-content:space-between;align-items:baseline;padding:8px 11px}
+.zn-row .k,.zn-mid .k{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.zn-row b,.zn-mid b{font-family:'Space Grotesk';font-size:14px;font-variant-numeric:tabular-nums}
+.zn.sell .zn-row:first-child b{color:var(--red)}
+.zn.buy .zn-row:first-child b{color:var(--red)}
+.zn-mid{background:rgba(167,139,250,.10);border-block:1px solid var(--rim)}
+.zn-mid b{color:var(--acc2);font-size:16px}
+.zn.sell .zn-row:last-child b{color:var(--green)}
+.zn.buy .zn-row:last-child b{color:var(--green)}
+.zn-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:10px;color:var(--soft)}
+.zn-meta .sc{color:var(--acc2);font-weight:700;margin-left:auto}
+.zn-rule{margin-top:9px;font-size:9.5px;color:var(--muted);line-height:1.6;border-top:1px solid var(--rim);padding-top:8px}
+
 .ab-sr-c{padding:13px 14px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
 .ab-z{display:grid;grid-template-columns:auto auto 1fr auto;gap:9px;align-items:baseline;
   padding:8px 0;border-bottom:1px solid var(--rim);animation:rowIn .4s var(--ease) backwards}
@@ -3950,23 +3971,51 @@ function anaLive(){
   _lastHistAsset='';
   fetchLivePrice(function(ok){ if(ok)runAI(); renderAnalytics(); });
 }
-/* Support and resistance drawn from the aligned-level engine, nearest first */
+/* ══ SUPPORT & RESISTANCE — the method from the original build ══
+   Two parts, both carried over rather than reinvented:
+   1. Zones are chosen by Gann degree, not by nearest price. A buy zone is a
+      level below at 135° or 180°; a sell zone is a level above at 180°, 225°,
+      254° or 270°.
+   2. A zone is a BAND, not a line. Take the level as base, root it, step
+      ±0.1 root units, square back, then average each against the base. That
+      gives bounce (lower) and rejection (upper). Price closing beyond the band
+      is a real break; a wick through and back is a sweep to fade. */
+function zoneBand(base){
+  var r=Math.sqrt(base), rj=Math.pow(r+0.1,2), bn=Math.pow(r-0.1,2);
+  return{base:base,root:r,bounce:(base+bn)/2,rejection:(base+rj)/2};
+}
+var BUY_DEGS=[135,180], SELL_DEGS=[180,225,254,270];
 function anaZones(price,dp){
   var lv=window._lastLevels||[];
   if(!lv.length)return '';
-  var res=lv.filter(function(l){return l.price>price;}).sort(function(a,b){return a.price-b.price;}).slice(0,3);
-  var sup=lv.filter(function(l){return l.price<price;}).sort(function(a,b){return b.price-a.price;}).slice(0,3);
-  function row(l,kind){
-    var d=(l.price-price)/price*100;
-    return '<div class="ab-z '+kind+'"><span class="p">'+l.price.toFixed(dp)+'</span>'
-      +'<span class="d">'+(d>=0?'+':'')+d.toFixed(2)+'%</span>'
-      +'<span class="m">'+l.deg+'° · '+l.sigma+'σ</span>'
-      +'<span class="sc">'+l.score+'pt</span></div>';
+  var above=lv.filter(function(l){return l.price>price;}).sort(function(a,b){return a.price-b.price;});
+  var below=lv.filter(function(l){return l.price<price;}).sort(function(a,b){return b.price-a.price;});
+  function pick(pool,degs){
+    var m=pool.filter(function(l){return degs.indexOf(l.modDeg||(l.deg%360))>=0;});
+    return{lvl:(m.length?m:pool)[0], byDeg:m.length>0};
   }
-  return '<div class="ab-sr">'
-    +'<div class="ab-sr-c"><div class="ab-cap">Resistance</div>'+(res.length?res.map(function(l){return row(l,'r');}).join(''):'<div class="ab-none">none within range</div>')+'</div>'
-    +'<div class="ab-sr-c"><div class="ab-cap">Support</div>'+(sup.length?sup.map(function(l){return row(l,'s');}).join(''):'<div class="ab-none">none within range</div>')+'</div>'
-    +'</div>';
+  var sell=pick(above,SELL_DEGS), buy=pick(below,BUY_DEGS);
+  function card(sel,kind){
+    if(!sel.lvl)return '<div class="zn '+kind+'"><div class="ab-cap">'+(kind==='sell'?'Sell zone':'Buy zone')
+      +'</div><div class="ab-none">No level on this side yet</div></div>';
+    var l=sel.lvl, b=zoneBand(l.price);
+    var dist=(l.price-price)/price*100;
+    var width=b.rejection-b.bounce;
+    return '<div class="zn '+kind+'">'
+      +'<div class="zn-h"><span class="ab-cap">'+(kind==='sell'?'Sell zone — resistance':'Buy zone — support')+'</span>'
+        +'<span class="zn-deg">'+l.deg+'°'+(sel.byDeg?'':' <i>nearest</i>')+'</span></div>'
+      +'<div class="zn-band">'
+        +'<div class="zn-row"><span class="k">Rejection</span><b>'+b.rejection.toFixed(dp)+'</b></div>'
+        +'<div class="zn-mid"><span class="k">Base</span><b>'+b.base.toFixed(dp)+'</b></div>'
+        +'<div class="zn-row"><span class="k">Bounce</span><b>'+b.bounce.toFixed(dp)+'</b></div>'
+      +'</div>'
+      +'<div class="zn-meta"><span>'+(dist>=0?'+':'')+dist.toFixed(2)+'% away</span>'
+        +'<span>'+l.sigma+'σ</span><span>width '+width.toFixed(dp)+'</span>'
+        +'<span class="sc">'+l.score+'pt</span></div>'
+      +'<div class="zn-rule">Close beyond the band = real break. Wick in and back = sweep — fade it.</div>'
+      +'</div>';
+  }
+  return '<div class="ab-sr">'+card(sell,'sell')+card(buy,'buy')+'</div>';
 }
 /* the square-root cycle rungs, compact */
 function anaRungs(price,dp){
