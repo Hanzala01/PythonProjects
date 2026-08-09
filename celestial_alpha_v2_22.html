@@ -1324,7 +1324,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ab-meter{height:6px;border-radius:99px;background:var(--s4);overflow:hidden}
 .ab-meter i{display:block;height:100%;width:0;border-radius:99px;transition:width .9s var(--ease)}
 .ab-note{font-size:9.5px;color:var(--muted);margin-top:7px;min-height:14px}
-.ab-lad-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.ab-lad-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:7px;padding:0 3px}
+.ab-lad-h .ab-lad-r{text-align:right;flex-shrink:1;min-width:0}
 .ab-lad-r{font-size:9.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .ab-ladder{position:relative;height:250px;border-radius:18px;border:1px solid var(--bd);
   background:linear-gradient(180deg,rgba(239,68,68,.05),rgba(9,9,18,.4) 45%,rgba(34,197,94,.05));
@@ -1349,6 +1350,66 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .tk-seg,.tk-nrow,.tk-slot,.ab-read,.ab-lv{animation:none!important}
   .tk-slot:hover,.tk-slot.live{transform:none}
 }
+/* ══ THE CALL — extra lines under the direction ══ */
+.ab-order{font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--tw);margin-bottom:7px}
+.ab-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ab-ch{font-size:9.5px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:99px;
+  border:1px solid var(--rim);background:rgba(255,255,255,.02);color:var(--soft)}
+.ab-ch.warn{color:var(--amber);border-color:rgba(245,158,11,.42);background:rgba(245,158,11,.09)}
+
+/* ══ TRADE LADDER ══ */
+.tl-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:10px}
+.tl-sum>div{padding:10px 12px;border-radius:13px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.tl-sum i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.tl-sum b{font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--tw);
+  font-variant-numeric:tabular-nums;display:block}
+.tl-sum span{font-size:9.5px;color:var(--muted)}
+.tl{display:grid;grid-template-columns:48px 1fr;gap:14px;padding:14px 16px;margin-bottom:12px;
+  border-radius:18px;border:1px solid var(--bd);
+  background:linear-gradient(160deg,rgba(139,92,246,.05),rgba(9,9,18,.55))}
+.tl-rail{position:relative;border-radius:12px;border:1px solid var(--rim);
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));overflow:hidden}
+.tl-band{position:absolute;left:0;right:0}
+.tl-band.rw{background:linear-gradient(180deg,rgba(34,197,94,.34),rgba(34,197,94,.12))}
+.tl-band.rk{background:linear-gradient(180deg,rgba(239,68,68,.12),rgba(239,68,68,.34))}
+.tl-mk{position:absolute;left:4px;right:4px;height:2px;border-radius:2px;transform:translateY(-50%);opacity:.9}
+.tl-mk.off{height:0;border-top:2px dashed;background:none!important;opacity:.7}
+.tl-row.faded{opacity:.66}
+.tl-t b em{font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.06em;color:var(--muted);
+  border:1px solid var(--rim);border-radius:99px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.tl-mk.entry,.tl-mk.tp,.tl-mk.sl{height:3px;left:2px;right:2px}
+.tl-now{position:absolute;left:-3px;right:-3px;height:2px;background:var(--acc2);transform:translateY(-50%);
+  box-shadow:0 0 10px var(--acc2);z-index:2}
+.tl-now::after{content:'';position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;
+  background:var(--acc2);box-shadow:0 0 9px var(--acc2)}
+.tl-cap{position:absolute;left:0;right:0;text-align:center;font-size:8px;color:var(--muted);
+  font-variant-numeric:tabular-nums;pointer-events:none}
+.tl-cap.top{top:3px} .tl-cap.bot{bottom:3px}
+.tl-list{min-width:0}
+.tl-row{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+  padding:9px 11px;border-radius:12px;border:1px solid var(--rim);margin-bottom:6px;
+  background:rgba(255,255,255,.02);animation:rowIn .45s var(--ease) backwards;transition:.2s var(--ease)}
+.tl-row:last-child{margin-bottom:0}
+.tl-row:hover{border-color:rgba(157,77,255,.35);transform:translateX(2px)}
+.tl-row .dotl{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tl-t{min-width:0}
+.tl-t b{display:block;font-size:12px;font-weight:700}
+.tl-t i{display:block;font-style:normal;font-size:9.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+.tl-n{text-align:right;white-space:nowrap}
+.tl-n b{display:block;font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--tw);
+  font-variant-numeric:tabular-nums}
+.tl-n i{display:block;font-style:normal;font-size:9.5px;color:var(--muted);margin-top:2px;
+  font-variant-numeric:tabular-nums}
+.tl-row.now{border-color:rgba(157,77,255,.55);background:rgba(167,139,250,.10)}
+.tl-row.entry{border-color:rgba(157,77,255,.35)}
+.tl-row.tp{border-color:rgba(34,197,94,.32)}
+.tl-row.sl{border-color:rgba(239,68,68,.32)}
+.tl-row.key{border-color:rgba(245,158,11,.32)}
+@media(max-width:1100px){.tl-sum{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.tl{grid-template-columns:30px 1fr;gap:10px}.tl-cap{display:none}}
+@media(prefers-reduced-motion:reduce){.tl-row{animation:none!important}.tl-row:hover{transform:none}}
+
 /* ══ TIMING — asset picker + aspect reader ══ */
 .tk-asset{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:11px 14px;margin-bottom:12px;
   border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
@@ -4339,6 +4400,104 @@ function anaCycle(price,dp){
      +'<div class="mc-k"><span>9-day count</span><b>Day '+day+' of 9</b></div>'
    +'</div></div>';
 }
+/* ══ THE CALL — written out, not just shouted ══
+   "BUY / 78% / Intraday · 2.0R" told you nothing you could act on. The block
+   now names the asset, says whether the order is a limit or at market, how far
+   the fill sits from live price, and states the whole plan in one sentence. */
+function anaFmt(v,dp){
+  if(v==null||isNaN(v))return '—';
+  return (+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp});
+}
+function anaOrderLine(S,price,dp){
+  if(!S||!S.style)return '';
+  var d=(S.entry-price)/price*100;
+  if(Math.abs(d)<0.05)return 'Market order — price is already at the level';
+  var side=S.isBull?(d<0?'Buy limit':'Buy stop'):(d>0?'Sell limit':'Sell stop');
+  return side+' at '+anaFmt(S.entry,dp)+' · '+Math.abs(d).toFixed(2)+'% '
+    +(d<0?'below':'above')+' live price';
+}
+function anaPlanLine(S,asset,dp){
+  if(!S||!S.style)return '';
+  return (S.isBull?'Buy ':'Sell ')+asset+' at '+anaFmt(S.entry,dp)
+    +', stop '+anaFmt(S.sl,dp)+', target '+anaFmt(S.tp,dp)
+    +'. Risking $'+S.risk+' to make $'+S.profit+' — that is '+S.rr+'R.';
+}
+/* ══ TRADE LADDER — a rail you can read, not a column of floating labels ══
+   Left rail paints the reward band green and the risk band red so the trade's
+   shape is visible before you read a single number. Every level then gets its
+   own row: price, how far it is from live in percent and in currency, and one
+   line saying what happens when price reaches it. */
+var LADDER_MEAN={
+  'Target':'Take profit here — this is the level the setup is aiming at.',
+  'Entry':'Where the order fills. No fill, no trade.',
+  'Stop':'Where this trade is wrong. Out, no argument.',
+  'Invalidation':'The major level. Break and close beyond it and the whole trend read changes.',
+  'Monthly high':'Top of this month’s expansion range — sellers have defended it.',
+  'Monthly low':'Bottom of this month’s expansion range — buyers have defended it.',
+  'Now':'Live price.'
+};
+function anaLadder(pts,price,lo,hi,dp,S,dir){
+  /* The rail scales to the TRADE, not to the widest level on the board. A
+     monthly low 9% away would otherwise squash entry, stop and target into a
+     two-pixel smudge — the one thing the rail exists to show. Levels outside
+     the trade band are pinned to the edge and drawn hollow, and the rows below
+     always carry the true numbers, so nothing is hidden by the zoom. */
+  var core=[price];
+  if(S&&S.style)core.push(S.entry,S.sl,S.tp);
+  var rlo=Math.min.apply(null,core), rhi=Math.max.apply(null,core);
+  var rpad=(rhi-rlo)*0.3||Math.abs(rhi)*0.004;
+  rlo-=rpad; rhi+=rpad;
+  var rspan=(rhi-rlo)||1;
+  var pct=function(v){return (1-(v-rlo)/rspan)*100;};
+  var clamp=function(v){return Math.max(1.2,Math.min(98.8,pct(v)));};
+  var off=function(v){return v>rhi||v<rlo;};
+  var band=function(a,b,cls){
+    if(a==null||b==null||isNaN(a)||isNaN(b))return '';
+    var t=Math.min(pct(a),pct(b)), h=Math.abs(pct(a)-pct(b));
+    return '<div class="tl-band '+cls+'" style="top:'+t.toFixed(1)+'%;height:'+h.toFixed(1)+'%"></div>';
+  };
+  var rail='<div class="tl-rail">'
+    + (S&&S.style?band(S.entry,S.tp,'rw')+band(S.entry,S.sl,'rk'):'')
+    + pts.map(function(x){
+        var o=off(x.p);
+        return '<div class="tl-mk '+x.k+(o?' off':'')+'" style="top:'+clamp(x.p).toFixed(1)+'%;'
+          +(o?'border-color:'+x.c:'background:'+x.c)+'"></div>';
+      }).join('')
+    + '<div class="tl-now" style="top:'+clamp(price).toFixed(1)+'%"></div>'
+    + '<span class="tl-cap top">'+anaFmt(rhi,dp)+'</span>'
+    + '<span class="tl-cap bot">'+anaFmt(rlo,dp)+'</span>'
+    +'</div>';
+
+  var rows=pts.slice().sort(function(a,b){return b.p-a.p;}).map(function(x,i){
+    var d=(x.p-price)/price*100;
+    var abs=x.p-price;
+    var side=x.k==='now'?'':(d>=0?'above':'below');
+    return '<div class="tl-row '+x.k+(off(x.p)?' faded':'')+'" style="animation-delay:'+(i*0.04).toFixed(2)+'s">'
+      +'<span class="dotl" style="background:'+x.c+'"></span>'
+      +'<div class="tl-t"><b style="color:'+x.c+'">'+escHtml(x.l)+(off(x.p)?' <em>off rail</em>':'')+'</b>'
+        +'<i>'+escHtml(LADDER_MEAN[x.l]||'')+'</i></div>'
+      +'<div class="tl-n"><b>'+anaFmt(x.p,dp)+'</b>'
+        +(x.k==='now'?'<i>live</i>'
+          :'<i>'+(d>=0?'+':'')+d.toFixed(2)+'% · '+(abs>=0?'+':'')+anaFmt(abs,dp)+' '+side+'</i>')
+      +'</div></div>';
+  }).join('');
+
+  var head='';
+  if(S&&S.style){
+    var toEntry=Math.abs((S.entry-price)/price*100);
+    head='<div class="tl-sum">'
+      +'<div><i>Risk</i><b style="color:var(--red)">'+anaFmt(Math.abs(S.entry-S.sl),dp)+'</b><span>$'+S.risk+'</span></div>'
+      +'<div><i>Reward</i><b style="color:var(--green)">'+anaFmt(Math.abs(S.tp-S.entry),dp)+'</b><span>$'+S.profit+'</span></div>'
+      +'<div><i>Ratio</i><b style="color:var(--acc2)">'+S.rr+'R</b><span>'+(dir||'—')+'</span></div>'
+      +'<div><i>To entry</i><b>'+toEntry.toFixed(2)+'%</b><span>'+(S.isPending?'waiting':'at market')+'</span></div>'
+    +'</div>';
+  }
+  return '<div class="ab-lad-h"><span class="ab-cap">Trade ladder</span>'
+    +'<span class="ab-lad-r">rail '+anaFmt(rlo,dp)+' — '+anaFmt(rhi,dp)
+    +' · board '+anaFmt(lo,dp)+' — '+anaFmt(hi,dp)+'</span></div>'
+    +head
+    +'<div class="tl">'+rail+'<div class="tl-list">'+rows+'</div></div>';
+}
 function renderAnalytics(){
   var host=document.getElementById('ana_new');
   if(!host)return;
@@ -4397,13 +4556,24 @@ function renderAnalytics(){
    +'<div class="ab-call '+(dir==='BUY'?'buy':dir==='SELL'?'sell':'none')+'">'
      +'<div class="ab-c-l">'
        +'<div class="ab-cap">The call</div>'
-       +'<div class="ab-dir" style="color:'+col+'">'+(dir||'NO TRADE')+'</div>'
-       +'<div class="ab-why">'+escHtml(S?(S.style?((S.rallyNote||('at '+S.entry))+(S.counter?' · counter-trend':'')):S.reason):'Run an analysis')+'</div>'
+       +'<div class="ab-dir" style="color:'+col+'">'+(dir?dir+' '+escHtml(asset.toUpperCase()):'NO TRADE')+'</div>'
+       +(S&&S.style
+          ?'<div class="ab-order">'+escHtml(anaOrderLine(S,price,dp))+'</div>'
+           +'<div class="ab-why">'+escHtml(anaPlanLine(S,asset,dp))+'</div>'
+           +'<div class="ab-chips">'
+             +'<span class="ab-ch">'+escHtml(S.style)+'</span>'
+             +'<span class="ab-ch">'+S.rr+'R</span>'
+             +'<span class="ab-ch">'+(S.isPending?'Pending fill':'At market')+'</span>'
+             +(S.counter?'<span class="ab-ch warn">Counter-trend — size down</span>':'')
+             +(S.rallyNote?'<span class="ab-ch">'+escHtml(S.rallyNote)+'</span>':'')
+           +'</div>'
+          :'<div class="ab-why">'+escHtml(S?(S.reason||'Confidence is below the entry threshold — nothing to take here.')
+                                            :'Run an analysis to get a call.')+'</div>')
      +'</div>'
      +'<div class="ab-c-r">'
        +'<div class="ab-conf" style="color:'+col+'">'+conf+'<i>%</i></div>'
        +'<div class="ab-cap">confidence</div>'
-       +(S&&S.style?'<div class="ab-style">'+S.style+' · '+S.rr+'R</div>':'')
+       +(S&&S.style?'<div class="ab-style">'+escHtml(S.style)+' setup</div>':'<div class="ab-style">no setup</div>')
      +'</div>'
    +'</div>'
 
@@ -4414,31 +4584,7 @@ function renderAnalytics(){
          +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
      }).join('')+'</div>'
 
-   +'<div class="ab-lad-h"><span class="ab-cap">Price ladder</span><span class="ab-lad-r">'
-     +lo.toFixed(dp)+' — '+hi.toFixed(dp)+'</span></div>'
-   +'<div class="ab-ladder">'
-     +(function(){
-        /* Space the labels so a tight cluster stays readable: place at the true
-           position, push each down to clear the previous, then if the stack runs
-           past the bottom, slide the whole column back up. */
-        var MIN=10.5, TOP=4, BOT=96;
-        var rows=pts.map(function(x){return{x:x,top:(1-(x.p-lo)/(hi-lo))*100};});
-        rows.sort(function(a,b){return a.top-b.top;});
-        rows.forEach(function(r,i){
-          r.top=Math.max(TOP,r.top);
-          if(i&&r.top-rows[i-1].top<MIN)r.top=rows[i-1].top+MIN;
-        });
-        var over=rows[rows.length-1].top-BOT;
-        if(over>0)rows.forEach(function(r){r.top-=over;});
-        return rows;
-      })().map(function(o){
-        var x=o.x, top=o.top;
-        return '<div class="ab-lv '+x.k+'" style="top:'+top.toFixed(1)+'%">'
-          +'<span class="dotl" style="background:'+x.c+'"></span>'
-          +'<span class="lb" style="color:'+x.c+'">'+x.l+'</span>'
-          +'<span class="pv">'+x.p.toFixed(dp)+'</span></div>';
-      }).join('')
-   +'</div>'
+   +anaLadder(pts,price,lo,hi,dp,S,dir)
 
    +anaCycle(price,dp)
    +anaZones(price,dp)
