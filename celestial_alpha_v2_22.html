@@ -1105,6 +1105,67 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jz-crow .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .8s var(--ease)}
 .jz-crow b{text-align:right;font-family:'Space Grotesk';font-size:11.5px}
 @media(prefers-reduced-motion:reduce){.jz-card,.jz-draw{animation:none!important}}
+/* ── analytics: asset bar, zones, rungs ── */
+.ab-bar{padding:14px 16px;border-radius:18px;border:1px solid var(--bd);
+  background:linear-gradient(150deg,rgba(139,92,246,.07),rgba(9,9,18,.7));margin-bottom:12px}
+.ab-in{display:grid;grid-template-columns:1.6fr 1fr .8fr auto auto;gap:9px;align-items:end}
+.ab-in label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ab-in input{width:100%;margin-top:5px;padding:9px 11px;font-size:13px}
+.ab-picks{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.ab-pick{padding:5px 11px;border-radius:99px;font-size:10.5px;font-weight:600;cursor:pointer;
+  border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--mid);transition:.2s var(--ease)}
+.ab-pick:hover{color:var(--tw);border-color:rgba(157,77,255,.4);transform:translateY(-1px)}
+.ab-pick.on{background:rgba(139,92,246,.2);border-color:rgba(157,77,255,.55);color:#c9b6ff}
+.ab-sr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.ab-sr-c{padding:13px 14px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.ab-z{display:grid;grid-template-columns:auto auto 1fr auto;gap:9px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--rim);animation:rowIn .4s var(--ease) backwards}
+.ab-z:last-child{border-bottom:none}
+.ab-z .p{font-family:'Space Grotesk';font-size:13.5px;font-weight:700}
+.ab-z.r .p{color:var(--red)} .ab-z.s .p{color:var(--green)}
+.ab-z .d{font-size:10.5px;color:var(--soft)}
+.ab-z .m{font-size:9.5px;color:var(--muted);text-align:right}
+.ab-z .sc{font-size:9.5px;color:var(--acc2);font-weight:700}
+.ab-none{font-size:10.5px;color:var(--muted);font-style:italic;padding:8px 0}
+.ab-rungs{padding:13px 15px;border-radius:16px;border:1px solid var(--bd);
+  background:rgba(255,255,255,.02);margin-bottom:12px}
+.ab-rg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:9px}
+.ab-rung{padding:10px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02);
+  text-align:center;animation:wblkIn .45s var(--ease) backwards}
+.ab-rung b{display:block;font-family:'Space Grotesk';font-size:15px;color:var(--acc2);margin-bottom:7px}
+.ab-rung span{display:block;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.ab-rung .dn{color:var(--red)} .ab-rung .up{color:var(--green);margin-top:5px}
+.ab-rung i{display:block;font-style:normal;font-size:9px;color:var(--muted);font-weight:400}
+@media(max-width:900px){.ab-in{grid-template-columns:1fr 1fr}.ab-sr{grid-template-columns:1fr}
+  .ab-rg{grid-template-columns:1fr 1fr}}
+
+/* ── timing extras: cycle, aspects, positions ── */
+.tx-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:10px;margin-bottom:12px}
+.tx-card{padding:14px 15px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.tx-cyc{margin-top:9px}
+.tx-dots{display:flex;gap:6px;margin-bottom:9px}
+.tx-dots i{flex:1;height:9px;border-radius:99px;background:var(--s4);animation:railIn .4s var(--ease) backwards}
+.tx-dots i.on{background:linear-gradient(90deg,var(--purple),var(--violet))}
+.tx-dots i.now{box-shadow:0 0 12px var(--acc2);transform:scaleY(1.5)}
+.tx-cnum{font-size:11.5px;color:var(--soft)} .tx-cnum b{color:var(--acc2);font-size:14px}
+.tx-asp{display:grid;grid-template-columns:auto auto auto 1fr auto;gap:8px;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--rim);animation:rowIn .4s var(--ease) backwards}
+.tx-asp:last-child{border-bottom:none}
+.tx-asp .g{font-size:14px;color:var(--acc2)} .tx-asp .s{font-size:13px;color:var(--soft)}
+.tx-asp .n{font-size:11.5px;font-weight:600;color:var(--tw)}
+.tx-asp .n i{display:block;font-style:normal;font-size:9px;color:var(--muted)}
+.tx-asp .o{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tx-pl{padding:14px 15px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02);margin-bottom:12px}
+.tx-pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin-top:9px}
+.tx-p{padding:9px 8px;border-radius:11px;border:1px solid var(--rim);background:rgba(255,255,255,.02);
+  text-align:center;animation:railIn .4s var(--ease) backwards;transition:.22s var(--ease)}
+.tx-p:hover{transform:translateY(-2px);border-color:rgba(157,77,255,.35)}
+.tx-p b{display:block;font-size:16px;color:var(--acc2)}
+.tx-p .z{display:block;font-size:10px;color:var(--tw);margin-top:3px}
+.tx-p .d{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+.tx-p em{font-style:normal;color:var(--amber)}
+@media(max-width:900px){.tx-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.ab-z,.ab-rung,.tx-asp,.tx-p,.tx-dots i{animation:none!important}}
 /* ══════════ TIMING v3 ══════════ */
 .tk{display:block}
 .tk-hero{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;padding:22px;
@@ -3861,6 +3922,63 @@ function renderTodayStrip(){
 function anaMeter(pct,col){
   return '<div class="ab-meter"><i style="--w:'+Math.max(0,Math.min(100,pct))+'%;background:'+col+'"></i></div>';
 }
+var ANA_PICKS=['Gold','Silver','Bitcoin','Ethereum','EURUSD','GBPUSD','Oil','Apple','Tesla','Nvidia'];
+function anaBar(asset,price,dp){
+  var risk=(document.getElementById('ai_risk')||{}).value||'100';
+  return '<div class="ab-bar">'
+   +'<div class="ab-in"><label>Asset<input id="ab_asset" value="'+escHtml(asset==='—'?'':asset)+'" '
+     +'onkeydown="if(event.key===\'Enter\')anaRun()" placeholder="Gold, BTC, EURUSD…"></label>'
+   +'<label>Price<input id="ab_price" type="number" step="0.01" value="'+(price?price.toFixed(dp):'')+'" '
+     +'onkeydown="if(event.key===\'Enter\')anaRun()" placeholder="live"></label>'
+   +'<label>Risk $<input id="ab_risk" type="number" step="1" value="'+escHtml(risk)+'"></label>'
+   +'<button class="btn btn-g btn-sm" onclick="anaLive()">⟲ Live</button>'
+   +'<button class="btn btn-a btn-sm" onclick="anaRun()">Analyse</button></div>'
+   +'<div class="ab-picks">'+ANA_PICKS.map(function(a){
+       return '<button class="ab-pick'+(a.toLowerCase()===String(asset).toLowerCase()?' on':'')+'" onclick="anaPick(\''+a+'\')">'+a+'</button>';
+     }).join('')+'</div></div>';
+}
+function anaPick(a){
+  document.getElementById('ai_asset_txt').value=a;
+  document.getElementById('ai_price').value='';
+  _lastHistAsset='';                       /* force a fresh history pull */
+  fetchLivePrice(function(ok){ if(ok)runAI(); renderAnalytics(); });
+}
+function anaLive(){
+  var a=document.getElementById('ab_asset');
+  if(a&&a.value)document.getElementById('ai_asset_txt').value=a.value;
+  document.getElementById('ai_price').value='';
+  _lastHistAsset='';
+  fetchLivePrice(function(ok){ if(ok)runAI(); renderAnalytics(); });
+}
+/* Support and resistance drawn from the aligned-level engine, nearest first */
+function anaZones(price,dp){
+  var lv=window._lastLevels||[];
+  if(!lv.length)return '';
+  var res=lv.filter(function(l){return l.price>price;}).sort(function(a,b){return a.price-b.price;}).slice(0,3);
+  var sup=lv.filter(function(l){return l.price<price;}).sort(function(a,b){return b.price-a.price;}).slice(0,3);
+  function row(l,kind){
+    var d=(l.price-price)/price*100;
+    return '<div class="ab-z '+kind+'"><span class="p">'+l.price.toFixed(dp)+'</span>'
+      +'<span class="d">'+(d>=0?'+':'')+d.toFixed(2)+'%</span>'
+      +'<span class="m">'+l.deg+'° · '+l.sigma+'σ</span>'
+      +'<span class="sc">'+l.score+'pt</span></div>';
+  }
+  return '<div class="ab-sr">'
+    +'<div class="ab-sr-c"><div class="ab-cap">Resistance</div>'+(res.length?res.map(function(l){return row(l,'r');}).join(''):'<div class="ab-none">none within range</div>')+'</div>'
+    +'<div class="ab-sr-c"><div class="ab-cap">Support</div>'+(sup.length?sup.map(function(l){return row(l,'s');}).join(''):'<div class="ab-none">none within range</div>')+'</div>'
+    +'</div>';
+}
+/* the square-root cycle rungs, compact */
+function anaRungs(price,dp){
+  var root=Math.sqrt(price/100);
+  return '<div class="ab-rungs"><div class="ab-cap">Major cycle levels</div><div class="ab-rg">'
+    +[{i:0.25,d:90},{i:0.5,d:180},{i:0.75,d:270},{i:1,d:360}].map(function(o){
+      var up=Math.pow(root+o.i,2)*100, dn=Math.pow(Math.max(0.0001,root-o.i),2)*100;
+      return '<div class="ab-rung"><b>'+o.d+'°</b>'
+        +'<span class="dn">'+dn.toFixed(dp)+'<i>'+((dn-price)/price*100).toFixed(1)+'%</i></span>'
+        +'<span class="up">'+up.toFixed(dp)+'<i>+'+((up-price)/price*100).toFixed(1)+'%</i></span></div>';
+    }).join('')+'</div></div>';
+}
 function renderAnalytics(){
   var host=document.getElementById('ana_new');
   if(!host)return;
@@ -3870,11 +3988,9 @@ function renderAnalytics(){
 
   if(!price){
     host.className='ab';
-    host.innerHTML='<div class="ab-empty"><div class="ab-e-ic">◎</div>'
-      +'<div><b>Enter an asset and price</b><span>Then Analyse — the read appears here</span></div>'
-      +'<div class="ab-e-in"><input id="ab_asset" placeholder="Gold" value="'+escHtml(asset==='—'?'':asset)+'">'
-      +'<input id="ab_price" type="number" placeholder="price" step="0.01">'
-      +'<button class="btn btn-a btn-sm" onclick="anaRun()">Analyse</button></div></div>';
+    host.innerHTML=anaBar(asset,0,2)
+      +'<div class="ab-empty"><div class="ab-e-ic">◎</div>'
+      +'<div><b>Pick an asset above</b><span>Or type any name and press Live — the read appears here</span></div></div>';
     return;
   }
   var dir=S&&S.style?(S.isBull?'BUY':'SELL'):null;
@@ -3916,8 +4032,7 @@ function renderAnalytics(){
 
   host.className='ab';
   host.innerHTML=
-   '<div class="ab-head"><div class="ab-asset">'+escHtml(asset)+'<i>'+price.toFixed(dp)+'</i></div>'
-     +'<button class="btn btn-a btn-sm" onclick="anaRun()">↻ Analyse</button></div>'
+   anaBar(asset,price,dp)
 
    +'<div class="ab-call '+(dir==='BUY'?'buy':dir==='SELL'?'sell':'none')+'">'
      +'<div class="ab-c-l">'
@@ -3965,6 +4080,8 @@ function renderAnalytics(){
       }).join('')
    +'</div>'
 
+   +anaZones(price,dp)
+   +anaRungs(price,dp)
    +'<details class="sec"><summary><b>Full working</b><span>every method, step by step</span></summary>'
      +'<div class="tk-tools"><button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open on the Reference tab</button></div>'
    +'</details>';
@@ -3977,6 +4094,8 @@ function anaRun(){
   var a=document.getElementById('ab_asset'), pz=document.getElementById('ab_price');
   if(a&&a.value)document.getElementById('ai_asset_txt').value=a.value;
   if(pz&&pz.value)document.getElementById('ai_price').value=pz.value;
+  var rk=document.getElementById('ab_risk');
+  if(rk&&rk.value)document.getElementById('ai_risk').value=rk.value;
   try{ if(!document.getElementById('ai_price').value){ fetchLivePrice(function(ok){if(ok)runAI();renderAnalytics();}); return; } }catch(e){}
   runAI(); renderAnalytics();
 }
@@ -4019,6 +4138,58 @@ function fmtIn(mins){
   if(mins<=0)return'now';
   var h=Math.floor(mins/60),m=mins%60;
   return (h?h+'h ':'')+m+'m';
+}
+/* Live planetary picture + aspects, computed here rather than pulled from the
+   embedded pages, so the Timing screen carries them in its own language. */
+var ASPECTS=[{a:0,n:'Conjunction',s:'☌',t:'charged'},{a:60,n:'Sextile',s:'⚹',t:'easy'},
+             {a:90,n:'Square',s:'□',t:'tension'},{a:120,n:'Trine',s:'△',t:'flow'},
+             {a:180,n:'Opposition',s:'☍',t:'pull'}];
+function liveAspects(eph,orb){
+  orb=orb||5;
+  var ks=EPH_ORDER, out=[];
+  for(var i=0;i<ks.length;i++)for(var j=i+1;j<ks.length;j++){
+    var d=Math.abs(eph[ks[i]].lon-eph[ks[j]].lon)%360; if(d>180)d=360-d;
+    for(var k=0;k<ASPECTS.length;k++){
+      var diff=Math.abs(d-ASPECTS[k].a);
+      if(diff<=orb){out.push({a:ks[i],b:ks[j],asp:ASPECTS[k],orb:diff});break;}
+    }
+  }
+  return out.sort(function(x,y){return x.orb-y.orb;}).slice(0,6);
+}
+function timExtras(){
+  var eph;try{eph=getEph();}catch(e){return '';}
+  var asp=liveAspects(eph);
+  var planets=EPH_ORDER.map(function(b){
+    var si=signOf(eph[b].lon), rate=lonRate(b,new Date());
+    var retro=b!=='sun'&&b!=='moon'&&rate<0;
+    return{k:b,sym:EPH_SYM[b],name:BODY_LABEL[b]||b,zone:dz(si.sign),deg:si.deg,retro:retro};
+  });
+  var now=new Date(), epoch=new Date(2026,0,1);
+  var pos=(Math.floor((now-epoch)/86400000)%9)+1, left=9-pos;
+  return ''
+   +'<div class="tx-grid">'
+     +'<div class="tx-card"><div class="ab-cap">9-day cycle</div>'
+       +'<div class="tx-cyc"><div class="tx-dots">'
+         +Array.apply(null,Array(9)).map(function(_,i){
+            return '<i class="'+(i<pos?'on':'')+(i===pos-1?' now':'')+'" style="animation-delay:'+(i*0.04).toFixed(2)+'s"></i>';
+          }).join('')
+       +'</div><div class="tx-cnum">Day <b>'+pos+'</b> of 9 · '+left+' to the turn</div></div></div>'
+     +'<div class="tx-card"><div class="ab-cap">Live aspects</div>'
+       +(asp.length?asp.map(function(x){
+          return '<div class="tx-asp"><span class="g">'+EPH_SYM[x.a]+'</span>'
+            +'<span class="s">'+x.asp.s+'</span><span class="g">'+EPH_SYM[x.b]+'</span>'
+            +'<span class="n">'+x.asp.n+'<i>'+escHtml((BODY_LABEL[x.a]||x.a)+' · '+(BODY_LABEL[x.b]||x.b))+'</i></span>'
+            +'<span class="o">'+x.orb.toFixed(1)+'°</span></div>';
+        }).join(''):'<div class="ab-none">No tight aspects right now</div>')
+     +'</div>'
+   +'</div>'
+   +'<div class="tx-pl"><div class="ab-cap">Cycle positions</div><div class="tx-pg">'
+     +planets.map(function(x,i){
+        return '<div class="tx-p" style="animation-delay:'+(i*0.03).toFixed(2)+'s" title="'+escHtml(x.name)+'">'
+          +'<b>'+x.sym+'</b><span class="z">'+escHtml(x.zone)+'</span>'
+          +'<span class="d">'+x.deg.toFixed(1)+'°'+(x.retro?' <em>℞</em>':'')+'</span></div>';
+      }).join('')
+   +'</div></div>';
 }
 function renderTiming(){
   var host=document.getElementById('tim_new');
@@ -4080,7 +4251,8 @@ function renderTiming(){
      +'<label>Now<input type="time" id="tk_now" value="'+(st.cur!=null?fmtT((st.srMin+st.cur)%1440):'')+'" onchange="timSync(this,\'xcur\')"></label>'
      +'<button class="btn btn-a btn-sm" onclick="runAnalyze();renderTiming()">Refresh</button>'
    +'</div>'
-   +'<details class="sec"><summary><b>Reference tools</b><span>aspects · planets · calendars</span></summary>'
+   +timExtras()
+   +'<details class="sec"><summary><b>Reference tools</b><span>full toolkit · calendars</span></summary>'
      +'<div class="tk-tools">'
        +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
      +'</div></details>';
@@ -4863,7 +5035,7 @@ function runAI(){
     window._lastTrend=trend;
     var sig=buildSignal(price,vibNum,astro,levels,risk,eph,trend);
 
-    _lastVib=vibNum;_lastPrice=price;_lastAsset=assetName;
+    _lastVib=vibNum;_lastPrice=price;_lastAsset=assetName;window._lastLevels=levels;
 
     renderPlanetsRow(eph);
     renderDegreeCircle(price);
