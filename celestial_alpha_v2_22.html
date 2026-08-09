@@ -1336,6 +1336,125 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .tk-seg,.tk-nrow,.tk-slot,.ab-read,.ab-lv{animation:none!important}
   .tk-slot:hover,.tk-slot.live{transform:none}
 }
+/* ══════════ SENTIMENT v3 — RISK RADAR ══════════
+   The pane answers one question before anything else: is it safe to be in a
+   trade right now, or is a release about to move price for reasons no chart
+   can see? Everything under the hero explains that verdict in plain words. */
+.sn{display:block}
+.sn-hero{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;padding:22px;
+  border-radius:24px;border:1px solid var(--bd);margin-bottom:14px;position:relative;overflow:hidden;
+  background:radial-gradient(620px 300px at 15% 0%,rgba(139,92,246,.18),transparent 62%),
+             linear-gradient(150deg,rgba(18,16,34,.95),rgba(7,7,14,.97))}
+.sn-hero.clear{border-color:rgba(34,197,94,.42)}
+.sn-hero.watch{border-color:rgba(139,92,246,.42)}
+.sn-hero.caution{border-color:rgba(245,158,11,.42)}
+.sn-hero.stand{border-color:rgba(239,68,68,.5)}
+.sn-hero::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0}
+.sn-hero.stand::after{opacity:1;background:radial-gradient(520px 250px at 12% 8%,rgba(239,68,68,.16),transparent 66%);
+  animation:snPulse 2.4s ease-in-out infinite}
+@keyframes snPulse{0%,100%{opacity:.3}50%{opacity:1}}
+.sn-dial{position:relative;width:264px;height:264px;flex-shrink:0}
+.sn-ring{width:264px;height:264px;transform:rotate(-90deg)}
+.sn-arc{transition:stroke-dashoffset 1s linear;filter:drop-shadow(0 0 9px currentColor)}
+.sn-tick{animation:segIn .5s var(--ease) backwards}
+.sn-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 30px}
+.sn-word{font-family:'Space Grotesk';font-size:25px;font-weight:800;line-height:1.06;letter-spacing:-.01em}
+.sn-clock{font-family:'Space Grotesk';font-size:29px;font-weight:800;margin-top:9px;color:var(--tw);
+  font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.sn-until{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.sn-side{min-width:0}
+.sn-cap{font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.sn-ev{font-family:'Space Grotesk';font-size:23px;font-weight:800;color:var(--tw);margin:3px 0 3px}
+.sn-when{font-size:11px;color:var(--muted);margin-bottom:12px}
+.sn-say{font-size:13.5px;color:var(--tw);line-height:1.62;margin-bottom:13px}
+.sn-do{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.sn-do>div{padding:10px 12px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02)}
+.sn-do .k{font-size:8.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.sn-do .v{font-size:12.5px;font-weight:600;color:var(--tw);margin-top:4px;line-height:1.45}
+.sn-nums{display:flex;gap:7px;flex-wrap:wrap}
+.sn-num{padding:6px 11px;border-radius:99px;border:1px solid var(--rim);font-size:10.5px;
+  color:var(--soft);background:rgba(255,255,255,.02)}
+.sn-num b{color:var(--tw);font-weight:700}
+
+.sn-moods{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.sn-mood{padding:14px 15px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02);
+  animation:wblkIn .45s var(--ease) backwards}
+.sn-mood:nth-child(2){animation-delay:.06s}.sn-mood:nth-child(3){animation-delay:.12s}.sn-mood:nth-child(4){animation-delay:.18s}
+.sn-mood .t{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.sn-mood .v{font-family:'Space Grotesk';font-size:19px;font-weight:800;margin:5px 0 10px}
+.sn-scale{position:relative;height:7px;border-radius:99px;
+  background:linear-gradient(90deg,rgba(239,68,68,.55),rgba(255,255,255,.10) 50%,rgba(34,197,94,.55))}
+.sn-pin{position:absolute;top:-3.5px;width:3px;height:14px;border-radius:2px;background:var(--tw);
+  box-shadow:0 0 9px rgba(255,255,255,.65);transition:left 1s var(--ease)}
+.sn-mood .n{font-size:9.5px;color:var(--muted);margin-top:9px;min-height:26px;line-height:1.45}
+
+.sn-help{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}
+.sn-help>div{padding:11px 13px;border-radius:13px;border:1px dashed var(--rim);background:rgba(255,255,255,.015)}
+.sn-help b{display:block;font-size:10.5px;color:var(--tw);margin-bottom:3px}
+.sn-help span{font-size:9.5px;color:var(--muted);line-height:1.5}
+
+.sn-sech{display:flex;align-items:baseline;justify-content:space-between;margin:2px 2px 8px}
+.sn-sech b{font-size:12px;font-weight:700;color:var(--tw)}
+.sn-sech span{font-size:10px;color:var(--muted)}
+.sn-week{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-bottom:12px}
+.sn-day{border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02);padding:10px 4px;
+  text-align:center;animation:railIn .45s var(--ease) backwards;transition:.25s var(--ease)}
+.sn-day:hover{transform:translateY(-3px)}
+.sn-day .w{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sn-day .d{font-family:'Space Grotesk';font-size:17px;font-weight:800;color:var(--mid);margin:3px 0 2px}
+.sn-day .s{font-size:8.5px;font-weight:700;color:var(--green)}
+.sn-day.hot{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.09)}
+.sn-day.hot .d{color:var(--red)}.sn-day.hot .s{color:var(--red)}
+.sn-day.today{box-shadow:0 0 0 1px var(--acc2)}
+.sn-day.today .w{color:var(--acc2)}
+
+.sn-evs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.sn-evc{padding:13px 15px;border-radius:15px;border:1px solid var(--bd);background:rgba(255,255,255,.02);
+  position:relative;overflow:hidden;animation:rowIn .45s var(--ease) backwards;transition:.22s var(--ease)}
+.sn-evc:hover{transform:translateY(-2px);border-color:rgba(157,77,255,.35)}
+.sn-evc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red)}
+.sn-evc .n{font-size:13px;font-weight:700;color:var(--tw);margin-bottom:3px}
+.sn-evc .w{font-size:10px;color:var(--muted);margin-bottom:7px}
+.sn-evc .x{font-size:10.5px;color:var(--soft);line-height:1.5}
+.sn-evc .cd{position:absolute;top:12px;right:14px;font-family:'Space Grotesk';font-size:13px;
+  font-weight:800;color:var(--amber)}
+
+.sn-tally{display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:center;padding:12px 15px;
+  border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02);margin-bottom:10px}
+.sn-tally .lb{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.sn-tally .rt{font-size:11px;color:var(--soft);white-space:nowrap}
+.sn-tbar{height:9px;border-radius:99px;overflow:hidden;display:flex;background:var(--s4)}
+.sn-tbar i{display:block;height:100%;transition:width 1s var(--ease)}
+.sn-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.sn-chip{padding:5px 12px;border-radius:99px;font-size:10.5px;font-weight:600;cursor:pointer;
+  border:1px solid var(--rim);background:rgba(255,255,255,.02);color:var(--soft);transition:.2s var(--ease)}
+.sn-chip:hover{color:var(--tw);transform:translateY(-1px)}
+.sn-chip.on{background:rgba(139,92,246,.2);border-color:rgba(157,77,255,.55);color:#c9b6ff}
+.sn-wall{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.sn-art{display:block;text-decoration:none;padding:13px 15px 13px 17px;border-radius:14px;
+  border:1px solid var(--bd);background:rgba(255,255,255,.02);position:relative;overflow:hidden;
+  transition:.22s var(--ease);animation:rowIn .45s var(--ease) backwards}
+.sn-art::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--mid)}
+.sn-art.bull::before{background:var(--green)}
+.sn-art.bear::before{background:var(--red)}
+.sn-art:hover{transform:translateY(-2px);border-color:rgba(157,77,255,.4);background:rgba(139,92,246,.06)}
+.sn-art .h{font-size:12.5px;color:var(--tw);line-height:1.5;margin-bottom:6px}
+.sn-art .m{display:flex;align-items:center;gap:8px;font-size:9.5px;color:var(--muted)}
+.sn-art .tagm{font-weight:800;letter-spacing:.06em;color:var(--mid)}
+.sn-art.bull .tagm{color:var(--green)}
+.sn-art.bear .tagm{color:var(--red)}
+.sn-load{padding:24px;text-align:center;font-size:11.5px;color:var(--mid);font-style:italic;
+  border:1px dashed var(--rim);border-radius:14px}
+@media(max-width:1100px){.sn-moods{grid-template-columns:repeat(2,1fr)}.sn-week{grid-template-columns:repeat(5,1fr)}
+  .sn-wall,.sn-evs{grid-template-columns:1fr}.sn-help{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.sn-hero{grid-template-columns:1fr;justify-items:center}
+  .sn-side{text-align:center}.sn-do{grid-template-columns:1fr}.sn-nums{justify-content:center}}
+@media(prefers-reduced-motion:reduce){
+  .sn-mood,.sn-day,.sn-art,.sn-evc,.sn-tick{animation:none!important}
+  .sn-hero.stand::after{animation:none}
+  .sn-day:hover,.sn-art:hover,.sn-evc:hover{transform:none}
+}
+
 /* ══ COLLAPSIBLE SECTIONS — detail on demand, so each pane opens simple ══ */
 .sec{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(160deg,rgba(139,92,246,.05),rgba(9,9,18,.6));
   margin-bottom:12px;overflow:hidden}
@@ -2280,6 +2399,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 </div>
 
       <div class="pane hidden" id="pane_sentiment">
+        <div id="sen_legacy" style="display:none" aria-hidden="true">
         <div class="card">
           <div class="ch"><div class="ct"><div class="dot" style="background:var(--amber)"></div>Next High-Impact Release</div><div class="cs">live countdown to the next market-moving event</div></div>
           <div class="cb">
@@ -2314,7 +2434,9 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
           <div class="ch"><div class="ct"><div class="dot" style="background:var(--violet)"></div>Live Market News</div><div class="cs">latest headlines · gold, crypto, forex, Fed</div></div>
           <div class="cb"><div id="news_feed"><div class="f10 dim italic tc" style="padding:14px">Loading latest headlines…</div></div></div>
         </div>
-      </div>
+              </div>
+        <div id="sen_new"></div>
+</div>
 
       <div class="pane hidden" id="pane_timing">
         <div id="tim_legacy" style="display:none" aria-hidden="true">
@@ -7620,6 +7742,9 @@ function fetchFinnhubNews(cb){
   });
 }
 function renderNewsList(items){
+  /* the v3 wall reads from here; the legacy list below stays for back-compat */
+  window._newsItems=items||[];
+  try{senPaintNews();}catch(e){}
   var el=document.getElementById('news_feed');
   if(!el)return;
   if(!items.length){el.innerHTML='<div class="f10 dim italic tc" style="padding:14px">No recent headlines found — check your connection or API quota</div>';return;}
@@ -7739,7 +7864,9 @@ function renderSentiment(){
   if(!events.length)return;
   var next=events[0];
   /* hero */
-  var setT=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  /* writes the legacy (hidden) node and mirrors it into the v3 hero chip */
+  var setT=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;
+    var m=document.getElementById('sn_'+id);if(m)m.textContent=v;};
   setT('nh_title',next.t);
   setT('nh_fc','Forecast '+next.fc);
   setT('nh_pv','Previous '+next.pv);
@@ -7782,7 +7909,242 @@ function renderSentiment(){
   }
   tick();
   _newsTimer=setInterval(tick,1000);
+  try{renderSentimentV3();}catch(e){console.error('sentiment v3:',e);}
 }
+/* ══════════════════════════════════════════════════════════════════════
+   SENTIMENT v3 — RISK RADAR
+   Old pane listed four boxes of raw data and left you to work out what to
+   do with them. This one leads with the only thing that actually changes
+   your behaviour: how long until the next release that can move price on
+   its own, and what you should be doing in that window. The reads under
+   it are the same engines used elsewhere, shown on one bear↔bull scale so
+   a beginner can see agreement or conflict at a glance.
+══════════════════════════════════════════════════════════════════════ */
+var _senFilter='all', _senTimer=null, _senLevel='';
+
+/* what each release actually does to a gold / dollar trader */
+var SEN_WHAT={
+  'Non-Farm Payrolls':'US jobs number. Strong print → dollar up → gold and indices usually down. Biggest scheduled move of the month.',
+  'CPI (Inflation)':'Inflation print. Hotter than forecast kills rate-cut hopes → gold and stocks sell off, dollar bid.',
+  'Federal Funds Rate':'Fed rate decision. The statement and the press conference move price far more than the number itself.'
+};
+function senWhat(t){ return SEN_WHAT[(t||'').replace(/ \(est\.\)$/,'')] || 'High-impact scheduled release — expect a spread widening and a stop sweep around the print.'; }
+
+/* the verdict — one of four states, driven by minutes to the next release */
+function senRisk(next){
+  var ms=next?(next.d-new Date()):Infinity;
+  var mins=ms/60000;
+  if(mins<=15)return{lv:'stand',word:'STAND ASIDE',col:'var(--red)',
+    say:'A high-impact release is minutes away. Spreads widen, price spikes both ways and stops get taken on noise rather than on your level. This is the worst moment of the session to open anything.',
+    a:'Do not open a new trade',
+    b:'Already in? Cut size or pull the stop to break-even'};
+  if(mins<=120)return{lv:'caution',word:'TIGHTEN UP',col:'var(--amber)',
+    say:'The release is close. You can still trade, but keep it small — expect the level you are watching to get swept first and reclaimed after the print.',
+    a:'Scalp only — half size, wider stop',
+    b:'Bank partial profit before the number lands'};
+  if(mins<=720)return{lv:'watch',word:'PLAN AHEAD',col:'var(--acc2)',
+    say:'Nothing hits for several hours, so conditions are normal. Just plan the exit now — the countdown is your deadline, not a surprise.',
+    a:'Normal size — intraday and scalp',
+    b:'Set the exit before the clock reads 2h'};
+  return{lv:'clear',word:'ALL CLEAR',col:'var(--green)',
+    say:'No high-impact release for more than half a day. This is clean tape: the technical levels are the only thing driving price, so the plan on the Analytics board is the plan.',
+    a:'Full plan — swing, intraday, scalp',
+    b:'Let winners run to the level'};
+}
+
+/* headline tally → one net number in −1..+1 */
+function senNewsMood(items){
+  var b=0,s=0,f=0;
+  (items||[]).forEach(function(a){
+    var m=newsMood(a.title);
+    if(m==='bull')b++; else if(m==='bear')s++; else f++;
+  });
+  var tot=b+s+f, net=tot?(b-s)/tot:0;
+  return{bull:b,bear:s,flat:f,total:tot,net:net,
+    label:tot===0?'No data':net>0.2?'Bullish':net<-0.2?'Bearish':'Mixed',
+    col:tot===0?'var(--mid)':net>0.2?'var(--green)':net<-0.2?'var(--red)':'var(--amber)'};
+}
+
+function senGauge(title,label,col,pos,note,id){
+  pos=Math.max(2,Math.min(98,pos));
+  return '<div class="sn-mood"'+(id?' id="'+id+'"':'')+'>'
+    +'<div class="t">'+title+'</div>'
+    +'<div class="v" style="color:'+col+'">'+escHtml(label)+'</div>'
+    +'<div class="sn-scale"><i class="sn-pin" style="left:'+pos.toFixed(1)+'%"></i></div>'
+    +'<div class="n">'+note+'</div></div>';
+}
+function senNewsGauge(){
+  var nm=senNewsMood(window._newsItems);
+  var note=nm.total?(nm.bull+' bullish · '+nm.bear+' bearish · '+nm.flat+' neutral headline'+(nm.flat===1?'':'s'))
+                   :'Headlines still loading — open this tab online to fill it';
+  return senGauge('News Mood',nm.label,nm.col,50+nm.net*46,note,'sn_gnews');
+}
+
+/* news wall — tally bar, filter chips, sentiment-striped cards */
+function senPaintNews(){
+  var host=document.getElementById('sn_news');
+  var g=document.getElementById('sn_gnews');
+  if(g)g.outerHTML=senNewsGauge();
+  if(!host)return;
+  var items=window._newsItems;
+  if(!items){host.innerHTML='<div class="sn-load">Reading the wires…</div>';return;}
+  if(!items.length){host.innerHTML='<div class="sn-load">No headlines came back — you are offline, or the news keys are out of quota for this minute.</div>';return;}
+  var nm=senNewsMood(items);
+  var pc=function(n){return nm.total?(n/nm.total*100).toFixed(1):0;};
+  var shown=items.filter(function(a){return _senFilter==='all'||newsMood(a.title)===_senFilter;}).slice(0,14);
+  var chip=function(k,t,n){return '<span class="sn-chip'+(_senFilter===k?' on':'')+'" onclick="senFilter(\''+k+'\')">'+t+' '+n+'</span>';};
+  host.innerHTML=
+     '<div class="sn-tally"><span class="lb">Wire tone</span>'
+      +'<div class="sn-tbar">'
+        +'<i style="width:'+pc(nm.bull)+'%;background:var(--green)"></i>'
+        +'<i style="width:'+pc(nm.flat)+'%;background:rgba(255,255,255,.16)"></i>'
+        +'<i style="width:'+pc(nm.bear)+'%;background:var(--red)"></i>'
+      +'</div>'
+      +'<span class="rt">'+nm.total+' headlines · <b style="color:'+nm.col+'">'+nm.label+'</b></span></div>'
+    +'<div class="sn-chips">'+chip('all','All',nm.total)+chip('bull','▲ Bullish',nm.bull)
+      +chip('bear','▼ Bearish',nm.bear)+chip('flat','● Neutral',nm.flat)+'</div>'
+    +(shown.length?'<div class="sn-wall">'+shown.map(function(a,i){
+        var m=newsMood(a.title);
+        var tag=m==='bull'?'▲ BULLISH':m==='bear'?'▼ BEARISH':'● NEUTRAL';
+        var when=a.ts?timeAgo(new Date(a.ts)):'';
+        return '<a class="sn-art '+m+'" href="'+escHtml(a.url||'#')+'" target="_blank" rel="noopener"'
+          +' style="animation-delay:'+(i*0.035).toFixed(2)+'s">'
+          +'<div class="h">'+escHtml(a.title)+'</div>'
+          +'<div class="m"><span class="tagm">'+tag+'</span><span>'+escHtml(a.source||'')+'</span>'
+          +(when?'<span>· '+when+'</span>':'')+'</div></a>';
+      }).join('')+'</div>'
+     :'<div class="sn-load">Nothing in that bucket right now — try another filter.</div>');
+}
+function senFilter(m){ _senFilter=m; senPaintNews(); }
+
+/* the live ring + clock, updated in place every second */
+function senTick(){
+  var host=document.getElementById('sen_new');
+  if(!host||!host.firstChild){if(_senTimer){clearInterval(_senTimer);_senTimer=null;}return;}
+  var ev=window._senNext;
+  if(!ev)return;
+  var ms=ev.d-new Date();
+  var c=document.getElementById('sn_clock');
+  if(c)c.textContent=fmtCountdown(ms);
+  var arc=document.getElementById('sn_arc');
+  if(arc){
+    var C=parseFloat(arc.getAttribute('data-c'))||0;
+    var p=1-Math.max(0,Math.min(1,ms/(7*86400000)));
+    arc.setAttribute('stroke-dashoffset',(C*(1-p)).toFixed(1));
+  }
+  /* the verdict changed band, or the event fired — rebuild the board */
+  if(senRisk(ev).lv!==_senLevel||ms<=0)renderSentimentV3();
+}
+
+function renderSentimentV3(){
+  var host=document.getElementById('sen_new');
+  if(!host)return;
+  if(_senTimer){clearInterval(_senTimer);_senTimer=null;}
+
+  var evs=buildEconEvents();
+  var next=evs[0]||null;
+  window._senNext=next;
+  var risk=senRisk(next);
+  _senLevel=risk.lv;
+  var ms=next?(next.d-new Date()):0;
+
+  /* ── countdown ring: fills as the release approaches (7-day window) ── */
+  var R=112, C=2*Math.PI*R, p=next?1-Math.max(0,Math.min(1,ms/(7*86400000))):0;
+  var ring='<svg viewBox="0 0 264 264" class="sn-ring">'
+    +'<circle cx="132" cy="132" r="'+R+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="13"/>'
+    +'<circle cx="132" cy="132" r="'+R+'" id="sn_arc" class="sn-arc" data-c="'+C.toFixed(1)+'" fill="none"'
+      +' stroke="'+risk.col+'" stroke-width="13" stroke-linecap="round"'
+      +' stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-p)).toFixed(1)+'"/>';
+  for(var i=0;i<24;i++){
+    var a=i/24*Math.PI*2, r1=R-22, r2=R-(i%6===0?31:26);
+    ring+='<line class="sn-tick" x1="'+(132+Math.cos(a)*r1).toFixed(1)+'" y1="'+(132+Math.sin(a)*r1).toFixed(1)
+      +'" x2="'+(132+Math.cos(a)*r2).toFixed(1)+'" y2="'+(132+Math.sin(a)*r2).toFixed(1)
+      +'" stroke="rgba(255,255,255,'+(i%6===0?'.22':'.10')+')" stroke-width="1.6"'
+      +' style="animation-delay:'+(i*0.02).toFixed(2)+'s"/>';
+  }
+  ring+='</svg>';
+
+  /* ── the three bias engines, on one shared bear↔bull scale ── */
+  var B=window._lastBias||{};
+  var a=B.time, pb=B.price, cb=B.combined;
+  var dc=function(d){return d==='bull'?'var(--green)':d==='bear'?'var(--red)':'var(--amber)';};
+  var gauges=senNewsGauge();
+  gauges+=a?senGauge('Time Bias',a.dir==='bull'?'Bullish':a.dir==='bear'?'Bearish':'Neutral',dc(a.dir),a.bull,
+      'Planetary + cycle read: '+a.bull+'% bull / '+(100-a.bull)+'% bear')
+    :senGauge('Time Bias','—','var(--mid)',50,'Run an analysis on the Analytics tab to fill this');
+  gauges+=pb?senGauge('Price Bias',pb.dir==='bull'?'Bullish':pb.dir==='bear'?'Bearish':'Neutral',dc(pb.dir),pb.bull,
+      'From the candles: '+(pb.n||0)+' factors measured, '+pb.bull+'% bull')
+    :senGauge('Price Bias','—','var(--mid)',50,'Needs price history — load an asset first');
+  gauges+=cb?senGauge('Combined',cb.label,dc(cb.dir),cb.bull,
+      cb.strength+' · '+escHtml(cb.agree))
+    :senGauge('Combined','—','var(--mid)',50,'Time and price merge here once both are loaded');
+
+  /* ── ten-day strip: which days are clean and which are minefields ── */
+  var today=new Date(); today.setHours(0,0,0,0);
+  var week='';
+  for(var d=0;d<10;d++){
+    var day=new Date(today.getTime()+d*86400000);
+    var hits=evs.filter(function(e){return e.d.getFullYear()===day.getFullYear()&&e.d.getMonth()===day.getMonth()&&e.d.getDate()===day.getDate();});
+    week+='<div class="sn-day'+(hits.length?' hot':'')+(d===0?' today':'')+'" style="animation-delay:'+(d*0.035).toFixed(2)+'s"'
+      +' title="'+(hits.length?hits.map(function(e){return e.t+' — '+fmtEventTime(e.d);}).join(' | '):'No scheduled high-impact release')+'">'
+      +'<div class="w">'+(d===0?'TODAY':day.toLocaleDateString('en',{weekday:'short'}).toUpperCase())+'</div>'
+      +'<div class="d">'+day.getDate()+'</div>'
+      +'<div class="s">'+(hits.length?(hits.length>1?hits.length+' EVENTS':'EVENT'):'CLEAR')+'</div></div>';
+  }
+
+  /* ── the next four releases, each with what it actually moves ── */
+  var cards=evs.slice(0,4).map(function(e,i){
+    var days=Math.ceil((e.d-new Date())/86400000);
+    return '<div class="sn-evc" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
+      +'<div class="cd">'+(days<=0?'today':'in '+days+'d')+'</div>'
+      +'<div class="n">'+escHtml(e.t)+'</div>'
+      +'<div class="w">'+fmtEventTime(e.d)+' · your local time · '+e.impact+' impact</div>'
+      +'<div class="x">'+escHtml(senWhat(e.t))+'</div></div>';
+  }).join('');
+
+  host.className='sn';
+  host.innerHTML=
+   '<div class="sn-hero '+risk.lv+'">'
+    +'<div class="sn-dial">'+ring
+      +'<div class="sn-core"><div class="sn-word" style="color:'+risk.col+'">'+risk.word+'</div>'
+      +'<div class="sn-clock" id="sn_clock">'+(next?fmtCountdown(ms):'—')+'</div>'
+      +'<div class="sn-until">until the next release</div></div></div>'
+    +'<div class="sn-side">'
+      +'<div class="sn-cap">Next high-impact release</div>'
+      +'<div class="sn-ev" id="sn_nh_title">'+escHtml(next?next.t:'Nothing scheduled')+'</div>'
+      +'<div class="sn-when" id="sn_nh_when">'+(next?fmtEventTime(next.d)+' (local)':'—')+'</div>'
+      +'<div class="sn-say">'+risk.say+'</div>'
+      +'<div class="sn-do"><div><div class="k">What to do now</div><div class="v">'+risk.a+'</div></div>'
+        +'<div><div class="k">If you are already in</div><div class="v">'+risk.b+'</div></div></div>'
+      +'<div class="sn-nums"><span class="sn-num" id="sn_nh_fc">Forecast —</span>'
+        +'<span class="sn-num" id="sn_nh_pv">Previous —</span>'
+        +'<span class="sn-num" id="sn_nh_cmp">—</span></div>'
+    +'</div></div>'
+   +'<div class="sn-moods">'+gauges+'</div>'
+   +'<div class="sn-help">'
+     +'<div><b>Why this matters</b><span>Charts cannot see a scheduled release. The ring is the one thing on this page that is known in advance.</span></div>'
+     +'<div><b>Green ring</b><span>All clear. Trade the levels on the Analytics board at normal size.</span></div>'
+     +'<div><b>Amber ring</b><span>Release inside 2 hours. Half size, and expect your level to be swept first.</span></div>'
+     +'<div><b>Red ring</b><span>Minutes to go. Nothing new gets opened. Protect what is already on.</span></div>'
+   +'</div>'
+   +'<div class="sn-sech"><b>Next 10 days</b><span>red = a release lands that day · hover a tile for the name</span></div>'
+   +'<div class="sn-week">'+week+'</div>'
+   +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
+   +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
+   +'<div class="sn-sech"><b>The wire</b><span>headlines scored bullish / bearish by keyword — a tone check, not a signal</span></div>'
+   +'<div id="sn_news"></div>';
+
+  /* the macro loader writes live numbers into the hidden legacy hero — mirror
+     whatever has already landed, and renderSentiment's setT keeps it in sync */
+  ['nh_title','nh_fc','nh_pv','nh_cmp','nh_when'].forEach(function(id){
+    var s=document.getElementById(id), t=document.getElementById('sn_'+id);
+    if(s&&t&&s.textContent&&s.textContent!=='—')t.textContent=s.textContent;
+  });
+
+  senPaintNews();
+  if(next)_senTimer=setInterval(senTick,1000);
+}
+
 function renderCycleCountdown(){
   try{renderCycleHero();}catch(e){console.error('cycle hero:',e);}
   if(!document.getElementById('cd_bar'))return;
