@@ -1105,6 +1105,43 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jz-crow .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .8s var(--ease)}
 .jz-crow b{text-align:right;font-family:'Space Grotesk';font-size:11.5px}
 @media(prefers-reduced-motion:reduce){.jz-card,.jz-draw{animation:none!important}}
+/* ══ COLLAPSIBLE SECTIONS — detail on demand, so each pane opens simple ══ */
+.sec{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(160deg,rgba(139,92,246,.05),rgba(9,9,18,.6));
+  margin-bottom:12px;overflow:hidden}
+.sec>summary{list-style:none;cursor:pointer;padding:13px 16px;display:flex;align-items:center;gap:10px;
+  transition:background .2s var(--ease)}
+.sec>summary::-webkit-details-marker{display:none}
+.sec>summary::before{content:'';width:7px;height:7px;border-right:1.6px solid var(--acc2);
+  border-bottom:1.6px solid var(--acc2);transform:rotate(-45deg);transition:transform .3s var(--ease);flex-shrink:0}
+.sec[open]>summary::before{transform:rotate(45deg)}
+.sec>summary:hover{background:rgba(139,92,246,.07)}
+.sec>summary b{font-size:12px;font-weight:700;color:var(--tw)}
+.sec>summary span{font-size:10px;color:var(--muted);margin-left:auto}
+.sec[open]>summary{border-bottom:1px solid var(--rim)}
+.sec>*:not(summary){animation:secIn .4s var(--ease)}
+@keyframes secIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.sec .card{border:none;background:transparent;margin:0}
+.sec .card+.card{border-top:1px solid var(--rim)}
+
+/* ══ TODAY'S WINDOWS — one strip that answers "when today?" ══ */
+.tws{border:1px solid var(--bd);border-radius:16px;padding:14px 16px;margin-bottom:12px;
+  background:linear-gradient(150deg,rgba(18,16,34,.9),rgba(9,9,18,.92))}
+.tws:empty{display:none}
+.tws-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.tws-h b{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.tws-h span{font-size:10px;color:var(--muted)}
+.tws-bar{position:relative;height:34px;border-radius:10px;background:var(--s4);overflow:hidden}
+.tws-slot{position:absolute;top:0;bottom:0;border-radius:4px;transition:opacity .3s}
+.tws-slot.scalp{background:rgba(34,197,94,.55)}
+.tws-slot.intra{background:rgba(139,92,246,.5)}
+.tws-slot.none{background:rgba(255,255,255,.04)}
+.tws-now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--amber);
+  box-shadow:0 0 10px var(--amber);z-index:2}
+.tws-axis{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:5px}
+.tws-legend{display:flex;gap:12px;margin-top:9px;font-size:9.5px;color:var(--muted)}
+.tws-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.tws-next{margin-top:9px;font-size:11px;color:var(--soft);border-top:1px solid var(--rim);padding-top:8px}
+.tws-next b{color:var(--acc2)}
 /* ══ TIMING VERDICT — the plain answer ══ */
 .tv{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;
   border-radius:18px;padding:16px 18px;margin-bottom:14px;position:relative;overflow:hidden;
@@ -1855,6 +1892,18 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
         <!-- OUTPUT -->
                   <div id="ca_out" class="hidden">
 
+
+
+            <div id="ca_sigma_blk" class="hidden">
+
+
+
+
+
+            </div>
+
+          
+            <details class="sec"><summary><b>Verdict detail</b><span>8-method vote table</span></summary>
             <div class="card">
               <div class="ch">
                 <div class="ct"><div class="dot" style="background:var(--acc2)"></div>Merged Verdict — 8-method confluence</div>
@@ -1862,9 +1911,9 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
               </div>
               <div class="cb" id="ca_verdict"></div>
             </div>
+            </details>
 
-
-            <div id="ca_sigma_blk" class="hidden">
+            <details class="sec"><summary><b>Deep analysis</b><span>sigma bands · confluence · export</span></summary>
               <div class="card">
                 <div class="ch">
                   <div class="ct"><div class="dot" style="background:var(--green)"></div>Sigma Dashboard</div>
@@ -1872,39 +1921,33 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
                 </div>
                 <div class="cb"><div class="g4" id="ca_sig_dash"></div></div>
               </div>
-
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Chart — sigma bands · major cycle levels</div></div>
                 <div class="cb"><canvas id="ca_cv" height="380"></canvas></div>
               </div>
-
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--amber,#fbbf24)"></div>Statistical Sigma Levels</div>
                   <div class="cs">theoretical vs measured</div></div>
                 <div class="cb"><div id="ca_sig_tbl"></div>
                   <div class="f10 dim lh" id="ca_sig_warn" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--rim)"></div></div>
               </div>
-
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Level Reasoning</div>
                   <div class="cs">measured from cached candles</div></div>
                 <div class="cb" id="ca_reason"></div>
               </div>
-
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Confluence Sources</div></div>
                 <div class="cb" id="ca_conf_tbl"></div>
               </div>
-
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>TradingView Export</div>
                   <div class="cs">Pine Script v5</div></div>
                 <div class="cb"><textarea id="ca_pine" readonly></textarea>
                   <button class="btn btn-g btn-sm mt10" onclick="CA.copyPine()">Copy Pine Script</button></div>
               </div>
-            </div>
-
-          </div>
+            </details>
+</div>
 
         <div id="ai_out" class="hidden">
 
@@ -2076,6 +2119,24 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
           </div>
         </div>
 
+        <div id="today_strip"></div>
+
+        <details class="sec" open><summary><b>Session setup</b><span>day · sunrise · now</span></summary>
+        <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Session Setup</div><div class="cs">auto-synced to your clock · override anytime</div></div>
+          <div class="cb"><div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:flex-end">
+            <div class="fg" style="margin-bottom:0"><label>Day</label>
+              <select id="xday" onchange="onDay()">
+                <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
+                <option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option>
+              </select></div>
+            <div class="fg" style="margin-bottom:0"><label>Sunrise</label><input type="time" id="xrise" value="06:20"></div>
+            <div class="fg" style="margin-bottom:0"><label>Now</label><input type="time" id="xcur"></div>
+            <button class="btn btn-a" onclick="runAnalyze()">Analyze Now</button>
+          </div></div>
+        </div>
+        </details>
+
+        <details class="sec"><summary><b>Cycle toolkit</b><span>aspects · planets · 9-day cycle</span></summary>
         <div class="card">
           <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Cycle Toolkit</div><div class="cs">Aspects · Planets · 9-Day Cycle</div></div>
           <div class="cb0">
@@ -2089,19 +2150,36 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
             <iframe id="tim_frame_2" class="ref-frame hidden"></iframe>
           </div>
         </div>
-        <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Session Setup</div><div class="cs">auto-synced to your clock · override anytime</div></div>
-          <div class="cb"><div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:flex-end">
-            <div class="fg" style="margin-bottom:0"><label>Day</label>
-              <select id="xday" onchange="onDay()">
-                <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
-                <option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option>
-              </select></div>
-            <div class="fg" style="margin-bottom:0"><label>Sunrise</label><input type="time" id="xrise" value="06:20"></div>
-            <div class="fg" style="margin-bottom:0"><label>Now</label><input type="time" id="xcur"></div>
-            <button class="btn btn-a" onclick="runAnalyze()">Analyze Now</button>
-          </div></div>
+        </details>
+
+        <details class="sec"><summary><b>This week's windows</b><span>scalp · intraday · swing</span></summary>
+        <div class="card">
+          <div class="ch"><div class="ct">Best Trade Windows This Week</div><div class="cs">4 Scalp / 2 Intraday / 1 Swing</div></div>
+          <div class="cb">
+            <div class="fr" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-bottom:12px">
+              <div class="fg"><label>Asset Res#</label><input type="number" id="tw_num" placeholder="6 for Gold" min="1" max="9"></div>
+              <div class="fg"><label>Sunrise</label><input type="time" id="tw_rise" value="06:20"></div>
+              <div class="fg"><label>Week Start</label><input type="date" id="tw_date"></div>
+              <div class="fg"><label>Market Open</label><input type="time" id="tw_open" value="09:00"></div>
+            </div>
+            <button class="btn btn-a btn-sm" onclick="buildWeek()">Build This Week</button>
+            <div id="tw_out" class="hidden mt10"></div>
+          </div>
         </div>
-        <div class="g2">
+          <div class="card">
+            <div class="ch"><div class="ct">Cycle Hour Table</div></div>
+            <div class="cb">
+              <div class="fr" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:12px">
+                <div class="fg"><label>Day</label><select id="ht_d" onchange="buildHT()"><option value="0">Sun</option><option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option><option value="6">Sat</option></select></div>
+                <div class="fg"><label>Sunrise</label><input type="time" id="ht_r" value="06:20" onchange="buildHT()"></div>
+                <div class="fg"><label>Highlight #</label><input type="number" id="ht_n" placeholder="1-9" min="1" max="9" onchange="buildHT()"></div>
+              </div>
+              <div id="htout"></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="sec"><summary><b>Calendar &amp; long cycles</b><span>solar windows · events · 2026-2028</span></summary>
           <div class="card">
             <div class="ch"><div class="ct">☀ Seasonal Cycle Calendar</div><div class="cs">Solar Year Cycles</div></div>
             <div class="cb">
@@ -2132,40 +2210,20 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
             <div class="ch"><div class="ct">Annual Solar Windows</div><div class="cs">±2 day margin</div></div>
             <div class="cb" id="solar_cal"></div>
           </div>
-        </div>
-        <div class="card">
-          <div class="ch"><div class="ct">Best Trade Windows This Week</div><div class="cs">4 Scalp / 2 Intraday / 1 Swing</div></div>
-          <div class="cb">
-            <div class="fr" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-bottom:12px">
-              <div class="fg"><label>Asset Res#</label><input type="number" id="tw_num" placeholder="6 for Gold" min="1" max="9"></div>
-              <div class="fg"><label>Sunrise</label><input type="time" id="tw_rise" value="06:20"></div>
-              <div class="fg"><label>Week Start</label><input type="date" id="tw_date"></div>
-              <div class="fg"><label>Market Open</label><input type="time" id="tw_open" value="09:00"></div>
-            </div>
-            <button class="btn btn-a btn-sm" onclick="buildWeek()">Build This Week</button>
-            <div id="tw_out" class="hidden mt10"></div>
-          </div>
-        </div>
         <div class="card">
           <div class="ch"><div class="ct">Cycle Events 2026–2028</div><div class="cs">Best swing entry days</div></div>
           <div class="cb" id="eph_ev"></div>
         </div>
-        <div class="g2">
-          <div class="card">
-            <div class="ch"><div class="ct">Cycle Hour Table</div></div>
-            <div class="cb">
-              <div class="fr" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:12px">
-                <div class="fg"><label>Day</label><select id="ht_d" onchange="buildHT()"><option value="0">Sun</option><option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option><option value="6">Sat</option></select></div>
-                <div class="fg"><label>Sunrise</label><input type="time" id="ht_r" value="06:20" onchange="buildHT()"></div>
-                <div class="fg"><label>Highlight #</label><input type="number" id="ht_n" placeholder="1-9" min="1" max="9" onchange="buildHT()"></div>
-              </div>
-              <div id="htout"></div>
-            </div>
-          </div>
           <div class="card">
             <div class="ch"><div class="ct">Live Cycle Data 2026–2028</div></div>
             <div class="cb0"><table><thead><tr><th>Period</th><th>Mid Cycle</th><th>Macro Cycle</th><th>Deep Cycle A</th><th>Deep Cycle B</th><th>Deep Cycle C</th></tr></thead><tbody id="eph_tbl"></tbody></table></div>
           </div>
+        </details>
+
+
+        <div class="g2">
+        </div>
+        <div class="g2">
         </div>
       </div>
 
@@ -3642,6 +3700,50 @@ function brokerTest(){
 }
 
 /* ══ TIMING VERDICT — one plain answer: is this a window to trade or not? ══ */
+/* ══ TODAY'S WINDOWS — the 12 planetary hours of this session laid on one bar,
+   shaded by how tradeable each is for the current asset, with a live marker. ══ */
+function renderTodayStrip(){
+  var el=document.getElementById('today_strip');
+  if(!el)return;
+  var di=parseInt((document.getElementById('xday')||{}).value,10);
+  var rs=(document.getElementById('xrise')||{}).value;
+  var cs=(document.getElementById('xcur')||{}).value;
+  if(isNaN(di)||!rs){el.innerHTML='';return;}
+  var rp=rs.split(':'), srMin=+rp[0]*60+ +rp[1];
+  var vib=_lastVib||0, span=12*60;
+  var slots=[],best=null;
+  for(var h=1;h<=12;h++){
+    var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
+    var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
+    var kind=exact?'scalp':inter?'intra':'none';
+    var start=srMin+(h-1)*60;
+    slots.push({h:h,kind:kind,start:start,name:hp.n,sym:hp.s});
+    if(!best&&kind!=='none')best=slots[slots.length-1];
+  }
+  var cur=null;
+  if(cs){var cp=cs.split(':');cur=(+cp[0]*60+ +cp[1])-srMin;if(cur<0)cur+=1440;}
+  var nowPct=cur!=null?Math.max(0,Math.min(100,cur/span*100)):null;
+  /* the next tradeable window still ahead of now */
+  var upcoming=slots.filter(function(x){return x.kind!=='none'&&(cur==null||(x.start-srMin+60)>cur);});
+  var nxt=upcoming[0];
+  el.className='tws';
+  el.innerHTML=
+    '<div class="tws-h"><b>Today’s windows</b><span>'+(vib?'for #'+vib:'set an asset to shade these')+'</span></div>'
+   +'<div class="tws-bar">'
+     +slots.map(function(x,i){
+        return '<div class="tws-slot '+x.kind+'" style="left:'+(i/12*100).toFixed(2)+'%;width:'+(100/12-0.6).toFixed(2)
+          +'%" title="H'+x.h+' · '+x.name+' · '+fmtT(x.start)+'"></div>';
+      }).join('')
+     +(nowPct!=null?'<div class="tws-now" style="left:'+nowPct.toFixed(2)+'%"></div>':'')
+   +'</div>'
+   +'<div class="tws-axis"><span>'+fmtT(srMin)+'</span><span>'+fmtT(srMin+360)+'</span><span>'+fmtT(srMin+720)+'</span></div>'
+   +'<div class="tws-legend"><span><i style="background:rgba(34,197,94,.55)"></i>Strong — period carries #'+(vib||'?')+'</span>'
+     +'<span><i style="background:rgba(139,92,246,.5)"></i>Supporting</span>'
+     +'<span><i style="background:rgba(255,255,255,.08)"></i>Skip</span></div>'
+   +'<div class="tws-next">'+(nxt
+      ? 'Next window: <b>H'+nxt.h+' · '+escHtml(nxt.name)+'</b> at '+fmtT(nxt.start)
+      : 'No further windows in this session')+'</div>';
+}
 function tradeWindow(){
   var td=LA;
   var out={ok:false,level:'wait',title:'Not a trading window',why:[],mins:null};
@@ -3717,6 +3819,7 @@ function renderCycleHero(){
   if(te)te.textContent=new Date(now.getTime()+daysLeft*86400000).toLocaleDateString('en',{month:'short',day:'numeric'});
   renderHourRail();
   try{rndTimingVerdict();}catch(e){}
+  try{renderTodayStrip();}catch(e){console.error('today strip:',e);}
 }
 /* twelve planetary hours from the current session, the live one highlighted */
 function renderHourRail(){
