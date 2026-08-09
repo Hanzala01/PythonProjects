@@ -1105,6 +1105,51 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jz-crow .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .8s var(--ease)}
 .jz-crow b{text-align:right;font-family:'Space Grotesk';font-size:11.5px}
 @media(prefers-reduced-motion:reduce){.jz-card,.jz-draw{animation:none!important}}
+/* ── major levels ladder ── */
+.mj{padding:15px 16px;border-radius:18px;border:1px solid var(--bd);
+  background:linear-gradient(160deg,rgba(139,92,246,.05),rgba(9,9,18,.6));margin-bottom:12px}
+.mj-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:10px 0 12px}
+.mj-s{padding:10px 12px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02)}
+.mj-s span{display:block;font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.mj-s b{font-family:'Space Grotesk';font-size:15px;font-variant-numeric:tabular-nums}
+.mj-row{display:grid;grid-template-columns:66px 1fr 2fr 1fr 78px;gap:11px;align-items:center;
+  padding:10px 11px;border-radius:12px;margin-bottom:6px;border:1px solid var(--rim);
+  background:rgba(255,255,255,.02);animation:mlIn .5s var(--ease) backwards;transition:.22s var(--ease)}
+.mj-row:hover{border-color:rgba(157,77,255,.32);background:rgba(139,92,246,.05)}
+.mj-deg b{font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--acc2)}
+.mj-deg i{display:block;font-style:normal;font-size:8.5px;color:var(--muted)}
+.mj-dn,.mj-up{text-align:center}
+.mj-dn b,.mj-up b{display:block;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.mj-dn b{color:var(--red)} .mj-up b{color:var(--green)}
+.mj-dn i,.mj-up i{font-style:normal;font-size:9.5px;color:var(--muted)}
+.mj-track{position:relative;height:6px;border-radius:99px;background:var(--s4);overflow:hidden}
+.mj-track .mid{position:absolute;left:50%;top:-3px;width:1px;height:12px;background:rgba(167,139,250,.5)}
+.mj-track .fill{position:absolute;left:50%;top:0;height:100%;width:0;border-radius:99px;transform:translateX(-50%);
+  transition:width .9s var(--ease);
+  background:linear-gradient(90deg,rgba(239,68,68,.8),rgba(157,77,255,.65),rgba(34,197,94,.8))}
+.mj-w{text-align:right;font-size:11.5px;color:var(--soft);font-variant-numeric:tabular-nums}
+.mj-note{margin-top:9px;font-size:9.5px;color:var(--muted);line-height:1.65;border-top:1px solid var(--rim);padding-top:9px}
+/* ── market cycle ── */
+.mc{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center;padding:16px 18px;
+  border-radius:18px;border:1px solid var(--bd);margin-bottom:12px;
+  background:linear-gradient(150deg,rgba(139,92,246,.08),rgba(9,9,18,.7))}
+.mc-phase{font-family:'Space Grotesk';font-size:26px;font-weight:800;line-height:1.15;margin:3px 0 5px}
+.mc-sub{font-size:10.5px;color:var(--soft);line-height:1.6}
+.mc-arc{position:relative;width:120px;height:120px;flex-shrink:0}
+.mc-arc svg{width:120px;height:120px;transform:rotate(-90deg)}
+.mc-tr{fill:none;stroke:var(--s4);stroke-width:8}
+.mc-pg{fill:none;stroke:url(#cycArc);stroke:var(--acc2);stroke-width:8;stroke-linecap:round;
+  stroke-dasharray:var(--dash);stroke-dashoffset:var(--off);filter:drop-shadow(0 0 8px rgba(157,77,255,.6))}
+.mc-deg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk';font-size:20px;font-weight:800;color:var(--tw)}
+.mc-k{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--rim)}
+.mc-k:last-child{border-bottom:none}
+.mc-k span{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mc-k b{font-family:'Space Grotesk';font-size:12.5px;color:var(--tw)}
+@media(max-width:900px){.mc{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .mj-strip{grid-template-columns:1fr 1fr}
+  .mj-row{grid-template-columns:56px 1fr 1fr;row-gap:6px}.mj-track,.mj-w{display:none}}
+@media(prefers-reduced-motion:reduce){.mj-row{animation:none!important}}
 /* ── analytics: asset bar, zones, rungs ── */
 .ab-bar{padding:14px 16px;border-radius:18px;border:1px solid var(--bd);
   background:linear-gradient(150deg,rgba(139,92,246,.07),rgba(9,9,18,.7));margin-bottom:12px}
@@ -4017,16 +4062,78 @@ function anaZones(price,dp){
   }
   return '<div class="ab-sr">'+card(sell,'sell')+card(buy,'buy')+'</div>';
 }
-/* the square-root cycle rungs, compact */
+/* ══ MAJOR LEVELS — the full square-root cycle ladder ══
+   Divide by 100, root it, step the increment, square back and multiply up.
+   The ÷100 is what scales each increment tenfold, so 0.25 here is 2.5 root
+   units on raw price — that is why the 90° rung sits where it does. */
 function anaRungs(price,dp){
-  var root=Math.sqrt(price/100);
-  return '<div class="ab-rungs"><div class="ab-cap">Major cycle levels</div><div class="ab-rg">'
-    +[{i:0.25,d:90},{i:0.5,d:180},{i:0.75,d:270},{i:1,d:360}].map(function(o){
-      var up=Math.pow(root+o.i,2)*100, dn=Math.pow(Math.max(0.0001,root-o.i),2)*100;
-      return '<div class="ab-rung"><b>'+o.d+'°</b>'
-        +'<span class="dn">'+dn.toFixed(dp)+'<i>'+((dn-price)/price*100).toFixed(1)+'%</i></span>'
-        +'<span class="up">'+up.toFixed(dp)+'<i>+'+((up-price)/price*100).toFixed(1)+'%</i></span></div>';
-    }).join('')+'</div></div>';
+  var scaled=price/100, root=Math.sqrt(scaled);
+  var STEPS=[{i:0.25,d:90},{i:0.5,d:180},{i:0.75,d:270},{i:1,d:360}];
+  var rows=STEPS.map(function(o){
+    var up=Math.pow(root+o.i,2)*100, dn=Math.pow(Math.max(0.0001,root-o.i),2)*100;
+    return{d:o.d,i:o.i,up:up,dn:dn,upPct:(up-price)/price*100,dnPct:(dn-price)/price*100,w:up-dn};
+  });
+  var maxW=rows[rows.length-1].w||1;
+  return '<div class="mj"><div class="ab-cap">Major levels — square root cycle</div>'
+   +'<div class="mj-strip">'
+     +'<div class="mj-s"><span>Price</span><b>'+price.toFixed(dp)+'</b></div>'
+     +'<div class="mj-s"><span>√(P÷100)</span><b>'+root.toFixed(5)+'</b></div>'
+     +'<div class="mj-s"><span>Next down</span><b class="cr">'+rows[0].dn.toFixed(dp)+'</b></div>'
+     +'<div class="mj-s"><span>Next up</span><b class="cg">'+rows[0].up.toFixed(dp)+'</b></div>'
+   +'</div>'
+   +rows.map(function(r,k){
+      return '<div class="mj-row" style="animation-delay:'+(k*0.06).toFixed(2)+'s">'
+        +'<div class="mj-deg"><b>'+r.d+'°</b><i>+'+r.i.toFixed(2)+'</i></div>'
+        +'<div class="mj-dn"><b>'+r.dn.toFixed(dp)+'</b><i>'+r.dnPct.toFixed(2)+'%</i></div>'
+        +'<div class="mj-track"><span class="mid"></span>'
+          +'<span class="fill" style="--w:'+(r.w/maxW*100).toFixed(0)+'%"></span></div>'
+        +'<div class="mj-up"><b>'+r.up.toFixed(dp)+'</b><i>+'+r.upPct.toFixed(2)+'%</i></div>'
+        +'<div class="mj-w">'+r.w.toFixed(dp)+'</div>'
+        +'</div>';
+    }).join('')
+   +'<div class="mj-note">Dividing by 100 before the root scales every increment 10×, so 0.25 here is 2.5 root units on raw price — the 90° level lands at '+rows[0].up.toFixed(dp)+'.</div>'
+   +'</div>';
+}
+/* ══ MARKET CYCLE — where price sits on the wheel, in the range, and in the
+   nine-day count, with the phase named in plain words ══ */
+function anaCycle(price,dp){
+  var root=Math.sqrt(price);
+  var deg=((root%2)/2)*360;
+  var ring=Math.floor(root/2)+1, step=Math.floor((root%2)/0.25);
+  var phase = deg<90?'Accumulation' : deg<135?'Markup' : deg<180?'Mid-cycle'
+            : deg<225?'Distribution': deg<270?'Markdown' : 'Late cycle';
+  var inZone = deg>=90&&deg<=225;
+  var rows=HIST_ROWS||[];
+  var pos=null,hi,lo;
+  if(rows.length>=10){
+    var win=rows.slice(-30);
+    hi=Math.max.apply(null,win.map(function(r){return +r.high;}));
+    lo=Math.min.apply(null,win.map(function(r){return +r.low;}));
+    if(hi>lo)pos=Math.max(0,Math.min(1,(price-lo)/(hi-lo)));
+  }
+  var eighth=pos!=null?(pos*8):null;
+  var now=new Date(), epoch=new Date(2026,0,1);
+  var day=(Math.floor((now-epoch)/86400000)%9)+1;
+  var next=[90,135,180,225,270,360].filter(function(d){return d>deg;})[0]||360;
+  var nextPrice=Math.pow((next/360)*2+Math.floor(root/2)*2,2);
+  return '<div class="mc">'
+   +'<div class="mc-l">'
+     +'<div class="ab-cap">Market cycle</div>'
+     +'<div class="mc-phase" style="color:'+(inZone?'var(--green)':'var(--amber)')+'">'+phase+'</div>'
+     +'<div class="mc-sub">Wheel '+deg.toFixed(1)+'° · ring '+ring+' / step '+step
+       +' · '+(inZone?'inside the 90–225° entry zone':'outside the entry zone')+'</div>'
+   +'</div>'
+   +'<div class="mc-arc">'
+     +'<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="48" class="mc-tr"/>'
+       +'<circle cx="60" cy="60" r="48" class="mc-pg" style="--dash:302;--off:'+(302*(1-deg/360)).toFixed(1)+'"/>'
+     +'</svg><div class="mc-deg">'+deg.toFixed(0)+'°</div>'
+   +'</div>'
+   +'<div class="mc-r">'
+     +'<div class="mc-k"><span>Next cycle degree</span><b>'+next+'°</b></div>'
+     +(eighth!=null?'<div class="mc-k"><span>Range position</span><b>'+eighth.toFixed(2)+'/8</b></div>':'')
+     +(pos!=null?'<div class="mc-k"><span>30-day range</span><b>'+lo.toFixed(dp)+' – '+hi.toFixed(dp)+'</b></div>':'')
+     +'<div class="mc-k"><span>9-day count</span><b>Day '+day+' of 9</b></div>'
+   +'</div></div>';
 }
 function renderAnalytics(){
   var host=document.getElementById('ana_new');
@@ -4129,12 +4236,17 @@ function renderAnalytics(){
       }).join('')
    +'</div>'
 
+   +anaCycle(price,dp)
    +anaZones(price,dp)
    +anaRungs(price,dp)
    +'<details class="sec"><summary><b>Full working</b><span>every method, step by step</span></summary>'
      +'<div class="tk-tools"><button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open on the Reference tab</button></div>'
    +'</details>';
 
+  host.querySelectorAll('.mj-track .fill').forEach(function(f){
+    f.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){
+      f.style.width=f.style.getPropertyValue('--w');});});
+  });
   host.querySelectorAll('.ab-meter i').forEach(function(i){
     i.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){i.style.width=i.style.getPropertyValue('--w');});});
   });
