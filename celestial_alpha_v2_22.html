@@ -1500,6 +1500,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qv-act1 span{font-size:11.5px;color:var(--tw);line-height:1.55}
 @media(prefers-reduced-motion:reduce){.tp-b,.qp-l{animation:none!important}.tp-n:hover{transform:none}}
 
+.rk{padding:13px 15px;border-radius:16px;border:1px solid var(--bd);margin-bottom:12px;
+  background:linear-gradient(155deg,rgba(139,92,246,.06),rgba(9,9,18,.5))}
+.rk-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:9px}
+.rk-h b{font-size:12.5px;color:var(--tw)}
+.rk-h span{font-size:10.5px;color:var(--acc2);font-weight:700;text-align:right}
+.rk-i{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:start;
+  font-size:11.5px;line-height:1.55;color:var(--soft);padding:6px 0}
+.rk-i+.rk-i{border-top:1px solid rgba(255,255,255,.05)}
+.rk-i span{width:7px;height:7px;border-radius:50%;margin-top:5px;background:var(--mid)}
+.rk-i.good span{background:var(--green)} .rk-i.warn span{background:var(--amber)}
+.rk-i.bad span{background:var(--red)}     .rk-i.mid span{background:var(--acc2)}
+.rk-i.bad{color:var(--tw)}
+.rk-f{margin-top:9px;padding-top:8px;border-top:1px solid var(--rim);
+  font-size:9.5px;color:var(--muted);line-height:1.55}
 /* ══ SHARE ══ */
 .sh{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:12px 0 4px;
   padding:10px 13px;border-radius:13px;border:1px dashed var(--rim);background:rgba(255,255,255,.015)}
@@ -5092,6 +5106,7 @@ function renderAnalytics(){
      +'</div>'
    +'</div>'
 
+   +qvRiskHtml(S,window._lastQV,price)
    +shareBar('setup')
    +'<div class="ab-reads">'+reads.map(function(r){
        return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
@@ -6574,7 +6589,11 @@ function runAI(){
     try{ botConsider(sig,assetName,trend); }catch(e){ console.error("bot:",e); }
     rndTrend(trend,price);
     rndBiasStack(astro,priceBias,combined,assetName);
+    /* the quantitative pass has to run before the board draws — the risk check
+       under the call reads from it */
+    try{qvRun();}catch(e){console.error('QV:',e);}
     try{renderAnalytics();}catch(e){console.error('analytics v3:',e);}
+    try{qvRefresh();}catch(e){console.error('QV refresh:',e);}
     setTimeout(function(){rollNumbers();},60);
     rndZones(levels,price);
     rndTrades(sig,risk);
@@ -6584,7 +6603,6 @@ function runAI(){
     renderDualEngines(levels,price);
     renderJrnlSnap();
     renderDashLive(assetName,price,sig,astro,priceBias,combined,trend,levels);
-    try{qvRefresh();}catch(e){console.error('QV:',e);}
 
     document.getElementById('ai_out').classList.remove('hidden');
     document.getElementById('ai_ph').classList.add('hidden');
@@ -8139,6 +8157,9 @@ function goTab(name,btn){
   if(name==='sentiment'){renderSentiment();}
   if(name==='fundamentals'){try{renderFundamentals();}catch(e){console.error('fundamentals:',e);}}
   if(name==='reference'){
+    /* compute on demand — opening Reference before Analytics used to show an
+       empty table, which read as broken rather than as "nothing run yet" */
+    try{if(!window._lastQV&&HIST_ROWS&&HIST_ROWS.length)qvRun();}catch(e){}
     try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
   }
@@ -10953,6 +10974,87 @@ function qvPlainHtml(R){
    +'<div class="qp-act"><i>So what do I do?</i><span>'+escHtml(P.action)+'</span></div>'
   +'</div>';
 }
+
+/* ══ RISK CHECK — where the volatility measures actually change the trade ══
+   The estimators were being displayed and then ignored. What follows is
+   arithmetic, not prediction: ATR is the average distance price travels in a
+   day, so a stop closer than that is inside the daily noise and will be taken
+   by ordinary movement rather than by the setup failing. A target several ATR
+   away cannot be reached inside a session. Both statements follow from the
+   definition of the measure, so they are allowed to move the confidence — and
+   every adjustment is shown, never applied silently.
+
+   Numerology deliberately changes nothing here. It earns weight only by
+   surviving out-of-sample, and on the histories tested nothing has. */
+function qvRiskCheck(S,R,price){
+  if(!S||!S.style||!R||!R.ok)return null;
+  var atr=R.vol.atr20;
+  var out={items:[],adj:0,atr:atr,closeOnly:R.closeOnly};
+  var stopDist=Math.abs(S.entry-S.sl), tpDist=Math.abs(S.tp-S.entry);
+
+  if(isFinite(atr)&&atr>0){
+    var sATR=stopDist/atr, tATR=tpDist/atr;
+    out.stopATR=sATR; out.tpATR=tATR;
+    if(sATR<0.5){
+      out.items.push({t:'Stop is '+sATR.toFixed(2)+'× the average daily range — well inside normal noise. Ordinary movement will take it out before the idea is wrong.',c:'bad'});
+      out.adj-=10;
+    }else if(sATR<1){
+      out.items.push({t:'Stop is '+sATR.toFixed(2)+'× the average daily range. A single normal day can reach it.',c:'warn'});
+      out.adj-=5;
+    }else{
+      out.items.push({t:'Stop sits '+sATR.toFixed(2)+'× the average daily range away — outside routine noise.',c:'good'});
+    }
+    var horizon=S.style==='Scalp'?0.5:S.style==='Intraday'?1.5:5;
+    var st=S.style.toLowerCase();
+    var art=/^[aeiou]/.test(st)?'an ':'a ';
+    if(tATR>horizon*1.6){
+      out.items.push({t:'Target is '+tATR.toFixed(1)+'× the daily range — a long way for '+art+st+'. Expect to hold longer than the label suggests.',c:'warn'});
+      out.adj-=4;
+    }else{
+      out.items.push({t:'Target is '+tATR.toFixed(1)+'× the daily range — reachable for '+art+st+'.',c:'good'});
+    }
+  }else if(R.closeOnly){
+    out.items.push({t:'This exchange publishes closes only, so there is no daily range to check the stop against.',c:'mid'});
+  }
+
+  var z=R.vol.z;
+  if(isFinite(z)){
+    if(z>=2){
+      out.items.push({t:'Daily swing is in the top of its own history. Same money at risk means a wider stop and a smaller position, not the usual size.',c:'warn'});
+      out.adj-=6;
+    }else if(z<=-1){
+      out.items.push({t:'Daily swing is unusually small. Targets should be nearer than usual — a normal-sized run is not on offer.',c:'mid'});
+      out.adj-=3;
+    }
+  }
+  if(R.regime&&R.regime.id===4){
+    out.items.push({t:'Price is travelling without backing (dislocation). Breakouts fail more often in this state — take profit earlier.',c:'warn'});
+    out.adj-=4;
+  }
+  /* numerology states its contribution explicitly, and it is zero */
+  var val=R.validated?R.validated.length:0;
+  out.items.push(val
+    ?{t:val+' number pattern'+(val===1?'':'s')+' survived out-of-sample and carry '+qvPct(R.numWeight*100,0)+' weight.',c:'good'}
+    :{t:'No number pattern has survived testing, so numerology changes nothing here — not a reduced weight, zero.',c:'mid'});
+
+  out.adj=Math.max(-20,out.adj);
+  out.adjusted=Math.max(0,Math.min(100,(S.conf||0)+out.adj));
+  return out;
+}
+function qvRiskHtml(S,R,price){
+  var C=qvRiskCheck(S,R,price);
+  if(!C)return '';
+  return '<div class="rk">'
+   +'<div class="rk-h"><b>Risk check</b>'
+     +'<span>'+(C.adj?('confidence '+(S.conf||0)+'% → '+C.adjusted+'% after these'):'nothing here changes the confidence')+'</span></div>'
+   +C.items.map(function(i){
+      return '<div class="rk-i '+i.c+'"><span></span>'+escHtml(i.t)+'</div>';
+    }).join('')
+   +(isFinite(C.atr)?'<div class="rk-f">Average daily range (ATR20) is '+qvNum(C.atr,2)
+      +'. Every line above is arithmetic against that figure — none of it is a forecast.</div>':'')
+  +'</div>';
+}
+
 /* ── ANALYTICS: plain words first, numbers on request ──
    The measures were right and unreadable. Someone opening this tab should
    learn what the market is doing in five sentences; the raw estimators are
