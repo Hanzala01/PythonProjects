@@ -1427,6 +1427,92 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:700px){.tl{grid-template-columns:30px 1fr;gap:10px}.tl-cap{display:none}}
 @media(prefers-reduced-motion:reduce){.tl-row{animation:none!important}.tl-row:hover{transform:none}}
 
+/* ══ QUANTITATIVE ENGINE — volatility, volume, numerology ══ */
+.qv-wrap{padding:12px 15px}
+.qv-hd{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin:14px 2px 8px;padding-bottom:6px;border-bottom:1px solid var(--rim)}
+.qv-hd:first-child{margin-top:2px}
+.qv-hd b{font-size:12px;font-weight:700;color:var(--tw)}
+.qv-hd span{font-size:9.5px;color:var(--muted);text-align:right}
+.qv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:8px}
+.qv-c{padding:10px 12px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02);
+  min-width:0;animation:rowIn .4s var(--ease) backwards}
+.qv-c i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.qv-c b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--tw);
+  font-variant-numeric:tabular-nums;line-height:1.15}
+.qv-c span{display:block;font-size:9.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.qv-reg{padding:13px 15px;border-radius:14px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.qv-reg b{display:block;font-family:'Space Grotesk';font-size:18px;font-weight:700;margin-bottom:3px}
+.qv-reg span{font-size:11px;color:var(--soft)}
+.qv-reg.r1{border-color:rgba(139,92,246,.4)}.qv-reg.r1 b{color:var(--acc2)}
+.qv-reg.r2{border-color:rgba(245,158,11,.4)}.qv-reg.r2 b{color:var(--amber)}
+.qv-reg.r3{border-color:rgba(34,197,94,.4)} .qv-reg.r3 b{color:var(--green)}
+.qv-reg.r4{border-color:rgba(239,68,68,.45)}.qv-reg.r4 b{color:var(--red)}
+.qv-reg.r0 b{color:var(--mid)}
+.qv-verd{padding:13px 15px;border-radius:14px;border:1px solid var(--bd)}
+.qv-verd.ok{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.06)}
+.qv-verd.none{border-color:rgba(245,158,11,.32);background:rgba(245,158,11,.05)}
+.qv-verd b{display:block;font-size:13.5px;font-weight:700;color:var(--tw);margin-bottom:4px}
+.qv-verd.ok b{color:var(--green)}
+.qv-verd span{font-size:11px;color:var(--soft);line-height:1.6}
+.qv-act{margin-top:9px;padding:11px 13px;border-radius:13px;border:1px solid var(--rim);
+  background:rgba(255,255,255,.02)}
+.qv-act>i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.qv-a{display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid rgba(255,255,255,.05)}
+.qv-a:first-of-type{border-top:none}
+.qv-a b{font-size:11.5px;font-weight:600;color:var(--tw)}
+.qv-a span{margin-left:auto;font-size:9.5px;white-space:nowrap}
+.qv-a.v span{color:var(--green)} .qv-a.x span{color:var(--muted)}
+.qv-note{margin-top:10px;padding:10px 13px;border-radius:12px;font-size:10.5px;line-height:1.6;
+  color:var(--amber);background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25)}
+.qv-note div+div{margin-top:5px}
+.qv-foot{margin-top:10px;font-size:9.5px;color:var(--muted);line-height:1.6}
+.qv-empty{padding:18px;border:1px dashed var(--rim);border-radius:13px;
+  font-size:11px;color:var(--mid);line-height:1.6;font-style:italic}
+/* dashboard summary */
+.qv-dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+.qv-dc{padding:11px 13px;border-radius:13px;border:1px solid var(--rim);background:rgba(255,255,255,.02);min-width:0}
+.qv-dc i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--tm);margin-bottom:4px}
+.qv-dc b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:700;color:var(--tw);line-height:1.15}
+.qv-dc span{display:block;font-size:9.5px;color:var(--tm);margin-top:3px;line-height:1.45}
+.qv-dc.off b{color:var(--mid);font-size:14px}
+/* reference */
+.qv-modes{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;
+  padding:10px 12px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02)}
+.qv-modes select{padding:6px 9px;font-size:11.5px;border-radius:8px}
+.qv-m{padding:12px 14px;border-radius:13px;border:1px solid var(--rim);
+  background:rgba(255,255,255,.02);margin-bottom:8px}
+.qv-m>b{display:block;font-size:12px;font-weight:700;color:var(--tw);margin-bottom:7px}
+.qv-m p{font-size:10.5px;color:var(--muted);line-height:1.6;margin:7px 0 0}
+.qv-fx{font-family:'Space Grotesk','Cambria Math',serif;font-size:12.5px;color:#c9b6ff;
+  padding:9px 12px;border-radius:9px;background:rgba(139,92,246,.09);
+  border:1px solid rgba(157,77,255,.22);overflow-x:auto;white-space:nowrap}
+.qv-fx sub{font-size:.72em}
+.qv-lim{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.qv-lim>div{padding:10px 12px;border-radius:12px;border:1px dashed var(--rim);background:rgba(255,255,255,.015)}
+.qv-lim b{display:block;font-size:11px;color:var(--tw);margin-bottom:3px}
+.qv-lim span{font-size:9.5px;color:var(--muted);line-height:1.5}
+.qv-tw{overflow-x:auto;border:1px solid var(--rim);border-radius:13px}
+.qv-t{width:100%;border-collapse:collapse;font-size:10.5px;min-width:780px}
+.qv-t th{font-size:8.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
+  text-align:right;padding:9px 10px;background:rgba(255,255,255,.03);white-space:nowrap;
+  border-bottom:1px solid var(--rim)}
+.qv-t th:first-child,.qv-t th:last-child{text-align:left}
+.qv-t td{padding:8px 10px;text-align:right;color:var(--soft);font-variant-numeric:tabular-nums;
+  border-bottom:1px solid rgba(255,255,255,.045);white-space:nowrap}
+.qv-t td.nm{text-align:left;color:var(--tw);font-weight:600}
+.qv-t td.vd{text-align:left;font-size:10px;color:var(--muted)}
+.qv-t tr:last-child td{border-bottom:none}
+.qv-t tr.v td{background:rgba(34,197,94,.07)}
+.qv-t tr.v td.vd{color:var(--green);font-weight:700}
+.qv-t tr.f td{background:rgba(245,158,11,.05)}
+.qv-t tr.f td.vd{color:var(--amber)}
+.qv-t tr:hover td{background:rgba(139,92,246,.07)}
+@media(prefers-reduced-motion:reduce){.qv-c{animation:none!important}}
+
 /* ══ BEST DAY TO TRADE ══ */
 .bd{border:1px solid var(--bd);border-radius:18px;margin-bottom:12px;overflow:hidden;
   background:linear-gradient(158deg,rgba(139,92,246,.07),rgba(9,9,18,.6))}
@@ -2351,6 +2437,11 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       </div>
     </div>
 
+    <div class="card" style="grid-column:1/-1">
+      <div class="chd">Quantitative Measures <span style="font-size:9px;font-weight:600;color:var(--tm);letter-spacing:.1em;margin-left:8px">VOLATILITY · VOLUME · NUMEROLOGY</span></div>
+      <div class="cbd" id="qv_dash"><div class="qv-empty">Run an analysis to populate the quantitative measures.</div></div>
+    </div>
+
     <div class="card">
       <div class="chd">Liquidity Zones</div>
       <div class="cbd" style="display:flex;gap:16px;align-items:center">
@@ -3154,6 +3245,24 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 
 
       <div class="pane hidden" id="pane_reference">
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><div class="dot" style="background:var(--green)"></div>Quantitative Engine — method &amp; statistics</div>
+            <div class="cs">formulas, coverage limits, and the full test table with p-values and confidence intervals</div>
+          </div>
+          <div class="cb">
+            <div class="qv-modes">
+              <span class="ab-cap">Decimal normalisation for the digital root</span>
+              <select onchange="qvSetMode(this.value)" id="qv_mode">
+                <option value="round">Round to whole unit</option>
+                <option value="x10">Keep 1 decimal (×10)</option>
+                <option value="x100">Keep 2 decimals (×100)</option>
+                <option value="trunc">Truncate to whole unit</option>
+              </select>
+            </div>
+            <div id="qv_ref"></div>
+          </div>
+        </div>
         <!-- moved here from Analytics: the per-method derivation belongs in
              Reference so the Analytics tab shows results, not the workings -->
         <div class="card">
@@ -4755,6 +4864,7 @@ function renderAnalytics(){
 
    +anaLadder(pts,price,lo,hi,dp,S,dir)
 
+   +'<details class="sec" id="qv_sec"><summary><b>Volatility, volume &amp; numerology</b><span>measured — every experimental pattern is re-tested each run</span></summary><div class="qv-wrap" id="qv_ana"></div></details>'
    +anaCycle(price,dp)
    +anaZones(price,dp)
    +anaRungs(price,dp)
@@ -6099,6 +6209,7 @@ function runAI(){
     renderDualEngines(levels,price);
     renderJrnlSnap();
     renderDashLive(assetName,price,sig,astro,priceBias,combined,trend,levels);
+    try{qvRefresh();}catch(e){console.error('QV:',e);}
 
     document.getElementById('ai_out').classList.remove('hidden');
     document.getElementById('ai_ph').classList.add('hidden');
@@ -7483,6 +7594,7 @@ function goTab(name,btn){
     try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
   }
   if(name==='sentiment'){renderSentiment();}
+  if(name==='reference'){try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}}
   if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();}
   if(name==='bot'){renderBot();renderBroker();}
 }
@@ -7690,7 +7802,12 @@ function twelveDaily(sym,days,cb){
       cb(null,d&&d.code===429?'limit':'empty');return;
     }
     cb(d.values.map(function(v){
-      return{date:v.datetime,open:+v.open,high:+v.high,low:+v.low,close:+v.close};
+      /* spot metals and FX have no consolidated tape, so volume is absent for
+         them — carry it through when the feed does send it rather than
+         dropping the field for every instrument */
+      var vol=v.volume==null?null:+v.volume;
+      return{date:v.datetime,open:+v.open,high:+v.high,low:+v.low,close:+v.close,
+             volume:(isFinite(vol)&&vol>0)?vol:null};
     }).filter(function(r){return isFinite(r.close);}));
   }).catch(function(){cb(null,'err');});
 }
@@ -9062,6 +9179,698 @@ function renderDashNews(){
       return '• '+escHtml(e.t)+'<span style="float:right;color:var(--tm)">in '+fmtCountdown(e.d-new Date()).replace(/:\d\d$/,'')+'</span>';
     }).join('<br>');
   }catch(e){}
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   QV — QUANTITATIVE VOLATILITY, VOLUME & NUMEROLOGY ENGINE
+   Measures first, claims second. Nothing in here asserts that a number
+   predicts anything: every experimental pattern is tested against the
+   history actually loaded, corrected for multiple testing, split into
+   in-sample and out-of-sample, and reported with its sample size, p-value
+   and confidence interval. Patterns that fail validation are shown as
+   failed rather than quietly dropped.
+══════════════════════════════════════════════════════════════════════════ */
+var QV=(function(){
+'use strict';
+
+/* ── basic statistics ─────────────────────────────────────────────── */
+function mean(a){var s=0,n=0;for(var i=0;i<a.length;i++){if(isFinite(a[i])){s+=a[i];n++;}}return n?s/n:NaN;}
+function sd(a){                                   /* sample sd, n-1 */
+  var m=mean(a),s=0,n=0;
+  for(var i=0;i<a.length;i++){if(isFinite(a[i])){s+=(a[i]-m)*(a[i]-m);n++;}}
+  return n>1?Math.sqrt(s/(n-1)):NaN;
+}
+function pctileOf(arr,v){                          /* share of arr below v */
+  var n=0,c=0;
+  for(var i=0;i<arr.length;i++){if(!isFinite(arr[i]))continue;n++;if(arr[i]<v)c++;}
+  return n?c/n*100:NaN;
+}
+/* Abramowitz & Stegun 7.1.26 — |error| < 1.5e-7 */
+function erf(x){
+  var s=x<0?-1:1; x=Math.abs(x);
+  var t=1/(1+0.3275911*x);
+  var y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+  return s*y;
+}
+function normCdf(z){return 0.5*(1+erf(z/Math.SQRT2));}
+/* exact two-sided binomial test; history here is a few hundred bars so the
+   full pmf sum is cheap and avoids the normal approximation entirely */
+function lnGamma(z){
+  var g=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+         12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(z<0.5)return Math.log(Math.PI/Math.sin(Math.PI*z))-lnGamma(1-z);
+  z-=1;var x=0.99999999999980993;
+  for(var i=0;i<8;i++)x+=g[i]/(z+i+1);
+  var t=z+7.5;
+  return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+}
+function lnChoose(n,k){return lnGamma(n+1)-lnGamma(k+1)-lnGamma(n-k+1);}
+function binomPmf(k,n,p){
+  if(p<=0)return k===0?1:0;
+  if(p>=1)return k===n?1:0;
+  return Math.exp(lnChoose(n,k)+k*Math.log(p)+(n-k)*Math.log(1-p));
+}
+function binomTest(k,n,p){                         /* two-sided, exact */
+  if(!n)return 1;
+  var obs=binomPmf(k,n,p), tot=0, tol=1e-12;
+  for(var i=0;i<=n;i++){var pm=binomPmf(i,n,p);if(pm<=obs+tol)tot+=pm;}
+  return Math.min(1,tot);
+}
+/* Wilson score interval — behaves at small n and near 0/1, unlike normal */
+function wilson(k,n,z){
+  z=z||1.959964;
+  if(!n)return[NaN,NaN];
+  var p=k/n, d=1+z*z/n;
+  var c=(p+z*z/(2*n))/d;
+  var h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d;
+  return[Math.max(0,c-h),Math.min(1,c+h)];
+}
+/* Benjamini-Hochberg: control the false discovery rate over a family of
+   tests. Testing twenty numerology patterns at 5% would otherwise be
+   expected to produce a "significant" result by chance alone. */
+function bhAdjust(ps){
+  var idx=ps.map(function(p,i){return{p:p,i:i};}).sort(function(a,b){return a.p-b.p;});
+  var n=ps.length, out=new Array(n), prev=1;
+  for(var r=n-1;r>=0;r--){
+    var q=Math.min(prev, idx[r].p*n/(r+1));
+    prev=q; out[idx[r].i]=Math.min(1,q);
+  }
+  return out;
+}
+
+/* ── 1. VOLATILITY ESTIMATORS ─────────────────────────────────────── */
+var TRADING_DAYS=252;
+function logReturns(rows){
+  var r=[];
+  for(var i=1;i<rows.length;i++){
+    var a=+rows[i-1].close, b=+rows[i].close;
+    if(a>0&&b>0)r.push(Math.log(b/a)); else r.push(NaN);
+  }
+  return r;
+}
+function stdVol(rets,n){                            /* sample sd of last n */
+  var w=rets.slice(-n).filter(isFinite);
+  return w.length>1?sd(w):NaN;
+}
+/* Parkinson: uses the high-low range, ~5x more efficient than close-to-close
+   but blind to gaps and assumes no drift */
+function parkinson(rows,n){
+  var w=rows.slice(-n),s=0,c=0;
+  for(var i=0;i<w.length;i++){
+    var h=+w[i].high,l=+w[i].low;
+    if(h>0&&l>0){var x=Math.log(h/l);s+=x*x;c++;}
+  }
+  return c?Math.sqrt(s/(4*c*Math.LN2)):NaN;
+}
+/* Garman-Klass: adds the open-close term; still assumes no overnight jump */
+function garmanKlass(rows,n){
+  var w=rows.slice(-n),s=0,c=0;
+  for(var i=0;i<w.length;i++){
+    var h=+w[i].high,l=+w[i].low,o=+w[i].open,cl=+w[i].close;
+    if(h>0&&l>0&&o>0&&cl>0){
+      var hl=Math.log(h/l), co=Math.log(cl/o);
+      s+=0.5*hl*hl-(2*Math.LN2-1)*co*co; c++;
+    }
+  }
+  return c&&s>0?Math.sqrt(s/c):NaN;                 /* the estimator can go negative on quiet bars */
+}
+/* Rogers-Satchell: the only one of these that is unbiased under drift */
+function rogersSatchell(rows,n){
+  var w=rows.slice(-n),s=0,c=0;
+  for(var i=0;i<w.length;i++){
+    var h=+w[i].high,l=+w[i].low,o=+w[i].open,cl=+w[i].close;
+    if(h>0&&l>0&&o>0&&cl>0){
+      s+=Math.log(h/cl)*Math.log(h/o)+Math.log(l/cl)*Math.log(l/o); c++;
+    }
+  }
+  return c&&s>0?Math.sqrt(s/c):NaN;
+}
+function trueRange(rows,i){
+  var h=+rows[i].high,l=+rows[i].low,pc=+rows[i-1].close;
+  return Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc));
+}
+function atr(rows,n,endIdx){
+  var end=endIdx==null?rows.length-1:endIdx;
+  var s=0,c=0;
+  for(var i=Math.max(1,end-n+1);i<=end;i++){var t=trueRange(rows,i);if(isFinite(t)){s+=t;c++;}}
+  return c?s/c:NaN;
+}
+/* rolling series of the 20-bar close-to-close vol, used for the z-score */
+function rollingStdVol(rets,n){
+  var out=[];
+  for(var i=n;i<=rets.length;i++){
+    var w=rets.slice(i-n,i).filter(isFinite);
+    out.push(w.length>1?sd(w):NaN);
+  }
+  return out;
+}
+
+/* ── 5. VOLUME ─────────────────────────────────────────────────────── */
+function hasVolume(rows){
+  var n=0;
+  for(var i=0;i<rows.length;i++){
+    var v=+rows[i].volume;
+    if(isFinite(v)&&v>0)n++;
+  }
+  return n>=Math.max(20,rows.length*0.6);            /* mostly-present, not a stray field */
+}
+function quantile(sorted,q){
+  if(!sorted.length)return NaN;
+  var i=(sorted.length-1)*q, lo=Math.floor(i), hi=Math.ceil(i);
+  return lo===hi?sorted[lo]:sorted[lo]+(sorted[hi]-sorted[lo])*(i-lo);
+}
+/* A feed can send a volume field that is not a volume series: mixed scales,
+   long runs of near-zero, values three orders of magnitude apart on adjacent
+   bars. Computing a Z-score off that produces a confident-looking number from
+   noise, so the series is screened before any statistic is reported. */
+function volumeQuality(rows){
+  var v=[];
+  for(var i=0;i<rows.length;i++){var x=+rows[i].volume;if(isFinite(x)&&x>0)v.push(x);}
+  if(v.length<30)return{usable:false,reason:'Fewer than 30 bars carry a volume figure.'};
+  var srt=v.slice().sort(function(a,b){return a-b;});
+  var med=quantile(srt,0.5), p10=quantile(srt,0.10), p90=quantile(srt,0.90);
+  var spread=p10>0?p90/p10:Infinity;
+  var tiny=v.filter(function(x){return x<med*0.1;}).length/v.length;
+  if(!isFinite(spread)||spread>500)
+    return{usable:false,spread:spread,
+      reason:'The volume series spans '+(isFinite(spread)?Math.round(spread).toLocaleString()+'×':'an unbounded range')
+        +' between its 10th and 90th percentile. A real tape does not do that — the feed is mixing scales or padding gaps, so volume statistics would be meaningless and are not reported.'};
+  if(tiny>0.25)
+    return{usable:false,tiny:tiny,
+      reason:Math.round(tiny*100)+'% of bars carry less than a tenth of the median volume. That is a padded or partial series rather than a traded one, so volume statistics are not reported.'};
+  return{usable:true,med:med,spread:spread};
+}
+
+/* ── 10/11. NUMEROLOGY FEATURES ────────────────────────────────────── */
+/* A price is not an integer, so any digital root needs an explicit rule.
+   These are the configurable normalisations; the default rounds to a whole
+   unit, which is what a trader reads off a chart. */
+var NORM_MODES={
+  round:{label:'Round to whole unit',fn:function(p){return Math.round(p);}},
+  x10:{label:'Keep 1 decimal (x10)',fn:function(p){return Math.round(p*10);}},
+  x100:{label:'Keep 2 decimals (x100)',fn:function(p){return Math.round(p*100);}},
+  trunc:{label:'Truncate to whole unit',fn:function(p){return Math.trunc(p);}}
+};
+function digitsOf(n){
+  n=Math.abs(Math.round(n));
+  return String(n).split('').map(Number);
+}
+function digitSum(n){return digitsOf(n).reduce(function(a,b){return a+b;},0);}
+function digitalRoot(n){                             /* DR = 1 + ((N-1) mod 9) */
+  n=Math.abs(Math.round(n));
+  if(n===0)return 0;
+  return 1+((n-1)%9);
+}
+function isPalindrome(n){
+  var s=String(Math.abs(Math.round(n)));
+  return s.length>1&&s===s.split('').reverse().join('');
+}
+function nearSquare(p,tolPct){
+  var r=Math.round(Math.sqrt(p));
+  return Math.abs(p-r*r)/p*100<=tolPct;
+}
+var FIBS=(function(){var f=[1,2];while(f[f.length-1]<1e9)f.push(f[f.length-1]+f[f.length-2]);return f;})();
+function nearFib(p,tolPct){
+  /* Fibonacci numbers thin out fast, so compare against the number and its
+     decimal scalings — 1.618 levels are scale-free in practice */
+  for(var s=0.001;s<=1e6;s*=10){
+    for(var i=0;i<FIBS.length;i++){
+      var v=FIBS[i]*s;
+      if(v>p*2)break;
+      if(v>0&&Math.abs(p-v)/p*100<=tolPct)return true;
+    }
+  }
+  return false;
+}
+/* Gann square-of-9: a price sits on a cardinal rung when sqrt(price) is
+   close to a whole or half increment */
+function gannProximity(p){
+  var r=Math.sqrt(p);
+  var d=Math.abs(r-Math.round(r*2)/2);
+  return d;                                          /* root units from the nearest half-rung */
+}
+function numFeatures(price,mode){
+  var norm=(NORM_MODES[mode]||NORM_MODES.round).fn(price);
+  var ds=digitsOf(norm);
+  var counts=[0,0,0,0,0,0,0,0,0,0];
+  ds.forEach(function(d){counts[d]++;});
+  var repeated=Math.max.apply(null,counts);
+  return{
+    price:price,norm:norm,digits:ds.join(''),
+    digitSum:digitSum(norm),digitalRoot:digitalRoot(norm),
+    lastDigit:norm%10,last2:norm%100,
+    counts:counts,repeatedMax:repeated,hasRepeat:repeated>=3,
+    palindrome:isPalindrome(norm),
+    nearSquare:nearSquare(price,0.25),
+    nearFib:nearFib(price,0.25),
+    gannDist:gannProximity(price),
+    onGann:gannProximity(price)<=0.05
+  };
+}
+
+/* ── 12. PATTERN TESTING ───────────────────────────────────────────── */
+/* Reversal is defined once, explicitly, and with no look-ahead: a bar
+   qualifies only if k bars of future data already exist in the sample. */
+function buildOutcomes(rows,lookback,forward){
+  var out=[];
+  for(var t=lookback;t<rows.length-forward;t++){
+    var c0=+rows[t].close, cb=+rows[t-lookback].close, cf=+rows[t+forward].close;
+    if(!(c0>0&&cb>0&&cf>0))continue;
+    var back=(c0-cb)/cb, fwd=(cf-c0)/c0;
+    out.push({t:t,close:c0,back:back,fwd:fwd});
+  }
+  if(!out.length)return out;
+  /* magnitude floor = median |forward move|, so a one-tick wobble against the
+     prior swing is not counted as a reversal */
+  var mags=out.map(function(o){return Math.abs(o.fwd);}).sort(function(a,b){return a-b;});
+  var med=mags[Math.floor(mags.length/2)];
+  out.forEach(function(o){
+    o.reversal=(o.back!==0)&&(Math.sign(o.fwd)!==Math.sign(o.back))&&(Math.abs(o.fwd)>=0.5*med);
+  });
+  return out;
+}
+function testPattern(sample,predicate,baseRate){
+  var hit=sample.filter(predicate);
+  var n=hit.length;
+  if(!n)return{n:0,k:0,p:NaN,lift:NaN,pval:NaN,ci:[NaN,NaN]};
+  var k=hit.filter(function(o){return o.reversal;}).length;
+  var p=k/n;
+  return{n:n,k:k,p:p,lift:baseRate>0?p/baseRate:NaN,
+         pval:binomTest(k,n,baseRate),ci:wilson(k,n),
+         fwdMean:mean(hit.map(function(o){return o.fwd;}))};
+}
+
+/* ── 14. REGIME ────────────────────────────────────────────────────── */
+function classifyRegime(zVol,zVolume,hasVol){
+  if(!hasVol)return{id:0,name:'Volume unavailable',note:'Only the volatility half of the regime map can be built for this instrument.'};
+  var hv=zVol>0.5, hV=zVolume>0.5;
+  if(!hv&&!hV)return{id:1,name:'Compression',note:'Low volatility, low participation.'};
+  if(!hv&&hV) return{id:2,name:'Absorption',note:'Low volatility with high participation — size is changing hands without moving price.'};
+  if(hv&&hV)  return{id:3,name:'Expansion',note:'High volatility with high participation.'};
+  return{id:4,name:'Dislocation',note:'High volatility on low participation — movement is not backed by size.'};
+}
+/* ── weekly bars resampled from the daily series ──────────────────── */
+function toWeekly(rows){
+  var out=[],cur=null;
+  for(var i=0;i<rows.length;i++){
+    var d=new Date(rows[i].date+'T00:00:00');
+    if(isNaN(d))continue;
+    var day=d.getDay(), monday=new Date(d); monday.setDate(d.getDate()-((day+6)%7));
+    var key=monday.getFullYear()+'-'+monday.getMonth()+'-'+monday.getDate();
+    if(!cur||cur.key!==key){
+      if(cur)out.push(cur.bar);
+      cur={key:key,bar:{date:rows[i].date,open:+rows[i].open,high:+rows[i].high,
+                        low:+rows[i].low,close:+rows[i].close,volume:+rows[i].volume||0}};
+    }else{
+      var b=cur.bar;
+      b.high=Math.max(b.high,+rows[i].high); b.low=Math.min(b.low,+rows[i].low);
+      b.close=+rows[i].close; b.volume+=(+rows[i].volume||0);
+    }
+  }
+  if(cur)out.push(cur.bar);
+  return out;
+}
+
+/* ── the run: every measure, then every pattern, then the verdict ─── */
+var LOOK=5, FWD=5;
+function run(rows,price,mode){
+  mode=mode||'round';
+  var R={ok:false,notes:[],mode:mode};
+  if(!rows||rows.length<60){
+    R.notes.push('Needs at least 60 bars to measure anything; this history has '+((rows||[]).length)+'.');
+    return R;
+  }
+  R.ok=true; R.bars=rows.length;
+  R.first=rows[0].date; R.last=rows[rows.length-1].date;
+  var rets=logReturns(rows), A=Math.sqrt(TRADING_DAYS);
+
+  R.vol={sd20:stdVol(rets,20),sd50:stdVol(rets,50),sd100:stdVol(rets,100),
+         parkinson:parkinson(rows,20),gk:garmanKlass(rows,20),rs:rogersSatchell(rows,20),
+         atr20:atr(rows,20),atr100:atr(rows,100)};
+  R.vol.ann20=R.vol.sd20*A; R.vol.ann50=R.vol.sd50*A; R.vol.ann100=R.vol.sd100*A;
+  R.vol.atrRatio=R.vol.atr100?R.vol.atr20/R.vol.atr100:NaN;
+  R.vol.ver=R.vol.sd100?R.vol.sd20/R.vol.sd100:NaN;
+  var roll=rollingStdVol(rets,20).filter(isFinite);
+  R.vol.n=roll.length;
+  R.vol.z=(R.vol.sd20-mean(roll))/sd(roll);
+  R.vol.pct=pctileOf(roll,R.vol.sd20);
+  R.vol.regime=!isFinite(R.vol.z)?'Unknown':R.vol.z<-1?'Compression':R.vol.z<=1?'Normal':R.vol.z<2?'Elevated':'Extreme';
+  R.vol.verLabel=!isFinite(R.vol.ver)?'Unknown':R.vol.ver<0.75?'Compression':R.vol.ver<=1.25?'Normal'
+                :R.vol.ver<=1.5?'Expansion':'Strong expansion';
+
+  R.volQuality=volumeQuality(rows);
+  R.hasVolume=hasVolume(rows)&&R.volQuality.usable;
+  if(!R.volQuality.usable&&hasVolume(rows))R.notes.push(R.volQuality.reason);
+  if(R.hasVolume){
+    var vols=[],i;
+    for(i=0;i<rows.length;i++){var v=+rows[i].volume;if(isFinite(v)&&v>0)vols.push(v);}
+    /* The final bar of a feed is often a partial session, and its volume then
+       reads as a once-in-history collapse in participation. Step back to the
+       last bar that carries a plausible share of the median — at most five,
+       after which the reading is abandoned rather than forced. */
+    var srtAll=vols.slice().sort(function(a,b){return a-b;});
+    var medAll=quantile(srtAll,0.5), end=vols.length-1, steps=0;
+    while(end>0&&vols[end]<medAll*0.1&&steps<5){end--;steps++;}
+    R.volPartial=steps>0;
+    if(steps>=5&&vols[end]<medAll*0.1){
+      R.hasVolume=false;
+      R.notes.push('The last several bars all carry token volume, so there is no complete session to measure. Volume statistics are withheld.');
+      R.regime=classifyRegime(R.vol.z,0,false);
+      R.num=numFeatures(price,mode);
+      return finishNumerology(R,rows,price,mode);
+    }
+    if(R.volPartial)R.notes.push('The final '+steps+' bar'+(steps===1?'':'s')+' carry token volume against the series median — partial or stale sessions, so volume is measured on the last complete bar instead.');
+    var vt=vols[end];
+    var base=vols.slice(Math.max(0,end-20),end);
+    R.volume={last:vt,ma20:mean(base),sd20:sd(base)};
+    R.volume.z=R.volume.sd20?(vt-R.volume.ma20)/R.volume.sd20:NaN;
+    R.volume.surprise=R.volume.ma20?vt/R.volume.ma20:NaN;
+    R.volume.pct=pctileOf(vols,vt);
+    R.volume.label=!isFinite(R.volume.z)?'Unknown':R.volume.z<-1?'Unusually low'
+                  :R.volume.z<=1?'Normal':R.volume.z<2?'Elevated':'Abnormal';
+    R.vvd=R.vol.z-R.volume.z;
+    R.vvr=R.volume.surprise?R.vol.sd20/R.volume.surprise:NaN;
+    R.vvdNote=!isFinite(R.vvd)?'':R.vvd>2?'Volatility is unusually high relative to participation.'
+             :R.vvd<-2?'Participation is unusually high relative to price movement.'
+             :'Volatility and participation are in their usual relationship.';
+    var iA=rows.length-1-(vols.length-1-end), iB=iA-1;
+    var dP=+rows[iA].close-+rows[iB].close, dV=+rows[iA].volume-+rows[iB].volume;
+    R.pv=(dP>=0?'Price up':'Price down')+' + '+(dV>=0?'volume up':'volume down');
+    R.pvNote=dP>=0&&dV>=0?'Potential confirmation'
+            :dP>=0?'Potential weak participation'
+            :dV>=0?'Potential selling pressure':'Potential weak selling pressure';
+  }else if(!hasVolume(rows)){
+    /* only when the field is genuinely absent — a series that failed the
+       quality screen has already said so, and saying both would contradict */
+    R.notes.push('The active data source publishes no volume for this instrument — spot metals and FX have no consolidated tape. Volume Z, surprise, VVD, VVR and the price-volume state cannot be computed, and the regime map falls back to its volatility half.');
+  }
+  R.regime=classifyRegime(R.vol.z,R.hasVolume?R.volume.z:0,R.hasVolume);
+  return finishNumerology(R,rows,price,mode);
+}
+/* the experimental half, split out so a volume failure above can jump straight
+   here without duplicating any of it */
+function finishNumerology(R,rows,price,mode){
+  R.num=numFeatures(price,mode);
+  var all=buildOutcomes(rows,LOOK,FWD);
+  R.sample={total:all.length,look:LOOK,fwd:FWD};
+  if(all.length<40){
+    R.notes.push('Only '+all.length+' bars have a complete '+FWD+'-bar forward window, which is too few to test a pattern. At least 40 are needed before any number is reported.');
+    return R;
+  }
+  all.forEach(function(o){o.f=numFeatures(o.close,mode);});
+  var split=Math.floor(all.length*0.7);
+  var IS=all.slice(0,split), OOS=all.slice(split);
+  var cnt=function(a){return a.filter(function(o){return o.reversal;}).length;};
+  R.base={all:cnt(all)/all.length,is:cnt(IS)/IS.length,
+          oos:OOS.length?cnt(OOS)/OOS.length:NaN,nIS:IS.length,nOOS:OOS.length};
+
+  var defs=[],d;
+  for(d=1;d<=9;d++)(function(dd){defs.push({name:'Digital root = '+dd,fn:function(o){return o.f.digitalRoot===dd;}});})(d);
+  defs.push({name:'Last digit 0 or 5 (round number)',fn:function(o){return o.f.lastDigit===0||o.f.lastDigit===5;}});
+  defs.push({name:'Three or more repeated digits',fn:function(o){return o.f.hasRepeat;}});
+  defs.push({name:'Palindromic price',fn:function(o){return o.f.palindrome;}});
+  defs.push({name:'Within 0.25% of a square number',fn:function(o){return o.f.nearSquare;}});
+  defs.push({name:'Within 0.25% of a Fibonacci number',fn:function(o){return o.f.nearFib;}});
+  defs.push({name:'On a Gann square-of-9 half rung',fn:function(o){return o.f.onGann;}});
+  defs.push({name:'Digit sum 20 or more',fn:function(o){return o.f.digitSum>=20;}});
+  defs.push({name:'Last two digits under 10',fn:function(o){return o.f.last2<10;}});
+
+  var raw=defs.map(function(df){
+    return{name:df.name,fn:df.fn,
+           is:testPattern(IS,df.fn,R.base.is),
+           oos:testPattern(OOS,df.fn,R.base.oos)};
+  });
+  var adj=bhAdjust(raw.map(function(r){return isFinite(r.is.pval)?r.is.pval:1;}));
+  raw.forEach(function(r,i){
+    r.q=adj[i];
+    r.sigIS=isFinite(r.is.pval)&&r.q<0.05&&r.is.n>=15;
+    r.holdsOOS=r.sigIS&&isFinite(r.oos.lift)&&r.oos.n>=8&&
+               (r.is.lift>1)===(r.oos.lift>1);
+    r.verdict=!isFinite(r.is.lift)?'Never occurred'
+             :!r.sigIS?'No effect found'
+             :r.holdsOOS?'Survives out-of-sample':'Failed out-of-sample';
+    r.active=r.fn({f:R.num});                       /* does today's price carry it */
+  });
+  R.patterns=raw;
+  R.validated=raw.filter(function(r){return r.holdsOOS;});
+  R.activeNow=raw.filter(function(r){return r.active;});
+  R.numWeight=R.validated.length?Math.min(1,R.validated.length/3):0;
+  return R;
+}
+
+/* ── 13. combined score — normalised first, never a raw sum ───────── */
+function combine(R,weights){
+  if(!R||!R.ok)return null;
+  var w=weights||{vol:0.35,volume:0.25,vvd:0.20,num:0.20};
+  var parts=[],used=0,score=0;
+  function add(key,x,label){
+    if(!isFinite(x))return;
+    var wt=w[key]||0; score+=wt*x; used+=wt;
+    parts.push({k:label,x:x,w:wt});
+  }
+  add('vol',Math.max(-3,Math.min(3,R.vol.z)),'Volatility Z');
+  if(R.hasVolume){
+    add('volume',Math.max(-3,Math.min(3,R.volume.z)),'Volume Z');
+    add('vvd',Math.max(-3,Math.min(3,R.vvd)),'VVD');
+  }
+  /* numerology only enters with weight it has earned out-of-sample; with no
+     validated pattern its contribution is exactly zero, by construction */
+  if(R.validated&&R.validated.length){
+    var lift=mean(R.validated.map(function(v){return v.oos.lift;}));
+    add('num',Math.max(-3,Math.min(3,(lift-1)*2))*R.numWeight,'Numerology (earned weight)');
+  }else{
+    parts.push({k:'Numerology (earned weight)',x:0,w:0,note:'no validated pattern'});
+  }
+  return{score:used?score/used:NaN,parts:parts,usedWeight:used};
+}
+
+return{run:run,combine:combine,numFeatures:numFeatures,NORM_MODES:NORM_MODES,
+       toWeekly:toWeekly,digitalRoot:digitalRoot,digitSum:digitSum,
+       binomTest:binomTest,wilson:wilson,bhAdjust:bhAdjust,mean:mean,sd:sd,
+       LOOK:LOOK,FWD:FWD,TRADING_DAYS:TRADING_DAYS};
+})();
+
+/* ══ QV RENDERERS — results on Analytics, a summary on the dashboard, the
+      full statistical working on Reference ══════════════════════════ */
+var _qvMode='round';
+function qvSetMode(m){_qvMode=m;try{runAI();}catch(e){qvRefresh();}}
+function qvRun(){
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+  if(!price||!HIST_ROWS){window._lastQV=null;return null;}
+  var R=QV.run(HIST_ROWS,price,_qvMode);
+  R.asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
+  window._lastQV=R;
+  return R;
+}
+function qvRefresh(){
+  qvRun();
+  try{var h=document.getElementById('qv_ana');if(h)h.innerHTML=qvAnalyticsHtml();}catch(e){}
+  try{qvDash();}catch(e){}
+  try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}
+}
+function qvNum(x,d){return isFinite(x)?(+x).toFixed(d==null?4:d):'—';}
+function qvPct(x,d){return isFinite(x)?(+x).toFixed(d==null?1:d)+'%':'—';}
+function qvBig(x){
+  if(!isFinite(x))return '—';
+  if(Math.abs(x)>=1e9)return (x/1e9).toFixed(2)+'B';
+  if(Math.abs(x)>=1e6)return (x/1e6).toFixed(2)+'M';
+  if(Math.abs(x)>=1e3)return (x/1e3).toFixed(1)+'K';
+  return String(Math.round(x));
+}
+function qvZCol(z){
+  if(!isFinite(z))return 'var(--mid)';
+  var a=Math.abs(z);
+  return a>=2?'var(--red)':a>=1?'var(--amber)':'var(--green)';
+}
+function qvCell(label,value,note,col){
+  return '<div class="qv-c"><i>'+label+'</i><b'+(col?' style="color:'+col+'"':'')+'>'+value+'</b>'
+    +(note?'<span>'+note+'</span>':'')+'</div>';
+}
+function qvNotes(R){
+  if(!R.notes.length)return '';
+  return '<div class="qv-note">'+R.notes.map(function(n){return '<div>'+escHtml(n)+'</div>';}).join('')+'</div>';
+}
+function qvEmpty(msg){
+  return '<div class="qv-empty">'+escHtml(msg)+'</div>';
+}
+
+/* ── ANALYTICS: results only ── */
+function qvAnalyticsHtml(){
+  var R=window._lastQV;
+  if(!R)return qvEmpty('Run an analysis with a price and daily history loaded — the volatility, volume and numerology measures appear here.');
+  if(!R.ok)return qvEmpty(R.notes.join(' '));
+  var v=R.vol;
+  var out='<div class="qv">';
+
+  out+='<div class="qv-hd"><b>Regime</b><span>'+R.bars+' daily bars · '+escHtml(R.first)+' → '+escHtml(R.last)+'</span></div>'
+     +'<div class="qv-reg r'+R.regime.id+'"><b>'+escHtml(R.regime.name)+'</b><span>'+escHtml(R.regime.note)+'</span></div>';
+
+  out+='<div class="qv-hd"><b>Volatility</b><span>daily σ, and annualised at √252</span></div><div class="qv-g">'
+    +qvCell('σ 20',qvNum(v.sd20),qvPct(v.ann20*100)+' annual')
+    +qvCell('σ 50',qvNum(v.sd50),qvPct(v.ann50*100)+' annual')
+    +qvCell('σ 100',qvNum(v.sd100),qvPct(v.ann100*100)+' annual')
+    +qvCell('Parkinson',qvNum(v.parkinson),'high–low, 20 bars')
+    +qvCell('Garman–Klass',qvNum(v.gk),'adds open–close')
+    +qvCell('Rogers–Satchell',qvNum(v.rs),'drift-robust')
+    +qvCell('ATR 20',qvNum(v.atr20,2),'ratio to ATR100 '+qvNum(v.atrRatio,2))
+    +qvCell('Volatility Z',qvNum(v.z,2),v.regime+' · '+qvPct(v.pct)+' percentile',qvZCol(v.z))
+    +qvCell('Expansion ratio',qvNum(v.ver,3),v.verLabel,
+        isFinite(v.ver)?(v.ver>1.5?'var(--red)':v.ver>1.25?'var(--amber)':'var(--green)'):null)
+    +'</div>';
+
+  out+='<div class="qv-hd"><b>Volume</b><span>'+(R.hasVolume?'from the loaded series':'not published for this instrument')+'</span></div>';
+  if(R.hasVolume){
+    out+='<div class="qv-g">'
+      +qvCell('Last volume',qvBig(R.volume.last),R.volPartial?'last complete bar':'latest bar')
+      +qvCell('20-bar average',qvBig(R.volume.ma20),'')
+      +qvCell('Volume Z',qvNum(R.volume.z,2),R.volume.label,qvZCol(R.volume.z))
+      +qvCell('Volume surprise',qvNum(R.volume.surprise,2)+'×',
+          isFinite(R.volume.surprise)?qvPct((R.volume.surprise-1)*100)+' vs average':'')
+      +qvCell('Volume percentile',qvPct(R.volume.pct),'of this history')
+      +qvCell('VVD',qvNum(R.vvd,2),R.vvdNote,qvZCol(R.vvd))
+      +qvCell('VVR',qvNum(R.vvr,5),'σ per unit of normalised volume')
+      +qvCell('Price · volume',escHtml(R.pv),R.pvNote)
+      +'</div>';
+  }else{
+    out+=qvEmpty('No volume on this feed, so Volume Z, surprise, VVD, VVR and the price-volume state are not computed. Nothing is estimated in their place.');
+  }
+
+  var n=R.num;
+  out+='<div class="qv-hd"><b>Numerology of '+qvNum(n.price,2)+'</b>'
+    +'<span>normalised to '+n.norm+' · '+escHtml(QV.NORM_MODES[R.mode].label)+'</span></div><div class="qv-g">'
+    +qvCell('Digit sum',n.digitSum,n.digits.split('').join(' + '))
+    +qvCell('Digital root',n.digitalRoot,'1 + ((N−1) mod 9)')
+    +qvCell('Last digit',n.lastDigit,'last two: '+n.last2)
+    +qvCell('Most repeated digit',n.repeatedMax+'×',n.hasRepeat?'triple or more present':'no triple')
+    +qvCell('Palindrome',n.palindrome?'Yes':'No','')
+    +qvCell('Near a square',n.nearSquare?'Yes':'No','within 0.25%')
+    +qvCell('Near a Fibonacci',n.nearFib?'Yes':'No','within 0.25%')
+    +qvCell('Gann half rung',n.onGann?'On rung':'Off rung',qvNum(n.gannDist,3)+' root units away')
+    +'</div>';
+
+  if(R.patterns){
+    var val=R.validated.length;
+    out+='<div class="qv-hd"><b>What the history says</b><span>'
+      +R.patterns.length+' patterns tested · '+R.base.nIS+' in-sample / '+R.base.nOOS+' out-of-sample bars</span></div>'
+      +'<div class="qv-verd '+(val?'ok':'none')+'">'
+        +'<b>'+(val?val+' pattern'+(val===1?'':'s')+' survived out-of-sample':'No numerology pattern survived validation')+'</b>'
+        +'<span>'+(val
+            ? escHtml(R.validated.map(function(p){return p.name;}).join('; '))+' — carried at '+qvPct(R.numWeight*100,0)+' of full numerology weight.'
+            : 'On this history, no digit pattern changed the probability of a reversal beyond what multiple-testing correction allows. Numerology therefore contributes exactly zero to the combined score — not a reduced weight, zero.')
+        +'</span></div>';
+    if(R.activeNow.length){
+      out+='<div class="qv-act"><i>Patterns this price currently carries</i>'
+        +R.activeNow.map(function(p){
+           return '<div class="qv-a '+(p.holdsOOS?'v':'x')+'"><b>'+escHtml(p.name)+'</b>'
+             +'<span>'+p.verdict+(isFinite(p.is.lift)?' · lift '+qvNum(p.is.lift,2)+' on n='+p.is.n:'')+'</span></div>';
+         }).join('')
+        +'</div>';
+    }
+  }
+  out+=qvNotes(R);
+  out+='<div class="qv-foot">These are measurements, not forecasts. The volatility and volume figures are '
+    +'definitional; the numerology section is an experiment that is re-tested on every run and is allowed to '
+    +'fail. Full formulas, sample sizes, p-values and confidence intervals are on the Reference tab.</div>';
+  return out+'</div>';
+}
+
+/* ── DASHBOARD: the four numbers that change how you size ── */
+function qvDash(){
+  var R=window._lastQV, host=document.getElementById('qv_dash');
+  if(!host)return;
+  if(!R||!R.ok){host.innerHTML=qvEmpty('Run an analysis to populate the quantitative measures.');return;}
+  host.innerHTML='<div class="qv-dg">'
+    +'<div class="qv-dc"><i>Regime</i><b>'+escHtml(R.regime.name)+'</b><span>'+escHtml(R.regime.note)+'</span></div>'
+    +'<div class="qv-dc"><i>Volatility Z</i><b style="color:'+qvZCol(R.vol.z)+'">'+qvNum(R.vol.z,2)+'</b>'
+      +'<span>'+R.vol.regime+' · '+qvPct(R.vol.pct)+' percentile</span></div>'
+    +'<div class="qv-dc"><i>Expansion ratio</i><b>'+qvNum(R.vol.ver,2)+'</b><span>'+R.vol.verLabel+'</span></div>'
+    +(R.hasVolume
+      ?'<div class="qv-dc"><i>Volume Z</i><b style="color:'+qvZCol(R.volume.z)+'">'+qvNum(R.volume.z,2)+'</b>'
+        +'<span>'+R.volume.label+' · '+qvNum(R.volume.surprise,2)+'× average</span></div>'
+       +'<div class="qv-dc"><i>VVD</i><b style="color:'+qvZCol(R.vvd)+'">'+qvNum(R.vvd,2)+'</b>'
+        +'<span>'+escHtml(R.vvdNote)+'</span></div>'
+      :'<div class="qv-dc off"><i>Volume</i><b>Not published</b><span>No consolidated tape for this instrument on the active feed.</span></div>')
+    +'<div class="qv-dc"><i>Numerology weight</i><b style="color:'+(R.validated&&R.validated.length?'var(--green)':'var(--mid)')+'">'
+      +(R.validated?qvPct(R.numWeight*100,0):'—')+'</b>'
+      +'<span>'+(R.validated&&R.validated.length?R.validated.length+' validated pattern(s)':'nothing survived out-of-sample')+'</span></div>'
+    +'</div>';
+}
+
+/* ── REFERENCE: the full working ── */
+function qvFormula(t){return '<div class="qv-fx">'+t+'</div>';}
+function qvReferenceHtml(){
+  var R=window._lastQV;
+  var out='<div class="qv-ref">';
+  out+='<div class="qv-hd"><b>Method</b><span>every formula this engine evaluates</span></div>';
+  out+='<div class="qv-m"><b>Logarithmic return</b>'+qvFormula('r<sub>t</sub> = ln( P<sub>t</sub> / P<sub>t−1</sub> )')
+    +'<p>All volatility here is built on log returns, so a move and its exact reversal cancel.</p></div>';
+  out+='<div class="qv-m"><b>Close-to-close volatility</b>'
+    +qvFormula('σ = √( Σ(r<sub>i</sub> − r̄)² / (n−1) )   ·   σ<sub>annual</sub> = σ√252')
+    +'<p>Sample standard deviation, n−1 in the denominator. Computed over 20, 50 and 100 bars.</p></div>';
+  out+='<div class="qv-m"><b>Parkinson</b>'+qvFormula('σ<sub>P</sub> = √( Σ ln(H/L)² / (4n·ln2) )')
+    +'<p>Uses the bar range, which carries more information than the close alone, but it cannot see an overnight gap and assumes zero drift.</p></div>';
+  out+='<div class="qv-m"><b>Garman–Klass</b>'
+    +qvFormula('σ<sub>GK</sub>² = (1/n) Σ [ ½·ln(H/L)² − (2ln2 − 1)·ln(C/O)² ]')
+    +'<p>Adds the open-to-close term. The estimator can go slightly negative on very quiet bars; when it does, it is reported as unavailable rather than square-rooted.</p></div>';
+  out+='<div class="qv-m"><b>Rogers–Satchell</b>'
+    +qvFormula('σ<sub>RS</sub>² = (1/n) Σ [ ln(H/C)·ln(H/O) + ln(L/C)·ln(L/O) ]')
+    +'<p>The only estimator here that stays unbiased when the series is trending.</p></div>';
+  out+='<div class="qv-m"><b>True range and ATR</b>'
+    +qvFormula('TR<sub>t</sub> = max[ H−L , |H − C<sub>t−1</sub>| , |L − C<sub>t−1</sub>| ]   ·   ATR<sub>n</sub> = MA<sub>n</sub>(TR)')
+    +'<p>ATR ratio = ATR<sub>20</sub> / ATR<sub>100</sub>.</p></div>';
+  out+='<div class="qv-m"><b>Z-scores</b>'
+    +qvFormula('Z = (x<sub>t</sub> − μ) / σ  — applied to the rolling 20-bar volatility and to volume')
+    +'<p>Bands: below −1 compression, −1 to +1 normal, +1 to +2 elevated, +2 and above extreme. These are classification defaults, not tested predictions.</p></div>';
+  out+='<div class="qv-m"><b>Expansion ratio, dislocation and VVR</b>'
+    +qvFormula('VER = σ<sub>20</sub> / σ<sub>100</sub>   ·   VVD = Z<sub>σ</sub> − Z<sub>V</sub>   ·   VVR = σ<sub>t</sub> / (V<sub>t</sub> / MA<sub>n</sub>(V))')
+    +'<p>VVD is deliberately unlabelled: a high or low reading is a description of the relationship between movement and participation, not a direction.</p></div>';
+  out+='<div class="qv-m"><b>Digital root</b>'+qvFormula('DR(P) = 1 + ((P − 1) mod 9),  DR(0) = 0')
+    +'<p>A price is not an integer, so the normalisation is explicit and selectable: '
+    +Object.keys(QV.NORM_MODES).map(function(k){return QV.NORM_MODES[k].label;}).join(', ')+'.</p></div>';
+  out+='<div class="qv-m"><b>Reversal, defined once</b>'
+    +qvFormula('reversal(t) = sign(fwd<sub>5</sub>) ≠ sign(back<sub>5</sub>)  AND  |fwd<sub>5</sub>| ≥ ½ · median|fwd|')
+    +'<p>A bar enters the sample only when all five forward bars already exist in the data, so no test can see the future. The magnitude floor stops a one-tick wobble counting as a reversal.</p></div>';
+  out+='<div class="qv-m"><b>Lift, significance and correction</b>'
+    +qvFormula('lift = P(reversal | pattern) / P(reversal)')
+    +'<p>p-values are exact two-sided binomial tests against the unconditional rate. Because many patterns are tested at once, p-values are corrected with Benjamini–Hochberg and the corrected q-value is what decides significance. A pattern must clear q &lt; 0.05 in-sample on at least 15 occurrences, and then keep the same direction out-of-sample on at least 8, before it earns any weight.</p></div>';
+  out+='<div class="qv-m"><b>Combining</b>'
+    +qvFormula('Score = Σ w<sub>i</sub> · X<sub>i,norm</sub>   over the components that are available')
+    +'<p>Components are normalised before weighting because a Z-score, a ratio and a lift are not the same kind of number. Numerology enters with the weight it earned; with nothing validated its weight is zero.</p></div>';
+
+  out+='<div class="qv-hd"><b>Coverage — what this can and cannot test</b><span>stated so the results are read correctly</span></div>'
+    +'<div class="qv-lim">'
+    +'<div><b>Daily</b><span>Native. This is the timeframe every figure above is computed on.</span></div>'
+    +'<div><b>Weekly</b><span>Resampled from the daily bars. Needs roughly 60 weeks of daily history before it can be measured; shorter histories are reported as insufficient rather than estimated.</span></div>'
+    +'<div><b>1H and 4H</b><span>Not available. The intraday endpoint is not open on this data plan, so no intraday backtest is run — and none is simulated from daily bars.</span></div>'
+    +'<div><b>Multi-asset</b><span>Each asset is tested on its own history when you analyse it. There is no pooled cross-asset study here, so treat every result as specific to the asset and window shown.</span></div>'
+    +'<div><b>Walk-forward</b><span>A single chronological 70/30 split, not a rolling walk-forward. With a few hundred bars a rolling scheme would leave folds too small to mean anything.</span></div>'
+    +'<div><b>Survivorship</b><span>Not applicable to a single continuous series, but it would be if these results were ever pooled across a changing universe.</span></div>'
+    +'</div>';
+
+  if(R&&R.ok&&R.patterns){
+    out+='<div class="qv-hd"><b>Statistical results — '+escHtml(R.asset)+'</b><span>'
+      +R.bars+' bars · base P(reversal) = '+qvNum(R.base.all,3)+'</span></div>'
+      +'<div class="qv-tw"><table class="qv-t"><thead><tr>'
+      +'<th>Pattern</th><th>n</th><th>reversals</th><th>P(rev|pattern)</th><th>lift</th>'
+      +'<th>p</th><th>q (BH)</th><th>95% CI</th><th>OOS n</th><th>OOS lift</th><th>Verdict</th></tr></thead><tbody>'
+      +R.patterns.map(function(p){
+         var cls=p.holdsOOS?'v':p.sigIS?'f':'';
+         return '<tr class="'+cls+'"><td class="nm">'+escHtml(p.name)+'</td>'
+           +'<td>'+p.is.n+'</td><td>'+p.is.k+'</td><td>'+qvNum(p.is.p,3)+'</td>'
+           +'<td>'+qvNum(p.is.lift,2)+'</td><td>'+qvNum(p.is.pval,3)+'</td><td>'+qvNum(p.q,3)+'</td>'
+           +'<td>'+(isFinite(p.is.ci[0])?qvNum(p.is.ci[0],2)+'–'+qvNum(p.is.ci[1],2):'—')+'</td>'
+           +'<td>'+p.oos.n+'</td><td>'+qvNum(p.oos.lift,2)+'</td>'
+           +'<td class="vd">'+p.verdict+'</td></tr>';
+       }).join('')
+      +'</tbody></table></div>'
+      +'<div class="qv-foot">n is how many bars carried the pattern in the in-sample window, not how many bars exist. '
+      +'A wide confidence interval on a small n is the honest signal that there is not enough evidence either way. '
+      +'q is the Benjamini–Hochberg corrected p-value: with '+R.patterns.length+' patterns tested, an uncorrected '
+      +'p below 0.05 would be expected roughly once by chance alone, which is exactly why the raw p is not what decides.</div>';
+  }else{
+    out+=qvEmpty('Run an analysis on the Analytics tab — the statistical tables for that asset appear here.');
+  }
+  return out+'</div>';
 }
 
 function renderCycleCountdown(){
