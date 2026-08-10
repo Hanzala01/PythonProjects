@@ -1496,6 +1496,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qv-act1 span{font-size:11.5px;color:var(--tw);line-height:1.55}
 @media(prefers-reduced-motion:reduce){.tp-b,.qp-l{animation:none!important}.tp-n:hover{transform:none}}
 
+/* ══ API HEALTH ══ */
+.ah-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:8px}
+.ah{padding:11px 13px;border-radius:13px;border:1px solid var(--bd);background:rgba(255,255,255,.02);
+  min-width:0;animation:rowIn .4s var(--ease) backwards}
+.ah b{display:block;font-size:11.5px;font-weight:700;color:var(--tw);margin-bottom:3px}
+.ah u{display:block;text-decoration:none;font-family:'Space Grotesk';font-size:15px;
+  font-weight:700;color:var(--mid);margin-bottom:3px}
+.ah span{display:block;font-size:9.5px;color:var(--muted);line-height:1.45}
+.ah i{display:block;font-style:normal;font-size:9px;color:var(--tm);margin-top:4px;
+  padding-top:4px;border-top:1px solid rgba(255,255,255,.05)}
+.ah.ok{border-color:rgba(34,197,94,.4)}      .ah.ok u{color:var(--green)}
+.ah.capped{border-color:rgba(245,158,11,.42)}.ah.capped u{color:var(--amber)}
+.ah.plan{border-color:rgba(245,158,11,.3)}   .ah.plan u{color:var(--amber)}
+.ah.blocked{border-color:rgba(139,92,246,.4)}.ah.blocked u{color:var(--acc2)}
+.ah.badkey{border-color:rgba(239,68,68,.45)} .ah.badkey u{color:var(--red)}
+.ah.error{border-color:rgba(239,68,68,.3)}   .ah.error u{color:var(--red)}
+.ah.nokey u{color:var(--mid)}
+.ah-f{margin-top:10px;font-size:9.5px;color:var(--muted);line-height:1.6}
+@media(prefers-reduced-motion:reduce){.ah{animation:none!important}}
+
 /* ══ QUANTITATIVE ENGINE — volatility, volume, numerology ══ */
 .qv-wrap{padding:12px 15px}
 .qv-hd{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
@@ -3331,6 +3351,16 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 
 
       <div class="pane hidden" id="pane_reference">
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><div class="dot" style="background:var(--amber)"></div>Data sources — live health check</div>
+            <div class="cs">one real request per provider, made when you open this tab</div>
+          </div>
+          <div class="cb">
+            <div id="api_health"><div class="qv-empty">Open this tab to run the check.</div></div>
+            <button class="btn btn-g btn-sm" style="margin-top:10px" onclick="apiProbeAll()">Re-check now</button>
+          </div>
+        </div>
         <div class="card">
           <div class="ch">
             <div class="ct"><div class="dot" style="background:var(--green)"></div>Quantitative Engine — method &amp; statistics</div>
@@ -7581,8 +7611,12 @@ function fmpSymbol(sym){
   return MAP[sym]||null;
 }
 function fmpQuote(symbol,cb){
+  /* the key answers 429 on every endpoint once its daily cap is spent, so a
+     capped source is skipped outright rather than re-asked on every tick */
+  if(apiCooled('FMP')){cb(null,'capped');return;}
   fetch('https://financialmodelingprep.com/stable/quote?symbol='+encodeURIComponent(symbol)+'&apikey='+FMP_KEY)
     .then(function(r){return r.json();}).then(function(d){
+      if(d&&d['Error Message']&&/limit/i.test(d['Error Message'])){apiCool('FMP',30);cb(null,'capped');return;}
       var q=Array.isArray(d)?d[0]:null;
       if(q&&typeof q.price==='number'&&q.price>0)cb(q.price,q.previousClose);
       else cb(null);
@@ -7816,7 +7850,10 @@ function goTab(name,btn){
     try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
   }
   if(name==='sentiment'){renderSentiment();}
-  if(name==='reference'){try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}}
+  if(name==='reference'){
+    try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}
+    try{apiProbeAll();}catch(e){console.error('api health:',e);}
+  }
   if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();}
   if(name==='bot'){renderBot();renderBroker();}
 }
@@ -8970,10 +9007,15 @@ function macroBls(series,cb){
 /* ── source 3: FMP — CORS-open, but this key is at its plan limit ── */
 function macroFmp(name,cb){
   if(!name){cb(null,'not mapped');return;}
+  if(apiCooled('FMP')){cb(null,'limit reached, skipped for '+apiCoolLeft('FMP')+' min');return;}
   fetch('https://financialmodelingprep.com/stable/economic-indicators?name='+encodeURIComponent(name)+'&apikey='+FMP_KEY)
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d&&d['Error Message']){cb(null,/limit/i.test(d['Error Message'])?'plan limit':'refused');return;}
+      if(d&&d['Error Message']){
+        var lim=/limit/i.test(d['Error Message']);
+        if(lim)apiCool('FMP',30);
+        cb(null,lim?'plan limit':'refused');return;
+      }
       if(!Array.isArray(d)||!d.length){cb(null,'empty');return;}
       var rows=d.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
       cb({latest:parseFloat(rows[0].value),prev:rows[1]?parseFloat(rows[1].value):null,
@@ -10033,6 +10075,118 @@ return{run:run,combine:combine,numFeatures:numFeatures,NORM_MODES:NORM_MODES,
        binomTest:binomTest,wilson:wilson,bhAdjust:bhAdjust,mean:mean,sd:sd,
        LOOK:LOOK,FWD:FWD,TRADING_DAYS:TRADING_DAYS};
 })();
+
+
+/* ══ API HEALTH — which key is alive, which is spent, and for how long ══
+   Eight providers sit behind this page and every one of them fails in its own
+   way: Twelve Data and Finnhub answer HTTP 200 with an error body, FMP answers
+   429 with {"Error Message":"Limit Reach"}, EODHD and FRED answer correctly but
+   send no CORS header so a browser cannot read them at all. A silent fall-
+   through hides all of that, so a key can be dead for days without anyone
+   noticing. This probes each one and says plainly what it found. */
+var _apiCool={};                     /* source -> epoch ms until which to skip */
+function apiCooled(name){return (_apiCool[name]||0)>Date.now();}
+function apiCool(name,mins){
+  _apiCool[name]=Date.now()+(mins||30)*60000;
+}
+function apiCoolLeft(name){
+  var t=(_apiCool[name]||0)-Date.now();
+  return t>0?Math.ceil(t/60000):0;
+}
+/* classify a response the way each provider actually reports trouble */
+function apiClassify(name,status,body){
+  var txt=typeof body==='string'?body:JSON.stringify(body||'');
+  if(/limit reach|daily threshold|you have exceeded|too many requests/i.test(txt)||status===429)
+    return{state:'capped',msg:'Request limit reached on this key'};
+  if(status===401||status===403||/invalid api key|apikey.*invalid|unauthorized/i.test(txt))
+    return{state:'badkey',msg:'Key rejected'};
+  if(status===402||/exclusive endpoint|upgrade your plan/i.test(txt))
+    return{state:'plan',msg:'Endpoint not on this plan'};
+  if(status===0)
+    return{state:'blocked',msg:'No CORS header — unreachable from a browser'};
+  if(status>=200&&status<300)return{state:'ok',msg:'Responding'};
+  return{state:'error',msg:'HTTP '+status};
+}
+var API_SOURCES=[
+  {n:'Twelve Data', use:'gold price, daily candles',
+   url:function(){return 'https://api.twelvedata.com/quote?symbol=XAU/USD&apikey='+TWELVE_KEY;},
+   ok:function(d){return d&&d.close!=null&&!d.code;}},
+  {n:'Finnhub', use:'stock and crypto quotes, news',
+   url:function(){return 'https://finnhub.io/api/v1/quote?symbol=AAPL&token='+FINNHUB_KEY;},
+   ok:function(d){return d&&typeof d.c==='number'&&d.c>0;}},
+  {n:'FMP', use:'forex and oil quotes, macro',
+   url:function(){return 'https://financialmodelingprep.com/stable/quote?symbol=AAPL&apikey='+FMP_KEY;},
+   ok:function(d){return Array.isArray(d)&&d.length&&typeof d[0].price==='number';}},
+  {n:'gold-api', use:'spot metals',
+   url:function(){return 'https://api.gold-api.com/price/XAU';},
+   ok:function(d){return d&&isFinite(+d.price);}},
+  {n:'DBnomics', use:'Fed funds rate',
+   url:function(){return 'https://api.db.nomics.world/v22/series/FED/H15/RIFSPFF_N.D?observations=1';},
+   ok:function(d){return d&&d.series&&d.series.docs&&d.series.docs.length;}},
+  {n:'BLS', use:'CPI and payrolls', needsKey:function(){return !!BLS_KEY;},
+   url:function(){return 'https://api.bls.gov/publicAPI/v2/timeseries/data/CUSR0000SA0'+(BLS_KEY?'?registrationkey='+encodeURIComponent(BLS_KEY):'');},
+   ok:function(d){return d&&d.status==='REQUEST_SUCCEEDED';}},
+  {n:'GNews', use:'headlines',
+   url:function(){return 'https://gnews.io/api/v4/search?q=gold&lang=en&max=1&apikey='+GNEWS_KEY;},
+   ok:function(d){return d&&d.articles;}},
+  {n:'newsdata.io', use:'headlines',
+   url:function(){return 'https://newsdata.io/api/1/latest?apikey='+NEWSDATA_KEY+'&q=gold&language=en&size=1';},
+   ok:function(d){return d&&d.status==='success';}},
+  {n:'EODHD', use:'longer daily history (needs your own proxy)',
+   url:function(){return 'https://eodhd.com/api/eod/XAUUSD.FOREX?api_token='+EODHD_KEY+'&fmt=json&period=d&from='+ymd(new Date(Date.now()-5*86400000));},
+   ok:function(d){return Array.isArray(d)&&d.length;}}
+];
+function apiProbeOne(src,cb){
+  if(src.needsKey&&!src.needsKey()){cb({state:'nokey',msg:'No key set — add one to enable'});return;}
+  var done=false, t=setTimeout(function(){
+    if(done)return; done=true; cb({state:'error',msg:'Timed out after 12s'});
+  },12000);
+  fetch(src.url()).then(function(r){
+    return r.text().then(function(txt){
+      var body=null; try{body=JSON.parse(txt);}catch(e){body=txt;}
+      return{status:r.status,body:body};
+    });
+  }).then(function(o){
+    if(done)return; done=true; clearTimeout(t);
+    var c=apiClassify(src.n,o.status,o.body);
+    if(c.state==='ok'&&!src.ok(o.body))c=apiClassify(src.n,0,o.body).state==='blocked'
+      ?{state:'error',msg:'Responded, but not with usable data'}
+      :{state:'error',msg:'Responded, but not with usable data'};
+    if(c.state==='capped')apiCool(src.n,30);
+    cb(c);
+  }).catch(function(){
+    if(done)return; done=true; clearTimeout(t);
+    /* a browser fetch that never reaches the app is nearly always the missing
+       Access-Control-Allow-Origin header, not the server being down */
+    apiCool(src.n,10);
+    cb({state:'blocked',msg:'Blocked before the response could be read — usually a missing CORS header'});
+  });
+}
+function apiProbeAll(){
+  var host=document.getElementById('api_health');
+  if(!host)return;
+  host.innerHTML='<div class="ah-g">'+API_SOURCES.map(function(s,i){
+    return '<div class="ah" id="ah_'+i+'"><b>'+escHtml(s.n)+'</b><u>checking…</u>'
+      +'<span>'+escHtml(s.use)+'</span></div>';
+  }).join('')+'</div>'
+  +'<div class="ah-f">Each row is one real request made just now. '
+  +'“Capped” means the key hit its plan limit — it usually clears on its own, and that source is '
+  +'skipped for 30 minutes so the app stops spending calls on it. “Blocked” means the data exists but '
+  +'the provider sends no CORS header, so only a page served behind your own proxy can read it.</div>';
+  API_SOURCES.forEach(function(s,i){
+    apiProbeOne(s,function(c){
+      var el=document.getElementById('ah_'+i);
+      if(!el)return;
+      el.className='ah '+c.state;
+      var left=apiCoolLeft(s.n);
+      el.innerHTML='<b>'+escHtml(s.n)+'</b>'
+        +'<u>'+({ok:'Live',capped:'Limit reached',badkey:'Key rejected',plan:'Not on plan',
+                 blocked:'Blocked',nokey:'No key',error:'Problem'}[c.state]||c.state)+'</u>'
+        +'<span>'+escHtml(c.msg)+(left?' · skipped for '+left+' min':'')+'</span>'
+        +'<i>'+escHtml(s.use)+'</i>';
+    });
+  });
+}
 
 /* ══ QV RENDERERS — results on Analytics, a summary on the dashboard, the
       full statistical working on Reference ══════════════════════════ */
