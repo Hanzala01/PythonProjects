@@ -1427,6 +1427,75 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:700px){.tl{grid-template-columns:30px 1fr;gap:10px}.tl-cap{display:none}}
 @media(prefers-reduced-motion:reduce){.tl-row{animation:none!important}.tl-row:hover{transform:none}}
 
+/* ══ TRADE PLAN — day + time + direction + horizon ══ */
+.tp{border:1px solid var(--bd);border-radius:20px;margin-bottom:12px;overflow:hidden;
+  background:linear-gradient(155deg,rgba(139,92,246,.09),rgba(9,9,18,.62))}
+.tp-main{padding:16px 18px;position:relative;overflow:hidden}
+.tp-main.bull{border-left:3px solid var(--green)}
+.tp-main.bear{border-left:3px solid var(--red)}
+.tp-main.neutral{border-left:3px solid var(--amber)}
+.tp-row{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:9px 0 11px}
+.tp-b{padding:11px 13px;border-radius:13px;border:1px solid var(--rim);background:rgba(255,255,255,.025);
+  min-width:0;animation:rowIn .45s var(--ease) backwards}
+.tp-b:nth-child(2){animation-delay:.06s}.tp-b:nth-child(3){animation-delay:.12s}.tp-b:nth-child(4){animation-delay:.18s}
+.tp-b i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.tp-b b{display:block;font-family:'Space Grotesk';font-size:20px;font-weight:700;color:var(--tw);
+  line-height:1.12;letter-spacing:-.015em}
+.tp-b span{display:block;font-size:9.5px;color:var(--muted);margin-top:4px;line-height:1.45}
+.tp-do{font-size:13.5px;color:var(--tw);line-height:1.6;padding:10px 13px;border-radius:12px;
+  background:rgba(255,255,255,.03);margin-bottom:9px}
+.tp-why{font-size:10.5px;color:var(--muted);line-height:1.6;margin-bottom:11px}
+.tp-next{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:11px 18px;
+  border-top:1px solid var(--rim);background:rgba(255,255,255,.02)}
+.tp-next>i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-right:4px}
+.tp-n{display:flex;align-items:baseline;gap:8px;padding:6px 11px;border-radius:99px;
+  border:1px solid var(--rim);background:rgba(255,255,255,.02);cursor:pointer;transition:.2s var(--ease)}
+.tp-n:hover{transform:translateY(-2px);border-color:rgba(157,77,255,.45)}
+.tp-n b{font-size:11px;font-weight:700;color:var(--tw)}
+.tp-n span{font-size:10px;color:var(--soft);font-variant-numeric:tabular-nums}
+.tp-n em{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.06em}
+.tp-n u{text-decoration:none;font-size:9.5px;color:var(--muted)}
+.tp-f{padding:10px 18px;font-size:9.5px;color:var(--muted);line-height:1.6;
+  border-top:1px solid var(--rim);background:rgba(255,255,255,.015)}
+@media(max-width:1100px){.tp-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.tp-row{grid-template-columns:1fr}}
+
+.tp-more{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tp-more>i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-right:3px}
+.tp-w{display:inline-flex;align-items:baseline;gap:6px;padding:5px 10px;border-radius:99px;
+  border:1px solid var(--rim);background:rgba(255,255,255,.02);font-size:11px;
+  color:var(--soft);font-variant-numeric:tabular-nums}
+.tp-w em{font-style:normal;font-size:8px;font-weight:800;letter-spacing:.07em;color:var(--muted)}
+.tp-w.s{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08);color:var(--tw)}
+.tp-w.s em{color:var(--green)}
+
+/* ══ PLAIN WORDS ══ */
+.qp{border:1px solid rgba(157,77,255,.3);border-radius:16px;padding:14px 16px;margin-bottom:14px;
+  background:linear-gradient(160deg,rgba(139,92,246,.10),rgba(9,9,18,.5))}
+.qp-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.qp-top b{font-size:12.5px;color:var(--tw)}
+.qp-top span{font-size:10px;font-weight:700;color:var(--acc2);letter-spacing:.06em}
+.qp-l{display:grid;grid-template-columns:1fr;gap:2px;padding:9px 0;
+  border-top:1px solid rgba(255,255,255,.06);animation:rowIn .4s var(--ease) backwards}
+.qp-l:first-of-type{border-top:none;padding-top:0}
+.qp-l i{font-style:normal;font-size:10px;font-weight:700;color:var(--muted)}
+.qp-l b{font-family:'Space Grotesk';font-size:15px;font-weight:600;color:var(--tw);line-height:1.25}
+.qp-l span{font-size:10.5px;color:var(--soft);line-height:1.55}
+.qp-act{margin-top:11px;padding:11px 13px;border-radius:12px;
+  border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.07)}
+.qp-act i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--green);margin-bottom:4px}
+.qp-act span{font-size:12px;color:var(--tw);line-height:1.6}
+.qv-act1{padding:11px 13px;border-radius:12px;margin-bottom:10px;
+  border:1px solid rgba(157,77,255,.3);background:rgba(139,92,246,.09)}
+.qv-act1 i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--acc2);margin-bottom:4px}
+.qv-act1 span{font-size:11.5px;color:var(--tw);line-height:1.55}
+@media(prefers-reduced-motion:reduce){.tp-b,.qp-l{animation:none!important}.tp-n:hover{transform:none}}
+
 /* ══ QUANTITATIVE ENGINE — volatility, volume, numerology ══ */
 .qv-wrap{padding:12px 15px}
 .qv-hd{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
@@ -4864,7 +4933,9 @@ function renderAnalytics(){
 
    +anaLadder(pts,price,lo,hi,dp,S,dir)
 
-   +'<details class="sec" id="qv_sec"><summary><b>Volatility, volume &amp; numerology</b><span>measured — every experimental pattern is re-tested each run</span></summary><div class="qv-wrap" id="qv_ana"></div></details>'
+   +'<details class="sec" id="qv_sec" open><summary><b>How is it moving right now?</b>'
+     +'<span>volatility, volume and number patterns — in plain words first</span></summary>'
+     +'<div class="qv-wrap" id="qv_ana"></div></details>'
    +anaCycle(price,dp)
    +anaZones(price,dp)
    +anaRungs(price,dp)
@@ -5209,6 +5280,139 @@ function timBestDays(asset,vib,n){
   }
   return out;
 }
+/* ══ TRADE PLAN — the day, the clock time, the direction, and how long ══
+   Three things the engine already knew separately: which date is good, which
+   hours inside it carry the asset's number, and which way the sky leans that
+   day. Combining them answers the only question that matters — be at the
+   screen on this date, between these times, looking this way, and expect the
+   push to last about this long. */
+function timHoursFor(di,srMin,vib){
+  var hours=[];
+  for(var h=1;h<=12;h++){
+    var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
+    var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
+    hours.push({h:h,name:hp.n,sym:hp.s,start:srMin+(h-1)*60,end:srMin+h*60,
+                rank:exact?2:inter?1:0,isPos:isPos});
+  }
+  return hours;
+}
+/* consecutive ranked hours are one window, not three — you sit down once */
+function timBlocks(hours){
+  var out=[],cur=null;
+  hours.forEach(function(x){
+    if(x.rank>0){
+      if(cur&&x.h===cur.lastH+1){cur.end=x.end;cur.lastH=x.h;cur.hours.push(x);cur.best=Math.max(cur.best,x.rank);}
+      else{if(cur)out.push(cur);cur={start:x.start,end:x.end,lastH:x.h,hours:[x],best:x.rank};}
+    }
+  });
+  if(cur)out.push(cur);
+  return out;
+}
+/* How long the push should last, from two things that are actually dated:
+   the 9-day cycle turn, and the day the asset's primary driver leaves the
+   sign it is currently working in. The shorter of the two is the horizon. */
+function timHorizon(date,asset){
+  var epoch=new Date(2026,0,1);
+  var d0=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  var pos=(Math.floor((d0-epoch)/86400000)%9+9)%9+1;
+  var cycDays=9-pos;
+  var cycTurn=new Date(d0.getTime()+cycDays*86400000);
+
+  var map=aspectsFor(getAstroKey(asset||'Gold'));
+  var noon=new Date(d0.getFullYear(),d0.getMonth(),d0.getDate(),12,0,0,0);
+  var eph=getEphemeris(noon);
+  var p1=map.p1, si=signOf(eph[p1].lon), rate=lonRate(p1,noon);
+  var exitDays=signExit(si.deg,rate);
+  var exitDate=exitDays!=null?new Date(d0.getTime()+exitDays*86400000):null;
+
+  var pick, why;
+  if(exitDays!=null&&exitDays<cycDays){
+    pick=exitDays; why=(PLANET_NAME[p1]||p1)+' leaves '+dz(si.sign);
+  }else{ pick=cycDays; why='the 9-day cycle turns'; }
+  /* a fast driver like the Moon changes sign inside a day — rounding that to
+     "1 day" reads as a full session when it is a few hours */
+  var label=pick<2?(Math.max(1,Math.round(pick*24))+' hour'+(Math.round(pick*24)===1?'':'s'))
+                  :Math.round(pick)+' day'+(Math.round(pick)===1?'':'s');
+  return{days:Math.max(0,Math.round(pick)),label:label,until:pick===cycDays?cycTurn:exitDate,
+         why:why,cycDays:cycDays,cycTurn:cycTurn,
+         exitDays:exitDays==null?null:Math.round(exitDays),exitDate:exitDate,
+         driver:PLANET_NAME[p1]||p1,driverSign:dz(si.sign)};
+}
+function timTradePlan(st){
+  var asset=timAsset(), vib=st.vib;
+  var days=timBestDays(asset,vib,14).filter(function(d){return !d.weekend;});
+  if(!days.length)return '';
+  var ranked=days.slice().sort(function(a,b){return b.score-a.score;});
+
+  /* build the concrete windows for each candidate day, keep the ones that have any */
+  var plans=[];
+  ranked.forEach(function(d){
+    var blocks=timBlocks(timHoursFor(d.di,st.srMin,vib));
+    if(!blocks.length)return;
+    /* rank first, then the longest run, then the later start — the first
+       hour after sunrise is thin on most markets and ties otherwise pick it */
+    blocks.sort(function(a,b){return (b.best-a.best)||((b.end-b.start)-(a.end-a.start))||(a.start-b.start);});
+    plans.push({day:d,block:blocks[0],all:blocks,hz:timHorizon(d.date,asset)});
+  });
+  if(!plans.length)return '';
+  var P=plans[0], A=P.day.astro;
+  var dir=A.dir==='bull'?'BULL':A.dir==='bear'?'BEAR':'FLAT';
+  var col=A.dir==='bull'?'var(--green)':A.dir==='bear'?'var(--red)':'var(--amber)';
+  var mins=P.block.end-P.block.start;
+  var side=A.dir==='bull'?'Look for longs only — buy pullbacks into support.'
+          :A.dir==='bear'?'Look for shorts only — sell rallies into resistance.'
+          :'No directional edge. Take the level in whichever way it breaks, smaller size.';
+  var today=ymd(new Date()), isToday=ymd(P.day.date)===today;
+  var dayGap=Math.round((new Date(P.day.date.getFullYear(),P.day.date.getMonth(),P.day.date.getDate())
+              -new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()))/86400000);
+
+  return '<div class="tp">'
+   +'<div class="tp-main '+A.dir+'">'
+     +'<div class="tp-l">'
+       +'<div class="ab-cap">Your next trade window · '+escHtml(asset)+'</div>'
+       +'<div class="tp-row">'
+         +'<div class="tp-b"><i>Day</i><b>'+P.day.date.toLocaleDateString('en',{weekday:'long'})+'</b>'
+           +'<span>'+P.day.date.toLocaleDateString('en',{day:'numeric',month:'long'})
+           +(isToday?' · today':dayGap===1?' · tomorrow':' · in '+dayGap+' days')+'</span></div>'
+         +'<div class="tp-b"><i>Time</i><b>'+fmtT(P.block.start)+' → '+fmtT(P.block.end)+'</b>'
+           +'<span>'+(mins>=120?(mins/60).toFixed(0)+' hours':mins+' minutes')+' · '
+           +escHtml(P.block.hours.map(function(x){return x.name;}).join(', '))+'</span></div>'
+         +'<div class="tp-b"><i>Direction</i><b style="color:'+col+'">'+dir+'</b>'
+           +'<span>sky '+A.bull+'% bull / '+(100-A.bull)+'% bear that day</span></div>'
+         +'<div class="tp-b"><i>Momentum holds</i><b>'+escHtml(P.hz.label)+'</b>'
+           +'<span>until '+escHtml(P.hz.why)+'</span></div>'
+       +'</div>'
+       +(P.all.length>1
+          ?'<div class="tp-more"><i>All '+P.all.length+' windows that day</i>'
+            +P.all.map(function(bk){
+               return '<span class="tp-w'+(bk.best===2?' s':'')+'">'+fmtT(bk.start)+'–'+fmtT(bk.end)
+                 +'<em>'+(bk.best===2?'strong':'support')+'</em></span>';
+             }).join('')
+          +'</div>':'')
+       +'<div class="tp-do">'+escHtml(side)+'</div>'
+       +'<div class="tp-why">Chosen because: '+P.day.strong+' hour'+(P.day.strong===1?'':'s')+' carry '
+         +escHtml(asset)+'’s number'+(P.day.support?', '+P.day.support+' more support it':'')
+         +(P.day.own?' · it is '+escHtml(asset)+'’s own '+escHtml(P.day.key.n)+' day':'')
+         +' · day score '+P.day.score+' of the next 14.</div>'
+       +'<button class="btn btn-a btn-sm" onclick="setTimDate(\''+ymd(P.day.date)+'\')">Open that day</button>'
+     +'</div>'
+   +'</div>'
+   +(plans.length>1?'<div class="tp-next"><i>After that</i>'
+      +plans.slice(1,4).map(function(q){
+         var c=q.day.astro.dir==='bull'?'var(--green)':q.day.astro.dir==='bear'?'var(--red)':'var(--amber)';
+         return '<div class="tp-n" onclick="setTimDate(\''+ymd(q.day.date)+'\')">'
+           +'<b>'+q.day.date.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'})+'</b>'
+           +'<span>'+fmtT(q.block.start)+'–'+fmtT(q.block.end)+'</span>'
+           +'<em style="color:'+c+'">'+(q.day.astro.dir==='bull'?'BULL':q.day.astro.dir==='bear'?'BEAR':'FLAT')+'</em>'
+           +'<u>'+q.hz.days+'d</u></div>';
+       }).join('')
+      +'</div>':'')
+   +'<div class="tp-f">The window comes from the planetary hours that carry '+escHtml(asset)+'’s cycle number '
+     +'on that date. The direction is that date’s own sky, not today’s. The horizon is the nearer of the 9-day '
+     +'cycle turn and the day '+escHtml(P.hz.driver)+' leaves '+escHtml(P.hz.driverSign)+' — both are dated, '
+     +'neither is a forecast of price. Structure and the major trend still decide whether you actually take it.</div>'
+  +'</div>';
+}
 function timBestPanel(st){
   var asset=timAsset(), vib=st.vib;
   var days=timBestDays(asset,vib,14);
@@ -5396,6 +5600,7 @@ function renderTiming(){
           +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
       }).join('')
    +'</div>'
+   +timTradePlan(st)
    +timDayCard(st)
    +timBestPanel(st)
    +timExtras()
@@ -9694,13 +9899,97 @@ function qvEmpty(msg){
   return '<div class="qv-empty">'+escHtml(msg)+'</div>';
 }
 
+/* ══ PLAIN READING — the same numbers, said in words ══
+   The measures were correct and completely unreadable to anyone who does not
+   already know what a Z-score is. This turns each one into a sentence, and
+   ends with the one line that changes what you do. */
+function qvPlain(R){
+  if(!R||!R.ok)return null;
+  var L=[];
+  var z=R.vol.z, ver=R.vol.ver;
+  var volWord=!isFinite(z)?'unknown'
+    :z<-1?'much quieter than usual'
+    :z<-0.3?'a bit quieter than usual'
+    :z<=0.3?'about as busy as usual'
+    :z<1?'a bit busier than usual'
+    :z<2?'busier than usual':'far busier than usual';
+  L.push({k:'How much is it moving?',
+    v:volWord,
+    d:'Its daily swing right now sits at the '+qvPct(R.vol.pct,0)+' mark of everything in this history.',
+    c:qvZCol(z)});
+
+  var verWord=!isFinite(ver)?'unknown'
+    :ver<0.75?'winding up — the range is tightening'
+    :ver<=1.25?'steady — no squeeze, no blow-off'
+    :ver<=1.5?'opening up — ranges are widening'
+    :'opening up fast';
+  L.push({k:'Is it speeding up or slowing down?',v:verWord,
+    d:'Short-term swing is '+qvNum(ver,2)+'× the long-term swing.'
+      +(isFinite(ver)&&ver<0.75?' Tight ranges tend to be followed by wider ones, but nothing here says which way.':''),
+    c:isFinite(ver)?(ver>1.5?'var(--red)':ver>1.25?'var(--amber)':'var(--green)'):null});
+
+  if(R.hasVolume){
+    var vz=R.volume.z;
+    var vw=vz<-1?'thin — few people are trading'
+      :vz<=1?'normal participation'
+      :vz<2?'heavier than usual':'very heavy — a crowd is in';
+    L.push({k:'How many people are trading?',v:vw,
+      d:'Today’s volume is '+qvNum(R.volume.surprise,2)+'× its 20-day average.',c:qvZCol(vz)});
+    var d=R.vvd;
+    var dw=!isFinite(d)?'unknown'
+      :d>2?'price is moving a lot on few hands — moves like this often do not stick'
+      :d<-2?'lots of hands, little movement — someone is absorbing the flow'
+      :'movement and participation match up';
+    L.push({k:'Do the moves and the crowd agree?',v:dw,
+      d:'The engine does not call this bullish or bearish — the history was tested and did not support either label.',
+      c:qvZCol(d)});
+  }else{
+    L.push({k:'How many people are trading?',v:'cannot tell',
+      d:'This instrument has no published volume, so nothing here is guessed in its place.',c:'var(--mid)'});
+  }
+
+  var val=R.validated?R.validated.length:0;
+  L.push({k:'Do the price’s numbers mean anything?',
+    v:val?val+' pattern'+(val===1?'':'s')+' held up':'no — none of them held up',
+    d:val
+      ? 'These survived testing on this history and out-of-sample: '+escHtml(R.validated.map(function(p){return p.name;}).join('; '))+'.'
+      : R.patterns
+        ? 'All '+R.patterns.length+' digit patterns were tested on '+R.sample.total+' past bars. None changed the odds of a reversal by more than chance would explain, so the engine gives them zero weight. That is the honest answer, not a broken one.'
+        : 'Not enough history loaded to test them yet.',
+    c:val?'var(--green)':'var(--mid)'});
+
+  /* the one line that changes behaviour */
+  var act;
+  if(!isFinite(z))act='Load daily history for this asset and the reading will fill in.';
+  else if(z>=2)act='Moves are outsized right now. Same risk in dollars means a wider stop and a smaller position — do not size as if this were a normal week.';
+  else if(z<=-1&&isFinite(ver)&&ver<0.75)act='Quiet and tightening. Stops can be tighter, but breakouts from a squeeze fail often — wait for the close beyond the level, not the poke.';
+  else if(z<=-1)act='Quiet tape. Targets should be nearer than usual; do not expect a normal-sized run.';
+  else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd>2)act='Price is running without the crowd behind it. Treat breakouts with suspicion and take profit earlier.';
+  else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd<-2)act='Heavy trade, small movement. Someone is absorbing — the level being defended matters more than the candle.';
+  else act='Nothing unusual in volatility or participation. Size normally and let the level and the trend make the decision.';
+  return{lines:L,action:act,regime:R.regime};
+}
+function qvPlainHtml(R){
+  var P=qvPlain(R);
+  if(!P)return '';
+  return '<div class="qp">'
+   +'<div class="qp-top"><b>In plain words</b><span>'+escHtml(P.regime.name)+'</span></div>'
+   +P.lines.map(function(l,i){
+      return '<div class="qp-l" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
+        +'<i>'+escHtml(l.k)+'</i>'
+        +'<b'+(l.c?' style="color:'+l.c+'"':'')+'>'+l.v+'</b>'
+        +'<span>'+l.d+'</span></div>';
+    }).join('')
+   +'<div class="qp-act"><i>So what do I do?</i><span>'+escHtml(P.action)+'</span></div>'
+  +'</div>';
+}
 /* ── ANALYTICS: results only ── */
 function qvAnalyticsHtml(){
   var R=window._lastQV;
   if(!R)return qvEmpty('Run an analysis with a price and daily history loaded — the volatility, volume and numerology measures appear here.');
   if(!R.ok)return qvEmpty(R.notes.join(' '));
   var v=R.vol;
-  var out='<div class="qv">';
+  var out='<div class="qv">'+qvPlainHtml(R);
 
   out+='<div class="qv-hd"><b>Regime</b><span>'+R.bars+' daily bars · '+escHtml(R.first)+' → '+escHtml(R.last)+'</span></div>'
      +'<div class="qv-reg r'+R.regime.id+'"><b>'+escHtml(R.regime.name)+'</b><span>'+escHtml(R.regime.note)+'</span></div>';
@@ -9779,7 +10068,9 @@ function qvDash(){
   var R=window._lastQV, host=document.getElementById('qv_dash');
   if(!host)return;
   if(!R||!R.ok){host.innerHTML=qvEmpty('Run an analysis to populate the quantitative measures.');return;}
-  host.innerHTML='<div class="qv-dg">'
+  var P=qvPlain(R);
+  host.innerHTML=(P?'<div class="qv-act1"><i>What this means</i><span>'+escHtml(P.action)+'</span></div>':'')
+    +'<div class="qv-dg">'
     +'<div class="qv-dc"><i>Regime</i><b>'+escHtml(R.regime.name)+'</b><span>'+escHtml(R.regime.note)+'</span></div>'
     +'<div class="qv-dc"><i>Volatility Z</i><b style="color:'+qvZCol(R.vol.z)+'">'+qvNum(R.vol.z,2)+'</b>'
       +'<span>'+R.vol.regime+' · '+qvPct(R.vol.pct)+' percentile</span></div>'
