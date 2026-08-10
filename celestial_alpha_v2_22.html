@@ -1787,6 +1787,23 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .ax-row{grid-template-columns:auto 1fr}.ax-tag{grid-column:2;justify-self:start}}
 @media(prefers-reduced-motion:reduce){.ax-row{animation:none!important}}
 
+.sn-src{margin-bottom:12px}
+.sn-srcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin-bottom:9px}
+.sn-s{padding:11px 13px;border-radius:13px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.sn-s b{display:block;font-size:11.5px;font-weight:700;color:var(--tw);margin-bottom:3px}
+.sn-s u{display:block;text-decoration:none;font-family:'Space Grotesk';font-size:17px;
+  font-weight:700;color:var(--tw);margin-bottom:2px}
+.sn-s span{display:block;font-size:9.5px;color:var(--muted);line-height:1.45}
+.sn-s.ok{border-color:rgba(34,197,94,.35)} .sn-s.ok u{color:var(--green)}
+.sn-s.old{border-color:rgba(245,158,11,.38)} .sn-s.old u{color:var(--amber)}
+.sn-s.old span{color:var(--amber)}
+.sn-s.bad{border-color:rgba(239,68,68,.35)} .sn-s.bad span{color:var(--red)}
+.sn-key{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 13px;
+  border-radius:13px;border:1px dashed var(--rim);background:rgba(255,255,255,.015)}
+.sn-key label{font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.sn-key input{margin-left:8px;padding:7px 10px;font-size:12px;border-radius:8px;min-width:230px}
+.sn-key>span{flex:1;min-width:220px;font-size:9.5px;color:var(--muted);line-height:1.5}
+
 /* ══════════ SENTIMENT v3 — RISK RADAR ══════════
    The pane answers one question before anything else: is it safe to be in a
    trade right now, or is a release about to move price for reasons no chart
@@ -8868,70 +8885,195 @@ function timeAgo(d){
   if(s<86400)return Math.floor(s/3600)+'h ago';
   return Math.floor(s/86400)+'d ago';
 }
-/* == MACRO INDICATORS — Financial Modeling Prep ==
-   FMP's economic *calendar* is a paid endpoint on this key (HTTP 402), but
-   economic-indicators is available and serves the same numbers the hero panel
-   needs. It also sends Access-Control-Allow-Origin:*, so unlike the old FRED
-   path it needs no third-party CORS proxy. FRED stays as a fallback below. */
+/* ══ MACRO INDICATORS — a chain of sources, each one CORS-checked ══
+   The old path was FMP, then FRED through corsproxy.io. Both are dead: FMP
+   answers 429 "Limit Reach" on this key, and corsproxy.io now answers 403
+   ("server-side requests are not allowed on your plan"). FRED itself is
+   healthy but sends no Access-Control-Allow-Origin, so a browser cannot read
+   it directly. That is why the panel said "temporarily unavailable" and never
+   recovered — nothing was going to retry into a working source.
+
+   DBnomics is the fix for the rate: no key, and it does send
+   Access-Control-Allow-Origin:*. Its Fed series matches FRED to the cent
+   (3.63 on 2026-08-06 from both). Its BLS mirror, however, lags badly — CPI
+   and payrolls sit ~19 months behind — so every reading is checked for
+   staleness before it is shown, and a stale figure is labelled with its age
+   instead of being passed off as live. */
 var FMP_KEY='IO43kBiJ7ZymeLdmrlX3NlOyIAXCKbzA';
-var FMP_MAP={'Federal Funds Rate':'federalFunds','CPI (Inflation)':'CPI','Non-Farm Payrolls':'totalNonfarmPayroll'};
-function fetchFmpIndicator(name,cb){
-  fetch('https://financialmodelingprep.com/stable/economic-indicators?name='+encodeURIComponent(name)+'&apikey='+FMP_KEY)
-    .then(function(r){return r.json();}).then(function(d){
-      if(!Array.isArray(d)||!d.length){cb(null);return;}
-      /* newest first; guard in case the API ever returns ascending */
-      var rows=d.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
-      cb({latest:parseFloat(rows[0].value),prev:rows[1]?parseFloat(rows[1].value):null,date:rows[0].date});
-    }).catch(function(){cb(null,'net');});
-}
-/* == FRED — kept as a secondary source (needs a CORS proxy, so tried second) == */
 var FRED_KEY='c430d00ac1788cdd16434956b4d08699';
-var FRED_MAP={'Federal Funds Rate':'DFF','CPI (Inflation)':'CPIAUCSL','Non-Farm Payrolls':'PAYEMS'};
-function fetchFredValue(seriesId,cb){
-  var fredUrl='https://api.stlouisfed.org/fred/series/observations?series_id='+seriesId
-    +'&api_key='+FRED_KEY+'&file_type=json&sort_order=desc&limit=2';
-  var url='https://corsproxy.io/?url='+encodeURIComponent(fredUrl);
-  fetch(url).then(function(r){return r.json();}).then(function(d){
-    if(d.observations&&d.observations.length){
-      var latest=parseFloat(d.observations[0].value);
-      var prev=d.observations[1]?parseFloat(d.observations[1].value):null;
-      cb({latest:latest,prev:prev,date:d.observations[0].date});
-    }else cb(null);
-  }).catch(function(){cb(null,'cors');});
+/* BLS is CORS-open and current, but the unregistered pool is usually spent.
+   Registration is free at bls.gov/developers — paste the key in Settings and
+   CPI and payrolls come from the source that publishes them. */
+var BLS_KEY=(function(){try{return localStorage.getItem('ca_bls_key')||'';}catch(e){return '';}})();
+function setBlsKey(v){
+  BLS_KEY=(v||'').trim();
+  try{localStorage.setItem('ca_bls_key',BLS_KEY);}catch(e){}
+  _macroCache={};
+  try{renderSentiment();}catch(e){}
+}
+var MACRO={
+  'Federal Funds Rate':{kind:'rate',   unit:'%',  maxAgeDays:14,
+    dbn:'FED/H15/RIFSPFF_N.D', bls:null, fmp:'federalFunds', fred:'DFF'},
+  'CPI (Inflation)':   {kind:'CPI',    unit:'idx',maxAgeDays:70,
+    dbn:'BLS/cu/CUSR0000SA0',  bls:'CUSR0000SA0', fmp:'CPI', fred:'CPIAUCSL'},
+  'Non-Farm Payrolls': {kind:'payrolls',unit:'k', maxAgeDays:70,
+    dbn:'BLS/ce/CES0000000001',bls:'CES0000000001', fmp:'totalNonfarmPayroll', fred:'PAYEMS'}
+};
+var _macroCache={};
+function ageDays(dateStr){
+  var d=new Date((dateStr||'').length===7?dateStr+'-01':dateStr);
+  if(isNaN(d))return Infinity;
+  return Math.floor((Date.now()-d)/86400000);
+}
+function fmtAge(days){
+  if(!isFinite(days))return 'unknown age';
+  if(days<45)return days+' days old';
+  var m=Math.round(days/30.44);
+  return m<24?m+' months old':(days/365.25).toFixed(1)+' years old';
+}
+/* ── source 1: DBnomics — no key, sends Access-Control-Allow-Origin:* ── */
+function macroDbnomics(code,cb){
+  if(!code){cb(null,'not mapped');return;}
+  fetch('https://api.db.nomics.world/v22/series/'+code+'?observations=1')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var docs=d&&d.series&&d.series.docs;
+      if(!docs||!docs.length){cb(null,(d&&d.message)||'no series');return;}
+      var x=docs[0], per=x.period||[], val=x.value||[];
+      var i=val.length-1;
+      while(i>=0&&!isFinite(val[i]))i--;
+      if(i<0){cb(null,'no observations');return;}
+      var j=i-1; while(j>=0&&!isFinite(val[j]))j--;
+      cb({latest:+val[i],prev:j>=0?+val[j]:null,date:per[i],src:'DBnomics'});
+    })
+    .catch(function(){cb(null,'unreachable');});
+}
+/* ── source 2: BLS, when a key is present — CORS-open and current ── */
+function macroBls(series,cb){
+  if(!series||!BLS_KEY){cb(null,BLS_KEY?'not mapped':'no key');return;}
+  fetch('https://api.bls.gov/publicAPI/v2/timeseries/data/'+series+'?registrationkey='+encodeURIComponent(BLS_KEY))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d||d.status!=='REQUEST_SUCCEEDED'){
+        cb(null,(d&&d.message&&d.message[0])?String(d.message[0]).slice(0,80):'refused');return;
+      }
+      var s=d.Results&&d.Results.series&&d.Results.series[0];
+      if(!s||!s.data||!s.data.length){cb(null,'empty');return;}
+      var rows=s.data.filter(function(r){return isFinite(parseFloat(r.value));});
+      if(!rows.length){cb(null,'empty');return;}
+      var pad=function(r){return r.year+'-'+String(r.period).replace('M','').padStart(2,'0');};
+      cb({latest:parseFloat(rows[0].value),prev:rows[1]?parseFloat(rows[1].value):null,
+          date:pad(rows[0]),src:'BLS'});
+    })
+    .catch(function(){cb(null,'unreachable');});
+}
+/* ── source 3: FMP — CORS-open, but this key is at its plan limit ── */
+function macroFmp(name,cb){
+  if(!name){cb(null,'not mapped');return;}
+  fetch('https://financialmodelingprep.com/stable/economic-indicators?name='+encodeURIComponent(name)+'&apikey='+FMP_KEY)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d&&d['Error Message']){cb(null,/limit/i.test(d['Error Message'])?'plan limit':'refused');return;}
+      if(!Array.isArray(d)||!d.length){cb(null,'empty');return;}
+      var rows=d.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+      cb({latest:parseFloat(rows[0].value),prev:rows[1]?parseFloat(rows[1].value):null,
+          date:rows[0].date,src:'FMP'});
+    })
+    .catch(function(){cb(null,'unreachable');});
+}
+/* ── source 4: FRED direct — healthy, but no CORS header, so this only
+      succeeds when the page is served behind your own proxy ── */
+function macroFred(id,cb){
+  if(!id){cb(null,'not mapped');return;}
+  fetch('https://api.stlouisfed.org/fred/series/observations?series_id='+id
+        +'&api_key='+FRED_KEY+'&file_type=json&sort_order=desc&limit=2')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var o=d&&d.observations;
+      if(!o||!o.length){cb(null,'empty');return;}
+      cb({latest:parseFloat(o[0].value),prev:o[1]?parseFloat(o[1].value):null,
+          date:o[0].date,src:'FRED'});
+    })
+    .catch(function(){cb(null,'blocked by CORS');});
+}
+/* Walk the chain, keep the freshest usable answer, and remember every failure
+   so the panel can say what actually went wrong instead of "unavailable". */
+function macroFetch(label,cb){
+  var m=MACRO[label];
+  if(!m){cb(null,[]);return;}
+  if(_macroCache[label]){cb(_macroCache[label].res,_macroCache[label].log);return;}
+  var log=[], best=null;
+  var chain=[
+    {n:'BLS',      f:function(k){macroBls(m.bls,k);}},
+    {n:'DBnomics', f:function(k){macroDbnomics(m.dbn,k);}},
+    {n:'FMP',      f:function(k){macroFmp(m.fmp,k);}},
+    {n:'FRED',     f:function(k){macroFred(m.fred,k);}}
+  ];
+  var i=0;
+  function step(){
+    if(i>=chain.length){_macroCache[label]={res:best,log:log};cb(best,log);return;}
+    var c=chain[i++];
+    c.f(function(res,err){
+      if(!res||!isFinite(res.latest)){log.push({src:c.n,err:err||'no data'});step();return;}
+      res.age=ageDays(res.date);
+      res.stale=res.age>m.maxAgeDays;
+      log.push({src:c.n,ok:true,date:res.date,age:res.age,stale:res.stale});
+      if(!res.stale){best=res;_macroCache[label]={res:best,log:log};cb(best,log);return;}
+      /* keep the freshest stale reading in case nothing current turns up */
+      if(!best||res.age<best.age)best=res;
+      step();
+    });
+  }
+  step();
 }
 function paintIndicator(kind,res,next,setT){
   if(!res||isNaN(res.latest))return;
-  if(kind==='CPI'&&res.prev){
-    var moM=((res.latest-res.prev)/res.prev*100).toFixed(2);
-    setT('nh_pv','Latest index '+res.latest.toFixed(1)+' ('+(moM>=0?'+':'')+moM+'% MoM)');
-    setT('nh_fc','Forecast —');
-    setT('nh_cmp','Live CPI index '+res.latest.toFixed(1)+' (as of '+res.date+')');
+  var tag=res.stale?' — '+fmtAge(res.age)+', not current':'';
+  var as=' (as of '+res.date+', '+res.src+tag+')';
+  if(kind==='CPI'){
+    if(res.prev){
+      var moM=((res.latest-res.prev)/res.prev*100).toFixed(2);
+      setT('nh_pv','CPI index '+res.latest.toFixed(1)+' ('+(moM>=0?'+':'')+moM+'% MoM)');
+    }else setT('nh_pv','CPI index '+res.latest.toFixed(1));
+    setT('nh_cmp',(res.stale?'Latest available':'Live')+' CPI index '+res.latest.toFixed(1)+as);
   }else if(kind==='rate'){
     setT('nh_pv','Current rate '+res.latest.toFixed(2)+'%');
     setT('nh_fc','Forecast '+next.fc);
-    setT('nh_cmp','Live Fed Funds Rate: '+res.latest.toFixed(2)+'% (as of '+res.date+')');
-  }else if(kind==='payrolls'&&res.prev){
-    /* series is in thousands of jobs: total reads as millions, the MoM delta is
-       the headline NFP print. The old label divided by 1000 and still said "K". */
-    var chg=Math.round(res.latest-res.prev);
-    setT('nh_pv','Total '+(res.latest/1000).toFixed(1)+'M jobs ('+(chg>=0?'+':'')+chg+'K MoM)');
-    setT('nh_cmp','Live payrolls as of '+res.date);
+    setT('nh_cmp',(res.stale?'Latest available':'Live')+' Fed Funds Rate '+res.latest.toFixed(2)+'%'+as);
+  }else if(kind==='payrolls'){
+    if(res.prev){
+      var chg=Math.round(res.latest-res.prev);
+      setT('nh_pv','Total '+(res.latest/1000).toFixed(1)+'M jobs ('+(chg>=0?'+':'')+chg+'K MoM)');
+    }else setT('nh_pv','Total '+(res.latest/1000).toFixed(1)+'M jobs');
+    setT('nh_cmp',(res.stale?'Latest available':'Live')+' payrolls'+as);
   }
 }
+/* When nothing current is reachable, say which source failed and how to fix
+   it. "Temporarily unavailable" was neither true nor actionable. */
+function macroFailLine(label,log){
+  var why=log.map(function(l){
+    return l.ok?l.src+' returned '+l.date+' ('+fmtAge(l.age)+')':l.src+': '+l.err;
+  }).join(' · ');
+  var fix='';
+  if(MACRO[label]&&MACRO[label].bls&&!BLS_KEY)
+    fix=' A free BLS key (bls.gov/developers) unlocks current CPI and payrolls — paste it in Settings.';
+  else if(log.some(function(l){return /CORS/i.test(l.err||'');}))
+    fix=' FRED has the data but sends no CORS header, so it needs this page served behind your own proxy.';
+  return 'No current source for '+label+'. '+why+'.'+fix;
+}
 function loadMacroForEvent(next,setT){
-  /* projected FOMC entries carry an " (est.)" suffix — strip it before lookup */
   var base=(next.t||'').replace(/ \(est\.\)$/,'');
-  var kind=base==='CPI (Inflation)'?'CPI':base==='Federal Funds Rate'?'rate':base==='Non-Farm Payrolls'?'payrolls':null;
-  if(!kind)return;
-  var fmpName=FMP_MAP[base],fredId=FRED_MAP[base];
-  fetchFmpIndicator(fmpName,function(res){
-    if(res){paintIndicator(kind,res,next,setT);return;}
-    /* FMP unavailable → fall back to FRED through the CORS proxy */
-    if(!fredId)return;
-    fetchFredValue(fredId,function(r2,err){
-      if(err||!r2){setT('nh_cmp','Live economic data temporarily unavailable — retrying on next open');return;}
-      paintIndicator(kind,r2,next,setT);
-    });
+  var m=MACRO[base];
+  if(!m)return;
+  macroFetch(base,function(res,log){
+    if(!res){setT('nh_cmp',macroFailLine(base,log));return;}
+    paintIndicator(m.kind,res,next,setT);
+    if(res.stale){
+      var extra=MACRO[base].bls&&!BLS_KEY
+        ?' Add a free BLS key in Settings for the current print.':'';
+      setT('nh_fc','Forecast '+next.fc);
+      console.info('macro '+base+': best available is '+fmtAge(res.age)+extra);
+    }
   });
 }
 /* back-compat alias — renderSentiment used to call this name */
@@ -9093,6 +9235,40 @@ function senPaintNews(){
      :'<div class="sn-load">Nothing in that bucket right now — try another filter.</div>');
 }
 function senFilter(m){ _senFilter=m; senPaintNews(); }
+/* Which source answered for each release figure, how old it is, and the one
+   action that fixes a stale reading. This replaced a bare "temporarily
+   unavailable" line that named nothing and suggested nothing. */
+function senPaintSources(){
+  var host=document.getElementById('sn_src');
+  if(!host)return;
+  var names=Object.keys(MACRO);
+  host.innerHTML='<div class="sn-srcs">'+names.map(function(n){
+      return '<div class="sn-s" id="sn_s_'+n.replace(/[^a-z]/gi,'')+'">'
+        +'<b>'+escHtml(n)+'</b><span>checking…</span></div>';
+    }).join('')+'</div>'
+   +'<div class="sn-key">'
+     +'<label>BLS key <input type="text" id="sn_bls" placeholder="free from bls.gov/developers" value="'+escHtml(BLS_KEY)+'"></label>'
+     +'<button class="btn btn-a btn-sm" onclick="setBlsKey(document.getElementById(\'sn_bls\').value)">Save</button>'
+     +'<span>CPI and payrolls come from BLS when a key is present. Without one they fall back to a public mirror that can run months behind — the age is always shown, never hidden.</span>'
+   +'</div>';
+  names.forEach(function(n){
+    macroFetch(n,function(res,log){
+      var el=document.getElementById('sn_s_'+n.replace(/[^a-z]/gi,''));
+      if(!el)return;
+      if(!res){
+        el.className='sn-s bad';
+        el.innerHTML='<b>'+escHtml(n)+'</b><span>'+escHtml(log.map(function(l){
+          return l.src+': '+(l.ok?l.date:l.err);}).join(' · '))+'</span>';
+        return;
+      }
+      el.className='sn-s '+(res.stale?'old':'ok');
+      var v=res.latest>=1000?(res.latest/1000).toFixed(1)+'M':res.latest.toFixed(2);
+      el.innerHTML='<b>'+escHtml(n)+'</b>'
+        +'<u>'+v+'</u>'
+        +'<span>'+res.src+' · '+res.date+' · '+(res.stale?fmtAge(res.age):'current')+'</span>';
+    });
+  });
+}
 
 /* the live ring + clock, updated in place every second */
 function senTick(){
@@ -9208,6 +9384,8 @@ function renderSentimentV3(){
    +'<div class="sn-week">'+week+'</div>'
    +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
    +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
+   +'<div class="sn-sech"><b>Data sources</b><span>where the release figures above come from</span></div>'
+   +'<div class="sn-src" id="sn_src"></div>'
    +'<div class="sn-sech"><b>The wire</b><span>headlines scored bullish / bearish by keyword — a tone check, not a signal</span></div>'
    +'<div id="sn_news"></div>';
 
@@ -9219,6 +9397,7 @@ function renderSentimentV3(){
   });
 
   senPaintNews();
+  senPaintSources();
   if(next)_senTimer=setInterval(senTick,1000);
 }
 
