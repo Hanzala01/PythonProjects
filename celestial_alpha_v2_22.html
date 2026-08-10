@@ -7635,6 +7635,80 @@ function metalKey(sym){
    price must be confirmed rather than assuming success. XAG/USD needs a paid
    plan on this key, so silver stays on gold-api.com. */
 var TWELVE_KEY='999d566e01a4447da5338469a44e3281';
+/* ══ POLYGON.IO — daily history WITH volume, and CORS-open ══
+   Verified against the live API before wiring: it reflects any Origin header
+   back (including "null", which is what a file:// page sends), so unlike EODHD
+   and FRED it is readable straight from the browser. Free tier serves two
+   years of daily aggregates and covers stocks, forex, crypto and metals.
+
+   Two things this changes. First, it is the only source here that returns
+   volume for gold, so the quantitative engine's volume half stops being dead
+   for the asset this app is mostly used on. Second, the free tier allows
+   FIVE calls per minute — call 2 of a rapid 6 already returns 429 — so it is
+   used for the once-per-analysis history fetch and never for the ticker loop.
+
+   One honest caveat, measured rather than assumed: for stocks and crypto the
+   "v" field is true traded volume (AAPL 34,437,191 shares against 718,865
+   trades). For forex and metals v equals n exactly — it is the number of
+   aggregated ticks, i.e. quote activity, not size traded. It is carried
+   through as an activity measure and labelled as one; it is never called
+   participation. */
+var POLY_KEY='k5hQ7Cyz7BsG0Vq7xHeug5L7NrONbxd2';
+var POLY_SYM={
+  GOLD:'C:XAUUSD',XAU:'C:XAUUSD',XAUUSD:'C:XAUUSD',
+  SILVER:'C:XAGUSD',XAG:'C:XAGUSD',XAGUSD:'C:XAGUSD',
+  EURUSD:'C:EURUSD',GBPUSD:'C:GBPUSD',USDJPY:'C:USDJPY',AUDUSD:'C:AUDUSD',
+  USDCAD:'C:USDCAD',NZDUSD:'C:NZDUSD',USDCHF:'C:USDCHF',
+  BITCOIN:'X:BTCUSD',BTC:'X:BTCUSD',BTCUSD:'X:BTCUSD',
+  ETHEREUM:'X:ETHUSD',ETH:'X:ETHUSD',ETHUSD:'X:ETHUSD',
+  SOLANA:'X:SOLUSD',SOL:'X:SOLUSD',RIPPLE:'X:XRPUSD',XRP:'X:XRPUSD',
+  CARDANO:'X:ADAUSD',ADA:'X:ADAUSD',LITECOIN:'X:LTCUSD',LTC:'X:LTCUSD',
+  DOGECOIN:'X:DOGEUSD',DOGE:'X:DOGEUSD',
+  APPLE:'AAPL',AAPL:'AAPL',TESLA:'TSLA',TSLA:'TSLA',MICROSOFT:'MSFT',MSFT:'MSFT',
+  NVIDIA:'NVDA',NVDA:'NVDA',AMAZON:'AMZN',AMZN:'AMZN',NETFLIX:'NFLX',NFLX:'NFLX',
+  OIL:'CL',CL:'CL'
+};
+function polygonSymbol(sym){return POLY_SYM[sym]||null;}
+/* v is traded size for equities and crypto, tick count for the C: (forex and
+   metals) feed — measured, not assumed */
+function polygonVolKind(pt){return /^C:/.test(pt)?'ticks':'traded';}
+/* five requests a minute on the free tier, so the calls are counted rather
+   than fired and apologised for afterwards */
+var _polyCalls=[];
+function polyBudget(){
+  var now=Date.now();
+  _polyCalls=_polyCalls.filter(function(t){return now-t<60000;});
+  return 5-_polyCalls.length;
+}
+function polyWaitSec(){
+  if(polyBudget()>0)return 0;
+  return Math.ceil((60000-(Date.now()-_polyCalls[0]))/1000);
+}
+function polygonDaily(sym,days,cb){
+  var pt=polygonSymbol(sym);
+  if(!pt){cb(null,'unmapped');return;}
+  if(apiCooled('Polygon')){cb(null,'rate limited, retry in '+apiCoolLeft('Polygon')+' min');return;}
+  if(polyBudget()<=0){cb(null,'5-per-minute budget spent, '+polyWaitSec()+'s to reset');return;}
+  _polyCalls.push(Date.now());
+  var to=new Date(), from=new Date(Date.now()-(days||200)*86400000);
+  var url='https://api.polygon.io/v2/aggs/ticker/'+encodeURIComponent(pt)
+    +'/range/1/day/'+ymd(from)+'/'+ymd(to)
+    +'?adjusted=true&sort=asc&limit=5000&apiKey='+POLY_KEY;
+  fetch(url).then(function(r){
+    if(r.status===429){apiCool('Polygon',2);return null;}
+    return r.json();
+  }).then(function(d){
+    if(!d){cb(null,'rate limited');return;}
+    if(d.status==='ERROR'||!d.results||!d.results.length){cb(null,(d&&d.error)||'no data');return;}
+    var kind=polygonVolKind(pt);
+    cb(d.results.map(function(x){
+      return{date:ymd(new Date(x.t)),open:+x.o,high:+x.h,low:+x.l,close:+x.c,
+             volume:isFinite(+x.v)&&+x.v>0?+x.v:null,trades:x.n||null,vwap:x.vw||null,
+             volKind:kind};
+    }).filter(function(r){return isFinite(r.close);}),null,kind);
+  }).catch(function(){cb(null,'unreachable');});
+}
+
 function twelveSymbol(sym){
   var MAP={
     GOLD:'XAU/USD',XAU:'XAU/USD',XAUUSD:'XAU/USD',
@@ -8073,8 +8147,8 @@ function twelveDaily(sym,days,cb){
 function loadHistory(assetName,cb){
   var sym=(assetName||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   var el=document.getElementById('plot');
-  var hasTD=!!twelveSymbol(sym),hasEOD=!!eodhdSymbol(sym);
-  if(!hasTD&&!hasEOD){
+  var hasTD=!!twelveSymbol(sym),hasEOD=!!eodhdSymbol(sym),hasPoly=!!polygonSymbol(sym);
+  if(!hasTD&&!hasEOD&&!hasPoly){
     if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No daily history mapped for "'+escHtml(assetName)+'" \u2014 supported: metals, major FX, top crypto and US stocks</div>';
     if(cb)cb(null);return;
   }
@@ -8092,17 +8166,29 @@ function loadHistory(assetName,cb){
         : 'Chart data unavailable. EODHD sends no cross-origin header, so serve this page behind your own proxy to use it as a source.')+'</div>';
     if(cb)cb(null);
   }
-  /* Twelve Data first because it is CORS-open; EODHD second for anyone
-     serving this behind a proxy, where it gives longer history. */
-  if(hasTD){
-    twelveDaily(sym,150,function(rows,err){
-      if(rows&&rows.length>1){done(rows,'Twelve Data');return;}
-      if(!hasEOD){fail(err);return;}
-      eodhdDaily(sym,150,function(r2){ r2?done(r2,'EODHD'):fail(err); });
-    });
-  }else{
-    eodhdDaily(sym,150,function(r2,err2){ r2?done(r2,'EODHD'):fail(err2); });
+  /* Polygon first: it is CORS-open and the only one of the three that returns
+     volume, which the quantitative engine needs. Twelve Data second (also
+     CORS-open, no volume). EODHD last, for anyone serving this behind a proxy. */
+  function tdThenEod(prevErr){
+    if(hasTD){
+      twelveDaily(sym,150,function(rows,err){
+        if(rows&&rows.length>1){done(rows,'Twelve Data');return;}
+        if(!hasEOD){fail(err||prevErr);return;}
+        eodhdDaily(sym,150,function(r2){ r2?done(r2,'EODHD'):fail(err||prevErr); });
+      });
+    }else if(hasEOD){
+      eodhdDaily(sym,150,function(r2,err2){ r2?done(r2,'EODHD'):fail(err2||prevErr); });
+    }else fail(prevErr);
   }
+  if(polygonSymbol(sym)){
+    polygonDaily(sym,220,function(rows,err,kind){
+      if(rows&&rows.length>1){
+        done(rows,'Polygon'+(kind==='ticks'?' · volume is tick activity':' · with volume'));
+        return;
+      }
+      tdThenEod(err);
+    });
+  }else tdThenEod(null);
 }
 
 /* ══════════════════════════════════════
@@ -9944,6 +10030,11 @@ function run(rows,price,mode){
   R.vol.verLabel=!isFinite(R.vol.ver)?'Unknown':R.vol.ver<0.75?'Compression':R.vol.ver<=1.25?'Normal'
                 :R.vol.ver<=1.5?'Expansion':'Strong expansion';
 
+  /* Polygon's forex and metals feed reports tick count in the volume field —
+     v equals n exactly on those symbols. It is a real activity measure, but it
+     is not size traded, and the panels must not call it participation. */
+  R.volKind=(rows[rows.length-1]&&rows[rows.length-1].volKind)||'traded';
+  R.volLabel=R.volKind==='ticks'?'quote activity (tick count)':'volume';
   R.volQuality=volumeQuality(rows);
   R.hasVolume=hasVolume(rows)&&R.volQuality.usable;
   if(!R.volQuality.usable&&hasVolume(rows))R.notes.push(R.volQuality.reason);
@@ -10132,6 +10223,9 @@ var API_SOURCES=[
   {n:'newsdata.io', use:'headlines',
    url:function(){return 'https://newsdata.io/api/1/latest?apikey='+NEWSDATA_KEY+'&q=gold&language=en&size=1';},
    ok:function(d){return d&&d.status==='success';}},
+  {n:'Polygon', use:'daily history with volume — 5 calls/min',
+   url:function(){return 'https://api.polygon.io/v2/aggs/ticker/AAPL/prev?adjusted=true&apiKey='+POLY_KEY;},
+   ok:function(d){return d&&d.results&&d.results.length;}},
   {n:'EODHD', use:'longer daily history (needs your own proxy)',
    url:function(){return 'https://eodhd.com/api/eod/XAUUSD.FOREX?api_token='+EODHD_KEY+'&fmt=json&period=d&from='+ymd(new Date(Date.now()-5*86400000));},
    ok:function(d){return Array.isArray(d)&&d.length;}}
@@ -10263,17 +10357,26 @@ function qvPlain(R){
 
   if(R.hasVolume){
     var vz=R.volume.z;
-    var vw=vz<-1?'thin — few people are trading'
-      :vz<=1?'normal participation'
-      :vz<2?'heavier than usual':'very heavy — a crowd is in';
-    L.push({k:'How many people are trading?',v:vw,
-      d:'Today’s volume is '+qvNum(R.volume.surprise,2)+'× its 20-day average.',c:qvZCol(vz)});
+    var ticks=R.volKind==='ticks';
+    var vw=ticks
+      ?(vz<-1?'quiet — the price is barely being requoted'
+        :vz<=1?'normal quote activity'
+        :vz<2?'busier than usual':'very busy — quotes are flying')
+      :(vz<-1?'thin — few people are trading'
+        :vz<=1?'normal participation'
+        :vz<2?'heavier than usual':'very heavy — a crowd is in');
+    L.push({k:ticks?'How active is the quote feed?':'How many people are trading?',v:vw,
+      d:'Today is '+qvNum(R.volume.surprise,2)+'× its 20-day average'
+        +(ticks?'. For spot FX and metals there is no central tape, so this counts price updates rather than size traded — an activity proxy, not participation.':'.'),
+      c:qvZCol(vz)});
     var d=R.vvd;
     var dw=!isFinite(d)?'unknown'
-      :d>2?'price is moving a lot on few hands — moves like this often do not stick'
-      :d<-2?'lots of hands, little movement — someone is absorbing the flow'
-      :'movement and participation match up';
-    L.push({k:'Do the moves and the crowd agree?',v:dw,
+      :d>2?(ticks?'price is travelling without the quote traffic to match'
+                 :'price is moving a lot on few hands — moves like this often do not stick')
+      :d<-2?(ticks?'heavy requoting, little travel — the price is being worked in a tight area'
+                 :'lots of hands, little movement — someone is absorbing the flow')
+      :'movement and activity match up';
+    L.push({k:ticks?'Do the moves and the quote traffic agree?':'Do the moves and the crowd agree?',v:dw,
       d:'The engine does not call this bullish or bearish — the history was tested and did not support either label.',
       c:qvZCol(d)});
   }else{
@@ -10340,18 +10443,24 @@ function qvAnalyticsHtml(){
         isFinite(v.ver)?(v.ver>1.5?'var(--red)':v.ver>1.25?'var(--amber)':'var(--green)'):null)
     +'</div>';
 
-  out+='<div class="qv-hd"><b>Volume</b><span>'+(R.hasVolume?'from the loaded series':'not published for this instrument')+'</span></div>';
+  out+='<div class="qv-hd"><b>'+(R.volKind==='ticks'?'Quote activity':'Volume')+'</b><span>'
+    +(R.hasVolume
+       ?(R.volKind==='ticks'
+          ?'this feed reports tick count for FX and metals, not size traded'
+          :'traded size from the loaded series')
+       :'not published for this instrument')+'</span></div>';
   if(R.hasVolume){
     out+='<div class="qv-g">'
-      +qvCell('Last volume',qvBig(R.volume.last),R.volPartial?'last complete bar':'latest bar')
+      +qvCell(R.volKind==='ticks'?'Last tick count':'Last volume',qvBig(R.volume.last),
+          R.volPartial?'last complete bar':'latest bar')
       +qvCell('20-bar average',qvBig(R.volume.ma20),'')
-      +qvCell('Volume Z',qvNum(R.volume.z,2),R.volume.label,qvZCol(R.volume.z))
-      +qvCell('Volume surprise',qvNum(R.volume.surprise,2)+'×',
+      +qvCell(R.volKind==='ticks'?'Activity Z':'Volume Z',qvNum(R.volume.z,2),R.volume.label,qvZCol(R.volume.z))
+      +qvCell(R.volKind==='ticks'?'Activity surprise':'Volume surprise',qvNum(R.volume.surprise,2)+'×',
           isFinite(R.volume.surprise)?qvPct((R.volume.surprise-1)*100)+' vs average':'')
-      +qvCell('Volume percentile',qvPct(R.volume.pct),'of this history')
+      +qvCell((R.volKind==='ticks'?'Activity':'Volume')+' percentile',qvPct(R.volume.pct),'of this history')
       +qvCell('VVD',qvNum(R.vvd,2),R.vvdNote,qvZCol(R.vvd))
       +qvCell('VVR',qvNum(R.vvr,5),'σ per unit of normalised volume')
-      +qvCell('Price · volume',escHtml(R.pv),R.pvNote)
+      +qvCell(R.volKind==='ticks'?'Price · activity':'Price · volume',escHtml(R.pv),R.pvNote)
       +'</div>';
   }else{
     out+=qvEmpty('No volume on this feed, so Volume Z, surprise, VVD, VVR and the price-volume state are not computed. Nothing is estimated in their place.');
