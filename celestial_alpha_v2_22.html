@@ -1500,6 +1500,77 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qv-act1 span{font-size:11.5px;color:var(--tw);line-height:1.55}
 @media(prefers-reduced-motion:reduce){.tp-b,.qp-l{animation:none!important}.tp-n:hover{transform:none}}
 
+/* ══ SHARE ══ */
+.sh{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:12px 0 4px;
+  padding:10px 13px;border-radius:13px;border:1px dashed var(--rim);background:rgba(255,255,255,.015)}
+.sh-l{font-size:8.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.sh-b{padding:6px 13px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;
+  border:1px solid var(--rim);background:rgba(255,255,255,.03);color:var(--soft);transition:.2s var(--ease)}
+.sh-b:hover{color:var(--tw);transform:translateY(-1px);border-color:rgba(157,77,255,.45)}
+.sh-b.wa{border-color:rgba(37,211,102,.45);color:#25D366}
+.sh-b.wa:hover{background:rgba(37,211,102,.12)}
+.sh-fallback{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.72);padding:20px}
+.sh-box{width:min(560px,100%);padding:16px;border-radius:16px;border:1px solid var(--bd);
+  background:var(--s1,#0b0b16)}
+.sh-box b{display:block;font-size:13px;color:var(--tw);margin-bottom:9px}
+.sh-box textarea{width:100%;padding:11px;border-radius:10px;font-size:12px;line-height:1.6;
+  background:rgba(255,255,255,.03);border:1px solid var(--rim);color:var(--tw);resize:vertical}
+.sh-box .btn{margin-top:10px}
+
+/* ══ FUNDAMENTALS ══ */
+.fd-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;padding:12px 14px;margin-bottom:12px;
+  border-radius:14px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.fd-bar label{font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.fd-bar input{display:block;margin-top:5px;padding:8px 11px;font-size:13px;border-radius:9px;width:130px;
+  text-transform:uppercase}
+.fd-picks{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.fd-head{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;
+  border:1px solid var(--bd);background:rgba(255,255,255,.02);margin-bottom:10px}
+.fd-head img{width:42px;height:42px;border-radius:10px;background:#fff;object-fit:contain;padding:4px;flex-shrink:0}
+.fd-id{min-width:0;flex:1}
+.fd-id b{display:block;font-family:'Space Grotesk';font-size:19px;font-weight:700;color:var(--tw);line-height:1.2}
+.fd-id span{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.fd-cap{text-align:right;flex-shrink:0}
+.fd-cap i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.fd-cap b{font-family:'Space Grotesk';font-size:20px;font-weight:700;color:var(--acc2)}
+.fd-range{padding:13px 16px;border-radius:14px;border:1px solid var(--bd);
+  background:rgba(255,255,255,.02);margin-bottom:10px}
+.fd-rl{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:7px}
+.fd-rt{position:relative;height:8px;border-radius:99px;
+  background:linear-gradient(90deg,rgba(34,197,94,.35),rgba(255,255,255,.10),rgba(239,68,68,.35))}
+.fd-rt i{position:absolute;top:-4px;width:3px;height:16px;border-radius:2px;background:var(--tw);
+  box-shadow:0 0 9px rgba(255,255,255,.7);transition:left .9s var(--ease)}
+.fd-rn{font-size:10.5px;color:var(--soft);margin-top:8px}
+.fd-v{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.fd-vc{padding:12px 14px;border-radius:14px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
+.fd-vc i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:6px}
+.fd-vc.good{border-color:rgba(34,197,94,.32)} .fd-vc.good i{color:var(--green)}
+.fd-vc.bad{border-color:rgba(239,68,68,.28)}  .fd-vc.bad i{color:var(--red)}
+.fd-vc ul{margin:0;padding-left:16px}
+.fd-vc li{font-size:11.5px;color:var(--tw);line-height:1.6}
+.fd-vc p{margin:0;font-size:11px;color:var(--muted);font-style:italic}
+.fd-rows{display:grid;grid-template-columns:1fr;gap:6px}
+.fd-r{display:grid;grid-template-columns:190px 150px 1fr;gap:12px;align-items:center;
+  padding:10px 13px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02);
+  animation:rowIn .4s var(--ease) backwards;transition:.2s var(--ease)}
+.fd-r:hover{border-color:rgba(157,77,255,.35)}
+.fd-k{font-size:12px;font-weight:700;color:var(--tw)}
+.fd-n{font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--tw);
+  font-variant-numeric:tabular-nums}
+.fd-n em{display:block;font-style:normal;font-size:9px;font-weight:700;margin-top:2px;letter-spacing:.04em}
+.fd-n em.good{color:var(--green)} .fd-n em.mid{color:var(--acc2)}
+.fd-n em.warn{color:var(--amber)} .fd-n em.bad{color:var(--red)}
+.fd-p{font-size:10.5px;color:var(--muted);line-height:1.55}
+.fd-foot{margin-top:11px;font-size:9.5px;color:var(--muted);line-height:1.6}
+.fd-foot a{color:var(--acc2)}
+@media(max-width:900px){.fd-v{grid-template-columns:1fr}
+  .fd-r{grid-template-columns:1fr auto;gap:6px}.fd-p{grid-column:1/-1}
+  .fd-picks{margin-left:0;width:100%}}
+@media(prefers-reduced-motion:reduce){.fd-r{animation:none!important}}
+
 /* ══ API HEALTH ══ */
 .ah-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:8px}
 .ah{padding:11px 13px;border-radius:13px;border:1px solid var(--bd);background:rgba(255,255,255,.02);
@@ -2378,6 +2449,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
     <div class="nav-item on" onclick='goTab("dashboard",this)'><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Dashboard</div>
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
+    <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>Fundamentals</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Sentiment</div>
     <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
@@ -2914,6 +2986,31 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   <span id="sb_ds"></span><span id="sb_dn"></span><span id="sb_dnu"></span><span id="sb_dq"></span>
   <span id="bi_timing"></span><span id="bs_timing"></span>
 </div>
+
+      <div class="pane hidden" id="pane_fundamentals">
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><div class="dot" style="background:var(--green)"></div>Fundamentals — what the company is</div>
+            <div class="cs">the business behind the ticker, in plain terms</div>
+          </div>
+          <div class="cb">
+            <div class="fd-bar">
+              <label>Ticker<input type="text" id="fund_sym" value="AAPL" placeholder="AAPL" onkeydown="if(event.key==='Enter')renderFundamentals()"></label>
+              <button class="btn btn-a btn-sm" onclick="renderFundamentals()">Load</button>
+              <button class="btn btn-g btn-sm" onclick="fundLoadFromAnalysis()">Use analysed asset</button>
+              <div class="fd-picks">
+                <span class="ab-pick" onclick="document.getElementById('fund_sym').value='AAPL';renderFundamentals()">AAPL</span>
+                <span class="ab-pick" onclick="document.getElementById('fund_sym').value='TSLA';renderFundamentals()">TSLA</span>
+                <span class="ab-pick" onclick="document.getElementById('fund_sym').value='MSFT';renderFundamentals()">MSFT</span>
+                <span class="ab-pick" onclick="document.getElementById('fund_sym').value='NVDA';renderFundamentals()">NVDA</span>
+                <span class="ab-pick" onclick="document.getElementById('fund_sym').value='AMZN';renderFundamentals()">AMZN</span>
+                <span class="ab-pick" onclick="document.getElementById('fund_sym').value='GOOGL';renderFundamentals()">GOOGL</span>
+              </div>
+            </div>
+            <div id="fund_body"><div class="qv-empty">Pick a ticker and press Load.</div></div>
+          </div>
+        </div>
+      </div>
 
       <div class="pane hidden" id="pane_sentiment">
         <div id="sen_legacy" style="display:none" aria-hidden="true">
@@ -4995,6 +5092,7 @@ function renderAnalytics(){
      +'</div>'
    +'</div>'
 
+   +shareBar('setup')
    +'<div class="ab-reads">'+reads.map(function(r){
        return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
          +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
@@ -5478,6 +5576,7 @@ function timTradePlan(st){
            +'<u>'+q.hz.days+'d</u></div>';
        }).join('')
       +'</div>':'')
+   +shareBar('timing')
    +'<div class="tp-f">The window comes from the planetary hours that carry '+escHtml(asset)+'’s cycle number '
      +'on that date. The direction is that date’s own sky, not today’s. The horizon is the nearer of the 9-day '
      +'cycle turn and the day '+escHtml(P.hz.driver)+' leaves '+escHtml(P.hz.driverSign)+' — both are dated, '
@@ -7659,6 +7758,84 @@ function metalKey(sym){
    price must be confirmed rather than assuming success. XAG/USD needs a paid
    plan on this key, so silver stays on gold-api.com. */
 var TWELVE_KEY='999d566e01a4447da5338469a44e3281';
+
+/* ══ PSX — Pakistan Stock Exchange ══════════════════════════════════════
+   The exchange publishes its own data and it is real: 748 equities in the
+   symbol list, and OGDC alone returns 1,239 end-of-day rows back to 2021 with
+   volume on every one. Two caveats found by testing, both handled rather than
+   papered over:
+
+   1. /symbols sends Access-Control-Allow-Origin:* and is read directly. The
+      /timeseries endpoints send no CORS header at all, so they need a relay.
+      corsproxy.io now answers 403 and allorigins and codetabs answer 5xx, so
+      the relay list is tried in order and the failure is reported by name.
+   2. The EOD rows carry [time, close, volume, previous] — a close, not a bar.
+      There is no high, low or open, so Parkinson, Garman-Klass and
+      Rogers-Satchell cannot be computed for PSX names. They are marked
+      unavailable instead of being fed a fabricated range. */
+var PSX_RELAYS=[
+  function(u){return 'https://proxy.cors.sh/'+u;},
+  function(u){return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u);},
+  function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}
+];
+var _psxSyms=null, _psxSymErr=null;
+function psxLoadSymbols(cb){
+  if(_psxSyms){cb(_psxSyms);return;}
+  fetch('https://dps.psx.com.pk/symbols')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!Array.isArray(d)){cb(null);return;}
+      _psxSyms=d.filter(function(x){return !x.isDebt&&!x.isETF;});
+      cb(_psxSyms);
+    })
+    .catch(function(){_psxSymErr='unreachable';cb(null);});
+}
+function psxIsSymbol(sym,cb){
+  psxLoadSymbols(function(list){
+    if(!list){cb(null);return;}
+    var u=String(sym||'').toUpperCase();
+    cb(list.filter(function(x){return x.symbol.toUpperCase()===u;})[0]||null);
+  });
+}
+function psxRelayFetch(path,cb){
+  var target='https://dps.psx.com.pk/'+path;
+  var i=0, tried=[];
+  (function attempt(){
+    if(i>=PSX_RELAYS.length){cb(null,'every relay failed ('+tried.join(', ')+')');return;}
+    var name=['cors.sh','allorigins','codetabs'][i];
+    var u=PSX_RELAYS[i++](target);
+    fetch(u).then(function(r){
+      if(!r.ok){tried.push(name+' '+r.status);attempt();return null;}
+      return r.json();
+    }).then(function(d){
+      if(!d)return;
+      if(d.status!==1||!d.data){tried.push(name+' bad body');attempt();return;}
+      cb(d.data,null,name);
+    }).catch(function(){tried.push(name+' blocked');attempt();});
+  })();
+}
+/* PSX rows are closes, not bars — flagged so the range estimators stand down */
+function psxDaily(sym,cb){
+  psxRelayFetch('timeseries/eod/'+encodeURIComponent(String(sym).toUpperCase()),function(data,err,via){
+    if(!data){cb(null,err);return;}
+    var rows=data.map(function(x){
+      var c=+x[1];
+      return{date:ymd(new Date(x[0]*1000)),open:c,high:c,low:c,close:c,
+             volume:isFinite(+x[2])&&+x[2]>0?+x[2]:null,
+             volKind:'traded',closeOnly:true};
+    }).filter(function(r){return isFinite(r.close)&&r.close>0;});
+    rows.sort(function(a,b){return a.date<b.date?-1:1;});
+    cb(rows,null,via);
+  });
+}
+function psxQuote(sym,cb){
+  psxDaily(sym,function(rows,err){
+    if(!rows||!rows.length){cb(null,err);return;}
+    var last=rows[rows.length-1], prev=rows[rows.length-2];
+    cb(last.close,prev?prev.close:null);
+  });
+}
+
 /* ══ POLYGON.IO — daily history WITH volume, and CORS-open ══
    Verified against the live API before wiring: it reflects any Origin header
    back (including "null", which is what a file:// page sends), so unlike EODHD
@@ -7835,8 +8012,20 @@ function avResolve(sym){
 function fetchLivePrice(cb){
   var a=document.getElementById('ai_asset_txt').value.trim()||'Gold';
   var sym=a.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if(!metalKey(sym)&&!fmpSymbol(sym)&&!finnhubSymbol(sym)){
-    notify('No live feed for "'+a+'" \u2014 try Gold, Silver, Bitcoin, EURUSD, Oil or a US stock','info');
+  var isPsx=!!(_psxSyms&&_psxSyms.some(function(x){return x.symbol.toUpperCase()===sym;}));
+  if(isPsx){
+    notify('Fetching '+a+' from PSX...','info');
+    psxQuote(sym,function(px){
+      if(px&&!isNaN(px)){
+        document.getElementById('ai_price').value=px.toFixed(2);
+        notify(sym+' \u2192 '+px.toLocaleString()+' (PSX)','bull');
+        if(cb)cb(true); else if(!document.getElementById('ai_out').classList.contains('hidden'))runAI();
+      }else{ notify('PSX relay unavailable for '+sym,'info'); if(cb)cb(false); }
+    });
+    return;
+  }
+  if(!metalKey(sym)&&!fmpSymbol(sym)&&!finnhubSymbol(sym)&&!polygonSymbol(sym)){
+    notify('No live feed for "'+a+'" \u2014 try a US stock, a PSX ticker, Gold, Silver, Bitcoin, EURUSD or Oil','info');
     if(cb)cb(false);return;
   }
   notify('Fetching '+a+' live price...','info');
@@ -7932,7 +8121,7 @@ renderJ=function(){
 };
 
 /* == MULTI-PANE SHELL == */
-var TABS_LIST=['dashboard','analytics','timing','sentiment','portfolio','bot','announcements','reference'];
+var TABS_LIST=['dashboard','analytics','timing','fundamentals','sentiment','portfolio','bot','announcements','reference'];
 function goTab(name,btn){
   TABS_LIST.forEach(function(t){
     var el=document.getElementById('pane_'+t);
@@ -7948,6 +8137,7 @@ function goTab(name,btn){
     try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
   }
   if(name==='sentiment'){renderSentiment();}
+  if(name==='fundamentals'){try{renderFundamentals();}catch(e){console.error('fundamentals:',e);}}
   if(name==='reference'){
     try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
@@ -8172,7 +8362,8 @@ function loadHistory(assetName,cb){
   var sym=(assetName||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   var el=document.getElementById('plot');
   var hasTD=!!twelveSymbol(sym),hasEOD=!!eodhdSymbol(sym),hasPoly=!!polygonSymbol(sym);
-  if(!hasTD&&!hasEOD&&!hasPoly){
+  var hasPsx=!!(_psxSyms&&_psxSyms.some(function(x){return x.symbol.toUpperCase()===sym;}));
+  if(!hasTD&&!hasEOD&&!hasPoly&&!hasPsx){
     if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No daily history mapped for "'+escHtml(assetName)+'" \u2014 supported: metals, major FX, top crypto and US stocks</div>';
     if(cb)cb(null);return;
   }
@@ -8203,6 +8394,16 @@ function loadHistory(assetName,cb){
     }else if(hasEOD){
       eodhdDaily(sym,150,function(r2,err2){ r2?done(r2,'EODHD'):fail(err2||prevErr); });
     }else fail(prevErr);
+  }
+  /* a PSX ticker is not in any of the western maps, so it is checked first */
+  if(_psxSyms&&_psxSyms.some(function(x){return x.symbol.toUpperCase()===sym;})){
+    psxDaily(sym,function(rows,err,via){
+      if(rows&&rows.length>1){done(rows,'PSX'+(via?' via '+via:''));return;}
+      if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">'
+        +'PSX data needs a relay and none answered — '+escHtml(err||'unavailable')+'</div>';
+      if(cb)cb(null);
+    });
+    return;
   }
   if(polygonSymbol(sym)){
     polygonDaily(sym,220,function(rows,err,kind){
@@ -9536,6 +9737,7 @@ function renderSentimentV3(){
    +'<div class="sn-week">'+week+'</div>'
    +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
    +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
+   +shareBar('sentiment')
    +'<div class="sn-sech"><b>Data sources</b><span>where the release figures above come from</span></div>'
    +'<div class="sn-src" id="sn_src"></div>'
    +'<div class="sn-sech"><b>The wire</b><span>headlines scored bullish / bearish by keyword — a tone check, not a signal</span></div>'
@@ -10046,9 +10248,16 @@ function run(rows,price,mode){
   R.first=rows[0].date; R.last=rows[rows.length-1].date;
   var rets=logReturns(rows), A=Math.sqrt(TRADING_DAYS);
 
-  R.vol={sd20:stdVol(rets,20),sd50:stdVol(rets,50),sd100:stdVol(rets,100),
-         parkinson:parkinson(rows,20),gk:garmanKlass(rows,20),rs:rogersSatchell(rows,20),
-         atr20:atr(rows,20),atr100:atr(rows,100)};
+  /* a close-only series (PSX publishes closes, not bars) has no range to
+     measure, so the range estimators report unavailable rather than zero */
+  R.closeOnly=!!(rows[rows.length-1]&&rows[rows.length-1].closeOnly);
+  R.vol=R.closeOnly
+    ?{sd20:stdVol(rets,20),sd50:stdVol(rets,50),sd100:stdVol(rets,100),
+      parkinson:NaN,gk:NaN,rs:NaN,atr20:NaN,atr100:NaN}
+    :{sd20:stdVol(rets,20),sd50:stdVol(rets,50),sd100:stdVol(rets,100),
+      parkinson:parkinson(rows,20),gk:garmanKlass(rows,20),rs:rogersSatchell(rows,20),
+      atr20:atr(rows,20),atr100:atr(rows,100)};
+  if(R.closeOnly)R.notes.push('This exchange publishes a daily close, not a full bar, so the high–low estimators (Parkinson, Garman–Klass, Rogers–Satchell) and ATR cannot be computed. Close-to-close volatility is unaffected.');
   R.vol.ann20=R.vol.sd20*A; R.vol.ann50=R.vol.sd50*A; R.vol.ann100=R.vol.sd100*A;
   R.vol.atrRatio=R.vol.atr100?R.vol.atr20/R.vol.atr100:NaN;
   R.vol.ver=R.vol.sd100?R.vol.sd20/R.vol.sd100:NaN;
@@ -10214,6 +10423,269 @@ return{run:run,combine:combine,numFeatures:numFeatures,NORM_MODES:NORM_MODES,
        LOOK:LOOK,FWD:FWD,TRADING_DAYS:TRADING_DAYS};
 })();
 
+
+
+
+/* ══ SHARE — send a setup, a window or the risk read to someone ══
+   Three routes, in order of what the device actually supports: the native
+   share sheet where it exists (phones), a WhatsApp deep link everywhere else,
+   and the clipboard as the always-available fallback. The text is built from
+   the same objects the panels render, so what is sent is what is on screen. */
+function shareLines(kind){
+  var L=[],push=function(x){if(x)L.push(x);};
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
+  if(kind==='setup'){
+    var S=window._lastSig, T=window._lastTrend, B=window._lastBias||{};
+    var px=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+    var dp=px<10?4:2;
+    /* the levels belong to whatever was last analysed — if that is not the
+       asset in the box, sending them under this name would be plain wrong */
+    var stale=(_lastAsset||'').trim().toUpperCase()!==asset.trim().toUpperCase();
+    push('*'+asset.toUpperCase()+' — trade setup*');
+    push('Price now: '+(px?px.toFixed(dp):'—'));
+    if(stale){
+      push('No analysis has been run for '+asset+' yet — press Analyse first.');
+      push('');push('— Celestial Alpha');
+      return L.join('\n');
+    }
+    if(S&&S.style){
+      push((S.isBull?'BUY':'SELL')+'  ·  '+S.style+'  ·  '+S.conf+'% confidence');
+      push('Entry '+S.entry.toFixed(dp)+'   Stop '+S.sl.toFixed(dp)+'   Target '+S.tp.toFixed(dp));
+      push('Risk:reward '+S.rr+'R  ·  risking $'+S.risk+' to make $'+S.profit);
+      if(S.counter)push('Note: counter-trend — size down');
+    }else{
+      push('No setup right now'+(S&&S.reason?' — '+S.reason:'')+'.');
+    }
+    if(T)push('Major trend: '+T.label+(T.relief?' (relief rally)':'')+' — '+T.reason);
+    if(B.combined)push('Combined bias: '+B.combined.label+' '+B.combined.bull+'% ('+B.combined.strength+')');
+  }else if(kind==='timing'){
+    var st=timState(), v=timVerdict(st), a2=timAsset();
+    push('*'+a2.toUpperCase()+' — timing*');
+    push(v.word+' — '+v.line);
+    var days=timBestDays(a2,st.vib,14).filter(function(d){return !d.weekend;})
+             .sort(function(x,y){return y.score-x.score;});
+    var top=days[0];
+    if(top){
+      var blocks=timBlocks(timHoursFor(top.di,st.srMin,st.vib));
+      push('Best day ahead: '+top.date.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'short'})
+        +'  ·  sky '+(top.astro.dir==='bull'?'BULL':top.astro.dir==='bear'?'BEAR':'FLAT')+' '+top.astro.bull+'%');
+      if(blocks.length)push('Windows: '+blocks.map(function(b){return fmtT(b.start)+'-'+fmtT(b.end);}).join(', '));
+      var hz=timHorizon(top.date,a2);
+      push('Momentum should hold about '+hz.label+' — until '+hz.why+'.');
+    }
+  }else if(kind==='sentiment'){
+    var evs=buildEconEvents(), nx=evs[0];
+    var risk=senRisk(nx);
+    push('*Market risk radar*');
+    push(risk.word+' — '+risk.say);
+    if(nx)push('Next release: '+nx.t+'  ·  '+fmtEventTime(nx.d)+'  ·  in '+fmtCountdown(nx.d-new Date()));
+    push('Now: '+risk.a);
+    push('If already in: '+risk.b);
+    var nm=senNewsMood(window._newsItems);
+    if(nm.total)push('Wire tone: '+nm.label+' ('+nm.bull+' bullish / '+nm.bear+' bearish / '+nm.flat+' neutral)');
+  }else if(kind==='quant'){
+    var R=window._lastQV;
+    if(!R||!R.ok){push('Run an analysis first.');}
+    else{
+      var P=qvPlain(R);
+      push('*'+(R.asset||asset).toUpperCase()+' — how it is moving*');
+      push('Regime: '+R.regime.name+' — '+R.regime.note);
+      P.lines.forEach(function(l){push('• '+l.k+' '+l.v);});
+      push('What to do: '+P.action);
+    }
+  }
+  push('');
+  push('— Celestial Alpha');
+  return L.join('\n');
+}
+function shareVia(kind){
+  var text=shareLines(kind);
+  var done=function(msg,tone){try{notify(msg,tone||'info');}catch(e){}};
+  if(navigator.share){
+    navigator.share({text:text}).then(function(){done('Shared','bull');})
+      .catch(function(){ shareWhatsApp(text); });
+    return;
+  }
+  shareWhatsApp(text);
+}
+function shareWhatsApp(text){
+  var url='https://wa.me/?text='+encodeURIComponent(text);
+  var w=window.open(url,'_blank','noopener');
+  if(!w)shareCopy(text);
+  else{try{notify('Opening WhatsApp…','bull');}catch(e){}}
+}
+function shareCopy(kindOrText){
+  var text=(kindOrText&&kindOrText.indexOf('\n')>=0)?kindOrText:shareLines(kindOrText);
+  function ok(){try{notify('Copied — paste it anywhere','bull');}catch(e){}}
+  function fail(){
+    /* clipboard is blocked on file:// in some browsers, so fall back to a
+       selectable box rather than silently doing nothing */
+    var d=document.createElement('div');
+    d.className='sh-fallback';
+    d.innerHTML='<div class="sh-box"><b>Copy this</b><textarea readonly rows="12"></textarea>'
+      +'<button class="btn btn-a btn-sm" onclick="this.closest(\'.sh-fallback\').remove()">Close</button></div>';
+    document.body.appendChild(d);
+    var ta=d.querySelector('textarea'); ta.value=text; ta.focus(); ta.select();
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText)
+    navigator.clipboard.writeText(text).then(ok).catch(fail);
+  else fail();
+}
+function shareBar(kind){
+  return '<div class="sh">'
+    +'<span class="sh-l">Share</span>'
+    +'<button class="sh-b wa" onclick="shareVia(\''+kind+'\')" title="Send on WhatsApp">WhatsApp</button>'
+    +'<button class="sh-b" onclick="shareCopy(\''+kind+'\')" title="Copy as text">Copy text</button>'
+  +'</div>';
+}
+
+/* ══ FUNDAMENTALS — what the company is, not what the chart is doing ══
+   Finnhub's profile2 and metric endpoints are on the free tier and CORS-open.
+   133 metrics come back; showing all of them would repeat the mistake the
+   analytics panel just had fixed, so each row here is one number with a plain
+   sentence saying what it means and whether this reading is high or low. */
+var _fundCache={};
+function fundFetch(sym,cb){
+  sym=String(sym||'').toUpperCase();
+  if(_fundCache[sym]){cb(_fundCache[sym]);return;}
+  var out={sym:sym,profile:null,metric:null,errs:[]}, left=2;
+  function done(){ if(--left)return; _fundCache[sym]=out; cb(out); }
+  fetch('https://finnhub.io/api/v1/stock/profile2?symbol='+encodeURIComponent(sym)+'&token='+FINNHUB_KEY)
+    .then(function(r){return r.json();}).then(function(d){
+      if(d&&d.ticker)out.profile=d; else out.errs.push('profile: '+((d&&d.error)||'no data'));
+    }).catch(function(){out.errs.push('profile: unreachable');}).then(done);
+  fetch('https://finnhub.io/api/v1/stock/metric?symbol='+encodeURIComponent(sym)+'&metric=all&token='+FINNHUB_KEY)
+    .then(function(r){return r.json();}).then(function(d){
+      if(d&&d.metric)out.metric=d.metric; else out.errs.push('metrics: '+((d&&d.error)||'no data'));
+    }).catch(function(){out.errs.push('metrics: unreachable');}).then(done);
+}
+function fNum(x,d){return (x==null||!isFinite(x))?null:+(+x).toFixed(d==null?2:d);}
+function fMoney(m){                       /* Finnhub reports market cap in millions */
+  if(m==null||!isFinite(m))return '—';
+  if(m>=1e6)return '$'+(m/1e6).toFixed(2)+'T';
+  if(m>=1e3)return '$'+(m/1e3).toFixed(1)+'B';
+  return '$'+Math.round(m)+'M';
+}
+/* every row: the number, what it means, and where this reading sits */
+function fundRows(m){
+  var R=[];
+  function add(k,val,fmt,plain,judge){
+    var v=fNum(val);
+    R.push({k:k,v:v==null?'—':(fmt?fmt(v):String(v)),plain:plain,
+            j:v==null?null:(judge?judge(v):null)});
+  }
+  add('Price / Earnings',m.peTTM,function(v){return v.toFixed(1)+'×';},
+    'What you pay for each $1 the company earns in a year. Lower is cheaper, but a low number can also mean the market expects trouble.',
+    function(v){return v<15?{t:'cheap side',c:'good'}:v<30?{t:'mid range',c:'mid'}:{t:'expensive side',c:'warn'};});
+  add('Earnings per share',m.epsTTM,function(v){return '$'+v.toFixed(2);},
+    'Profit for each share over the last twelve months. Negative means the company is losing money.',
+    function(v){return v>0?{t:'profitable',c:'good'}:{t:'losing money',c:'bad'};});
+  add('Price / Book',m.pbAnnual,function(v){return v.toFixed(1)+'×';},
+    'Price against what the company owns on paper. Very high means you are paying for the brand and the future, not the assets.',
+    function(v){return v<3?{t:'asset-backed',c:'good'}:v<10?{t:'mid range',c:'mid'}:{t:'priced on expectation',c:'warn'};});
+  add('Price / Sales',m.psTTM,function(v){return v.toFixed(1)+'×';},
+    'Price against revenue. Useful when a company has no profit yet.',null);
+  add('Return on equity',m.roeTTM,function(v){return v.toFixed(1)+'%';},
+    'How much profit the company makes from the money shareholders put in. Higher is better.',
+    function(v){return v>15?{t:'strong',c:'good'}:v>5?{t:'ordinary',c:'mid'}:{t:'weak',c:'warn'};});
+  add('Net profit margin',m.netProfitMarginTTM,function(v){return v.toFixed(1)+'%';},
+    'Of every $100 of sales, this much is kept as profit.',
+    function(v){return v>15?{t:'high',c:'good'}:v>5?{t:'ordinary',c:'mid'}:{t:'thin',c:'warn'};});
+  add('Gross margin',m.grossMarginTTM,function(v){return v.toFixed(1)+'%';},
+    'What is left after the direct cost of making the product. High margins usually mean pricing power.',null);
+  add('Revenue growth',m.revenueGrowthTTMYoy,function(v){return (v>=0?'+':'')+v.toFixed(1)+'%';},
+    'How much sales grew against the same period a year ago.',
+    function(v){return v>10?{t:'growing fast',c:'good'}:v>0?{t:'growing',c:'mid'}:{t:'shrinking',c:'bad'};});
+  add('Earnings growth',m.epsGrowthTTMYoy,function(v){return (v>=0?'+':'')+v.toFixed(1)+'%';},
+    'How much profit per share grew against a year ago.',
+    function(v){return v>10?{t:'growing fast',c:'good'}:v>0?{t:'growing',c:'mid'}:{t:'shrinking',c:'bad'};});
+  add('Debt to equity',m['totalDebt/totalEquityAnnual'],function(v){return v.toFixed(2)+'×';},
+    'Borrowed money against shareholder money. High debt magnifies both good and bad years.',
+    function(v){return v<1?{t:'conservative',c:'good'}:v<2?{t:'carries debt',c:'mid'}:{t:'heavily geared',c:'warn'};});
+  add('Current ratio',m.currentRatioAnnual,function(v){return v.toFixed(2)+'×';},
+    'Short-term assets against short-term bills. Below 1 means it owes more this year than it can quickly cover.',
+    function(v){return v>1.5?{t:'comfortable',c:'good'}:v>1?{t:'adequate',c:'mid'}:{t:'tight',c:'warn'};});
+  add('Dividend yield',m.dividendYieldIndicatedAnnual,function(v){return v.toFixed(2)+'%';},
+    'Annual dividend as a share of the price. Zero simply means the company reinvests instead.',null);
+  add('Beta',m.beta,function(v){return v.toFixed(2);},
+    'How much it moves relative to the wider market. Above 1 swings harder than the index.',
+    function(v){return v<0.8?{t:'calmer than market',c:'good'}:v<1.3?{t:'moves with market',c:'mid'}:{t:'swings harder',c:'warn'};});
+  return R;
+}
+function fundVerdict(m,price){
+  var pros=[],cons=[];
+  var pe=fNum(m.peTTM), roe=fNum(m.roeTTM), rg=fNum(m.revenueGrowthTTMYoy),
+      de=fNum(m['totalDebt/totalEquityAnnual']), eps=fNum(m.epsTTM), np=fNum(m.netProfitMarginTTM);
+  if(eps!=null)(eps>0?pros:cons).push(eps>0?'it is profitable':'it is losing money');
+  if(roe!=null&&roe>15)pros.push('it earns well on shareholder money');
+  else if(roe!=null&&roe<5)cons.push('it earns little on shareholder money');
+  if(rg!=null&&rg>10)pros.push('sales are growing quickly');
+  else if(rg!=null&&rg<0)cons.push('sales are shrinking');
+  if(np!=null&&np>15)pros.push('margins are healthy');
+  else if(np!=null&&np<5&&np>=0)cons.push('margins are thin');
+  if(de!=null&&de>2)cons.push('it carries a lot of debt');
+  else if(de!=null&&de<1)pros.push('debt is conservative');
+  if(pe!=null&&pe>40)cons.push('the price already assumes a lot of growth');
+  else if(pe!=null&&pe<15&&eps!=null&&eps>0)pros.push('it is not expensively priced');
+  return{pros:pros,cons:cons};
+}
+function renderFundamentals(){
+  var host=document.getElementById('fund_body');
+  if(!host)return;
+  var sym=(document.getElementById('fund_sym')||{}).value||'';
+  sym=sym.trim().toUpperCase();
+  if(!sym){host.innerHTML=qvEmpty('Type a US stock ticker above — AAPL, TSLA, MSFT, NVDA — and press Load.');return;}
+  host.innerHTML='<div class="qv-empty">Loading '+escHtml(sym)+'…</div>';
+  fundFetch(sym,function(F){
+    if(!F.metric&&!F.profile){
+      host.innerHTML=qvEmpty('Nothing came back for "'+escHtml(sym)+'". '+F.errs.join(' · ')
+        +'. Finnhub covers US listings on the free tier; international and PSX names are not included.');
+      return;
+    }
+    var p=F.profile||{}, m=F.metric||{};
+    var rows=fundRows(m), V=fundVerdict(m);
+    var hi=fNum(m['52WeekHigh']), lo=fNum(m['52WeekLow']);
+    var px=parseFloat((document.getElementById('ai_price')||{}).value)||null;
+    var pos=(hi&&lo&&px&&hi>lo)?Math.max(0,Math.min(100,(px-lo)/(hi-lo)*100)):null;
+    host.innerHTML=
+      '<div class="fd-head">'
+        +(p.logo?'<img src="'+escHtml(p.logo)+'" alt="" onerror="this.style.display=\'none\'">':'')
+        +'<div class="fd-id"><b>'+escHtml(p.name||sym)+'</b>'
+          +'<span>'+escHtml(sym)+(p.finnhubIndustry?' · '+escHtml(p.finnhubIndustry):'')
+          +(p.exchange?' · '+escHtml(p.exchange):'')+'</span></div>'
+        +'<div class="fd-cap"><i>Market value</i><b>'+fMoney(p.marketCapitalization||m.marketCapitalization)+'</b></div>'
+      +'</div>'
+      +(hi&&lo?'<div class="fd-range"><div class="fd-rl"><span>52-week low '+lo.toFixed(2)+'</span>'
+          +'<span>high '+hi.toFixed(2)+'</span></div>'
+          +'<div class="fd-rt">'+(pos!=null?'<i style="left:'+pos.toFixed(1)+'%"></i>':'')+'</div>'
+          +'<div class="fd-rn">'+(pos!=null
+              ?'Currently at the '+pos.toFixed(0)+'% mark of its year — '
+                +(pos>80?'near the top of the range':pos<20?'near the bottom of the range':'mid range')
+              :'Run an analysis to place the live price on this range')+'</div></div>':'')
+      +((V.pros.length||V.cons.length)
+        ?'<div class="fd-v"><div class="fd-vc good"><i>In its favour</i>'
+           +(V.pros.length?'<ul><li>'+V.pros.map(escHtml).join('</li><li>')+'</li></ul>':'<p>Nothing stands out.</p>')
+         +'</div><div class="fd-vc bad"><i>Against it</i>'
+           +(V.cons.length?'<ul><li>'+V.cons.map(escHtml).join('</li><li>')+'</li></ul>':'<p>Nothing stands out.</p>')
+         +'</div></div>':'')
+      +'<div class="fd-rows">'+rows.map(function(r,i){
+          return '<div class="fd-r" style="animation-delay:'+(i*0.03).toFixed(2)+'s">'
+            +'<div class="fd-k">'+escHtml(r.k)+'</div>'
+            +'<div class="fd-n">'+r.v+(r.j?'<em class="'+r.j.c+'">'+escHtml(r.j.t)+'</em>':'')+'</div>'
+            +'<div class="fd-p">'+escHtml(r.plain)+'</div></div>';
+        }).join('')+'</div>'
+      +'<div class="fd-foot">Fundamentals describe the business; the rest of this app describes the price. '
+      +'They answer different questions and a good company can still be a bad trade this week. '
+      +'Figures are trailing twelve months from Finnhub'+(p.weburl?' · <a href="'+escHtml(p.weburl)+'" target="_blank" rel="noopener">company site</a>':'')
+      +(F.errs.length?' · '+escHtml(F.errs.join(' · ')):'')+'</div>';
+  });
+}
+function fundLoadFromAnalysis(){
+  var a=(document.getElementById('ai_asset_txt')||{}).value||'';
+  var sym=(finnhubSymbol(a.toUpperCase().replace(/[^A-Z0-9]/g,''))||a).toUpperCase();
+  var el=document.getElementById('fund_sym');
+  if(el){el.value=sym;renderFundamentals();}
+}
 
 /* ══ API HEALTH — which key is alive, which is spent, and for how long ══
    Eight providers sit behind this page and every one of them fails in its own
@@ -10583,6 +11055,7 @@ function qvAnalyticsHtml(){
   out+='<details class="sec qv-more"><summary><b>Show the numbers</b>'
      +'<span>every estimator, with what it means</span></summary><div class="qv-mw">'+g+'</div></details>';
 
+  out+=shareBar('quant');
   out+='<div class="qv-foot">These are measurements, not forecasts. The movement and activity figures are '
     +'definitional. The digit section is an experiment that is re-tested on every run and is allowed to fail — '
     +'and on this history it did. Full formulas, sample sizes, p-values and confidence intervals are on the '
@@ -10822,6 +11295,7 @@ setInterval(tick,1000);
 unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
 setTimeout(loadTickers,800);
+try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
 /* refresh live tickers every 60s (Finnhub free = 60 calls/min) */
 setInterval(loadTickers,60000);
