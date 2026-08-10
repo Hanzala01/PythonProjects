@@ -1484,6 +1484,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qp-l i{font-style:normal;font-size:10px;font-weight:700;color:var(--muted)}
 .qp-l b{font-family:'Space Grotesk';font-size:15px;font-weight:600;color:var(--tw);line-height:1.25}
 .qp-l span{font-size:10.5px;color:var(--soft);line-height:1.55}
+.qp-spark{margin:2px 0 10px;padding:9px 11px;border-radius:11px;
+  border:1px solid var(--rim);background:rgba(255,255,255,.02)}
+.qp-spark svg{display:block;width:100%;height:34px;overflow:visible}
+.qp-spark i{display:block;font-style:normal;font-size:9px;color:var(--muted);margin-top:5px}
 .qp-act{margin-top:11px;padding:11px 13px;border-radius:12px;
   border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.07)}
 .qp-act i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
@@ -1560,6 +1564,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qv-foot{margin-top:10px;font-size:9.5px;color:var(--muted);line-height:1.6}
 .qv-empty{padding:18px;border:1px dashed var(--rim);border-radius:13px;
   font-size:11px;color:var(--mid);line-height:1.6;font-style:italic}
+/* regime headline reads as a statement plus an instruction */
+.qv-reg{display:grid;grid-template-columns:1fr 1.15fr;gap:14px;align-items:center;
+  padding:14px 16px;border-radius:16px;border:1px solid var(--bd);
+  background:rgba(255,255,255,.02);margin-bottom:10px}
+.qv-rl b{display:block;font-family:'Space Grotesk';font-size:21px;font-weight:700;margin-bottom:3px;
+  letter-spacing:-.015em}
+.qv-rl span{font-size:11px;color:var(--soft);line-height:1.5}
+.qv-rr{font-size:12.5px;color:var(--tw);line-height:1.6;padding-left:14px;
+  border-left:1px solid var(--rim)}
+.qv-c em{display:block;font-style:normal;font-size:8.5px;color:var(--tm);margin-top:5px;
+  padding-top:5px;border-top:1px solid rgba(255,255,255,.05);letter-spacing:.03em}
+.qv-more{margin-top:12px}
+.qv-mw{padding:4px 15px 14px}
+@media(max-width:900px){.qv-reg{grid-template-columns:1fr}
+  .qv-rr{padding-left:0;border-left:none;padding-top:10px;border-top:1px solid var(--rim)}}
 /* dashboard summary */
 .qv-dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
 .qv-dc{padding:11px 13px;border-radius:13px;border:1px solid var(--rim);background:rgba(255,255,255,.02);min-width:0}
@@ -4666,8 +4685,13 @@ function anaPick(a){
 function anaLive(){
   var a=document.getElementById('ab_asset');
   if(a&&a.value)document.getElementById('ai_asset_txt').value=a.value;
+  var want=document.getElementById('ai_asset_txt').value.trim();
   document.getElementById('ai_price').value='';
-  _lastHistAsset='';
+  /* Only drop the history cache when the asset actually changed. Clearing it
+     unconditionally re-fetched the same series on every Live press, which on
+     Polygon's five-calls-a-minute budget is a fifth of the allowance spent on
+     data already held. */
+  if(want!==_lastHistAsset||!HIST_ROWS||!HIST_ROWS.length)_lastHistAsset='';
   fetchLivePrice(function(ok){ if(ok)runAI(); renderAnalytics(); });
 }
 /* ══ SUPPORT & RESISTANCE — the method from the original build ══
@@ -9973,13 +9997,19 @@ function testPattern(sample,predicate,baseRate){
 }
 
 /* ── 14. REGIME ────────────────────────────────────────────────────── */
-function classifyRegime(zVol,zVolume,hasVol){
-  if(!hasVol)return{id:0,name:'Volume unavailable',note:'Only the volatility half of the regime map can be built for this instrument.'};
+function classifyRegime(zVol,zVolume,hasVol,kind){
+  if(!hasVol)return{id:0,name:'Volume unavailable',
+    note:'Only the volatility half of the regime map can be built for this instrument.'};
+  var t=kind==='ticks';
+  var lo=t?'quiet quote traffic':'low participation';
+  var hi=t?'busy quote traffic':'high participation';
   var hv=zVol>0.5, hV=zVolume>0.5;
-  if(!hv&&!hV)return{id:1,name:'Compression',note:'Low volatility, low participation.'};
-  if(!hv&&hV) return{id:2,name:'Absorption',note:'Low volatility with high participation — size is changing hands without moving price.'};
-  if(hv&&hV)  return{id:3,name:'Expansion',note:'High volatility with high participation.'};
-  return{id:4,name:'Dislocation',note:'High volatility on low participation — movement is not backed by size.'};
+  if(!hv&&!hV)return{id:1,name:'Compression',note:'Small daily range and '+lo+'.'};
+  if(!hv&&hV) return{id:2,name:'Absorption',note:'Small daily range despite '+hi
+    +(t?' — the price is being worked hard inside a tight area.':' — size is changing hands without moving price.')};
+  if(hv&&hV)  return{id:3,name:'Expansion',note:'Wide daily range with '+hi+'.'};
+  return{id:4,name:'Dislocation',note:'Wide daily range on '+lo
+    +(t?' — the move is travelling on few updates.':' — movement is not backed by size.')};
 }
 /* ── weekly bars resampled from the daily series ──────────────────── */
 function toWeekly(rows){
@@ -10024,6 +10054,7 @@ function run(rows,price,mode){
   R.vol.ver=R.vol.sd100?R.vol.sd20/R.vol.sd100:NaN;
   var roll=rollingStdVol(rets,20).filter(isFinite);
   R.vol.n=roll.length;
+  R.vol.series=roll.slice(-90);      /* kept for the sparkline */
   R.vol.z=(R.vol.sd20-mean(roll))/sd(roll);
   R.vol.pct=pctileOf(roll,R.vol.sd20);
   R.vol.regime=!isFinite(R.vol.z)?'Unknown':R.vol.z<-1?'Compression':R.vol.z<=1?'Normal':R.vol.z<2?'Elevated':'Extreme';
@@ -10033,7 +10064,10 @@ function run(rows,price,mode){
   /* Polygon's forex and metals feed reports tick count in the volume field —
      v equals n exactly on those symbols. It is a real activity measure, but it
      is not size traded, and the panels must not call it participation. */
-  R.volKind=(rows[rows.length-1]&&rows[rows.length-1].volKind)||'traded';
+  R.volKind=(function(){
+    for(var i=rows.length-1;i>=0;i--)if(rows[i].volKind)return rows[i].volKind;
+    return 'traded';
+  })();
   R.volLabel=R.volKind==='ticks'?'quote activity (tick count)':'volume';
   R.volQuality=volumeQuality(rows);
   R.hasVolume=hasVolume(rows)&&R.volQuality.usable;
@@ -10052,11 +10086,15 @@ function run(rows,price,mode){
     if(steps>=5&&vols[end]<medAll*0.1){
       R.hasVolume=false;
       R.notes.push('The last several bars all carry token volume, so there is no complete session to measure. Volume statistics are withheld.');
-      R.regime=classifyRegime(R.vol.z,0,false);
+      R.regime=classifyRegime(R.vol.z,0,false,R.volKind);
       R.num=numFeatures(price,mode);
       return finishNumerology(R,rows,price,mode);
     }
-    if(R.volPartial)R.notes.push('The final '+steps+' bar'+(steps===1?'':'s')+' carry token volume against the series median — partial or stale sessions, so volume is measured on the last complete bar instead.');
+    if(R.volPartial){
+      var w=R.volKind==='ticks'?'tick counts':'volume';
+      R.notes.push('The final '+steps+' bar'+(steps===1?'':'s')+' carry token '+w
+        +' against the series median — partial or stale sessions, so it is measured on the last complete bar instead.');
+    }
     var vt=vols[end];
     var base=vols.slice(Math.max(0,end-20),end);
     R.volume={last:vt,ma20:mean(base),sd20:sd(base)};
@@ -10067,21 +10105,30 @@ function run(rows,price,mode){
                   :R.volume.z<=1?'Normal':R.volume.z<2?'Elevated':'Abnormal';
     R.vvd=R.vol.z-R.volume.z;
     R.vvr=R.volume.surprise?R.vol.sd20/R.volume.surprise:NaN;
-    R.vvdNote=!isFinite(R.vvd)?'':R.vvd>2?'Volatility is unusually high relative to participation.'
-             :R.vvd<-2?'Participation is unusually high relative to price movement.'
-             :'Volatility and participation are in their usual relationship.';
+    var pw=R.volKind==='ticks'?'quote activity':'participation';
+    R.vvdNote=!isFinite(R.vvd)?''
+      :R.vvd>2?'Volatility is unusually high relative to '+pw+'.'
+      :R.vvd<-2?(R.volKind==='ticks'?'Quote activity':'Participation')+' is unusually high relative to price movement.'
+      :'Volatility and '+pw+' are in their usual relationship.';
     var iA=rows.length-1-(vols.length-1-end), iB=iA-1;
     var dP=+rows[iA].close-+rows[iB].close, dV=+rows[iA].volume-+rows[iB].volume;
-    R.pv=(dP>=0?'Price up':'Price down')+' + '+(dV>=0?'volume up':'volume down');
-    R.pvNote=dP>=0&&dV>=0?'Potential confirmation'
-            :dP>=0?'Potential weak participation'
-            :dV>=0?'Potential selling pressure':'Potential weak selling pressure';
+    /* the second half of this label has to name the measure that was actually
+       compared — saying "volume" on a tick-count feed is simply wrong */
+    var word=R.volKind==='ticks'?'activity':'volume';
+    R.pv=(dP>=0?'Price up':'Price down')+' + '+word+' '+(dV>=0?'up':'down');
+    R.pvNote=R.volKind==='ticks'
+      ?(dP>=0&&dV>=0?'Rising price with more quote traffic'
+        :dP>=0?'Rising price on thinning quote traffic'
+        :dV>=0?'Falling price with more quote traffic':'Falling price on thinning quote traffic')
+      :(dP>=0&&dV>=0?'Potential confirmation'
+        :dP>=0?'Potential weak participation'
+        :dV>=0?'Potential selling pressure':'Potential weak selling pressure');
   }else if(!hasVolume(rows)){
     /* only when the field is genuinely absent — a series that failed the
        quality screen has already said so, and saying both would contradict */
     R.notes.push('The active data source publishes no volume for this instrument — spot metals and FX have no consolidated tape. Volume Z, surprise, VVD, VVR and the price-volume state cannot be computed, and the regime map falls back to its volatility half.');
   }
-  R.regime=classifyRegime(R.vol.z,R.hasVolume?R.volume.z:0,R.hasVolume);
+  R.regime=classifyRegime(R.vol.z,R.hasVolume?R.volume.z:0,R.hasVolume,R.volKind);
   return finishNumerology(R,rows,price,mode);
 }
 /* the experimental half, split out so a volume failure above can jump straight
@@ -10402,14 +10449,29 @@ function qvPlain(R){
   else if(z<=-1)act='Quiet tape. Targets should be nearer than usual; do not expect a normal-sized run.';
   else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd>2)act='Price is running without the crowd behind it. Treat breakouts with suspicion and take profit earlier.';
   else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd<-2)act='Heavy trade, small movement. Someone is absorbing — the level being defended matters more than the candle.';
-  else act='Nothing unusual in volatility or participation. Size normally and let the level and the trend make the decision.';
+  else act='Nothing unusual in how far it moves or how busy it is. Size normally and let the level and the trend make the decision.';
   return{lines:L,action:act,regime:R.regime};
+}
+/* the rolling 20-day volatility, drawn small, with today marked. A percentile
+   is abstract; seeing where the dot sits in the range is not. */
+function qvSpark(R){
+  var a=(R.vol.series||[]).filter(isFinite);
+  if(a.length<10)return '';
+  var lo=Math.min.apply(null,a), hi=Math.max.apply(null,a), rng=(hi-lo)||1;
+  var W=210,H=34,step=W/(a.length-1);
+  var d=a.map(function(v,i){return (i?'L':'M')+(i*step).toFixed(1)+' '+(H-(v-lo)/rng*(H-6)-3).toFixed(1);}).join(' ');
+  var lastX=W, lastY=H-(a[a.length-1]-lo)/rng*(H-6)-3;
+  return '<div class="qp-spark"><svg viewBox="0 0 '+(W+6)+' '+H+'" preserveAspectRatio="none">'
+    +'<path d="'+d+'" fill="none" stroke="var(--acc2)" stroke-width="1.4" opacity=".8"/>'
+    +'<circle cx="'+lastX.toFixed(1)+'" cy="'+lastY.toFixed(1)+'" r="3.2" fill="'+qvZCol(R.vol.z)+'"/>'
+    +'</svg><i>20-day swing over the last '+a.length+' readings · dot is today</i></div>';
 }
 function qvPlainHtml(R){
   var P=qvPlain(R);
   if(!P)return '';
   return '<div class="qp">'
    +'<div class="qp-top"><b>In plain words</b><span>'+escHtml(P.regime.name)+'</span></div>'
+   +qvSpark(R)
    +P.lines.map(function(l,i){
       return '<div class="qp-l" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
         +'<i>'+escHtml(l.k)+'</i>'
@@ -10419,92 +10481,114 @@ function qvPlainHtml(R){
    +'<div class="qp-act"><i>So what do I do?</i><span>'+escHtml(P.action)+'</span></div>'
   +'</div>';
 }
-/* ── ANALYTICS: results only ── */
+/* ── ANALYTICS: plain words first, numbers on request ──
+   The measures were right and unreadable. Someone opening this tab should
+   learn what the market is doing in five sentences; the raw estimators are
+   still all there, one click away, for when they are wanted. ── */
 function qvAnalyticsHtml(){
   var R=window._lastQV;
-  if(!R)return qvEmpty('Run an analysis with a price and daily history loaded — the volatility, volume and numerology measures appear here.');
+  if(!R)return qvEmpty('Run an analysis with a price and daily history loaded — the volatility, activity and numerology measures appear here.');
   if(!R.ok)return qvEmpty(R.notes.join(' '));
-  var v=R.vol;
+  var v=R.vol, ticks=R.volKind==='ticks';
   var out='<div class="qv">'+qvPlainHtml(R);
 
-  out+='<div class="qv-hd"><b>Regime</b><span>'+R.bars+' daily bars · '+escHtml(R.first)+' → '+escHtml(R.last)+'</span></div>'
-     +'<div class="qv-reg r'+R.regime.id+'"><b>'+escHtml(R.regime.name)+'</b><span>'+escHtml(R.regime.note)+'</span></div>';
+  /* the regime, as a headline anyone can act on */
+  var regHow={
+    1:'Ranges are small. Take nearer targets and do not expect a big run.',
+    2:'The price is being held in a tight area while a lot changes hands. The level being defended matters more than the candle.',
+    3:'Ranges are wide and the crowd is in. Full size is fine, but give the stop room.',
+    4:'The price is travelling without backing. Treat breakouts with suspicion and bank profit earlier.',
+    0:'Only the movement half can be measured for this instrument.'
+  };
+  out+='<div class="qv-reg r'+R.regime.id+'">'
+    +'<div class="qv-rl"><b>'+escHtml(R.regime.name)+'</b>'
+      +'<span>'+escHtml(R.regime.note)+'</span></div>'
+    +'<div class="qv-rr">'+escHtml(regHow[R.regime.id]||'')+'</div>'
+  +'</div>';
 
-  out+='<div class="qv-hd"><b>Volatility</b><span>daily σ, and annualised at √252</span></div><div class="qv-g">'
-    +qvCell('σ 20',qvNum(v.sd20),qvPct(v.ann20*100)+' annual')
-    +qvCell('σ 50',qvNum(v.sd50),qvPct(v.ann50*100)+' annual')
-    +qvCell('σ 100',qvNum(v.sd100),qvPct(v.ann100*100)+' annual')
-    +qvCell('Parkinson',qvNum(v.parkinson),'high–low, 20 bars')
-    +qvCell('Garman–Klass',qvNum(v.gk),'adds open–close')
-    +qvCell('Rogers–Satchell',qvNum(v.rs),'drift-robust')
-    +qvCell('ATR 20',qvNum(v.atr20,2),'ratio to ATR100 '+qvNum(v.atrRatio,2))
-    +qvCell('Volatility Z',qvNum(v.z,2),v.regime+' · '+qvPct(v.pct)+' percentile',qvZCol(v.z))
-    +qvCell('Expansion ratio',qvNum(v.ver,3),v.verLabel,
-        isFinite(v.ver)?(v.ver>1.5?'var(--red)':v.ver>1.25?'var(--amber)':'var(--green)'):null)
-    +'</div>';
-
-  out+='<div class="qv-hd"><b>'+(R.volKind==='ticks'?'Quote activity':'Volume')+'</b><span>'
-    +(R.hasVolume
-       ?(R.volKind==='ticks'
-          ?'this feed reports tick count for FX and metals, not size traded'
-          :'traded size from the loaded series')
-       :'not published for this instrument')+'</span></div>';
-  if(R.hasVolume){
-    out+='<div class="qv-g">'
-      +qvCell(R.volKind==='ticks'?'Last tick count':'Last volume',qvBig(R.volume.last),
-          R.volPartial?'last complete bar':'latest bar')
-      +qvCell('20-bar average',qvBig(R.volume.ma20),'')
-      +qvCell(R.volKind==='ticks'?'Activity Z':'Volume Z',qvNum(R.volume.z,2),R.volume.label,qvZCol(R.volume.z))
-      +qvCell(R.volKind==='ticks'?'Activity surprise':'Volume surprise',qvNum(R.volume.surprise,2)+'×',
-          isFinite(R.volume.surprise)?qvPct((R.volume.surprise-1)*100)+' vs average':'')
-      +qvCell((R.volKind==='ticks'?'Activity':'Volume')+' percentile',qvPct(R.volume.pct),'of this history')
-      +qvCell('VVD',qvNum(R.vvd,2),R.vvdNote,qvZCol(R.vvd))
-      +qvCell('VVR',qvNum(R.vvr,5),'σ per unit of normalised volume')
-      +qvCell(R.volKind==='ticks'?'Price · activity':'Price · volume',escHtml(R.pv),R.pvNote)
-      +'</div>';
-  }else{
-    out+=qvEmpty('No volume on this feed, so Volume Z, surprise, VVD, VVR and the price-volume state are not computed. Nothing is estimated in their place.');
-  }
-
-  var n=R.num;
-  out+='<div class="qv-hd"><b>Numerology of '+qvNum(n.price,2)+'</b>'
-    +'<span>normalised to '+n.norm+' · '+escHtml(QV.NORM_MODES[R.mode].label)+'</span></div><div class="qv-g">'
-    +qvCell('Digit sum',n.digitSum,n.digits.split('').join(' + '))
-    +qvCell('Digital root',n.digitalRoot,'1 + ((N−1) mod 9)')
-    +qvCell('Last digit',n.lastDigit,'last two: '+n.last2)
-    +qvCell('Most repeated digit',n.repeatedMax+'×',n.hasRepeat?'triple or more present':'no triple')
-    +qvCell('Palindrome',n.palindrome?'Yes':'No','')
-    +qvCell('Near a square',n.nearSquare?'Yes':'No','within 0.25%')
-    +qvCell('Near a Fibonacci',n.nearFib?'Yes':'No','within 0.25%')
-    +qvCell('Gann half rung',n.onGann?'On rung':'Off rung',qvNum(n.gannDist,3)+' root units away')
-    +'</div>';
-
+  /* the honest verdict on the experiment stays in plain sight */
   if(R.patterns){
     var val=R.validated.length;
-    out+='<div class="qv-hd"><b>What the history says</b><span>'
-      +R.patterns.length+' patterns tested · '+R.base.nIS+' in-sample / '+R.base.nOOS+' out-of-sample bars</span></div>'
-      +'<div class="qv-verd '+(val?'ok':'none')+'">'
-        +'<b>'+(val?val+' pattern'+(val===1?'':'s')+' survived out-of-sample':'No numerology pattern survived validation')+'</b>'
-        +'<span>'+(val
-            ? escHtml(R.validated.map(function(p){return p.name;}).join('; '))+' — carried at '+qvPct(R.numWeight*100,0)+' of full numerology weight.'
-            : 'On this history, no digit pattern changed the probability of a reversal beyond what multiple-testing correction allows. Numerology therefore contributes exactly zero to the combined score — not a reduced weight, zero.')
-        +'</span></div>';
+    out+='<div class="qv-verd '+(val?'ok':'none')+'">'
+      +'<b>'+(val?val+' number pattern'+(val===1?'':'s')+' actually held up':'No number pattern held up')+'</b>'
+      +'<span>'+(val
+          ? escHtml(R.validated.map(function(p){return p.name;}).join('; '))+' — carried at '+qvPct(R.numWeight*100,0)+' of full weight.'
+          : 'All '+R.patterns.length+' digit patterns were tested on '+R.sample.total+' past bars and none beat chance, so they are given zero weight. Trade the level, not the number.')
+      +'</span></div>';
     if(R.activeNow.length){
-      out+='<div class="qv-act"><i>Patterns this price currently carries</i>'
+      out+='<div class="qv-act"><i>Patterns this price happens to carry</i>'
         +R.activeNow.map(function(p){
            return '<div class="qv-a '+(p.holdsOOS?'v':'x')+'"><b>'+escHtml(p.name)+'</b>'
              +'<span>'+p.verdict+(isFinite(p.is.lift)?' · lift '+qvNum(p.is.lift,2)+' on n='+p.is.n:'')+'</span></div>';
-         }).join('')
-        +'</div>';
+         }).join('')+'</div>';
     }
   }
   out+=qvNotes(R);
-  out+='<div class="qv-foot">These are measurements, not forecasts. The volatility and volume figures are '
-    +'definitional; the numerology section is an experiment that is re-tested on every run and is allowed to '
-    +'fail. Full formulas, sample sizes, p-values and confidence intervals are on the Reference tab.</div>';
+
+  /* everything technical lives behind one click */
+  var cell=function(k,val,plain,tech,col){
+    return '<div class="qv-c"><i>'+k+'</i><b'+(col?' style="color:'+col+'"':'')+'>'+val+'</b>'
+      +'<span>'+plain+'</span>'+(tech?'<em>'+tech+'</em>':'')+'</div>';
+  };
+  var g='<div class="qv-hd"><b>How far it swings</b><span>daily σ, and the same figure annualised at √252</span></div><div class="qv-g">'
+    +cell('Last 20 days',qvNum(v.sd20),'a typical day moves about '+qvPct(v.sd20*100,2),qvPct(v.ann20*100)+' a year')
+    +cell('Last 50 days',qvNum(v.sd50),'the medium-term normal',qvPct(v.ann50*100)+' a year')
+    +cell('Last 100 days',qvNum(v.sd100),'the long-term normal',qvPct(v.ann100*100)+' a year')
+    +cell('Parkinson',qvNum(v.parkinson),'same idea, measured from the high–low range','blind to overnight gaps')
+    +cell('Garman–Klass',qvNum(v.gk),'adds where the bar opened and closed','assumes no gap')
+    +cell('Rogers–Satchell',qvNum(v.rs),'the version that stays honest in a trend','drift-robust')
+    +cell('ATR 20',qvNum(v.atr20,2),'the average daily range in price terms','ratio to ATR100 '+qvNum(v.atrRatio,2))
+    +cell('Versus its own history',qvNum(v.z,2),'today sits at the '+qvPct(v.pct,0)+' mark of everything measured',
+        'Z-score · '+v.regime,qvZCol(v.z))
+    +cell('Speeding up?',qvNum(v.ver,3),'short-term swing vs long-term swing',v.verLabel,
+        isFinite(v.ver)?(v.ver>1.5?'var(--red)':v.ver>1.25?'var(--amber)':'var(--green)'):null)
+    +'</div>';
+
+  g+='<div class="qv-hd"><b>'+(ticks?'How busy the quotes are':'How much is changing hands')+'</b><span>'
+    +(R.hasVolume?(ticks?'spot FX and metals have no central tape, so this counts price updates, not size traded'
+                       :'traded size from the loaded series')
+                : 'not published for this instrument')+'</span></div>';
+  if(R.hasVolume){
+    g+='<div class="qv-g">'
+      +cell(ticks?'Latest tick count':'Latest volume',qvBig(R.volume.last),
+          R.volPartial?'taken from the last complete session':'the newest bar','')
+      +cell('20-day average',qvBig(R.volume.ma20),'what a normal day looks like','')
+      +cell('Versus its own history',qvNum(R.volume.z,2),
+          'today sits at the '+qvPct(R.volume.pct,0)+' mark','Z-score · '+R.volume.label,qvZCol(R.volume.z))
+      +cell('Busier or quieter',qvNum(R.volume.surprise,2)+'×',
+          (isFinite(R.volume.surprise)?(R.volume.surprise>=1?'+':'')+qvPct((R.volume.surprise-1)*100):'—')+' against the average','')
+      +cell('Movement vs '+(ticks?'traffic':'crowd'),qvNum(R.vvd,2),escHtml(R.vvdNote),'VVD',qvZCol(R.vvd))
+      +cell('Travel per unit',qvNum(R.vvr,5),
+          ticks?'how far price goes per unit of quote traffic':'how far price goes per unit of volume','VVR')
+      +cell('Today’s pairing',escHtml(R.pv),escHtml(R.pvNote),'')
+      +'</div>';
+  }else{
+    g+=qvEmpty('No '+(ticks?'activity':'volume')+' on this feed, so nothing in this section is computed. Nothing is estimated in its place.');
+  }
+
+  var n=R.num;
+  g+='<div class="qv-hd"><b>The digits in the price</b><span>an experiment — '+qvNum(n.price,2)
+    +' normalised to '+n.norm+' · '+escHtml(QV.NORM_MODES[R.mode].label)+'</span></div><div class="qv-g">'
+    +cell('Digit sum',n.digitSum,n.digits.split('').join(' + '),'')
+    +cell('Digital root',n.digitalRoot,'the digit sum reduced to one figure','1 + ((N−1) mod 9)')
+    +cell('Last digit',n.lastDigit,'round numbers often attract orders','last two: '+n.last2)
+    +cell('Most repeated digit',n.repeatedMax+'×',n.hasRepeat?'a triple or better is present':'no digit repeats three times','')
+    +cell('Palindrome',n.palindrome?'Yes':'No','reads the same both ways','')
+    +cell('Near a square',n.nearSquare?'Yes':'No','within 0.25% of a whole square','')
+    +cell('Near a Fibonacci',n.nearFib?'Yes':'No','within 0.25% at any decimal scale','')
+    +cell('Gann half rung',n.onGann?'On rung':'Off rung','√price close to a whole or half step',
+        qvNum(n.gannDist,3)+' root units away')
+    +'</div>';
+
+  out+='<details class="sec qv-more"><summary><b>Show the numbers</b>'
+     +'<span>every estimator, with what it means</span></summary><div class="qv-mw">'+g+'</div></details>';
+
+  out+='<div class="qv-foot">These are measurements, not forecasts. The movement and activity figures are '
+    +'definitional. The digit section is an experiment that is re-tested on every run and is allowed to fail — '
+    +'and on this history it did. Full formulas, sample sizes, p-values and confidence intervals are on the '
+    +'Reference tab.</div>';
   return out+'</div>';
 }
-
 /* ── DASHBOARD: the four numbers that change how you size ── */
 function qvDash(){
   var R=window._lastQV, host=document.getElementById('qv_dash');
