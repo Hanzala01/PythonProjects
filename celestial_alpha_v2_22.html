@@ -1911,6 +1911,35 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .ax-row{grid-template-columns:auto 1fr}.ax-tag{grid-column:2;justify-self:start}}
 @media(prefers-reduced-motion:reduce){.ax-row{animation:none!important}}
 
+.ep-h{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+  margin:12px 2px 7px}
+.ep-h:first-child{margin-top:2px}
+.ep-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.ep-t{padding:11px 13px;border-radius:13px;border:1px solid var(--bd);background:rgba(255,255,255,.02);
+  min-width:0;animation:rowIn .4s var(--ease) backwards}
+.ep-t i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.ep-t b{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-family:'Space Grotesk';
+  font-size:17px;font-weight:700;color:var(--tw);font-variant-numeric:tabular-nums;line-height:1.15}
+.ep-t b em{font-style:normal;font-size:10px;font-weight:700}
+.ep-t b em.up{color:var(--green)} .ep-t b em.dn{color:var(--red)} .ep-t b em.flat{color:var(--mid)}
+.ep-t span{display:block;font-size:9.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+.ep-t.off b{color:var(--mid)}
+.ep-fg{padding:13px 15px;border-radius:15px;border:1px solid var(--bd);
+  background:linear-gradient(155deg,rgba(139,92,246,.07),rgba(9,9,18,.5));margin-bottom:4px}
+.ep-fgl i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.ep-fgl b{display:block;font-family:'Space Grotesk';font-size:19px;font-weight:700;margin-bottom:4px}
+.ep-fgl span{display:block;font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.ep-fgb{position:relative;height:8px;border-radius:99px;
+  background:linear-gradient(90deg,rgba(239,68,68,.55),rgba(245,158,11,.5) 35%,rgba(255,255,255,.12) 50%,
+    rgba(34,197,94,.5) 70%,rgba(245,158,11,.55))}
+.ep-fgb i{position:absolute;top:-4px;width:3px;height:16px;border-radius:2px;
+  box-shadow:0 0 9px currentColor;transition:left .9s var(--ease)}
+.ep-fgs{display:flex;justify-content:space-between;font-size:8.5px;color:var(--muted);margin-top:5px}
+.ep-f{margin-top:11px;font-size:9.5px;color:var(--muted);line-height:1.55}
+@media(prefers-reduced-motion:reduce){.ep-t{animation:none!important}}
+
 .sn-src{margin-bottom:12px}
 .sn-srcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin-bottom:9px}
 .sn-s{padding:11px 13px;border-radius:13px;border:1px solid var(--bd);background:rgba(255,255,255,.02)}
@@ -9254,6 +9283,76 @@ function timeAgo(d){
   if(s<86400)return Math.floor(s/3600)+'h ago';
   return Math.floor(s/86400)+'d ago';
 }
+
+/* ══ ECONPULSE — one call, current macro ═════════════════════════════════
+   The stale-CPI problem is solved here. DBnomics mirrors BLS about nineteen
+   months behind; EconPulse returns July 2026 CPI at 332.813, which matches
+   FRED's CPIAUCSL for the same month to the third decimal, and Fed funds at
+   3.63 which matches FRED's DFF. It sends Access-Control-Allow-Origin:* so
+   the browser can read it directly, and one request carries inflation,
+   employment, rates, energy, markets and sentiment together.
+
+   Key handling: the published spec documents a shared demo key, which is what
+   this ships with. A personal key can be pasted on the Sentiment tab and is
+   used in preference — but only after it is checked, because a rejected key
+   should fall back to working data rather than blanking the panel. */
+var EP_KEY=(function(){try{return localStorage.getItem('ca_ep_key')||'';}catch(e){return '';}})();
+var EP_DEMO='demo';
+var _epCache=null,_epAt=0,_epKeyState=null;
+function setEpKey(v){
+  EP_KEY=(v||'').trim();
+  try{localStorage.setItem('ca_ep_key',EP_KEY);}catch(e){}
+  _epCache=null;_epAt=0;_epKeyState=null;_macroCache={};
+  try{renderSentiment();}catch(e){}
+}
+function epFetch(cb){
+  if(_epCache&&Date.now()-_epAt<5*60000){cb(_epCache);return;}
+  var keys=EP_KEY?[EP_KEY,EP_DEMO]:[EP_DEMO];
+  var i=0;
+  (function attempt(){
+    if(i>=keys.length){cb(null,'no key accepted');return;}
+    var k=keys[i++], mine=(k===EP_KEY&&EP_KEY);
+    fetch('https://api.econpulse.io/v1/macro?key='+encodeURIComponent(k))
+      .then(function(r){ return r.status===200?r.json():null; })
+      .then(function(d){
+        if(!d||d.status!=='ok'||!d.data){
+          if(mine)_epKeyState='rejected';
+          attempt();return;
+        }
+        if(mine)_epKeyState='ok'; else if(EP_KEY)_epKeyState='rejected';
+        _epCache=d;_epAt=Date.now();
+        _epCache.usingDemo=(k===EP_DEMO);
+        cb(d);
+      })
+      .catch(function(){ attempt(); });
+  })();
+}
+function epPick(d,path){
+  var o=d&&d.data;
+  var p=path.split('.');
+  for(var i=0;i<p.length&&o!=null;i++)o=o[p[i]];
+  if(o==null)return null;
+  /* rates, inflation and employment arrive as {value,date,change}; markets and
+     sentiment arrive as bare numbers. Both are normalised to one shape. */
+  if(typeof o==='number')return isFinite(o)?{value:o,date:null,change:null,bare:true}:null;
+  return isFinite(o.value)?o:null;
+}
+/* the three the release panel needs, in the shape the rest of the chain uses */
+function macroEconPulse(which,cb){
+  epFetch(function(d,err){
+    if(!d){cb(null,err||'unreachable');return;}
+    var map={rate:'rates.fed_funds',CPI:'inflation.cpi',payrolls:null};
+    var key=map[which];
+    if(!key){cb(null,'not carried by this feed');return;}
+    var o=epPick(d,key);
+    if(!o){cb(null,'absent from response');return;}
+    /* the feed gives the change against the previous print, so the previous
+       value is derived rather than guessed */
+    var prev=(o.change!=null&&isFinite(o.change))?o.value-o.change:null;
+    cb({latest:o.value,prev:prev,date:o.date,src:'EconPulse'+(d.usingDemo?' (demo key)':'')});
+  });
+}
+
 /* ══ MACRO INDICATORS — a chain of sources, each one CORS-checked ══
    The old path was FMP, then FRED through corsproxy.io. Both are dead: FMP
    answers 429 "Limit Reach" on this key, and corsproxy.io now answers 403
@@ -9281,7 +9380,7 @@ function setBlsKey(v){
   try{renderSentiment();}catch(e){}
 }
 var MACRO={
-  'Federal Funds Rate':{kind:'rate',   unit:'%',  maxAgeDays:14,
+  'Federal Funds Rate':{kind:'rate',   unit:'%',  maxAgeDays:45,
     dbn:'FED/H15/RIFSPFF_N.D', bls:null, fmp:'federalFunds', fred:'DFF'},
   'CPI (Inflation)':   {kind:'CPI',    unit:'idx',maxAgeDays:70,
     dbn:'BLS/cu/CUSR0000SA0',  bls:'CUSR0000SA0', fmp:'CPI', fred:'CPIAUCSL'},
@@ -9378,6 +9477,7 @@ function macroFetch(label,cb){
   if(_macroCache[label]){cb(_macroCache[label].res,_macroCache[label].log);return;}
   var log=[], best=null;
   var chain=[
+    {n:'EconPulse',f:function(k){macroEconPulse(m.kind,k);}},
     {n:'BLS',      f:function(k){macroBls(m.bls,k);}},
     {n:'DBnomics', f:function(k){macroDbnomics(m.dbn,k);}},
     {n:'FMP',      f:function(k){macroFmp(m.fmp,k);}},
@@ -9609,6 +9709,84 @@ function senPaintNews(){
      :'<div class="sn-load">Nothing in that bucket right now — try another filter.</div>');
 }
 function senFilter(m){ _senFilter=m; senPaintNews(); }
+
+/* ══ MACRO BOARD — the wider picture the release panel never showed ══
+   One EconPulse call already carries rates, inflation, jobs, energy and
+   market gauges. Showing them costs nothing extra and answers the question a
+   countdown cannot: what is the backdrop the next print lands into. */
+function epFmt(v,unit,dp){
+  if(v==null||!isFinite(v))return '—';
+  var n=(+v).toLocaleString('en',{minimumFractionDigits:dp==null?2:dp,maximumFractionDigits:dp==null?2:dp});
+  return unit==='%'?n+'%':unit==='$'?'$'+n:unit?n+' '+unit:n;
+}
+function epDelta(o,unit,dp,invert){
+  /* isFinite(null) is true in JavaScript, so a bare number with no change
+     field was rendering as "0.00" — an invented reading of no movement */
+  if(!o||o.change==null||!isFinite(o.change))return '';
+  var up=o.change>=0, good=invert?!up:up;
+  return '<em class="'+(Math.abs(o.change)<1e-9?'flat':good?'up':'dn')+'">'
+    +(up?'▲':'▼')+' '+epFmt(Math.abs(o.change),unit,dp)+'</em>';
+}
+function epTile(label,o,unit,dp,note,invert){
+  if(!o)return '<div class="ep-t off"><i>'+label+'</i><b>—</b><span>not in this response</span></div>';
+  return '<div class="ep-t"><i>'+label+'</i>'
+    +'<b>'+epFmt(o.value,unit,dp)+epDelta(o,unit,dp,invert)+'</b>'
+    +'<span>'+escHtml(note||'')+(o.date?' · '+o.date:'')+'</span></div>';
+}
+function senPaintMacro(){
+  var host=document.getElementById('sn_macro');
+  if(!host)return;
+  host.innerHTML='<div class="qv-empty">Reading the macro feed…</div>';
+  epFetch(function(d,err){
+    if(!d){host.innerHTML=qvEmpty('EconPulse did not answer ('+escHtml(err||'unreachable')+'). The release figures above fall back to the other sources.');return;}
+    var P=function(p){return epPick(d,p);};
+    var cpi=P('inflation.cpi'), core=P('inflation.core_cpi');
+    var groups=[
+      {h:'Rates',cells:[
+        epTile('Fed funds',P('rates.fed_funds'),'%',2,'policy rate'),
+        epTile('10-year',P('rates.treasury_10yr'),'%',2,'long end'),
+        epTile('2-year',P('rates.treasury_2yr'),'%',2,'policy expectations'),
+        epTile('10y TIPS',P('rates.tips_10yr'),'%',2,'real yield')]},
+      {h:'Inflation',cells:[
+        '<div class="ep-t"><i>CPI</i><b>'+(cpi?epFmt(cpi.value,'',3):'—')
+          +(cpi&&isFinite(cpi.yoy_pct)?'<em class="'+(cpi.yoy_pct>3?'dn':'up')+'">'+cpi.yoy_pct.toFixed(2)+'% y/y</em>':'')
+          +'</b><span>'+(cpi&&isFinite(cpi.mom_pct)?cpi.mom_pct.toFixed(2)+'% m/m · ':'')+(cpi?cpi.date:'')+'</span></div>',
+        '<div class="ep-t"><i>Core CPI</i><b>'+(core?epFmt(core.value,'',3):'—')
+          +(core&&isFinite(core.yoy_pct)?'<em class="'+(core.yoy_pct>3?'dn':'up')+'">'+core.yoy_pct.toFixed(2)+'% y/y</em>':'')
+          +'</b><span>strips food and energy'+(core?' · '+core.date:'')+'</span></div>',
+        epTile('PPI',P('inflation.ppi'),'',3,'producer prices'),
+        epTile('Consumer sentiment',P('inflation.consumer_sentiment'),'',1,'survey')]},
+      {h:'Jobs and growth',cells:[
+        epTile('Unemployment',P('employment.unemployment'),'%',1,'rate',true),
+        epTile('Jobless claims',P('employment.jobless_claims'),'',0,'weekly',true),
+        epTile('Job openings',P('employment.jolts'),'',0,'JOLTS'),
+        epTile('GDP nowcast',P('economy.gdp_nowcast'),'%',2,'annualised')]},
+      {h:'Market gauges',cells:[
+        epTile('VIX',P('markets.vix'),'',2,'equity volatility',true),
+        epTile('Dollar index',P('markets.dxy'),'',2,'DXY'),
+        epTile('WTI crude',P('energy.wti_crude'),'$',2,'oil'),
+        epTile('Gold',P('markets.gold'),'$',2,'spot')]}
+    ];
+    var fg=P('sentiment.fear_greed');
+    var fgv=fg?fg.value:null;
+    var fgw=fgv==null?'':fgv<25?'Extreme fear':fgv<45?'Fear':fgv<55?'Neutral':fgv<75?'Greed':'Extreme greed';
+    var fgc=fgv==null?'var(--mid)':fgv<25?'var(--red)':fgv<45?'var(--amber)':fgv<55?'var(--ts)':fgv<75?'var(--green)':'var(--amber)';
+    host.innerHTML=
+      (fgv!=null?'<div class="ep-fg"><div class="ep-fgl"><i>Fear &amp; greed</i>'
+        +'<b style="color:'+fgc+'">'+Math.round(fgv)+' · '+fgw+'</b>'
+        +'<span>A crowd gauge, not a signal. Extremes mark where positioning is stretched, not when it turns.</span></div>'
+        +'<div class="ep-fgb"><i style="left:'+Math.max(0,Math.min(100,fgv))+'%;background:'+fgc+'"></i></div>'
+        +'<div class="ep-fgs"><span>fear</span><span>neutral</span><span>greed</span></div></div>':'')
+      +groups.map(function(g){
+        return '<div class="ep-h">'+g.h+'</div><div class="ep-g">'+g.cells.join('')+'</div>';
+      }).join('')
+      +'<div class="ep-f">One EconPulse request, '+(d.usingDemo?'on the shared demo key':'on your key')
+      +' · snapshot '+escHtml(String(d.timestamp||'').slice(0,16).replace('T',' '))
+      +(_epKeyState==='rejected'?' · your saved key was rejected, so the demo key is being used':'')
+      +'. Each figure carries its own observation date — they are not all from today.</div>';
+  });
+}
+
 /* Which source answered for each release figure, how old it is, and the one
    action that fixes a stale reading. This replaced a bare "temporarily
    unavailable" line that named nothing and suggested nothing. */
@@ -9621,6 +9799,8 @@ function senPaintSources(){
         +'<b>'+escHtml(n)+'</b><span>checking…</span></div>';
     }).join('')+'</div>'
    +'<div class="sn-key">'
+     +'<label>EconPulse key <input type="text" id="sn_ep" placeholder="leave blank to use the demo key" value="'+escHtml(EP_KEY)+'"></label>'
+     +'<button class="btn btn-a btn-sm" onclick="setEpKey(document.getElementById(\'sn_ep\').value)">Save</button>'
      +'<label>BLS key <input type="text" id="sn_bls" placeholder="free from bls.gov/developers" value="'+escHtml(BLS_KEY)+'"></label>'
      +'<button class="btn btn-a btn-sm" onclick="setBlsKey(document.getElementById(\'sn_bls\').value)">Save</button>'
      +'<span>CPI and payrolls come from BLS when a key is present. Without one they fall back to a public mirror that can run months behind — the age is always shown, never hidden.</span>'
@@ -9758,6 +9938,8 @@ function renderSentimentV3(){
    +'<div class="sn-week">'+week+'</div>'
    +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
    +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
+   +'<div class="sn-sech"><b>The backdrop</b><span>what the next print is landing into</span></div>'
+   +'<div id="sn_macro"></div>'
    +shareBar('sentiment')
    +'<div class="sn-sech"><b>Data sources</b><span>where the release figures above come from</span></div>'
    +'<div class="sn-src" id="sn_src"></div>'
@@ -9772,6 +9954,7 @@ function renderSentimentV3(){
   });
 
   senPaintNews();
+  senPaintMacro();
   senPaintSources();
   if(next)_senTimer=setInterval(senTick,1000);
 }
@@ -10763,6 +10946,9 @@ var API_SOURCES=[
   {n:'newsdata.io', use:'headlines',
    url:function(){return 'https://newsdata.io/api/1/latest?apikey='+NEWSDATA_KEY+'&q=gold&language=en&size=1';},
    ok:function(d){return d&&d.status==='success';}},
+  {n:'EconPulse', use:'current CPI, rates, jobs, market gauges',
+   url:function(){return 'https://api.econpulse.io/v1/macro?key='+encodeURIComponent(EP_KEY||EP_DEMO);},
+   ok:function(d){return d&&d.status==='ok'&&d.data;}},
   {n:'Polygon', use:'daily history with volume — 5 calls/min',
    url:function(){return 'https://api.polygon.io/v2/aggs/ticker/AAPL/prev?adjusted=true&apiKey='+POLY_KEY;},
    ok:function(d){return d&&d.results&&d.results.length;}},
