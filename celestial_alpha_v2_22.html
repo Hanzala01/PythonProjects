@@ -903,7 +903,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tick .s{font-size:10px;font-weight:700;color:var(--ts);letter-spacing:.04em}
 .tick .p{font-family:'Space Grotesk';font-size:16px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
 .tick .c{font-size:10px;font-weight:700;margin-top:1px}
-.tick svg{position:absolute;right:10px;bottom:10px;opacity:.85}
+.tick > svg{position:absolute;right:10px;bottom:10px;opacity:.85}
 .hero-art{position:relative;display:flex;flex-direction:column;align-items:flex-end;gap:8px;justify-content:flex-start}
 .elite{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--ts)}
 .elite .b{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#c9b6ff,#7C3AED 50%,#180f2e);
@@ -1514,6 +1514,32 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rk-i.bad{color:var(--tw)}
 .rk-f{margin-top:9px;padding-top:8px;border-top:1px solid var(--rim);
   font-size:9.5px;color:var(--muted);line-height:1.55}
+/* ══ DASHBOARD SKIN — matched to the reference design ══ */
+.tick-t{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.tick-l{min-width:0;flex:1}
+.spark{width:78px;height:34px;flex-shrink:0;opacity:.95;position:static}
+.tick .spark svg{position:static!important;display:block;width:78px;height:34px;opacity:1;
+  right:auto;bottom:auto}
+.tick{background:linear-gradient(150deg,rgba(139,92,246,.10),rgba(10,10,20,.9));
+  border:1px solid rgba(167,139,250,.18)}
+.tick:hover{border-color:rgba(167,139,250,.38)}
+/* deeper violet ground, as the design shows */
+.app-main,.pane{background:transparent}
+body{background:
+  radial-gradient(ellipse 900px 620px at 20% -8%, rgba(124,58,237,.16), transparent 62%),
+  radial-gradient(ellipse 760px 520px at 92% 4%, rgba(167,139,250,.10), transparent 60%),
+  var(--bg)}
+.card,.side-card{background:linear-gradient(158deg,rgba(139,92,246,.055),rgba(10,10,20,.92))}
+.chd{letter-spacing:.13em}
+/* footer, three parts as in the design */
+.ca-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:14px 22px;margin-top:14px;border-top:1px solid var(--rim);
+  font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.ca-foot b{color:var(--soft);font-weight:700}
+.ca-foot .mid{letter-spacing:.18em;color:var(--mid)}
+.ca-foot span{display:flex;align-items:center;gap:9px}
+.ca-foot i{font-style:normal;color:var(--acc2);letter-spacing:0;font-size:12px}
+
 /* ══ SHARE ══ */
 .sh{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:12px 0 4px;
   padding:10px 13px;border-radius:13px;border:1px dashed var(--rim);background:rgba(255,255,255,.015)}
@@ -2527,10 +2553,10 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       <div class="sub">AI-Powered · Cycle-Based · Probability Driven</div>
     </div>
     <div class="tick-grid">
-      <div class="tick"><div class="s">XAU/USD</div><div class="p" id="tk_xau">0.00</div><div class="c" id="tkc_xau" style="color:var(--ts)">—</div></div>
-      <div class="tick"><div class="s">BTC/USD</div><div class="p" id="tk_btc">0.00</div><div class="c" id="tkc_btc" style="color:var(--ts)">—</div></div>
-      <div class="tick"><div class="s">EUR/USD</div><div class="p" id="tk_eur">0.00</div><div class="c" id="tkc_eur" style="color:var(--ts)">—</div></div>
-      <div class="tick"><div class="s">USOIL</div><div class="p" id="tk_oil">0.00</div><div class="c" id="tkc_oil" style="color:var(--ts)">—</div></div>
+      <div class="tick"><div class="tick-t"><div class="tick-l"><div class="s">XAU/USD</div><div class="p" id="tk_xau">0.00</div><div class="c" id="tkc_xau" style="color:var(--ts)">—</div></div><div class="spark" id="sp_xau"></div></div></div>
+      <div class="tick"><div class="tick-t"><div class="tick-l"><div class="s">BTC/USD</div><div class="p" id="tk_btc">0.00</div><div class="c" id="tkc_btc" style="color:var(--ts)">—</div></div><div class="spark" id="sp_btc"></div></div></div>
+      <div class="tick"><div class="tick-t"><div class="tick-l"><div class="s">EUR/USD</div><div class="p" id="tk_eur">0.00</div><div class="c" id="tkc_eur" style="color:var(--ts)">—</div></div><div class="spark" id="sp_eur"></div></div></div>
+      <div class="tick"><div class="tick-t"><div class="tick-l"><div class="s">USOIL</div><div class="p" id="tk_oil">0.00</div><div class="c" id="tkc_oil" style="color:var(--ts)">—</div></div><div class="spark" id="sp_oil"></div></div></div>
     </div>
     <div class="hero-art" style="position:relative">
       <div class="elite" style="position:absolute;top:2px;right:0;z-index:2;background:rgba(10,8,20,.55);backdrop-filter:blur(8px);padding:5px 10px;border-radius:12px;border:1px solid var(--bd)"><div class="b">CA</div>Celestial Alpha<br>Elite Member</div>
@@ -2747,6 +2773,12 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       </div>
     </div>
   </section>
+  <div class="ca-foot">
+    <span><i>&#9101;</i>Built in silence</span>
+    <span class="mid">Powered by cycles &nbsp;&middot;&nbsp; Verified by data &nbsp;&middot;&nbsp; Executed by you</span>
+    <span><i>&#10022;</i><b>Celestial Alpha</b></span>
+  </div>
+
 
   <!-- FOOTER -->
   <footer class="footer rise" style="animation-delay:.32s">
@@ -6631,6 +6663,9 @@ function runAI(){
     renderWheelPlus(price);
     renderDualEngines(levels,price);
     renderJrnlSnap();
+    /* redraw with the setup on it — drawCandles runs when history arrives,
+       which is before buildSignal has produced anything to draw */
+    try{if(HIST_ROWS&&HIST_ROWS.length>1)drawCandles(HIST_ROWS,assetName+' \u00b7 daily');}catch(e){}
     renderDashLive(assetName,price,sig,astro,priceBias,combined,trend,levels);
 
     document.getElementById('ai_out').classList.remove('hidden');
@@ -7806,6 +7841,47 @@ function metalKey(sym){
    plan on this key, so silver stays on gold-api.com. */
 var TWELVE_KEY='999d566e01a4447da5338469a44e3281';
 
+
+/* ══ TICKER SPARKLINES — the design shows a shape next to each price ══
+   Drawn from real daily closes fetched once per ticker, not decoration: the
+   line is the last 30 sessions and it is coloured by the move over that span,
+   so the card says direction as well as level. */
+var SPARK_MAP={xau:'GOLD',btc:'BITCOIN',eur:'EURUSD',oil:'OIL'};
+var _sparkDone={};
+function drawSpark(id,closes,up){
+  var el=document.getElementById('sp_'+id);
+  if(!el||!closes||closes.length<4)return;
+  var lo=Math.min.apply(null,closes), hi=Math.max.apply(null,closes), rng=(hi-lo)||1;
+  var W=76,H=30,step=W/(closes.length-1);
+  var pts=closes.map(function(v,i){return (i*step).toFixed(1)+' '+(H-2-((v-lo)/rng)*(H-6)).toFixed(1);});
+  var col=up?'#34d399':'#f87171';
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+    +'<defs><linearGradient id="sg_'+id+'" x1="0" y1="0" x2="0" y2="1">'
+      +'<stop offset="0" stop-color="'+col+'" stop-opacity=".28"/>'
+      +'<stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
+    +'<path d="M'+pts.join(' L')+' L'+W+' '+H+' L0 '+H+'Z" fill="url(#sg_'+id+')"/>'
+    +'<path d="M'+pts.join(' L')+'" fill="none" stroke="'+col+'" stroke-width="1.3" '
+      +'stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+/* one history call per ticker, staggered so Polygon's five-a-minute budget is
+   not spent on decoration before the analysis needs it */
+function loadSparklines(){
+  var keys=Object.keys(SPARK_MAP), i=0;
+  (function next(){
+    if(i>=keys.length)return;
+    var k=keys[i++], name=SPARK_MAP[k];
+    if(_sparkDone[k]){next();return;}
+    polygonDaily(name,45,function(rows){
+      if(rows&&rows.length>4){
+        _sparkDone[k]=1;
+        var c=rows.slice(-30).map(function(r){return +r.close;}).filter(isFinite);
+        drawSpark(k,c,c[c.length-1]>=c[0]);
+      }
+      setTimeout(next,13000);          /* stay inside 5 requests a minute */
+    });
+  })();
+}
+
 /* ══ PSX — Pakistan Stock Exchange ══════════════════════════════════════
    The exchange publishes its own data and it is real: 748 equities in the
    symbol list, and OGDC alone returns 1,239 end-of-day rows back to 2021 with
@@ -8374,6 +8450,35 @@ function drawCandles(rows,label){
     var yT=Y(Math.max(o,c)),yB=Y(Math.min(o,c));
     svg+='<rect x="'+(x-cw/2).toFixed(1)+'" y="'+yT.toFixed(1)+'" width="'+cw.toFixed(1)+'" height="'+Math.max(1,yB-yT).toFixed(1)+'" fill="'+col+'"/>';
   });
+  /* the setup drawn on the chart itself — entry band, stop and the three
+     targets. A trading chart with no plan on it is just a picture. */
+  var S=window._lastSig, xL=padL, xR=W-padR;
+  if(S&&S.style&&isFinite(S.entry)&&S.entry>lo&&S.entry<hi){
+    var band=Math.abs(S.entry-S.sl)*0.28||span*0.004;
+    var eTop=Y(S.entry+band), eBot=Y(S.entry-band);
+    svg+='<rect x="'+xL+'" y="'+Math.min(eTop,eBot).toFixed(1)+'" width="'+(xR-xL)+'" height="'
+      +Math.max(2,Math.abs(eBot-eTop)).toFixed(1)+'" fill="rgba(139,92,246,.16)" stroke="rgba(167,139,250,.45)" stroke-width="1"/>'
+      +'<text x="'+(xL+10)+'" y="'+(Math.min(eTop,eBot)-4).toFixed(1)+'" fill="#c4b5fd" font-size="10" font-family="Inter">Entry Zone</text>';
+    if(isFinite(S.sl)&&S.sl>lo&&S.sl<hi){
+      svg+='<line x1="'+xL+'" y1="'+Y(S.sl).toFixed(1)+'" x2="'+xR+'" y2="'+Y(S.sl).toFixed(1)
+        +'" stroke="#EF4444" stroke-width="1.2" stroke-dasharray="5 4"/>'
+        +'<text x="'+(xR-8)+'" y="'+(Y(S.sl)-5).toFixed(1)+'" text-anchor="end" fill="#f87171" font-size="10" font-family="Inter">Stop Loss</text>';
+    }
+    var full=S.tp-S.entry;
+    [[0.5,'TP 1'],[0.8,'TP 2'],[1,'TP 3']].forEach(function(t){
+      var v=S.entry+full*t[0];
+      if(!(v>lo&&v<hi))return;
+      svg+='<line x1="'+xL+'" y1="'+Y(v).toFixed(1)+'" x2="'+xR+'" y2="'+Y(v).toFixed(1)
+        +'" stroke="rgba(52,211,153,'+(0.35+t[0]*0.45).toFixed(2)+')" stroke-width="1" stroke-dasharray="3 3"/>'
+        +'<text x="'+(xR-8)+'" y="'+(Y(v)-4).toFixed(1)+'" text-anchor="end" fill="#34d399" font-size="9.5" font-family="Inter">'+t[1]+'</text>';
+    });
+  }
+  var lastC=+data[data.length-1].close;
+  if(isFinite(lastC)){
+    var ly=Y(lastC);
+    svg+='<rect x="'+(xR+2)+'" y="'+(ly-8).toFixed(1)+'" width="52" height="16" rx="3" fill="#8b5cf6"/>'
+      +'<text x="'+(xR+28)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="middle" fill="#fff" font-size="9.5" font-family="Inter" font-weight="700">'+lastC.toFixed(dp)+'</text>';
+  }
   svg+='</svg>';
   var first=data[0],last=data[data.length-1];
   var chg=((+last.close-+first.close)/+first.close*100);
@@ -11583,6 +11688,7 @@ setInterval(tick,1000);
 unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
 setTimeout(loadTickers,800);
+setTimeout(loadSparklines,9000);
 try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
 /* refresh live tickers every 60s (Finnhub free = 60 calls/min) */
