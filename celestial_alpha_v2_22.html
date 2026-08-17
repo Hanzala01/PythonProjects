@@ -2969,6 +2969,166 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 .lq-svg{height:96px}
 .po-svg{height:62px}
 .dh{min-height:0}
+
+/* ── chart fills its card: the svg was a flex item and collapsed to ~410px
+   of the 717px available, which is why the plot looked half-drawn ── */
+.ch-plot{display:block!important;position:relative}
+.ch-plot > svg{width:100%!important;height:100%!important;display:block;flex:none}
+.ch-plot .plot-label{position:absolute;left:10px;bottom:8px;font-size:9.5px;color:var(--t3);
+  pointer-events:none;letter-spacing:.02em}
+
+/* ── the purple wash from the reference — a lit top-left and a soft centre,
+   not a flat black field ── */
+body{background:var(--bg0)}
+.shell{background:
+  radial-gradient(1100px 620px at 12% -6%, rgba(124,58,237,.20), transparent 60%),
+  radial-gradient(820px 520px at 88% 2%, rgba(168,85,247,.13), transparent 58%),
+  radial-gradient(1400px 900px at 50% 55%, rgba(76,29,149,.14), transparent 70%),
+  var(--bg0)}
+#pane_dashboard{background:transparent}
+.card{background:linear-gradient(160deg,rgba(124,58,237,.075),var(--card) 60%)}
+.chart-card{background:linear-gradient(160deg,rgba(124,58,237,.06),var(--chartbg) 55%)}
+.stat{background:linear-gradient(150deg,rgba(124,58,237,.09),var(--card) 62%)}
+.tick{background:linear-gradient(150deg,rgba(124,58,237,.13),rgba(7,6,21,.8) 65%)}
+.side-card{background:linear-gradient(165deg,rgba(124,58,237,.11),var(--card) 58%)}
+.sidebar,aside.sidebar{background:linear-gradient(180deg,#06031A,#02010A 45%)}
+
+/* ── fit the content inside the spec heights instead of letting it clip ── */
+.drow-b>.card>.cbd{padding:10px 12px}
+.ces{gap:7px}
+.ces-top{gap:9px}
+.mp-radar.sm{height:64px;width:64px}
+.mp-radar.sm .mp-ring:nth-child(1){width:62px!important;height:62px!important}
+.mp-radar.sm .mp-ring:nth-child(2){width:42px!important;height:42px!important}
+.mp-radar.sm .mp-orbit{width:62px!important;height:62px!important}
+.ces-num{font-size:18px}
+.ces-name b{font-size:12px}
+.ces-name span{font-size:7.5px;padding:2px 6px;margin-top:3px}
+.ces-grid{gap:5px}
+.ces-grid>div{padding:5px 8px}
+.ces-grid i{font-size:7.5px;margin-bottom:1px}
+.ces-grid b{font-size:11px}
+.mx-item .k{font-size:8px;margin-bottom:4px}
+.mx-item .s{font-size:8.5px;margin-top:4px}
+.lq-list>div{margin-bottom:5px}
+.lq-list span{font-size:9px}
+.lq-list b{font-size:11.5px}
+.lq-svg{height:88px}
+/* market pulse must keep its button inside 365 */
+.drow-a>.card:nth-child(3)>.cbd{display:flex;flex-direction:column;padding:12px}
+.mp-radar{height:112px;margin-bottom:8px}
+.mp-radar .mp-ring:nth-child(1){width:112px!important;height:112px!important}
+.mp-radar .mp-ring:nth-child(2){width:80px!important;height:80px!important}
+.mp-radar .mp-ring:nth-child(3){width:48px!important;height:48px!important}
+.mp-radar .mp-orbit:nth-child(4){width:112px!important;height:112px!important}
+.mp-radar .mp-orbit:nth-child(5){width:80px!important;height:80px!important}
+.mp-radar .mp-orbit:nth-child(6){width:48px!important;height:48px!important}
+.mp-grid{gap:7px}
+.mp-c .v{font-size:12px}
+.mp-news{margin-top:8px}
+.mp-nl{font-size:10px;line-height:1.75;margin-top:3px}
+.drow-a>.card:nth-child(3) .cta{margin-top:auto}
+/* trade setup: keep every row inside 365 */
+.drow-a>.card:nth-child(2)>.cbd{display:flex;flex-direction:column;padding:12px 14px}
+.ts-top{margin-bottom:8px}
+.ts-bias{font-size:15px}
+.ts-conf{font-size:15px;margin:2px 0 5px}
+.ts-rows{margin-top:8px}
+.ts-row{padding:5px 0}
+.ts-tp{padding:3px 0 3px 14px}
+.drow-a>.card:nth-child(2) .cta{margin-top:auto}
+
+/* ── more of the reference's purple, as asked ── */
+.shell{background:
+  radial-gradient(1150px 660px at 10% -8%, rgba(139,92,246,.34), transparent 58%),
+  radial-gradient(900px 560px at 90% 0%, rgba(168,85,247,.22), transparent 56%),
+  radial-gradient(1500px 980px at 48% 52%, rgba(109,53,255,.17), transparent 68%),
+  radial-gradient(700px 500px at 25% 100%, rgba(124,58,237,.14), transparent 62%),
+  var(--bg0)}
+.card{background:linear-gradient(158deg,rgba(139,92,246,.13),rgba(10,8,26,.94) 62%);
+  box-shadow:0 0 20px rgba(124,58,237,.10)}
+.chart-card{background:linear-gradient(158deg,rgba(124,58,237,.10),rgba(2,2,12,.96) 58%)}
+.stat{background:linear-gradient(150deg,rgba(139,92,246,.15),rgba(10,8,26,.94) 64%)}
+.tick{background:linear-gradient(150deg,rgba(139,92,246,.2),rgba(7,6,21,.86) 66%)}
+.side-card{background:linear-gradient(165deg,rgba(139,92,246,.18),rgba(10,8,26,.94) 58%)}
+.sidebar,aside.sidebar{background:linear-gradient(180deg,#0B0524,#03011099 55%,#02010A)}
+
+/* ── final pass: everything inside its spec height, measured not guessed ── */
+.drow-a>.card:nth-child(2)>.cbd{padding:10px 12px}
+.ts-top .ring-wrap svg{width:74px;height:74px}
+.ts-top .ring-wrap .ring-txt{font-size:15px!important}
+.ts-k{font-size:9px}
+.ts-cyc{font-size:9.5px;margin-top:2px}
+.ts-bias{font-size:14px;margin-top:1px}
+.ts-conf{font-size:13.5px;margin:1px 0 4px}
+.ts-rows{margin-top:5px}
+.ts-row{padding:3.5px 0}
+.ts-row .k{font-size:9px}
+.ts-row .v{font-size:11.5px}
+.ts-tp{padding:2px 0 2px 12px}
+.ts-tp span{font-size:9px} .ts-tp b{font-size:11px}
+.cta{height:30px;margin-top:8px;font-size:11.5px}
+
+.ces-top{gap:8px}
+.mp-radar.sm{height:54px;width:54px}
+.mp-radar.sm .mp-ring:nth-child(1){width:52px!important;height:52px!important}
+.mp-radar.sm .mp-ring:nth-child(2){width:34px!important;height:34px!important}
+.mp-radar.sm .mp-orbit{width:52px!important;height:52px!important}
+.ces-num{font-size:15px}
+.ces-name b{font-size:11px}
+.ces-grid>div{padding:4px 7px}
+.ces-grid i{font-size:7px}
+.ces-grid b{font-size:10.5px}
+
+.mx-item .k{font-size:7.5px;margin-bottom:3px;line-height:1.2}
+.mx-item .s{font-size:8px;margin-top:3px;line-height:1.2}
+.mx-strip .ring-wrap svg{width:56px;height:56px}
+.mx-strip .mx-item.big .ring-wrap svg{width:84px;height:84px}
+.mx-strip .ring-txt{font-size:11px!important}
+.mx-strip .mx-item.big .ring-txt{font-size:17px!important}
+
+.lqz{gap:10px}
+.lq-svg{height:74px}
+.lq-list>div{margin-bottom:3px}
+.lq-list span{font-size:8.5px}
+.lq-list b{font-size:10.5px}
+
+.drow-c>.card>.cbd{padding:10px}
+.tj-tabs{margin-bottom:6px;gap:3px}
+.tj-tabs span{padding:3px 7px;font-size:9px}
+.tj-cal .hd{font-size:10px;margin-bottom:4px}
+.tj-cal .dow{font-size:7px;padding:1px 0}
+.tj-cal .d{padding:1px 0;font-size:9px;border-radius:4px}
+.tj-cal .g{gap:1.5px}
+.po-grid{gap:6px;margin-bottom:6px}
+.po-grid b{font-size:13px}
+.po-svg{height:56px}
+.ai-orb{width:56px;height:56px}
+.ai-orb span{font-size:13px}
+.ai-txt{font-size:10px;line-height:1.5}
+.ai-c{gap:7px}
+
+/* ── last 25px: rows that were stacking get laid out side by side ── */
+.ces-grid{grid-template-columns:1fr 1fr 1fr}
+.ces-grid .wide{grid-column:auto}
+.ces-grid b{font-size:9.5px}
+.ces-grid .wide b{font-size:9px}
+.lq-list>div{display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-bottom:2px}
+.lq-list span{font-size:8.5px;white-space:nowrap}
+.lq-list b{margin-top:0;text-align:right}
+.lq-svg{height:66px}
+.tj-cal .d{padding:0;line-height:1.55}
+.tj-cal .hd{margin-bottom:3px}
+.ts-top .ring-wrap svg{width:66px;height:66px}
+.ts-top .ring-wrap .ring-txt{font-size:13px!important}
+.ts-row{padding:3px 0}
+.cta{height:28px;margin-top:6px}
+
+.ts-tp{padding:1.5px 0 1.5px 12px}
+.ts-rows{margin-top:4px}
+.tj-tabs{margin-bottom:4px}
+.tj-cal .dow{padding:0}
+.tj-cal .g{gap:1px}
 </style>
 <div class="shell">
 
@@ -2992,7 +3152,7 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Market Intelligence</div>
     <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
-    <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h11v18H6a2 2 0 01-2-2z"/><path d="M8 8h6M8 12h6"/></svg>Trading Journal</div>
+    <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>Stock Fundamentals</div>
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7M10 20a2.2 2.2 0 004 0"/></svg>Alerts</div>
     <div class="nav-item" onclick='goTab("bot",this)'><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M8 4h8"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/></svg>Bot</div>
@@ -8962,11 +9122,13 @@ function drawCandles(rows,label){
   svg+='</svg>';
   var first=data[0],last=data[data.length-1];
   var chg=((+last.close-+first.close)/+first.close*100);
+  /* the caption is absolutely placed so the svg keeps the full plot height —
+     as a sibling in normal flow it was stealing rows from the chart */
   el.innerHTML=svg
-    +'<div style="display:flex;justify-content:space-between;padding:4px 10px 0;font-size:10px;color:var(--tm)">'
-    /* the caller appends the actual provider to label — do not hard-code one */
+    +'<div class="plot-label" style="display:flex;justify-content:space-between;right:10px">'
     +'<span>'+escHtml(label||'')+' · '+data.length+'D daily</span>'
-    +'<span>'+first.date+' → '+last.date+' <b style="color:'+(chg>=0?'var(--green)':'var(--red)')+'">'+(chg>=0?'+':'')+chg.toFixed(2)+'%</b></span></div>';
+    +'<span style="margin-left:auto">'+first.date+' → '+last.date
+    +' <b style="color:'+(chg>=0?'var(--up)':'var(--dn)')+'">'+(chg>=0?'+':'')+chg.toFixed(2)+'%</b></span></div>';
 }
 /* Pull history for whatever asset is in the Analyze box */
 /* Twelve Data daily candles — normalised to the EODHD row shape
