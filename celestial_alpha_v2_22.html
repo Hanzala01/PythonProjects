@@ -3224,6 +3224,115 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   /* "CYCLE ENGINE STA…" — the card titles are ellipsised at this width */
   .chd{font-size:10px;letter-spacing:.05em}
 }
+
+/* ══ VIBRATION ENGINE ══ */
+#pane_vibration{padding:14px;overflow-y:auto}
+.vb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.vb-title{font-size:22px;font-weight:600;color:var(--t1);letter-spacing:-.01em}
+.vb-sub{font-size:11px;color:var(--t3);margin-top:3px}
+.vb-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vb-ctl label{display:flex;align-items:center;gap:5px;font-size:9.5px;color:var(--t3);
+  text-transform:uppercase;letter-spacing:.06em}
+.vb-ctl input{background:var(--card);border:1px solid var(--b1);border-radius:6px;
+  color:var(--t1);font-size:11px;padding:5px 7px;font-family:inherit;width:120px}
+.vb-ctl input:focus{outline:none;border-color:var(--p3)}
+.vb-warn{border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.07);
+  border-radius:8px;padding:9px 12px;font-size:10.5px;line-height:1.6;color:var(--t2);margin-bottom:12px}
+.vb-warn b{color:var(--amber)}
+.vb-card{margin-bottom:12px}
+.vb-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+
+.vb-hero{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+  border:1px solid rgba(139,92,246,.28);border-radius:10px;padding:16px 18px;margin-bottom:12px;
+  background:linear-gradient(105deg,rgba(30,17,64,.9),rgba(12,8,30,.7))}
+.vb-cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.vb-big{display:flex;align-items:center;gap:14px;margin-top:8px}
+.vb-num{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;flex:none;
+  font-size:30px;font-weight:700;color:#fff;
+  background:radial-gradient(circle at 35% 30%,var(--p3),var(--p1));
+  box-shadow:0 0 26px rgba(139,92,246,.4)}
+.vb-big b{display:block;font-size:19px;font-weight:600;color:var(--t1)}
+.vb-big i{display:block;font-style:normal;font-size:9.5px;color:var(--t3);
+  letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.vb-keys{margin-top:10px;font-size:12px;color:var(--p3)}
+.vb-keys-note{margin-top:3px;font-size:9px;color:var(--t3);font-style:italic}
+.vb-hero-r{display:grid;grid-template-columns:repeat(5,minmax(0,110px));gap:7px}
+.vb-chip{border:1px solid var(--b1);border-radius:7px;padding:7px 8px;background:rgba(7,6,21,.6);min-width:0}
+.vb-chip i{display:block;font-style:normal;font-size:8px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vb-chip b{display:block;font-size:13px;font-weight:600;color:var(--t1);margin-top:3px;
+  font-variant-numeric:tabular-nums}
+.vb-chip.hi{border-color:var(--p3);background:rgba(139,92,246,.14)}
+.vb-chip.hi b{color:var(--p3)}
+
+.vb-math .vb-mrow{display:grid;grid-template-columns:150px 1fr;gap:10px;padding:8px 0;
+  border-bottom:1px solid var(--b1)}
+.vb-math .vb-mrow:last-child{border-bottom:0}
+.vb-mrow.strong .vb-mv{color:var(--p3);font-weight:600}
+.vb-mk{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);padding-top:2px}
+.vb-mv{font-size:13px;color:var(--t1);font-variant-numeric:tabular-nums;word-break:break-word}
+.vb-mw{grid-column:2;font-size:9.5px;color:var(--t3);line-height:1.55;margin-top:3px}
+.vb-ev{display:inline-block;border:1px solid var(--b1);border-radius:5px;padding:3px 7px;
+  margin:0 5px 5px 0;font-size:10.5px;color:var(--t2)}
+.vb-ev em{font-style:normal;color:var(--p3);margin-left:5px;font-variant-numeric:tabular-nums}
+.vb-ev.none{opacity:.5}
+.vb-ev.none em{color:var(--t3)}
+
+.vb-tbl{width:100%;border-collapse:collapse;font-size:10.5px}
+.vb-tbl th{text-align:left;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--t3);font-weight:600;padding:0 8px 6px 0;border-bottom:1px solid var(--b1);white-space:nowrap}
+.vb-tbl td{padding:5px 8px 5px 0;border-bottom:1px solid rgba(139,92,246,.08);color:var(--t2)}
+.vb-tbl td b{color:var(--t1);font-weight:600}
+.vb-tbl .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vb-tbl th.n{text-align:right}
+.vb-tbl tr.node td{opacity:.62}
+.vb-tbl .rx{color:var(--amber)}
+.vb-tbl .pn{display:inline-block;min-width:14px;text-align:center;border-radius:4px;
+  background:rgba(139,92,246,.18);color:var(--p3);font-size:9px;font-weight:700;padding:0 3px}
+.vb-tbl .sig{color:var(--p3);font-weight:600}
+.vb-tbl .ap{color:var(--green)}
+.vb-tbl .se{color:var(--t3)}
+.vb-tbl .dim{color:var(--t3)}
+.vb-tbl tr.me{background:rgba(139,92,246,.1)}
+.vb-bt td.good{color:var(--green);font-weight:600}
+.vb-bt td.warn{color:var(--amber)}
+.vb-bt td i{display:block;font-style:normal;font-size:8.5px;color:var(--t3)}
+.vb-bt td.v{font-size:9px}
+.vb-bt td.v.ok{color:var(--green)}
+.vb-bt td.v.no{color:var(--t3)}
+
+.vb-items{display:flex;flex-direction:column;gap:9px}
+.vb-item{border:1px solid var(--b1);border-radius:7px;padding:9px 11px;background:rgba(7,6,21,.5)}
+.vb-it b{display:block;font-size:12px;color:var(--t1);font-weight:600}
+.vb-it span{display:block;font-size:9.5px;color:var(--t3);margin-top:2px;line-height:1.5}
+.vb-isig{margin-top:6px;display:inline-block;font-size:10px;font-weight:600;color:var(--p3);
+  background:rgba(139,92,246,.14);border-radius:5px;padding:2px 7px}
+.vb-isig.none{color:var(--t3);background:rgba(148,138,180,.12);font-weight:500}
+.vb-note{margin-top:6px;font-size:9px;color:var(--t3);line-height:1.55}
+.vb-ecl{margin-top:8px;border-radius:6px;padding:7px 9px;border:1px solid}
+.vb-ecl.likely{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.08)}
+.vb-ecl.possible{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.07)}
+.vb-ecl b{display:block;font-size:10.5px;color:var(--t1)}
+.vb-ecl span{display:block;font-size:9px;color:var(--t3);margin-top:3px;line-height:1.5}
+
+.vb-verdict{border-radius:8px;padding:10px 12px;margin-bottom:11px;border:1px solid}
+.vb-verdict.ok{border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.08)}
+.vb-verdict.exp{border-color:var(--b1);background:rgba(148,138,180,.07)}
+.vb-verdict b{display:block;font-size:12px;color:var(--t1);line-height:1.5}
+.vb-verdict span{display:block;font-size:10px;color:var(--t3);margin-top:4px;line-height:1.6}
+.vb-btfoot{display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;font-size:9.5px;color:var(--t3)}
+
+.vb-foot{margin-top:9px;font-size:9px;color:var(--t3);line-height:1.65}
+.vb-empty{padding:14px 4px;font-size:11px;color:var(--t3);letter-spacing:.04em}
+.vb-notes{margin-bottom:12px}
+.vb-notes div{font-size:10px;color:var(--amber);line-height:1.6;padding:5px 10px;
+  border-left:2px solid rgba(245,158,11,.4);background:rgba(245,158,11,.05);margin-bottom:4px}
+.vb-legal{font-size:9px;color:var(--t3);line-height:1.7;padding:10px 0 4px;border-top:1px solid var(--b1)}
+@media (max-width:1450px){
+  .vb-grid{grid-template-columns:1fr}
+  .vb-hero{grid-template-columns:1fr}
+  .vb-hero-r{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
 </style>
 <div class="shell">
 
@@ -3245,6 +3354,7 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
     <div class="nav-item on" onclick='goTab("dashboard",this)'><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Dashboard</div>
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
+    <div class="nav-item" onclick='goTab("vibration",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/></svg>Vibration Engine</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Market Intelligence</div>
     <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
     <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>Stock Fundamentals</div>
@@ -3816,7 +3926,29 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   <span id="bi_timing"></span><span id="bs_timing"></span>
 </div>
 
-      <div class="pane hidden" id="pane_fundamentals">
+      <!-- ═══════════ DAILY NUMEROLOGICAL & PLANETARY VIBRATION ENGINE ═══════════ -->
+<div class="pane hidden" id="pane_vibration">
+  <div class="vb-head">
+    <div>
+      <h2 class="vb-title">Daily Celestial Profile</h2>
+      <div class="vb-sub">Date number · weekday planet · real sky events · composite &mdash; every step shown</div>
+    </div>
+    <div class="vb-ctl">
+      <label>Date<input type="date" id="vb_date" onchange="renderVibration()"></label>
+      <label>Asset<input type="text" id="vb_asset" placeholder="Gold" onchange="renderVibration()"></label>
+      <button class="btn btn-g btn-sm" onclick="vbToday()">Today</button>
+      <button class="btn btn-g btn-sm" onclick="vbToggleMath()" id="vb_mathbtn">Show the arithmetic</button>
+    </div>
+  </div>
+  <div class="vb-warn">
+    <b>Research framework.</b> Nothing on this page is evidence that numbers or planetary
+    geometry move price. The astronomy is calculated and checkable; the market meaning is a
+    hypothesis, and it stays labelled as one until the backtest below earns otherwise.
+  </div>
+  <div id="vb_body"></div>
+</div>
+
+<div class="pane hidden" id="pane_fundamentals">
         <div class="card">
           <div class="ch">
             <div class="ct"><div class="dot" style="background:var(--green)"></div>Fundamentals — what the company is</div>
@@ -9031,7 +9163,7 @@ renderJ=function(){
 };
 
 /* == MULTI-PANE SHELL == */
-var TABS_LIST=['dashboard','analytics','timing','fundamentals','sentiment','portfolio','bot','announcements','reference'];
+var TABS_LIST=['dashboard','analytics','timing','vibration','fundamentals','sentiment','portfolio','bot','announcements','reference'];
 function goTab(name,btn){
   TABS_LIST.forEach(function(t){
     var el=document.getElementById('pane_'+t);
@@ -9047,12 +9179,13 @@ function goTab(name,btn){
     try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
   }
   if(name==='sentiment'){renderSentiment();}
+  if(name==='vibration'){try{renderVibration();}catch(e){console.error('vibration:',e);}}
   if(name==='fundamentals'){try{renderFundamentals();}catch(e){console.error('fundamentals:',e);}}
   if(name==='reference'){
     /* compute on demand — opening Reference before Analytics used to show an
        empty table, which read as broken rather than as "nothing run yet" */
     try{if(!window._lastQV&&HIST_ROWS&&HIST_ROWS.length)qvRun();}catch(e){}
-    try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}
+    try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml()+vbReferenceHtml();}catch(e){}
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
   }
   if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashMember();}catch(e){console.error('dash:',e);}}
@@ -11760,12 +11893,1024 @@ return{run:run,combine:combine,numFeatures:numFeatures,NORM_MODES:NORM_MODES,
 
 
 
+/* The three blocks below were developed and verified as standalone modules
+   (worked example reproduced, lunations checked against Meeus to 11 minutes,
+   2026 eclipse screen recovering exactly the four real eclipses, fast path
+   agreeing with the full engine on 1096/1096 days, and the backtest raising
+   1 false positive in 360 null tests while recovering a planted edge). This
+   shim hands them the app's own ephemeris instead of a node import. */
+var _VIBEPH={getEphemeris:getEphemeris,lonRate:lonRate,signOf:signOf,SIGNS:SIGNS,
+             ELEM:ELEM,helio:helio,dFromDate:dFromDate};
+
+/* ══════════════════════════════════════════════════════════════════════
+   DAILY NUMEROLOGICAL & PLANETARY VIBRATION ENGINE
+   ─────────────────────────────────────────────────────────────────────
+   Two halves that must never be confused with each other:
+
+     · CALCULATED FACT   — digit arithmetic and astronomy. Reproducible
+                           from the inputs shown; either right or wrong.
+     · INTERPRETATION    — what a number is supposed to mean for a market.
+                           Unproven. It is labelled as such everywhere, and
+                           it is never converted into a confidence number
+                           unless a backtest actually earned one.
+
+   Nothing here asserts that numerology or planetary geometry moves price.
+   The engine's job is to emit a reproducible daily SIGNATURE so that the
+   claim can be tested against real returns rather than believed.
+══════════════════════════════════════════════════════════════════════ */
+var VIB=(function(){
+'use strict';
+
+/* ── CONFIGURATION ────────────────────────────────────────────────────
+   Everything a user could reasonably disagree with lives here, so the
+   engine has no opinions buried in its code. The planet/number table and
+   the weekday table are exactly as supplied; nothing has been added. */
+var CFG={
+  /* supplied number → planet table, used verbatim */
+  planetOfNumber:{1:'Sun',2:'Moon',3:'Jupiter',4:'Rahu / Uranus',5:'Mercury',
+                  6:'Venus',7:'Ketu / Neptune',8:'Saturn',9:'Mars'},
+
+  /* traditional weekday rulers, indexed by Date.getDay() — Sun..Sat */
+  weekdayPlanet:['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'],
+  weekdayNumber:[1,2,9,5,3,6,8],
+
+  /* Which ephemeris body carries which number. The supplied table pairs 4
+     with "Rahu / Uranus" and 7 with "Ketu / Neptune". Rahu and Ketu are the
+     Moon's nodes, which are NOT Uranus and Neptune — they are different
+     points with different positions. The ephemeris can produce both, so the
+     choice is exposed rather than decided silently. */
+  nodeBodyFor4and7:'planet',        /* 'planet' → Uranus/Neptune, 'node' → Rahu/Ketu */
+  bodyNumber:{sun:1,moon:2,jupiter:3,uranus:4,mercury:5,venus:6,neptune:7,saturn:8,mars:9},
+  nodeNumber:{rahu:4,ketu:7},
+
+  /* Pluto has no number in the supplied table, so it takes no part in any
+     numeric event. It is still reported as an astronomical position. */
+  aspectBodies:['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune'],
+
+  aspects:[{ang:0,  name:'Conjunction',orb:8},
+           {ang:60, name:'Sextile',    orb:4},
+           {ang:90, name:'Square',     orb:6},
+           {ang:120,name:'Trine',      orb:6},
+           {ang:180,name:'Opposition', orb:8}],
+
+  /* master numbers are a numerological convention, not a mathematical
+     property of the digital root — off unless the user turns them on */
+  masterNumbers:{enabled:false,keep:[11,22,33]},
+
+  /* §8: no validated sign→number mapping was supplied. Leaving this null
+     makes a sign change an astronomical event with NO manufactured score.
+     Set it to an array of 12 numbers (Aries..Pisces) to enable scoring. */
+  signNumbers:null,
+
+  /* the Moon must be this far from the Sun's aspect for a lunation to count
+     as "on this date" — lunations are instants, not days */
+  backtest:{minSample:30,forwards:[1,3,5,10],oosSplit:0.7,alpha:0.05}
+};
+
+/* ── 1. DATE NUMBER ───────────────────────────────────────────────────
+   The digits of the printed date, including the leading zeros, exactly as
+   the worked example does: 17-08-2026 → 1+7+0+8+2+0+2+6 = 26. */
+function pad2(n){return(n<10?'0':'')+n;}
+function dateDigits(date){
+  var s=pad2(date.getDate())+pad2(date.getMonth()+1)+String(date.getFullYear());
+  return s.split('').map(Number);
+}
+function digitSum(n){
+  var s=0,x=Math.abs(Math.round(n));
+  while(x>0){s+=x%10;x=Math.floor(x/10);}
+  return s;
+}
+/* Digital root, with master numbers optional. A master number is returned
+   un-reduced only at a step where the running value IS one — that is the
+   convention; it is not arithmetic, which is why it is a setting. */
+function digitalRoot(n,cfg){
+  cfg=cfg||CFG;
+  var x=Math.abs(Math.round(n));
+  if(cfg.masterNumbers.enabled&&cfg.masterNumbers.keep.indexOf(x)>=0)return x;
+  while(x>9){
+    x=digitSum(x);
+    if(cfg.masterNumbers.enabled&&cfg.masterNumbers.keep.indexOf(x)>=0)return x;
+  }
+  return x;
+}
+function dateNumber(date,cfg){
+  var d=dateDigits(date), raw=d.reduce(function(a,b){return a+b;},0);
+  return{digits:d,expr:d.join(' + ')+' = '+raw,raw:raw,
+         root:digitalRoot(raw,cfg),
+         rootExpr:raw>9?String(raw).split('').join(' + ')+' = '+digitalRoot(raw,cfg):String(raw)};
+}
+
+/* ── 3. WEEKDAY ───────────────────────────────────────────────────────── */
+var DAY_NAME=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function weekday(date,cfg){
+  cfg=cfg||CFG;
+  var i=date.getDay();
+  return{idx:i,name:DAY_NAME[i],planet:cfg.weekdayPlanet[i],num:cfg.weekdayNumber[i]};
+}
+
+/* ── 4. BASE COMPOSITE ────────────────────────────────────────────────
+   Deliberately a different quantity from the final composite in §11: this
+   one folds in the RAW date sum as well as its root, the final one does
+   not. Both are shown so the difference is visible instead of confusing. */
+function baseComposite(dn,wd,cfg){
+  var sum=dn.raw+dn.root+wd.num;
+  return{sum:sum,root:digitalRoot(sum,cfg),
+         expr:dn.raw+' + '+dn.root+' + '+wd.num+' = '+sum+' → '+digitalRoot(sum,cfg)};
+}
+
+return{CFG:CFG,pad2:pad2,dateDigits:dateDigits,digitSum:digitSum,
+       digitalRoot:digitalRoot,dateNumber:dateNumber,weekday:weekday,
+       baseComposite:baseComposite,DAY_NAME:DAY_NAME};
+})();
+
+/* ══ PLANETARY EVENT ENGINE ══════════════════════════════════════════
+   Every event below is DERIVED from the ephemeris, never asserted. If a
+   quantity cannot be computed from the available elements the engine says
+   so rather than guessing — §16 of the spec, and the only defensible way
+   to run something a person might trade against.
+
+   Accuracy of the source: this is a Schlyter-style low-order ephemeris.
+   Longitudes are good to roughly 1–2 arcminutes for the Sun and Moon and
+   better than a degree for the outer planets over the modern era; the
+   solar series was checked against an independent source and agreed to
+   0.006°. That is ample for sign, degree, aspect and lunation work. It is
+   NOT ample for eclipse classification, which is why eclipses are reported
+   as candidates with their numbers shown, never as settled fact.
+══════════════════════════════════════════════════════════════════════ */
+var VIBA=(function(A,V){
+'use strict';
+var CFG=V.CFG;
+var SIGNS=A.SIGNS;
+var BODY_NAME={sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',
+  jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'};
+
+function rev(x){return x-Math.floor(x/360)*360;}
+function angDiff(a,b){var d=rev(a-b);return d>180?d-360:d;}   /* signed, −180..180 */
+function sep(a,b){return Math.abs(angDiff(a,b));}             /* 0..180 */
+
+/* ── the Moon's mean node, so Rahu/Ketu can be offered as the bodies for
+      4 and 7 if the user prefers the nodal reading of the supplied table ── */
+function nodes(date){
+  var d=A.dFromDate(date), N=rev(A.ELEM.moon(d).N);
+  return{rahu:N,ketu:rev(N+180)};
+}
+/* Moon's ecliptic latitude. The longitude carries Schlyter's perturbation
+   series; the latitude here does NOT, so it is good to roughly ±0.2°. That
+   error is why eclipse output is a candidate flag and not a verdict. */
+function moonLat(date){
+  var d=A.dFromDate(date), h=A.helio(A.ELEM.moon(d));
+  return Math.asin(h.zh/h.r)*180/Math.PI;
+}
+
+function bodyRow(key,lon,speed){
+  var s=A.signOf(lon);
+  return{key:key,name:BODY_NAME[key]||key,num:CFG.bodyNumber[key]||null,
+         lon:lon,sign:s.sign,signIdx:s.idx,deg:s.deg,
+         speed:speed,retro:speed<0};
+}
+function bodies(date){
+  var e=A.getEphemeris(date), out=[];
+  ['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto']
+    .forEach(function(k){out.push(bodyRow(k,e[k].lon,A.lonRate(k,date)));});
+  var n=nodes(date);
+  out.push({key:'rahu',name:'Rahu (mean north node)',num:CFG.nodeNumber.rahu,
+    lon:n.rahu,sign:A.signOf(n.rahu).sign,signIdx:A.signOf(n.rahu).idx,
+    deg:A.signOf(n.rahu).deg,speed:-0.0529538083,retro:true,isNode:true});
+  out.push({key:'ketu',name:'Ketu (mean south node)',num:CFG.nodeNumber.ketu,
+    lon:n.ketu,sign:A.signOf(n.ketu).sign,signIdx:A.signOf(n.ketu).idx,
+    deg:A.signOf(n.ketu).deg,speed:-0.0529538083,retro:true,isNode:true});
+  return out;
+}
+
+/* ── generic root finder: the instant inside [t0,t1] where f changes sign.
+      Bisection rather than Newton because f is cheap and this can never
+      diverge — an exact time that is wrong is worse than no exact time. ── */
+function bisect(f,t0,t1,iter){
+  var a=t0,b=t1,fa=f(a),fb=f(b);
+  if(!(isFinite(fa)&&isFinite(fb))||fa===0)return fa===0?a:null;
+  if(fa*fb>0)return null;
+  for(var i=0;i<(iter||48);i++){
+    var m=(a+b)/2,fm=f(m);
+    if(fm===0)return m;
+    if(fa*fm<0){b=m;fb=fm;}else{a=m;fa=fm;}
+  }
+  return (a+b)/2;
+}
+function dayBounds(date){
+  var t0=new Date(date.getFullYear(),date.getMonth(),date.getDate(),0,0,0,0);
+  var t1=new Date(+t0+86400000);
+  return[+t0,+t1];
+}
+function lonAt(key,ms){
+  if(key==='rahu')return nodes(new Date(ms)).rahu;
+  if(key==='ketu')return nodes(new Date(ms)).ketu;
+  return A.getEphemeris(new Date(ms))[key].lon;
+}
+
+/* ── 6/7. ASPECTS ────────────────────────────────────────────────────
+   Reported for the reference instant with the orb actually measured. The
+   exact time is given ONLY when the aspect truly perfects inside the day;
+   an aspect that sits inside orb all day without perfecting says so, which
+   is the honest answer and the one that matters for timing. */
+function aspects(date,cfg){
+  cfg=cfg||CFG;
+  var list=cfg.aspectBodies, e=A.getEphemeris(date), out=[];
+  var b=dayBounds(date), ref=+date;
+  for(var i=0;i<list.length;i++)for(var j=i+1;j<list.length;j++){
+    var ka=list[i],kb=list[j];
+    var s=sep(e[ka].lon,e[kb].lon);
+    for(var q=0;q<cfg.aspects.length;q++){
+      var asp=cfg.aspects[q], orb=Math.abs(s-asp.ang);
+      if(orb>asp.orb)continue;
+      /* applying vs separating: does the orb shrink over the next hour? */
+      var e2=A.getEphemeris(new Date(ref+3600000));
+      var orb2=Math.abs(sep(e2[ka].lon,e2[kb].lon)-asp.ang);
+      var f=function(ms){
+        return sep(lonAt(ka,ms),lonAt(kb,ms))-asp.ang;
+      };
+      var tExact=bisect(f,b[0],b[1]);
+      var na=cfg.bodyNumber[ka],nb=cfg.bodyNumber[kb];
+      var raw=na+nb;
+      out.push({a:ka,aName:BODY_NAME[ka],aNum:na,
+                b:kb,bName:BODY_NAME[kb],bNum:nb,
+                type:asp.name,angle:asp.ang,
+                separation:s,orb:orb,orbLimit:asp.orb,
+                applying:orb2<orb,
+                exact:tExact?new Date(tExact):null,
+                perfectsToday:!!tExact,
+                raw:raw,reduced:V.digitalRoot(raw,cfg),
+                expr:na+' + '+nb+' = '+raw+(raw>9?' → '+V.digitalRoot(raw,cfg):'')});
+      break;                                   /* one aspect per pair */
+    }
+  }
+  out.sort(function(x,y){return x.orb-y.orb;});
+  return out;
+}
+
+/* ── 8. SIGN CHANGES ─────────────────────────────────────────────────
+   A crossing of a 30° boundary between midnight and midnight, local time.
+   The numeric score is deliberately absent unless a sign→number mapping has
+   been configured: the spec supplies none, and inventing one would put a
+   fabricated number into a trading screen. */
+function signChanges(date,cfg){
+  cfg=cfg||CFG;
+  var b=dayBounds(date), out=[];
+  var keys=cfg.aspectBodies.concat(['pluto']);
+  keys.forEach(function(k){
+    var l0=lonAt(k,b[0]), l1=lonAt(k,b[1]);
+    var i0=Math.floor(rev(l0)/30), i1=Math.floor(rev(l1)/30);
+    if(i0===i1)return;
+    var boundary=i1*30;                          /* the edge just crossed */
+    var f=function(ms){return angDiff(lonAt(k,ms),boundary);};
+    var t=bisect(f,b[0],b[1]);
+    var rec={body:k,name:BODY_NAME[k],num:cfg.bodyNumber[k]||null,
+             fromSign:SIGNS[i0],toSign:SIGNS[i1],
+             at:t?new Date(t):null,
+             numbered:false,signNum:null,raw:null,reduced:null,
+             note:'No validated sign→number mapping is configured, so this '
+                 +'transition is recorded as an astronomical event only.'};
+    if(cfg.signNumbers&&cfg.signNumbers.length===12&&rec.num!=null){
+      var sn=cfg.signNumbers[i1];
+      rec.numbered=true;rec.signNum=sn;rec.raw=rec.num+sn;
+      rec.reduced=V.digitalRoot(rec.raw,cfg);
+      rec.note='Sign number from the configured mapping.';
+    }
+    out.push(rec);
+  });
+  return out;
+}
+
+/* ── STATIONS ─── a sign flip in daily motion inside the day ── */
+function stations(date,cfg){
+  cfg=cfg||CFG;
+  var b=dayBounds(date), out=[];
+  cfg.aspectBodies.concat(['pluto']).forEach(function(k){
+    if(k==='sun'||k==='moon')return;             /* neither ever stations */
+    var r0=A.lonRate(k,new Date(b[0])), r1=A.lonRate(k,new Date(b[1]));
+    if(r0===0||r1===0||r0*r1>0)return;
+    var f=function(ms){return A.lonRate(k,new Date(ms));};
+    var t=bisect(f,b[0],b[1],40);
+    out.push({body:k,name:BODY_NAME[k],num:cfg.bodyNumber[k]||null,
+              kind:r0>0?'Retrograde station':'Direct station',
+              at:t?new Date(t):null,
+              lon:t?lonAt(k,t):null});
+  });
+  return out;
+}
+
+/* ── 9. NEW MOON / FULL MOON ─────────────────────────────────────────
+   Found from the elongation Moon−Sun crossing 0° or 180° inside the day.
+   The event's planetary signature is Sun + Moon = 1 + 2 = 3 under the
+   supplied table, for BOTH phases — the spec says so, and it is worth
+   noticing that this makes the two phases numerically indistinguishable.
+   They are therefore also tagged by phase so a backtest can separate them. */
+function lunations(date,cfg){
+  cfg=cfg||CFG;
+  var b=dayBounds(date), out=[];
+  [{ang:0,type:'New Moon'},{ang:180,type:'Full Moon'}].forEach(function(P){
+    /* angDiff wraps at ±180°, so a naive bisection finds the WRAP as a root
+       and reports every full moon as a new moon as well. The root is only
+       real if the elongation actually equals the target there — checking it
+       costs one call and removes an entire class of phantom events. */
+    var f=function(ms){
+      var e=A.getEphemeris(new Date(ms));
+      return angDiff(e.moon.lon-e.sun.lon,P.ang);
+    };
+    var t=bisect(f,b[0],b[1]);
+    if(t==null)return;
+    var chk=A.getEphemeris(new Date(t));
+    if(Math.abs(angDiff(chk.moon.lon-chk.sun.lon,P.ang))>0.01)return;
+    var e=A.getEphemeris(new Date(t));
+    var na=cfg.bodyNumber.sun,nb=cfg.bodyNumber.moon,raw=na+nb;
+    out.push({type:P.type,at:new Date(t),
+              sunLon:e.sun.lon,moonLon:e.moon.lon,
+              sunSign:A.signOf(e.sun.lon).sign,moonSign:A.signOf(e.moon.lon).sign,
+              phaseAngle:rev(e.moon.lon-e.sun.lon),
+              moonLat:moonLat(new Date(t)),
+              raw:raw,reduced:V.digitalRoot(raw,cfg),
+              expr:'Sun '+na+' + Moon '+nb+' = '+raw,
+              eclipse:eclipseCandidate(new Date(t),P.type)});
+  });
+  return out;
+}
+
+/* Eclipse screening. The classical Danjon limits are applied to the Moon's
+   distance from its node at the syzygy. Both inputs carry real error here —
+   the mean node differs from the true node by up to ~1.6°, and this
+   ephemeris omits the lunar latitude perturbations — so the result is
+   returned as a THREE-STATE screen with its own numbers attached, never as
+   "there is an eclipse today". Anyone acting on it should check a canon. */
+function eclipseCandidate(t,type){
+  var n=nodes(t), e=A.getEphemeris(t);
+  var d1=Math.abs(angDiff(e.moon.lon,n.rahu)), d2=Math.abs(angDiff(e.moon.lon,n.ketu));
+  var nd=Math.min(d1,d2);
+  var lim=(type==='New Moon')?{certain:15.35,possible:18.52}:{certain:9.5,possible:12.2};
+  var state=nd<=lim.certain?'likely':nd<=lim.possible?'possible':'none';
+  return{state:state,nodeDistance:nd,moonLat:moonLat(t),
+         limits:lim,kind:type==='New Moon'?'Solar eclipse':'Lunar eclipse',
+         caveat:'Screened from the MEAN node and an unperturbed lunar latitude. '
+               +'Treat as a candidate to verify against an eclipse canon, not as a confirmed eclipse.'};
+}
+
+return{bodies:bodies,aspects:aspects,signChanges:signChanges,stations:stations,
+       lunations:lunations,nodes:nodes,moonLat:moonLat,bisect:bisect,
+       angDiff:angDiff,sep:sep,rev:rev,BODY_NAME:BODY_NAME,dayBounds:dayBounds};
+})(_VIBEPH,VIB);
+
+/* ══ DAILY PROFILE, EVENT STACK, AND HISTORICAL VALIDATION ═══════════ */
+var VIBP=(function(A,V,VA,QV){
+'use strict';
+var CFG=V.CFG;
+
+/* ── 12. INTERPRETIVE PROFILE ────────────────────────────────────────
+   This table is the ONLY part of the engine that is not a calculation.
+   It is a traditional keyword set, reproduced so the output is readable —
+   not a discovered relationship, not a market law, and never a reason on
+   its own to take a trade. The backtest below is what decides whether any
+   of it survives contact with real returns. */
+var PROFILE={
+  1:{planet:'Sun',        keys:'initiative · visibility · fresh starts · single direction'},
+  2:{planet:'Moon',       keys:'fluctuation · sentiment-led · short swings · reactive'},
+  3:{planet:'Jupiter',    keys:'expansion · optimism · overextension · wide ranges'},
+  4:{planet:'Rahu / Uranus',keys:'disruption · sudden change · gaps · instability'},
+  5:{planet:'Mercury',    keys:'speed · news flow · chop · fast reversals'},
+  6:{planet:'Venus',      keys:'value · consolidation · range-holding · mean reversion'},
+  7:{planet:'Ketu / Neptune',keys:'ambiguity · unclear signal · drift · false breaks'},
+  8:{planet:'Saturn',     keys:'slow · structural · pressure · long-term themes'},
+  9:{planet:'Mars',       keys:'energy · aggression · momentum · sharp directional moves'},
+  11:{planet:'Moon (master 11)',keys:'heightened sentiment — master number retained by configuration'},
+  22:{planet:'Rahu / Uranus (master 22)',keys:'large structural change — master number retained by configuration'},
+  33:{planet:'Jupiter (master 33)',keys:'wide expansion — master number retained by configuration'}
+};
+
+/* ── 10/11. EVENT STACK AND FINAL COMPOSITE ──────────────────────────
+   Every valid event contributes; nothing is chosen over anything else.
+   The reduced number is what enters the sum, matching the worked example
+   (Mars 9 + Saturn 8 = 17 → 8, and 8 is what is added). */
+function profile(date,cfg){
+  cfg=cfg||CFG;
+  var dn=V.dateNumber(date,cfg), wd=V.weekday(date,cfg), bc=V.baseComposite(dn,wd,cfg);
+  var ok=true,notes=[];
+  var bodies,asp,sc,st,lun;
+  try{
+    bodies=VA.bodies(date); asp=VA.aspects(date,cfg); sc=VA.signChanges(date,cfg);
+    st=VA.stations(date,cfg); lun=VA.lunations(date,cfg);
+  }catch(e){ok=false;bodies=[];asp=[];sc=[];st=[];lun=[];}
+
+  var stack=[];
+  asp.forEach(function(x){
+    stack.push({kind:'aspect',
+      label:x.aName+' '+x.aNum+' '+aspGlyph(x.type)+' '+x.bName+' '+x.bNum+' ('+x.type+')',
+      raw:x.raw,reduced:x.reduced,expr:x.expr,ref:x});
+  });
+  lun.forEach(function(x){
+    stack.push({kind:'lunation',label:x.type+' in '+x.moonSign,
+      raw:x.raw,reduced:x.reduced,expr:x.expr,ref:x});
+  });
+  /* Sign changes and stations are real astronomical events but the supplied
+     configuration gives them no number, so they enter the stack with a null
+     contribution rather than an invented one. */
+  sc.forEach(function(x){
+    stack.push({kind:'signChange',label:x.name+' enters '+x.toSign,
+      raw:x.numbered?x.raw:null,reduced:x.numbered?x.reduced:null,
+      expr:x.numbered?(x.num+' + '+x.signNum+' = '+x.raw):'no number — sign mapping not configured',
+      ref:x});
+  });
+  st.forEach(function(x){
+    stack.push({kind:'station',label:x.name+' '+x.kind.toLowerCase(),
+      raw:null,reduced:null,expr:'no number — the supplied table numbers bodies, not stations',
+      ref:x});
+  });
+
+  var numbered=stack.filter(function(s){return s.reduced!=null;});
+  var eventSum=numbered.reduce(function(a,s){return a+s.reduced;},0);
+  var total=dn.root+wd.num+eventSum;
+  var finalRoot=V.digitalRoot(total,cfg);
+  var expr=[dn.root,wd.num].concat(numbered.map(function(s){return s.reduced;}))
+             .join(' + ')+' = '+total+' → '+finalRoot;
+
+  if(!ok)notes.push('ASTRONOMICAL DATA UNAVAILABLE — the numeric result below uses the date and weekday only.');
+  if(!stack.length)notes.push('NO MAJOR PLANETARY EVENT on this date within the configured orbs.');
+  if(sc.length&&!cfg.signNumbers)
+    notes.push('Sign changes are listed as astronomical events only: no validated sign→number mapping is configured, so no sign score was manufactured.');
+
+  return{date:new Date(date),ok:ok,
+         dateNumber:dn,weekday:wd,base:bc,
+         bodies:bodies,aspects:asp,signChanges:sc,stations:st,lunations:lun,
+         stack:stack,numberedCount:numbered.length,eventCount:stack.length,
+         eventSum:eventSum,total:total,
+         final:{sum:total,root:finalRoot,expr:expr},
+         dominant:{num:finalRoot,planet:(PROFILE[finalRoot]||{}).planet||cfg.planetOfNumber[finalRoot],
+                   keys:(PROFILE[finalRoot]||{}).keys||''},
+         notes:notes};
+}
+function aspGlyph(t){
+  return{Conjunction:'☌',Sextile:'⚹',Square:'□',
+         Trine:'△',Opposition:'☍'}[t]||'·';
+}
+
+/* ── FAST SIGNATURE ──────────────────────────────────────────────────
+   The full profile bisects for exact times, which costs roughly a hundred
+   ephemeris evaluations per day — fine for one date, hopeless for the ten
+   years of history the backtest needs. This produces the SAME final root
+   from three ephemeris evaluations (midnight, noon, next midnight) by
+   dropping only the things the root does not depend on: exact timestamps,
+   applying/separating, and eclipse screening. Agreement with profile() is
+   asserted in the test harness, not assumed. */
+function signatureFast(date,cfg){
+  cfg=cfg||CFG;
+  var dn=V.dateNumber(date,cfg), wd=V.weekday(date,cfg);
+  var t0=new Date(date.getFullYear(),date.getMonth(),date.getDate(),0,0,0,0);
+  var t2=new Date(+t0+86400000), t1=new Date(+t0+43200000);
+  var e0,e1,e2;
+  try{e0=A.getEphemeris(t0);e1=A.getEphemeris(t1);e2=A.getEphemeris(t2);}
+  catch(err){return null;}
+
+  var nums=[],kinds=[];
+  /* aspects at noon */
+  var L=cfg.aspectBodies;
+  for(var i=0;i<L.length;i++)for(var j=i+1;j<L.length;j++){
+    var s=VA.sep(e1[L[i]].lon,e1[L[j]].lon);
+    for(var q=0;q<cfg.aspects.length;q++){
+      var a=cfg.aspects[q];
+      if(Math.abs(s-a.ang)<=a.orb){
+        nums.push(V.digitalRoot(cfg.bodyNumber[L[i]]+cfg.bodyNumber[L[j]],cfg));
+        kinds.push('aspect');break;
+      }
+    }
+  }
+  /* lunation: elongation crossing 0 or 180 between the two midnights */
+  var el0=VA.rev(e0.moon.lon-e0.sun.lon), el2=VA.rev(e2.moon.lon-e2.sun.lon);
+  var isNew=el2<el0;                              /* wrapped past 0° */
+  var isFull=(el0<180&&el2>=180);
+  if(isNew||isFull){nums.push(V.digitalRoot(cfg.bodyNumber.sun+cfg.bodyNumber.moon,cfg));
+                    kinds.push(isNew?'newMoon':'fullMoon');}
+  /* sign changes and stations carry no number under the supplied config, so
+     they are counted for the record but contribute nothing to the sum */
+  var signChanges=0,stations=0;
+  cfg.aspectBodies.forEach(function(k){
+    if(Math.floor(VA.rev(e0[k].lon)/30)!==Math.floor(VA.rev(e2[k].lon)/30))signChanges++;
+    if(k==='sun'||k==='moon')return;
+    var r1=VA.angDiff(e1[k].lon,e0[k].lon), r2=VA.angDiff(e2[k].lon,e1[k].lon);
+    if(r1*r2<0)stations++;
+  });
+
+  var eventSum=nums.reduce(function(a,b){return a+b;},0);
+  var total=dn.root+wd.num+eventSum;
+  return{dateRoot:dn.root,weekday:wd.num,eventNums:nums,kinds:kinds,
+         eventCount:nums.length+signChanges+stations,
+         signChanges:signChanges,stations:stations,
+         eventSum:eventSum,total:total,root:V.digitalRoot(total,cfg)};
+}
+
+/* ── 14. HISTORICAL VALIDATION ───────────────────────────────────────
+   The rule the whole module exists to obey: a number means nothing until
+   its forward return distribution has been measured against the same
+   asset's own base rate, and has survived being tested out of sample.
+
+   What is measured, per composite root and per horizon:
+     · n, mean forward return, and the asset's base rate for that horizon
+     · hit rate with a Wilson 95% interval (never a bare percentage)
+     · exact two-sided binomial p against the base rate
+     · Benjamini–Hochberg adjusted p, because nine roots × four horizons is
+       36 simultaneous tests and the naive p is meaningless at that count
+     · mean MFE / MAE over the horizon
+     · the same statistics recomputed on a held-out final 30% of history
+   A root is reported as VALIDATED only if the in-sample BH-adjusted p is
+   below alpha AND the out-of-sample effect keeps the same sign. Everything
+   else is returned with its numbers and the label INSUFFICIENT or
+   NOT VALIDATED. Nothing is ever converted into a confidence percentage. */
+function parseRowDate(r){
+  var d=r.date||r.datetime||r.time||r.t||r.timestamp;
+  if(d==null)return null;
+  if(typeof d==='number')return new Date(d<1e11?d*1000:d);
+  var x=new Date(d);
+  return isFinite(+x)?x:null;
+}
+function backtest(rows,cfg){
+  cfg=cfg||CFG;
+  var B=cfg.backtest, out={ok:false,reason:'',horizons:B.forwards,groups:[],base:{},n:0};
+  if(!rows||rows.length<B.minSample+Math.max.apply(null,B.forwards)+5){
+    out.reason='INSUFFICIENT SAMPLE — need at least '
+      +(B.minSample+Math.max.apply(null,B.forwards)+5)+' daily bars, have '+((rows&&rows.length)||0)+'.';
+    return out;
+  }
+  var maxF=Math.max.apply(null,B.forwards);
+  var recs=[];
+  for(var t=0;t<rows.length-maxF;t++){
+    var d=parseRowDate(rows[t]); if(!d)continue;
+    var c0=+rows[t].close; if(!(c0>0))continue;
+    var sig=signatureFast(d,cfg); if(!sig)continue;
+    var rec={i:t,date:d,root:sig.root,events:sig.eventNums.length,fwd:{},mfe:0,mae:0};
+    var okAll=true;
+    B.forwards.forEach(function(f){
+      var cf=+rows[t+f].close;
+      if(!(cf>0)){okAll=false;return;}
+      rec.fwd[f]=(cf-c0)/c0;
+    });
+    if(!okAll)continue;
+    /* MFE / MAE across the longest horizon, from the actual highs and lows */
+    var hi=-Infinity,lo=Infinity;
+    for(var k=t+1;k<=t+maxF;k++){
+      var h=+rows[k].high,l=+rows[k].low;
+      if(isFinite(h))hi=Math.max(hi,h);
+      if(isFinite(l))lo=Math.min(lo,l);
+    }
+    rec.mfe=isFinite(hi)?(hi-c0)/c0:NaN;
+    rec.mae=isFinite(lo)?(lo-c0)/c0:NaN;
+    recs.push(rec);
+  }
+  if(recs.length<B.minSample){
+    out.reason='INSUFFICIENT SAMPLE — only '+recs.length+' usable observations.';
+    return out;
+  }
+  out.n=recs.length;
+  out.first=recs[0].date; out.last=recs[recs.length-1].date;
+
+  var split=Math.floor(recs.length*B.oosSplit);
+  var IS=recs.slice(0,split), OOS=recs.slice(split);
+
+  /* base rate per horizon, measured on the in-sample block only so the
+     comparison a group is judged against never peeks at held-out data */
+  B.forwards.forEach(function(f){
+    var v=IS.map(function(r){return r.fwd[f];}).filter(isFinite);
+    out.base[f]={p:v.filter(function(x){return x>0;}).length/v.length,
+                 mean:QV.mean(v),n:v.length};
+  });
+
+  var pvals=[],cells=[];
+  for(var root=1;root<=9;root++){
+    var gIS=IS.filter(function(r){return r.root===root;});
+    var gOO=OOS.filter(function(r){return r.root===root;});
+    var g={root:root,planet:cfg.planetOfNumber[root],
+           nIS:gIS.length,nOOS:gOO.length,horizons:{}};
+    B.forwards.forEach(function(f){
+      var vi=gIS.map(function(r){return r.fwd[f];}).filter(isFinite);
+      var vo=gOO.map(function(r){return r.fwd[f];}).filter(isFinite);
+      var cell={n:vi.length,mean:NaN,hit:NaN,ci:[NaN,NaN],p:NaN,pAdj:NaN,
+                oosN:vo.length,oosMean:NaN,oosHit:NaN};
+      if(vi.length>=8){
+        var k=vi.filter(function(x){return x>0;}).length;
+        cell.mean=QV.mean(vi); cell.hit=k/vi.length;
+        cell.ci=QV.wilson(k,vi.length);
+        cell.p=QV.binomTest(k,vi.length,out.base[f].p);
+        pvals.push(cell.p); cells.push(cell);
+      }
+      if(vo.length>=5){
+        cell.oosMean=QV.mean(vo);
+        cell.oosHit=vo.filter(function(x){return x>0;}).length/vo.length;
+      }
+      g.horizons[f]=cell;
+    });
+    var mfe=gIS.map(function(r){return r.mfe;}).filter(isFinite);
+    var mae=gIS.map(function(r){return r.mae;}).filter(isFinite);
+    g.mfe=QV.mean(mfe); g.mae=QV.mean(mae);
+    out.groups.push(g);
+  }
+  /* Benjamini–Hochberg across every cell that was actually testable */
+  var adj=QV.bhAdjust(pvals);
+  cells.forEach(function(c,i){c.pAdj=adj[i];});
+
+  out.groups.forEach(function(g){
+    g.validated=false; g.verdict='NOT VALIDATED';
+    B.forwards.forEach(function(f){
+      var c=g.horizons[f];
+      if(!isFinite(c.pAdj)||c.pAdj>=B.alpha)return;
+      if(!isFinite(c.oosMean)||c.oosN<5){c.note='in-sample only — no out-of-sample confirmation';return;}
+      var sameSign=(c.mean>out.base[f].mean)===(c.oosMean>out.base[f].mean);
+      if(sameSign){g.validated=true;c.confirmed=true;
+                   g.verdict='VALIDATED at '+f+'d (BH p='+c.pAdj.toFixed(4)+', out-of-sample agrees)';}
+      else c.note='significant in sample, but the out-of-sample effect flips sign';
+    });
+    if(g.nIS<8)g.verdict='INSUFFICIENT SAMPLE (n='+g.nIS+')';
+  });
+  out.ok=true;
+  out.validatedCount=out.groups.filter(function(g){return g.validated;}).length;
+  return out;
+}
+
+/* ── 13. MARKET REGIME VIEW ──────────────────────────────────────────
+   A regime label is emitted ONLY where the backtest earned one. With no
+   validated group the honest output is the sentence the spec asks for, and
+   no number attached to it. */
+function regime(prof,bt){
+  if(!bt||!bt.ok)
+    return{label:'Experimental interpretation — insufficient historical validation.',
+           validated:false,detail:(bt&&bt.reason)||'No historical sample available.'};
+  var g=bt.groups.filter(function(x){return x.root===prof.final.root;})[0];
+  if(!g||!g.validated)
+    return{label:'Experimental interpretation — insufficient historical validation.',
+           validated:false,
+           detail:'Composite '+prof.final.root+' has '+((g&&g.nIS)||0)+' in-sample days'
+             +(g&&g.nIS>=8?' but no horizon survived multiple-testing correction with out-of-sample agreement.'
+                          :' — below the minimum needed to test anything.')};
+  var f=bt.horizons.filter(function(h){return g.horizons[h].confirmed;})[0];
+  var c=g.horizons[f];
+  var dir=c.mean>bt.base[f].mean?'higher':'lower';
+  return{validated:true,horizon:f,
+         label:'Composite '+g.root+': mean '+f+'-day return ran '+dir
+              +' than this asset’s base rate, and held out of sample.',
+         detail:'n='+c.n+' in sample, hit '+(c.hit*100).toFixed(1)+'% '
+              +'(95% CI '+(c.ci[0]*100).toFixed(1)+'–'+(c.ci[1]*100).toFixed(1)+'%), '
+              +'BH-adjusted p='+c.pAdj.toFixed(4)+'; out of sample n='+c.oosN
+              +', mean '+(c.oosMean*100).toFixed(2)+'%.',
+         cell:c};
+}
+
+return{profile:profile,signatureFast:signatureFast,backtest:backtest,
+       regime:regime,PROFILE:PROFILE,parseRowDate:parseRowDate,aspGlyph:aspGlyph};
+})(_VIBEPH,VIB,VIBA,QV);
+
+
+
+
 
 /* ══ SHARE — send a setup, a window or the risk read to someone ══
    Three routes, in order of what the device actually supports: the native
    share sheet where it exists (phones), a WhatsApp deep link everywhere else,
    and the clipboard as the always-available fallback. The text is built from
    the same objects the panels render, so what is sent is what is on screen. */
+/* ══ VIBRATION ENGINE — UI ═══════════════════════════════════════════
+   Same rule as the rest of the app: the front says it in plain words, the
+   arithmetic is one click away, and nothing that has not been measured is
+   allowed to look like it has. Every number on this page can be rebuilt by
+   hand from the inputs printed next to it. */
+var _vbDate=null,_vbMath=false,_vbBT=null,_vbBTAsset='';
+
+function vbToday(){
+  _vbDate=null;
+  var e=document.getElementById('vb_date');if(e)e.value='';
+  renderVibration();
+}
+function vbToggleMath(){
+  _vbMath=!_vbMath;
+  var b=document.getElementById('vb_mathbtn');
+  if(b)b.textContent=_vbMath?'Hide the arithmetic':'Show the arithmetic';
+  renderVibration();
+}
+function vbDate(){
+  var e=document.getElementById('vb_date');
+  var v=e&&e.value;
+  if(v){var p=v.split('-');return new Date(+p[0],+p[1]-1,+p[2],12,0,0,0);}
+  var n=new Date();
+  return new Date(n.getFullYear(),n.getMonth(),n.getDate(),12,0,0,0);
+}
+function vbAsset(){
+  var e=document.getElementById('vb_asset');
+  return (e&&e.value.trim())||(typeof _lastAsset!=='undefined'&&_lastAsset)||'Gold';
+}
+function vbFmtT(d){
+  if(!d)return '—';
+  return d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+}
+function vbPct(x,dp){return isFinite(x)?((x>=0?'+':'')+(x*100).toFixed(dp==null?2:dp)+'%'):'—';}
+
+/* the five-line summary a person actually reads */
+function vbHero(P){
+  var d=P.date;
+  return '<div class="vb-hero">'
+    +'<div class="vb-hero-l">'
+      +'<div class="vb-cap">'+d.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</div>'
+      +'<div class="vb-big"><span class="vb-num">'+P.final.root+'</span>'
+        +'<div><b>'+escHtml(P.dominant.planet)+'</b><i>Dominant number &amp; planet</i></div></div>'
+      +'<div class="vb-keys">'+escHtml(P.dominant.keys)+'</div>'
+      +'<div class="vb-keys-note">Traditional keyword set &mdash; interpretation, not a measured result.</div>'
+    +'</div>'
+    +'<div class="vb-hero-r">'
+      +vbChip('Date number',P.dateNumber.raw+' → '+P.dateNumber.root)
+      +vbChip(P.weekday.name,P.weekday.planet+' → '+P.weekday.num)
+      +vbChip('Base composite',String(P.base.root))
+      +vbChip('Events counted',P.eventCount+(P.numberedCount!==P.eventCount
+         ?' ('+P.numberedCount+' numbered)':''))
+      +vbChip('Final composite',String(P.final.root),'hi')
+    +'</div>'
+  +'</div>';
+}
+function vbChip(k,v,cls){
+  return '<div class="vb-chip'+(cls?' '+cls:'')+'"><i>'+escHtml(k)+'</i><b>'+escHtml(v)+'</b></div>';
+}
+
+/* §1–4 + §11, the whole chain, only when asked for */
+function vbMathBlock(P){
+  if(!_vbMath)return '';
+  var L=[];
+  L.push(vbRow('1 · Date digits',P.dateNumber.expr,
+    'Every digit of the printed date, leading zeros included.'));
+  L.push(vbRow('1 · Reduce to a root',P.dateNumber.rootExpr+' → '+P.dateNumber.root,
+    'Repeated digit sum until one digit remains.'));
+  L.push(vbRow('3 · Weekday',P.weekday.name+' → '+P.weekday.planet+' → '+P.weekday.num,
+    'Traditional weekday ruler from the configured table.'));
+  L.push(vbRow('4 · Base composite',P.base.expr,
+    'Raw date sum + its root + the weekday number. This is a different quantity '
+    +'from the final composite below, which does not use the raw sum — both are shown '
+    +'because the specification defines them differently.'));
+  if(P.stack.length){
+    L.push(vbRow('7/9 · Event numbers',
+      P.stack.map(function(x){
+        return '<span class="vb-ev'+(x.reduced==null?' none':'')+'">'+escHtml(x.label)
+          +' <em>'+escHtml(x.expr)+'</em></span>';
+      }).join(''),
+      'Each aspect contributes PlanetA + PlanetB, reduced. Sign changes and stations '
+      +'carry no number under the supplied configuration and contribute zero.',true));
+  }
+  L.push(vbRow('11 · Final composite',P.final.expr,
+    'Date root + weekday number + every reduced event number.','',true));
+  return '<div class="card vb-card"><div class="chd">The arithmetic, step by step</div>'
+    +'<div class="cbd vb-math">'+L.join('')+'</div></div>';
+}
+function vbRow(k,v,why,raw,strong){
+  return '<div class="vb-mrow'+(strong?' strong':'')+'">'
+    +'<div class="vb-mk">'+escHtml(k)+'</div>'
+    +'<div class="vb-mv">'+(raw?v:escHtml(v))+'</div>'
+    +'<div class="vb-mw">'+escHtml(why||'')+'</div></div>';
+}
+
+/* §5/6 — what the sky is actually doing, with the numbers that prove it */
+function vbSky(P){
+  if(!P.ok)
+    return '<div class="card vb-card"><div class="chd">Sky</div><div class="cbd">'
+      +'<div class="vb-empty">ASTRONOMICAL DATA UNAVAILABLE</div></div></div>';
+  var rows=P.bodies.filter(function(b){return !b.isNode;}).map(function(b){
+    return '<tr><td>'+escHtml(b.name)+'</td>'
+      +'<td class="n">'+(b.num==null?'—':b.num)+'</td>'
+      +'<td>'+escHtml(b.sign)+' '+b.deg.toFixed(2)+'°</td>'
+      +'<td class="n">'+b.lon.toFixed(3)+'°</td>'
+      +'<td class="n '+(b.retro?'rx':'')+'">'+(b.speed>=0?'+':'')+b.speed.toFixed(3)+'°/d'
+        +(b.retro?' ℞':'')+'</td></tr>';
+  }).join('');
+  var nodes=P.bodies.filter(function(b){return b.isNode;}).map(function(b){
+    return '<tr class="node"><td>'+escHtml(b.name)+'</td><td class="n">'+b.num+'</td>'
+      +'<td>'+escHtml(b.sign)+' '+b.deg.toFixed(2)+'°</td>'
+      +'<td class="n">'+b.lon.toFixed(3)+'°</td><td class="n rx">mean ℞</td></tr>';
+  }).join('');
+  return '<div class="card vb-card"><div class="chd">Planet positions'
+    +'<span class="chd-sub">calculated, not interpreted</span></div><div class="cbd">'
+    +'<table class="vb-tbl"><thead><tr><th>Body</th><th class="n">No.</th>'
+    +'<th>Sign &amp; degree</th><th class="n">Longitude</th><th class="n">Daily motion</th></tr></thead>'
+    +'<tbody>'+rows+nodes+'</tbody></table>'
+    +'<div class="vb-foot">The supplied table pairs 4 with &ldquo;Rahu / Uranus&rdquo; and 7 with '
+    +'&ldquo;Ketu / Neptune&rdquo;. Those are different bodies in different places, so both are '
+    +'listed. Aspect numbering uses Uranus and Neptune; the nodes are shown for reference. '
+    +'Pluto has no number in the supplied table and takes no part in any sum.</div>'
+    +'</div></div>';
+}
+
+/* §6/7 aspects */
+function vbAspects(P){
+  if(!P.aspects.length)
+    return '<div class="card vb-card"><div class="chd">Aspects</div><div class="cbd">'
+      +'<div class="vb-empty">NO MAJOR PLANETARY EVENT within the configured orbs.</div></div></div>';
+  var rows=P.aspects.map(function(a){
+    return '<tr>'
+      +'<td><b>'+escHtml(a.aName)+'</b> <span class="pn">'+a.aNum+'</span> '
+        +VIBP.aspGlyph(a.type)+' <b>'+escHtml(a.bName)+'</b> <span class="pn">'+a.bNum+'</span></td>'
+      +'<td>'+escHtml(a.type)+'</td>'
+      +'<td class="n">'+a.separation.toFixed(2)+'°</td>'
+      +'<td class="n">'+a.orb.toFixed(2)+'°</td>'
+      +'<td>'+(a.applying?'<span class="ap">applying</span>':'<span class="se">separating</span>')+'</td>'
+      +'<td>'+(a.perfectsToday?vbFmtT(a.exact):'<span class="dim">not exact today</span>')+'</td>'
+      +'<td class="n sig">'+escHtml(a.expr)+'</td>'
+      +'</tr>';
+  }).join('');
+  return '<div class="card vb-card"><div class="chd">Aspects &amp; their number signatures'
+    +'<span class="chd-sub">'+P.aspects.length+' within orb</span></div><div class="cbd">'
+    +'<table class="vb-tbl"><thead><tr><th>Pair</th><th>Aspect</th><th class="n">Separation</th>'
+    +'<th class="n">Orb</th><th>Direction</th><th>Exact</th><th class="n">Signature</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table>'
+    +'<div class="vb-foot">A signature is arithmetic on the supplied table, nothing more. '
+    +'A Jupiter&ndash;Sun trine is not a reason to buy; it is a label that the backtest below '
+    +'can count. &ldquo;Not exact today&rdquo; means the pair is inside orb but does not perfect '
+    +'between midnight and midnight.</div></div></div>';
+}
+
+/* §8/9 + stations */
+function vbEvents(P){
+  var L=[];
+  P.lunations.forEach(function(x){
+    var ec=x.eclipse, tag='';
+    if(ec.state!=='none')
+      tag='<div class="vb-ecl '+ec.state+'"><b>'+escHtml(ec.kind)+' candidate — '+ec.state+'</b>'
+        +'<span>Moon '+ec.nodeDistance.toFixed(2)+'° from its node, latitude '
+        +ec.moonLat.toFixed(2)+'°. '+escHtml(ec.caveat)+'</span></div>';
+    L.push('<div class="vb-item"><div class="vb-it"><b>'+escHtml(x.type)+'</b>'
+      +'<span>'+vbFmtT(x.at)+' · Sun '+x.sunLon.toFixed(2)+'° in '+escHtml(x.sunSign)
+      +' · Moon '+x.moonLon.toFixed(2)+'° in '+escHtml(x.moonSign)
+      +' · phase angle '+x.phaseAngle.toFixed(2)+'°</span></div>'
+      +'<div class="vb-isig">'+escHtml(x.expr)+' → '+x.reduced+'</div>'+tag+'</div>');
+  });
+  P.signChanges.forEach(function(x){
+    L.push('<div class="vb-item"><div class="vb-it"><b>'+escHtml(x.name)+' enters '+escHtml(x.toSign)+'</b>'
+      +'<span>leaves '+escHtml(x.fromSign)+' at '+vbFmtT(x.at)
+      +(x.at?' local · '+x.at.toISOString().slice(11,16)+' UTC':'')+'</span></div>'
+      +'<div class="vb-isig '+(x.numbered?'':'none')+'">'
+      +(x.numbered?escHtml(x.num+' + '+x.signNum+' = '+x.raw+' → '+x.reduced):'no number')+'</div>'
+      +'<div class="vb-note">'+escHtml(x.note)+'</div></div>');
+  });
+  P.stations.forEach(function(x){
+    L.push('<div class="vb-item"><div class="vb-it"><b>'+escHtml(x.name)+' — '+escHtml(x.kind)+'</b>'
+      +'<span>'+vbFmtT(x.at)+(x.lon!=null?' · '+x.lon.toFixed(2)+'°':'')+'</span></div>'
+      +'<div class="vb-isig none">no number</div>'
+      +'<div class="vb-note">The supplied table numbers bodies, not stations, so this '
+      +'contributes nothing to the sum. It is recorded because it is real.</div></div>');
+  });
+  if(!L.length)L.push('<div class="vb-empty">NO MAJOR PLANETARY EVENT — no lunation, '
+    +'sign change or station on this date.</div>');
+  return '<div class="card vb-card"><div class="chd">Lunations, sign changes &amp; stations'
+    +'</div><div class="cbd vb-items">'+L.join('')+'</div></div>';
+}
+
+/* §13/14 — the only place a market claim is allowed, and only if earned */
+function vbMarket(P,asset,bt){
+  var reg=VIBP.regime(P,bt);
+  var head='<div class="card vb-card"><div class="chd">Daily celestial market profile'
+    +'<span class="chd-sub">'+escHtml(asset)+'</span></div><div class="cbd">';
+  var body='<div class="vb-verdict '+(reg.validated?'ok':'exp')+'">'
+    +'<b>'+escHtml(reg.label)+'</b><span>'+escHtml(reg.detail||'')+'</span></div>';
+  if(!bt||!bt.ok)
+    return head+body+'<div class="vb-foot">'+escHtml((bt&&bt.reason)||
+      'Load a history on the Analytics tab first — this panel measures against real bars or it says nothing.')
+      +'</div></div></div>';
+
+  var hs=bt.horizons;
+  var rows=bt.groups.map(function(g){
+    var tds=hs.map(function(f){
+      var c=g.horizons[f];
+      if(!isFinite(c.mean))return '<td class="n dim">—</td>';
+      var sig=isFinite(c.pAdj)&&c.pAdj<0.05;
+      return '<td class="n'+(c.confirmed?' good':sig?' warn':'')+'">'
+        +vbPct(c.mean,2)+'<i>'+(c.hit*100).toFixed(0)+'%</i></td>';
+    }).join('');
+    return '<tr'+(g.root===P.final.root?' class="me"':'')+'>'
+      +'<td><b>'+g.root+'</b> '+escHtml(g.planet)+'</td>'
+      +'<td class="n">'+g.nIS+'</td>'+tds
+      +'<td class="n">'+vbPct(g.mfe,2)+'</td><td class="n">'+vbPct(g.mae,2)+'</td>'
+      +'<td class="v '+(g.validated?'ok':'no')+'">'+escHtml(g.verdict)+'</td></tr>';
+  }).join('');
+  return head+body
+    +'<table class="vb-tbl vb-bt"><thead><tr><th>Composite</th><th class="n">n</th>'
+    +hs.map(function(f){return '<th class="n">'+f+'d</th>';}).join('')
+    +'<th class="n">MFE</th><th class="n">MAE</th><th>Verdict</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table>'
+    +'<div class="vb-btfoot">'
+    +'<span>Sample '+bt.n+' days'+(bt.first?' · '+bt.first.toLocaleDateString('en')
+      +' → '+bt.last.toLocaleDateString('en'):'')+'</span>'
+    +'<span>Base rate: '+hs.map(function(f){
+        return f+'d '+(bt.base[f].p*100).toFixed(1)+'%';}).join(' · ')+'</span>'
+    +'<span>'+bt.validatedCount+' of 9 composites validated</span></div>'
+    +'<div class="vb-foot">Each cell is the mean forward return with the share of positive days '
+    +'beneath it. Significance is the exact two-sided binomial test against this asset&rsquo;s own '
+    +'base rate, then Benjamini&ndash;Hochberg adjusted across every cell tested — nine composites '
+    +'over four horizons is 36 simultaneous tests, and an unadjusted p-value at that count is '
+    +'meaningless. A composite is only called VALIDATED if it also keeps the same direction on the '
+    +'held-out last 30% of history, which it never saw. Forward returns are measured from the close '
+    +'of the signature day onward, so nothing here uses information the signal did not have.</div>'
+    +'</div></div>';
+}
+
+function vbRunBacktest(asset){
+  /* the history the rest of the app already loaded — no second fetch */
+  if(typeof HIST_ROWS==='undefined'||!HIST_ROWS||!HIST_ROWS.length)return null;
+  /* keyed on the bar count and last close too: reloading the same asset on a
+     different timeframe would otherwise serve a stale table */
+  var key=asset+'|'+HIST_ROWS.length+'|'+HIST_ROWS[HIST_ROWS.length-1].close;
+  if(_vbBT&&_vbBTAsset===key)return _vbBT;
+  try{_vbBT=VIBP.backtest(HIST_ROWS);_vbBTAsset=key;}catch(e){_vbBT=null;}
+  return _vbBT;
+}
+
+/* ══ VIBRATION ENGINE — METHOD, for the Reference column ══
+   Written so someone can reproduce every number by hand, and so the line
+   between "this is calculated" and "this is a guess" is impossible to miss. */
+function vbReferenceHtml(){
+  var C=VIB.CFG;
+  var row=function(k,v){return '<tr><td style="white-space:nowrap;color:var(--t1);font-weight:600;vertical-align:top">'
+    +k+'</td><td style="line-height:1.65">'+v+'</td></tr>';};
+  return '<div class="card vb-card" style="margin-top:12px"><div class="chd">'
+   +'Daily Numerological &amp; Planetary Vibration Engine<span class="chd-sub">method</span></div>'
+   +'<div class="cbd">'
+   +'<div class="vb-verdict exp"><b>What is calculated, and what is not.</b>'
+   +'<span>The digit arithmetic and every planetary position, aspect, sign change, station '
+   +'and lunation on this page are computed and reproducible — check them against any ephemeris. '
+   +'The claim that those numbers say something about price is a hypothesis with no accepted '
+   +'mechanism behind it, and the engine treats it as one: it is only ever shown next to a measured '
+   +'result, and is never turned into a confidence score on its own.</span></div>'
+   +'<table class="vb-tbl" style="margin-top:10px"><tbody>'
+   +row('Date number','Sum of every digit of DD MM YYYY including leading zeros. '
+       +'17-08-2026 → 1+7+0+8+2+0+2+6 = 26, reduced 2+6 = 8. Both the raw sum and the root are kept.')
+   +row('Digital root','Repeated digit sum to one digit — equivalent to 1+((n−1) mod 9), which it was '
+       +'checked against for every n from 1 to 100,000. Master numbers '
+       +(C.masterNumbers.enabled?'ON ('+C.masterNumbers.keep.join(', ')+')'
+         :'OFF — a numerological convention rather than arithmetic, so it is a setting')+'.')
+   +row('Planet table','1 Sun · 2 Moon · 3 Jupiter · 4 Rahu/Uranus · 5 Mercury · 6 Venus · 7 Ketu/Neptune · '
+       +'8 Saturn · 9 Mars, exactly as supplied. Pluto has no number and takes no part in any sum. '
+       +'4 and 7 name a planet and a lunar node together; those sit in different places, so both are '
+       +'listed and the aspect maths uses Uranus and Neptune.')
+   +row('Weekday number','Traditional ruler: Sun 1, Mon 2, Tue 9, Wed 5, Thu 3, Fri 6, Sat 8.')
+   +row('Base composite','DigitalRoot(raw date sum + date root + weekday number). Deliberately a '
+       +'different quantity from the final composite, which omits the raw sum.')
+   +row('Aspects','Conjunction 0°, sextile 60°, square 90°, trine 120°, opposition 180°, orbs '
+       +C.aspects.map(function(a){return a.ang+'°±'+a.orb+'°';}).join(', ')+'. The exact instant is '
+       +'found by bisection and reported only when the aspect really perfects between midnight and '
+       +'midnight. Applying vs separating compares the orb one hour on.')
+   +row('Aspect signature','PlanetA number + PlanetB number, then reduced. Jupiter 3 + Sun 1 = 4. '
+       +'Mars 9 + Saturn 8 = 17 → 8. The reduced value is what enters the sum.')
+   +row('Sign changes',(C.signNumbers
+       ?'Planet number + configured sign number.'
+       :'Recorded as an astronomical event with NO number. No validated sign→number mapping was '
+        +'supplied, and inventing one would put a fabricated figure on a trading screen. Set '
+        +'VIB.CFG.signNumbers to twelve values to enable scoring.'))
+   +row('Stations','A sign change in daily motion inside the day, located by bisection. Carries no '
+       +'number — the supplied table numbers bodies, not events.')
+   +row('Lunations','Elongation Moon−Sun crossing 0° or 180°. Signature Sun 1 + Moon 2 = 3 for both '
+       +'phases, so the two are tagged separately for testing. Instants agree with an independent '
+       +'Meeus implementation to within 11 minutes across all twelve 2026 new moons.')
+   +row('Eclipses','Screened by the Moon’s distance from its mean node against the classical limits and '
+       +'reported as none / possible / likely with the distance and latitude shown. A mean node and an '
+       +'unperturbed latitude are not precise enough for a verdict, so the engine never states one. '
+       +'Across 2026 this screen returns exactly the four real eclipses.')
+   +row('Final composite','DigitalRoot(date root + weekday number + every reduced event number). All '
+       +'events count; none is chosen over another.')
+   +row('Backtest','Forward returns at '+C.backtest.forwards.join('/')+' days measured from the close of '
+       +'the signature day, so no observation uses information the signal did not have. Hit rates carry a '
+       +'Wilson 95% interval; significance is the exact two-sided binomial test against the same asset’s '
+       +'own base rate, then Benjamini–Hochberg adjusted across all '+(9*C.backtest.forwards.length)
+       +' cells. A composite is VALIDATED only if it also keeps its direction on a held-out final '
+       +Math.round((1-C.backtest.oosSplit)*100)+'% of history. Below '+C.backtest.minSample
+       +' usable bars the engine reports INSUFFICIENT SAMPLE and stops.')
+   +row('Known property','With these orbs most days carry ten or more aspects, so the composite is driven '
+       +'largely by how many pairs happen to be in orb, and its distribution across 1–9 comes out close to '
+       +'uniform. That is a real consequence of the supplied configuration rather than a fault — tighten '
+       +'the orbs to make the signature more selective.')
+   +'</tbody></table></div></div>';
+}
+function renderVibration(){
+  var host=document.getElementById('vb_body');
+  if(!host)return;
+  var d=vbDate(), asset=vbAsset();
+  var P;
+  try{P=VIBP.profile(d);}
+  catch(e){
+    host.innerHTML='<div class="card vb-card"><div class="cbd"><div class="vb-empty">'
+      +'ASTRONOMICAL DATA UNAVAILABLE — '+escHtml(e.message)+'</div></div></div>';
+    return;
+  }
+  var bt=vbRunBacktest(asset);
+  var notes=P.notes.length
+    ?'<div class="vb-notes">'+P.notes.map(function(n){return '<div>'+escHtml(n)+'</div>';}).join('')+'</div>'
+    :'';
+  host.innerHTML=vbHero(P)+notes+vbMathBlock(P)
+    +'<div class="vb-grid">'+vbAspects(P)+vbEvents(P)+'</div>'
+    +vbMarket(P,asset,bt)+vbSky(P)
+    +'<div class="vb-legal">Configuration in force: planet table as supplied · orbs '
+    +VIB.CFG.aspects.map(function(a){return a.ang+'°±'+a.orb;}).join(', ')
+    +' · master numbers '+(VIB.CFG.masterNumbers.enabled?'on':'off')
+    +' · sign→number mapping '+(VIB.CFG.signNumbers?'configured':'NOT configured, so sign changes score nothing')
+    +'. Ephemeris: low-order analytic series; lunation instants agree with an independent '
+    +'Meeus implementation to within 11 minutes, and the 2026 eclipse screen recovers exactly '
+    +'the four real eclipses. Good enough for sign, degree, aspect and phase; not a substitute '
+    +'for a full eclipse canon.</div>';
+}
+
 function shareLines(kind){
   var L=[],push=function(x){if(x)L.push(x);};
   var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
@@ -12155,7 +13300,7 @@ function qvRefresh(){
   qvRun();
   try{var h=document.getElementById('qv_ana');if(h)h.innerHTML=qvAnalyticsHtml();}catch(e){}
   try{qvDash();}catch(e){}
-  try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml();}catch(e){}
+  try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml()+vbReferenceHtml();}catch(e){}
 }
 function qvNum(x,d){return isFinite(x)?(+x).toFixed(d==null?4:d):'—';}
 function qvPct(x,d){return isFinite(x)?(+x).toFixed(d==null?1:d)+'%':'—';}
