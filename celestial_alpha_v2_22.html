@@ -4911,6 +4911,38 @@ function bodyDegreeStrength(lon){
   var distFromMid=Math.abs(degInSign-15);
   return 1-(distFromMid/15)*0.45;
 }
+/* ══ WHY THE VOTES ARE SCALED ══════════════════════════════════════════
+   Each body votes bullish in one list of signs and bearish in another. Those
+   lists were not the same length. The default table — which every asset
+   outside the six named ones falls through to — named SIX bullish signs and
+   TWO bearish ones, so a body wandering evenly round the zodiac spent three
+   times as long voting up as down. Measured over 2024–2026 that produced 912
+   bullish days against 46 bearish: a meter pinned to bull before the sky was
+   even consulted.
+
+   The fix adds no astrology and removes none. Every correspondence the tables
+   assert is kept exactly as written; each sign's vote is simply divided by how
+   many signs share its side, so a body's EXPECTED vote over a full circuit of
+   the zodiac is zero and any tilt that remains comes from the sky rather than
+   from the bookkeeping. The scale factor (nb+ns)/2 keeps the magnitude where
+   it was: for a table that was already balanced the arithmetic is unchanged.
+
+       bullish sign →  +w · strength · ((nb+ns)/2) / nb
+       bearish sign →  −w · strength · ((nb+ns)/2) / ns
+
+   With 6 bull and 2 bear that is +0.67w each and −2w each: six ups and two
+   downs now cancel exactly, instead of summing to +4w every circuit. */
+function biasNorm(biasDef){
+  var nb=(biasDef.b||[]).length, ns=(biasDef.s||[]).length;
+  if(!nb||!ns)return{bull:nb?1:0,bear:ns?1:0};
+  var mid=(nb+ns)/2;
+  return{bull:mid/nb,bear:mid/ns};
+}
+/* the largest score this body can contribute, used to scale the percentage */
+function biasMax(biasDef,weight){
+  var k=biasNorm(biasDef);
+  return weight*Math.max(k.bull,k.bear);
+}
 function bodyBiasScore(bodyKey,eph,biasDef,weight,refDate){
   if(!eph||!eph[bodyKey])return{contrib:0,dir:'neutral',sign:null};
   var lon=eph[bodyKey].lon;
@@ -4918,11 +4950,21 @@ function bodyBiasScore(bodyKey,eph,biasDef,weight,refDate){
   var strength=bodyDegreeStrength(lon);
   /* the retro test has to run on the day being scored — scanning next week for
      the best day used to check today's Mercury for every one of those days */
+  var k=biasNorm(biasDef);
+  /* Retrograde overrides the sign vote, and it has to do so on the SAME scale
+     as every other bearish vote — it used to return the raw weight while the
+     sign votes around it were scaled, so on a lopsided table the two disagreed
+     about what one unit of bearish meant. This is a one-sided claim the config
+     makes on purpose (Mercury retrograde reads bearish for this asset) and it
+     is left standing; on EUR/USD it runs 19% of days and shifts the series by
+     about a third of a point, which is the config's assertion doing its job
+     rather than a bookkeeping artefact. */
   if(biasDef.retro&&bodyKey==='mercury'&&lonRate('mercury',refDate||new Date())<0){
-    return{contrib:-weight*strength,dir:'bear',sign:s+' (Retrograde)'};
+    return{contrib:-weight*strength*k.bear,dir:'bear',sign:s+' (Retrograde)'};
   }
   var dir=biasDef.b.indexOf(s)>=0?'bull':biasDef.s.indexOf(s)>=0?'bear':'neutral';
-  var contrib=dir==='bull'?weight*strength:dir==='bear'?-weight*strength:0;
+  var contrib=dir==='bull'?weight*strength*k.bull
+             :dir==='bear'?-weight*strength*k.bear:0;
   return{contrib:contrib,dir:dir,sign:s};
 }
 function calcAstroBias(assetName,eph,refDate){
@@ -4942,10 +4984,18 @@ function calcAstroBias(assetName,eph,refDate){
   var toneBias={b:['Aries','Leo','Sagittarius','Cancer','Taurus','Gemini'],s:['Capricorn','Virgo','Scorpio','Libra']};
   var r4=bodyBiasScore('saturn',eph,toneBias,0.8,refDate);
   score+=r4.contrib;
-  var maxScore=7.8;
+  /* The ceiling is what THIS asset's own tables can actually reach, not a
+     fixed 7.8 — the scaling above lets a body on the short side of a lopsided
+     list contribute more than its raw weight, and a constant denominator would
+     have quietly clipped those days to the ends of the meter. */
+  var maxScore=biasMax(d.p2b,3)+biasMax(d.p1b,2.5)+biasMax(d.p3b,1.5)+biasMax(toneBias,0.8);
   var bullPct=Math.max(8,Math.min(92,Math.round(50+(score/maxScore)*42)));
+  /* The label is read off the same number the meter shows, so the two can
+     never disagree — it used to be possible to print 58% bull and call it
+     neutral, because the word came from a separate threshold on the raw score. */
+  var dir=bullPct>=56?'bull':bullPct<=44?'bear':'neutral';
   return{score:score,bull:bullPct,bear:100-bullPct,factors:factors,
-         dir:score>0.8?'bull':score<-0.8?'bear':'neutral'};
+         maxScore:maxScore,dir:dir};
 }
 
 
@@ -5218,8 +5268,8 @@ function priceToGannDeg(price){var root=Math.sqrt(price);return((root%2)/2)*360;
    CONFIDENCE SCORING
    Gann(40%) + Sigma(25%) + Astro(25%) + Timing(10%)
 ══════════════════════════════════════ */
-function calcSignalConf(gannScore,astroScore,timingMatch,levels,price){
-  return confParts(gannScore,astroScore,timingMatch,levels,price).conf;
+function calcSignalConf(gannScore,astroBull,timingMatch,levels,price){
+  return confParts(gannScore,astroBull,timingMatch,levels,price).conf;
 }
 /* ══ THE FOUR TERMS BEHIND THE CONFIDENCE ══
    The dashboard matrix used to invent its own four numbers — a trend score
@@ -5233,12 +5283,17 @@ function calcSignalConf(gannScore,astroScore,timingMatch,levels,price){
    exactly four weighted terms. They are returned here so the matrix can show
    the real inputs: the big ring is the weighted mean of the four small ones,
    by construction, and can no longer disagree with them. */
-function confParts(gannScore,astroScore,timingMatch,levels,price){
+function confParts(gannScore,astroBull,timingMatch,levels,price){
   var gannNorm=Math.min(100,Math.round(gannScore*8)); // max level score ~12
   var sigma=levels&&levels.length?levels[0].sigma:4;
   var sigmaNorm=Math.round((1-Math.min(sigma,4)/4)*100);
-  /* astroScore spans roughly ±7.8, so clamp before it is weighted into the blend */
-  var astroNorm=Math.max(0,Math.min(100,Math.round(50+astroScore*6.25)));
+  /* This term takes the bias meter's OWN percentage rather than re-deriving one
+     from the raw score. The old line assumed the score spanned ±7.8 and mapped
+     it with a hardcoded 6.25; once each asset's sign votes were normalised the
+     achievable range became asset-specific, the assumption went stale, and the
+     dashboard's Cycle Bias ring stopped matching the timing meter even though
+     both came from the same reading. One number now, computed once. */
+  var astroNorm=Math.max(0,Math.min(100,Math.round(astroBull)));
   var timingNorm=timingMatch?100:30;
   var raw=gannNorm*0.40+sigmaNorm*0.25+astroNorm*0.25+timingNorm*0.10;
   return{
@@ -5253,8 +5308,9 @@ function confParts(gannScore,astroScore,timingMatch,levels,price){
        long:(levels&&levels.length
          ?'The nearest aligned level sits '+sigma.toFixed(1)+' sigma bands from price. Closer scores higher.'
          :'No aligned level inside the scan range, so this term falls back to the 4σ floor.')},
-      {k:'Cycle Bias',    v:astroNorm, w:25, s:'astro '+(astroScore>=0?'+':'')+(+astroScore||0).toFixed(1),
-       long:'Astro bias score '+(astroScore>=0?'+':'')+(+astroScore||0).toFixed(1)+' on a ±7.8 scale, mapped so 0 sits at 50%.'},
+      {k:'Cycle Bias',    v:astroNorm, w:25, s:astroNorm+'% bull',
+       long:'The cycle-bias meter for this asset, the same number the Timing tab shows: '
+           +astroNorm+'% bull. 50% means the sky is saying nothing either way.'},
       {k:'Hour Match',    v:timingNorm,w:10, s:timingMatch?'match':'no match',
        long:timingMatch?'The current planetary hour carries this asset\u2019s cycle number.'
                        :'The current planetary hour does not carry this asset\u2019s cycle number, so this term sits at its 30% floor.'}
@@ -5276,7 +5332,7 @@ function buildSignal(price,vibNum,astro,levels,risk,eph,trend){
 
   // Calculate confidence
   var topLevel=levels[0];
-  var _cp=confParts(topLevel?topLevel.score:0,astro.score,timingMatch,levels,price);
+  var _cp=confParts(topLevel?topLevel.score:0,astro.bull,timingMatch,levels,price);
   var conf=_cp.conf;
 
   /* Thresholds are calibrated against the engine's real confidence distribution
@@ -6214,11 +6270,29 @@ function aspectRead(x,assetName,eph){
   var w=ra.w+rb.w;
   var signNet=ra.sign*ra.w+rb.sign*rb.w;
   var base=x.asp.tone;
+  /* ══ WHERE THE DIRECTION COMES FROM ══
+     This used to read:
+         base>0 → signNet<0 ? flat : bull
+         base<0 → signNet>0 ? flat : bear
+     which had two faults. A harmonious angle could never come out bearish and
+     a hard angle could never come out bullish, so the angle decided direction
+     on its own; and signNet===0 — the ordinary case, both bodies in signs the
+     table takes no view on — fell through to bull. Every sextile and trine
+     with neutral placements therefore printed BULLISH, which is why the panel
+     read bullish almost every day.
+
+     Direction now comes only from where the bodies actually sit, using the
+     same sign tables the bias meter uses. The angle decides how CLEAN that
+     direction is, which is what the descriptions beneath each angle already
+     claim: a trine lets the placement follow through, a square is friction and
+     chop — and chop is not a direction. Nothing new is asserted; the two
+     inputs are just no longer allowed to overwrite each other. */
+  var dir=signNet>0?'bull':signNet<0?'bear':'flat';
+  var decisive=w?Math.abs(signNet)>=w/2:false;
   var tone;
-  if(!w)                     tone='flat';
-  else if(base===0)          tone=signNet>0?'bull':signNet<0?'bear':'flat';
-  else if(base>0)            tone=signNet<0?'flat':'bull';
-  else                       tone=signNet>0?'flat':'bear';
+  if(!w||dir==='flat')       tone='flat';   /* no view from the placements */
+  else if(base>=0)           tone=dir;      /* flowing, or a conjunction amplifying it */
+  else                       tone=decisive?dir:'flat';  /* friction unless the placement is decisive */
 
   var na=PLANET_NAME[x.a]||x.a, nb=PLANET_NAME[x.b]||x.b;
   var lead=ra.w>=rb.w?{b:x.a,n:na,r:ra}:{b:x.b,n:nb,r:rb};
@@ -6230,10 +6304,22 @@ function aspectRead(x,assetName,eph){
     var placed=lead.r.sign>0?'sits in '+lead.r.zone+', a zone it likes'
              :lead.r.sign<0?'sits in '+lead.r.zone+', a zone that works against it'
              :'sits in '+lead.r.zone+', a neutral zone';
-    var eff=tone==='bull'?'net bullish pressure on '+assetName
-           :tone==='bear'?'net bearish pressure on '+assetName
-           :'pressure that cancels out — treat it as neutral for '+assetName;
-    why=lead.n+' is '+assetName+'’s '+rank+' and '+placed+'. With this angle that gives '+eff+'.';
+    var eff;
+    if(tone==='flat'&&dir==='flat')
+      eff='the two bodies sit in zones that cancel, so this angle gives no direction for '+assetName+'.';
+    else if(tone==='flat')
+      eff='the placements lean '+(dir==='bull'?'up':'down')+', but this is a friction angle and they are '
+         +'not decisive enough to call — expect it fought over rather than trending.';
+    else if(base>0)
+      eff='net '+(tone==='bull'?'bullish':'bearish')+' pressure on '+assetName
+         +', and this is a flowing angle, so that direction tends to follow through.';
+    else if(base===0)
+      eff='net '+(tone==='bull'?'bullish':'bearish')+' pressure on '+assetName
+         +', amplified — a conjunction magnifies whatever the placements already say.';
+    else
+      eff='net '+(tone==='bull'?'bullish':'bearish')+' pressure on '+assetName
+         +', but through a friction angle — the move should be contested on the way.';
+    why=lead.n+' is '+assetName+'’s '+rank+' and '+placed+'. With this angle, '+eff;
   }
   return{tone:tone,w:w,na:na,nb:nb,why:why,
     head:na+' '+x.asp.s+' '+nb,
