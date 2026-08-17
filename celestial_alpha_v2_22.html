@@ -3226,7 +3226,9 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 }
 
 /* ══ VIBRATION ENGINE ══ */
-#pane_vibration{padding:14px;overflow-y:auto}
+/* Daily Bias sits inside Analytics, so it needs a rule of its own rather
+   than a pane wrapper — a separator above it and matching side padding. */
+.vb-sec{margin-top:16px;padding-top:16px;border-top:1px solid var(--b1)}
 .vb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px;flex-wrap:wrap}
 .vb-title{font-size:22px;font-weight:600;color:var(--t1);letter-spacing:-.01em}
 .vb-sub{font-size:11px;color:var(--t3);margin-top:3px}
@@ -3256,7 +3258,7 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
 .vb-keys{margin-top:10px;font-size:12px;color:var(--p3)}
 .vb-keys-note{margin-top:3px;font-size:9px;color:var(--t3);font-style:italic}
-.vb-hero-r{display:grid;grid-template-columns:repeat(5,minmax(0,110px));gap:7px}
+.vb-hero-r{display:grid;grid-template-columns:repeat(5,minmax(0,122px));gap:7px}
 .vb-chip{border:1px solid var(--b1);border-radius:7px;padding:7px 8px;background:rgba(7,6,21,.6);min-width:0}
 .vb-chip i{display:block;font-style:normal;font-size:8px;letter-spacing:.06em;
   text-transform:uppercase;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -3354,7 +3356,6 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
     <div class="nav-item on" onclick='goTab("dashboard",this)'><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Dashboard</div>
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
-    <div class="nav-item" onclick='goTab("vibration",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/></svg>Vibration Engine</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Market Intelligence</div>
     <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
     <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>Stock Fundamentals</div>
@@ -3909,6 +3910,28 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
         </div>
         </div>
         <div id="ana_new"></div>
+
+        <!-- ══ DAILY BIAS — the numerological & planetary vibration engine ══ -->
+        <div class="vb-sec" id="vb_section">
+  <div class="vb-head">
+    <div>
+      <h2 class="vb-title">Daily Bias</h2>
+      <div class="vb-sub">Date number · weekday planet · real sky events · composite &mdash; every step shown</div>
+    </div>
+    <div class="vb-ctl">
+      <label>Date<input type="date" id="vb_date" onchange="renderVibration()"></label>
+      <button class="btn btn-g btn-sm" onclick="vbToday()">Today</button>
+      <button class="btn btn-g btn-sm" onclick="vbToggleMath()" id="vb_mathbtn">Show the arithmetic</button>
+    </div>
+  </div>
+  <div class="vb-warn">
+    <b>Research framework.</b> Nothing on this page is evidence that numbers or planetary
+    geometry move price. The astronomy is calculated and checkable; the market meaning is a
+    hypothesis, and it stays labelled as one until the backtest below earns otherwise.
+  </div>
+  <div id="vb_body"></div>
+
+        </div>
       </div>
 
 <!-- hidden stubs so bot/scalp status writes from runAI() don't error in standalone.
@@ -3926,29 +3949,7 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   <span id="bi_timing"></span><span id="bs_timing"></span>
 </div>
 
-      <!-- ═══════════ DAILY NUMEROLOGICAL & PLANETARY VIBRATION ENGINE ═══════════ -->
-<div class="pane hidden" id="pane_vibration">
-  <div class="vb-head">
-    <div>
-      <h2 class="vb-title">Daily Celestial Profile</h2>
-      <div class="vb-sub">Date number · weekday planet · real sky events · composite &mdash; every step shown</div>
-    </div>
-    <div class="vb-ctl">
-      <label>Date<input type="date" id="vb_date" onchange="renderVibration()"></label>
-      <label>Asset<input type="text" id="vb_asset" placeholder="Gold" onchange="renderVibration()"></label>
-      <button class="btn btn-g btn-sm" onclick="vbToday()">Today</button>
-      <button class="btn btn-g btn-sm" onclick="vbToggleMath()" id="vb_mathbtn">Show the arithmetic</button>
-    </div>
-  </div>
-  <div class="vb-warn">
-    <b>Research framework.</b> Nothing on this page is evidence that numbers or planetary
-    geometry move price. The astronomy is calculated and checkable; the market meaning is a
-    hypothesis, and it stays labelled as one until the backtest below earns otherwise.
-  </div>
-  <div id="vb_body"></div>
-</div>
-
-<div class="pane hidden" id="pane_fundamentals">
+      <div class="pane hidden" id="pane_fundamentals">
         <div class="card">
           <div class="ch">
             <div class="ct"><div class="dot" style="background:var(--green)"></div>Fundamentals — what the company is</div>
@@ -6059,6 +6060,11 @@ function anaLadder(pts,price,lo,hi,dp,S,dir){
     +'<div class="tl">'+rail+'<div class="tl-list">'+rows+'</div></div>';
 }
 function renderAnalytics(){
+  /* Daily Bias is a section of this board, so it redraws whenever the board
+     does — and it sits ABOVE the no-price early return below, because the
+     astronomy needs a date, not a price, and should still be readable before
+     an asset has been priced. */
+  try{renderVibration();}catch(e){console.error('daily bias:',e);}
   var host=document.getElementById('ana_new');
   if(!host)return;
   var B=window._lastBias||{}, T=window._lastTrend, S=window._lastSig;
@@ -9249,7 +9255,7 @@ renderJ=function(){
 };
 
 /* == MULTI-PANE SHELL == */
-var TABS_LIST=['dashboard','analytics','timing','vibration','fundamentals','sentiment','portfolio','bot','announcements','reference'];
+var TABS_LIST=['dashboard','analytics','timing','fundamentals','sentiment','portfolio','bot','announcements','reference'];
 function goTab(name,btn){
   TABS_LIST.forEach(function(t){
     var el=document.getElementById('pane_'+t);
@@ -9265,7 +9271,7 @@ function goTab(name,btn){
     try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
   }
   if(name==='sentiment'){renderSentiment();}
-  if(name==='vibration'){try{renderVibration();}catch(e){console.error('vibration:',e);}}
+
   if(name==='fundamentals'){try{renderFundamentals();}catch(e){console.error('fundamentals:',e);}}
   if(name==='reference'){
     /* compute on demand — opening Reference before Analytics used to show an
@@ -12681,8 +12687,10 @@ function vbDate(){
   var n=new Date();
   return new Date(n.getFullYear(),n.getMonth(),n.getDate(),12,0,0,0);
 }
+/* Daily Bias lives inside Analytics, so it reads whatever Analytics is
+   analysing rather than carrying a second asset box that could disagree. */
 function vbAsset(){
-  var e=document.getElementById('vb_asset');
+  var e=document.getElementById('ai_asset_txt');
   return (e&&e.value.trim())||(typeof _lastAsset!=='undefined'&&_lastAsset)||'Gold';
 }
 function vbFmtT(d){
@@ -12706,8 +12714,10 @@ function vbHero(P){
       +vbChip('Date number',P.dateNumber.raw+' → '+P.dateNumber.root)
       +vbChip(P.weekday.name,P.weekday.planet+' → '+P.weekday.num)
       +vbChip('Base composite',String(P.base.root))
-      +vbChip('Events counted',P.eventCount+(P.numberedCount!==P.eventCount
-         ?' ('+P.numberedCount+' numbered)':''))
+      /* the count stays in the value and the qualifier moves to the label —
+         "12 (11 numbered)" wrapped the chip onto a second line */
+      +vbChip('Events'+(P.numberedCount!==P.eventCount?' · '+P.numberedCount+' scored':' counted'),
+              String(P.eventCount))
       +vbChip('Final composite',String(P.final.root),'hi')
     +'</div>'
   +'</div>';
