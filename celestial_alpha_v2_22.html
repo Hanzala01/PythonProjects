@@ -3470,6 +3470,62 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 .sn-macr span{grid-area:d;font-size:8px;color:var(--t3);white-space:nowrap}
 .sn-macn{font-size:8.5px;color:var(--t3);margin-top:8px;line-height:1.6}
 @media (max-width:1450px){.sn-mac{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* three ladders, the original row design */
+.mj-blk{border:1px solid var(--b1);border-radius:10px;padding:11px 13px;margin-bottom:12px;
+  background:rgba(7,6,21,.4)}
+.mj-blk.hi{border-color:rgba(239,68,68,.26)}
+.mj-blk.lo{border-color:rgba(16,185,129,.26)}
+.mj-blk.now{border-color:rgba(139,92,246,.3)}
+.mj-bh{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:2px}
+.mj-bh b{font-size:11.5px;font-weight:600;color:var(--t1);letter-spacing:.02em}
+.mj-bh span{font-size:9px;color:var(--t3)}
+.mj-blk .mj-strip{grid-template-columns:repeat(4,minmax(0,1fr));margin:8px 0 10px}
+.mj-blk .mj-s b{font-size:14px}
+.mj-blk .mj-s b.cr{color:var(--red)} .mj-blk .mj-s b.cg{color:var(--green)}
+.mj-blk .mj-dn i,.mj-blk .mj-up i{font-size:8.5px;white-space:nowrap}
+@media (max-width:1450px){
+  .mj-row{grid-template-columns:54px 1fr 1.2fr 1fr 60px;gap:8px}
+  .mj-blk .mj-dn b,.mj-blk .mj-up b{font-size:12px}
+  .mj-blk .mj-s b{font-size:12.5px}
+}
+
+/* ── GUTTER ──
+   .shell had gap:0!important from the dashboard spec work, and only
+   #pane_dashboard carried its own padding. Every other tab therefore started
+   at x=236 with the sidebar ending at 236 — content pressed flat against the
+   nav with nothing between them. Same 12px the dashboard already uses, plus
+   breathing room on the right so nothing sits flush to the window edge. */
+#pane_analytics,#pane_timing,#pane_sentiment,#pane_portfolio,
+#pane_fundamentals,#pane_bot,#pane_reference,#pane_announcements{
+  padding:12px 16px 12px 12px}
+
+/* ── MARKET INTELLIGENCE HERO, flat ── */
+.sn-hero2{border:1px solid var(--b1);border-radius:10px;padding:13px 15px;margin-bottom:12px;
+  background:rgba(7,6,21,.5)}
+.sn-hero2.amber{border-color:rgba(245,158,11,.35)}
+.sn-hero2.red{border-color:rgba(239,68,68,.4)}
+.sn-h2top{display:flex;align-items:center;gap:13px}
+.sn-pill{flex:none;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  border:1px solid;border-radius:99px;padding:4px 11px;white-space:nowrap}
+.sn-h2t{flex:1;min-width:0}
+.sn-h2t b{display:block;font-size:16px;font-weight:600;color:var(--t1);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.sn-h2t i{display:block;font-style:normal;font-size:9.5px;color:var(--t3);margin-top:2px}
+.sn-h2c{flex:none;text-align:right}
+.sn-h2c b{display:block;font-size:19px;font-weight:600;color:var(--t1);
+  font-variant-numeric:tabular-nums;line-height:1.1}
+.sn-h2c i{display:block;font-style:normal;font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--t3);margin-top:2px}
+.sn-h2bar{height:3px;border-radius:2px;background:rgba(148,138,180,.16);overflow:hidden;margin:11px 0 9px}
+.sn-h2bar span{display:block;height:100%;border-radius:2px}
+.sn-h2say{font-size:11px;color:var(--t2);line-height:1.6}
+.sn-h2do{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sn-h2do span{font-size:10px;color:var(--t2);border:1px solid var(--b1);border-radius:6px;
+  padding:5px 9px;background:rgba(7,6,21,.5)}
+.sn-h2do span i{font-style:normal;font-size:8px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--t3);margin-right:6px}
+.sn-h2do span.hide{display:none}
 </style>
 <div class="shell">
 
@@ -6224,102 +6280,74 @@ function anaLadderFrom(anchor){
            dn:Math.pow(Math.max(0.0001,root-o.i),2)*100};
   });
 }
-/* ══ the original ladder, rooted on price ══
-   Kept because it answers a different question from the anchor ladders: those
-   say where the rungs of the swing sit, this says where the rungs sit around
-   wherever price happens to be right now. Same arithmetic, different origin. */
-function anaRungsFromPrice(price,dp){
-  var rows=anaLadderFrom(price), sig=dailySigma();
-  return '<div class="mj-set mj-now"><div class="mj-h">From price now — '+price.toFixed(dp)
-   +' <em>(the original ladder)</em></div>'
-   +'<table class="mj-t"><thead><tr><th>Degree</th><th>Step</th>'
-   +'<th>&darr; from price</th><th>&uarr; from price</th><th>Width</th></tr></thead><tbody>'
-   +rows.map(function(r){
+/* ══ MAJOR LEVELS ══
+   The original row design is the design — degree, the level below, a width
+   track, the level above, and the span. It is simply drawn three times now,
+   once per origin: the major high, the major low, and price itself. Nothing
+   about the look changed; there are three of them instead of one. */
+function anaMjBlock(title,sub,origin,price,dp,tone){
+  var rows=anaLadderFrom(origin), sig=dailySigma();
+  var maxW=rows[rows.length-1].up-rows[rows.length-1].dn||1;
+  return '<div class="mj-blk '+(tone||'')+'">'
+   +'<div class="mj-bh"><b>'+escHtml(title)+'</b><span>'+escHtml(sub)+'</span></div>'
+   +'<div class="mj-strip">'
+     +'<div class="mj-s"><span>Anchor</span><b>'+origin.toFixed(dp)+'</b></div>'
+     +'<div class="mj-s"><span>&radic;(A&divide;100)</span><b>'+Math.sqrt(origin/100).toFixed(5)+'</b></div>'
+     +'<div class="mj-s"><span>Next down</span><b class="cr">'+rows[0].dn.toFixed(dp)+'</b></div>'
+     +'<div class="mj-s"><span>Next up</span><b class="cg">'+rows[0].up.toFixed(dp)+'</b></div>'
+   +'</div>'
+   +rows.map(function(r,k){
       var w=r.up-r.dn;
-      return '<tr><td><b>'+r.d+'°</b></td><td>'+r.i.toFixed(2)+'</td>'
-        +'<td><div class="mj-c dn"><b>'+r.dn.toFixed(dp)+'</b><i>'
-          +((r.dn-price)/price*100).toFixed(2)+'% · '
-          +(Math.abs(r.dn-price)/(price*sig.v)).toFixed(1)+'σ</i></div></td>'
-        +'<td><div class="mj-c up"><b>'+r.up.toFixed(dp)+'</b><i>+'
-          +((r.up-price)/price*100).toFixed(2)+'% · '
-          +(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i></div></td>'
-        +'<td class="mj-w">'+w.toFixed(dp)+'</td></tr>';
+      var dnPct=(r.dn-price)/price*100, upPct=(r.up-price)/price*100;
+      return '<div class="mj-row" style="animation-delay:'+(k*0.06).toFixed(2)+'s">'
+        +'<div class="mj-deg"><b>'+r.d+'°</b><i>+'+r.i.toFixed(2)+'</i></div>'
+        +'<div class="mj-dn"><b>'+r.dn.toFixed(dp)+'</b><i>'+dnPct.toFixed(2)+'% · '
+          +(Math.abs(r.dn-price)/(price*sig.v)).toFixed(1)+'σ</i></div>'
+        +'<div class="mj-track"><span class="mid"></span>'
+          +'<span class="fill" style="--w:'+(w/maxW*100).toFixed(0)+'%"></span></div>'
+        +'<div class="mj-up"><b>'+r.up.toFixed(dp)+'</b><i>+'+upPct.toFixed(2)+'% · '
+          +(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i></div>'
+        +'<div class="mj-w">'+w.toFixed(dp)+'</div>'
+        +'</div>';
     }).join('')
-   +'</tbody></table></div>';
+   +'</div>';
 }
 function anaRungs(price,dp){
-  var A=anaAnchors(price);
+  var A=anaAnchors(price), sig=dailySigma(), blocks=[];
+  if(A.hi)blocks.push(anaMjBlock('From the major high',A.hi.n+(A.hi.auto?' · auto':''),A.hi.v,price,dp,'hi'));
+  if(A.lo)blocks.push(anaMjBlock('From the major low', A.lo.n+(A.lo.auto?' · auto':''),A.lo.v,price,dp,'lo'));
+  blocks.push(anaMjBlock('From price now','the original ladder',price,price,dp,'now'));
+
   if(!A.hi&&!A.lo)
     return '<div class="mj"><div class="ab-cap">Major levels — square root cycle</div>'
-      +'<div class="mj-none">No major high or low to measure from. Enter an ATH/ATL, a '
-      +'monthly high and low, or load a history — a square-root cycle level means nothing '
-      +'unless it is rooted in a price the market actually printed.</div></div>';
+      +'<div class="mj-none">No major high or low to measure from. Enter a weekly or daily '
+      +'high and low, or load a history — a square-root cycle level means nothing unless it is '
+      +'rooted in a price the market actually printed.</div>'
+      +blocks.join('')+'</div>';
 
-  var sets=[];
-  if(A.hi)sets.push({key:'hi',src:A.hi,rows:anaLadderFrom(A.hi.v)});
-  if(A.lo)sets.push({key:'lo',src:A.lo,rows:anaLadderFrom(A.lo.v)});
-
-  /* a price both ladders reach is doing two jobs — flag it */
+  /* a price both anchor ladders reach is doing two jobs */
   var all=[];
-  sets.forEach(function(S){S.rows.forEach(function(r){
-    all.push({p:r.up,s:S.key,d:r.d});all.push({p:r.dn,s:S.key,d:r.d});});});
-  var conf=[];
-  all.forEach(function(x){
-    all.forEach(function(y){
-      if(x.s===y.s)return;
-      if(Math.abs(x.p-y.p)/((x.p+y.p)/2)<0.004&&conf.indexOf(Math.round(x.p))<0)
-        conf.push(Math.round(x.p));
-    });
+  [A.hi,A.lo].forEach(function(S,ix){
+    if(!S)return;
+    anaLadderFrom(S.v).forEach(function(r){all.push({p:r.up,s:ix});all.push({p:r.dn,s:ix});});
   });
-  var isConf=function(v){return conf.indexOf(Math.round(v))>=0;};
+  var conf=[];
+  all.forEach(function(x){all.forEach(function(y){
+    if(x.s===y.s)return;
+    if(Math.abs(x.p-y.p)/((x.p+y.p)/2)<0.004&&conf.indexOf(Math.round(x.p))<0)conf.push(Math.round(x.p));
+  });});
 
-  var sig=dailySigma();
-  var cell=function(v){
-    var pct=(v-price)/price*100;
-    var sg=Math.abs(v-price)/(price*sig.v);
-    return '<div class="mj-c'+(isConf(v)?' cf':'')+(v>price?' up':' dn')+'">'
-      +'<b>'+v.toFixed(dp)+'</b>'
-      +'<i>'+(pct>=0?'+':'')+pct.toFixed(2)+'% · '+sg.toFixed(1)+'σ</i></div>';
-  };
-
-  return '<div class="mj"><div class="ab-cap">Major levels — square root cycle from the high and the low</div>'
-   +'<div class="mj-anch">'
-     +sets.map(function(S){
-        return '<div class="mj-a '+S.key+'"><i>'+escHtml(S.src.n)+(S.src.auto?' · auto':'')+'</i>'
-          +'<b>'+S.src.v.toFixed(dp)+'</b>'
-          +'<span>√('+S.key.toUpperCase()+'÷100) = '+Math.sqrt(S.src.v/100).toFixed(5)+'</span></div>';
-      }).join('')
-     +'<div class="mj-a now"><i>Price now</i><b>'+price.toFixed(dp)+'</b>'
-       +'<span>1σ = '+(sig.v*100).toFixed(2)+'%'+(sig.measured?' (measured)':' (default — no history)')+'</span></div>'
-   +'</div>'
-   +anaRungsFromPrice(price,dp)
-   +'<div class="mj-sets">'
-   +sets.map(function(S){
-      return '<div class="mj-set"><div class="mj-h">From the '
-        +(S.key==='hi'?'major high':'major low')+' — '+S.src.v.toFixed(dp)+'</div>'
-        /* "Down" and "Up" are measured FROM THE ANCHOR, not from price — the
-           90° rung under a 4888 high still sits above a 4055 spot. Saying so
-           in the header stops a level reading as a downside target when it is
-           an upside one. The colour is the other axis: side of price now. */
-        +'<table class="mj-t"><thead><tr><th>Degree</th><th>Step</th>'
-        +'<th>&darr; from anchor</th><th>&uarr; from anchor</th></tr></thead><tbody>'
-        +S.rows.map(function(r){
-           return '<tr><td><b>'+r.d+'°</b></td><td>'+r.i.toFixed(2)+'</td>'
-             +'<td>'+cell(r.dn)+'</td><td>'+cell(r.up)+'</td></tr>';
-         }).join('')
-        +'</tbody></table></div>';
-    }).join('')+'</div>'
-   +'<div class="mj-lg"><span class="k up"></span>above price now'
-   +'<span class="k dn"></span>below price now'
-   +'<span class="k cf"></span>both ladders agree</div>'
-   +(conf.length?'<div class="mj-cf">Both ladders land within 0.4% of each other at '
+  return '<div class="mj"><div class="ab-cap">Major levels — square root cycle, '
+   +'from the high, the low, and price</div>'
+   +blocks.join('')
+   +(conf.length?'<div class="mj-cf">The high and low ladders land within 0.4% of each other at '
       +conf.sort(function(x,y){return x-y;}).map(function(v){return v.toFixed(0);}).join(', ')
       +' — those prices are doing two jobs at once.</div>':'')
-   +'<div class="mj-note">Dividing by 100 before the root scales every increment 10×, so a '
-   +'0.25 step is 2.5 root units on raw price. Distances are shown in this asset’s own daily '
-   +'sigma ('+(sig.v*100).toFixed(2)+'% a day'+(sig.measured?' measured over the last 60 sessions':', default')
-   +'), not a flat 1%.</div>'
-   +'</div>';
+   +'<div class="mj-note">Dividing by 100 before the root scales every increment 10×, so a 0.25 '
+   +'step is 2.5 root units on raw price. Percent and sigma are measured from price now ('
+   +price.toFixed(dp)+'), so you can see how far each rung is from where you are; 1σ is this '
+   +'asset’s own daily move, '+(sig.v*100).toFixed(2)+'%'+(sig.measured?' measured over the last 60 sessions':' (default)')
+   +'.</div></div>';
 }
 /* ══ MARKET CYCLE — where price sits on the wheel, in the range, and in the
    nine-day count, with the phase named in plain words ══ */
@@ -6594,6 +6622,11 @@ function renderAnalytics(){
    +'</details>';
 
   vbMount();
+  /* renderAnalytics rebuilds #ana_new, which recreates #qv_ana empty. Only
+     qvRefresh used to refill it, so any redraw not coming through runAI left
+     the quantitative block blank. */
+  try{var _qh=document.getElementById('qv_ana');
+      if(_qh)_qh.innerHTML=qvAnalyticsHtml();}catch(e){}
 
   host.querySelectorAll('.mj-track .fill').forEach(function(f){
     f.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -11506,12 +11539,9 @@ function senTick(){
   var ms=ev.d-new Date();
   var c=document.getElementById('sn_clock');
   if(c)c.textContent=fmtCountdown(ms);
-  var arc=document.getElementById('sn_arc');
-  if(arc){
-    var C=parseFloat(arc.getAttribute('data-c'))||0;
-    var p=1-Math.max(0,Math.min(1,ms/(7*86400000)));
-    arc.setAttribute('stroke-dashoffset',(C*(1-p)).toFixed(1));
-  }
+  /* the dial is gone; the flat bar is what fills now */
+  var bar=document.querySelector('.sn-h2bar span');
+  if(bar)bar.style.width=(Math.max(0,Math.min(1,1-ms/(7*86400000)))*100).toFixed(1)+'%';
   /* the verdict changed band, or the event fired — rebuild the board */
   if(senRisk(ev).lv!==_senLevel||ms<=0)renderSentimentV3();
 }
@@ -11528,21 +11558,11 @@ function renderSentimentV3(){
   _senLevel=risk.lv;
   var ms=next?(next.d-new Date()):0;
 
-  /* ── countdown ring: fills as the release approaches (7-day window) ── */
-  var R=112, C=2*Math.PI*R, p=next?1-Math.max(0,Math.min(1,ms/(7*86400000))):0;
-  var ring='<svg viewBox="0 0 264 264" class="sn-ring">'
-    +'<circle cx="132" cy="132" r="'+R+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="13"/>'
-    +'<circle cx="132" cy="132" r="'+R+'" id="sn_arc" class="sn-arc" data-c="'+C.toFixed(1)+'" fill="none"'
-      +' stroke="'+risk.col+'" stroke-width="13" stroke-linecap="round"'
-      +' stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-p)).toFixed(1)+'"/>';
-  for(var i=0;i<24;i++){
-    var a=i/24*Math.PI*2, r1=R-22, r2=R-(i%6===0?31:26);
-    ring+='<line class="sn-tick" x1="'+(132+Math.cos(a)*r1).toFixed(1)+'" y1="'+(132+Math.sin(a)*r1).toFixed(1)
-      +'" x2="'+(132+Math.cos(a)*r2).toFixed(1)+'" y2="'+(132+Math.sin(a)*r2).toFixed(1)
-      +'" stroke="rgba(255,255,255,'+(i%6===0?'.22':'.10')+')" stroke-width="1.6"'
-      +' style="animation-delay:'+(i*0.02).toFixed(2)+'s"/>';
-  }
-  ring+='</svg>';
+  /* ── A thin progress bar, not a 264px dial with twenty-four animated tick
+        marks. The dial carried one number — time until the release — and took
+        a third of the screen to say it, which is what made this page read as a
+        toy rather than a desk tool. ── */
+  var p=next?1-Math.max(0,Math.min(1,ms/(7*86400000))):0;
 
   /* ── the three bias engines, on one shared bear↔bull scale ── */
   var B=window._lastBias||{};
@@ -11584,21 +11604,21 @@ function renderSentimentV3(){
 
   host.className='sn';
   host.innerHTML=
-   '<div class="sn-hero '+risk.lv+'">'
-    +'<div class="sn-dial">'+ring
-      +'<div class="sn-core"><div class="sn-word" style="color:'+risk.col+'">'+risk.word+'</div>'
-      +'<div class="sn-clock" id="sn_clock">'+(next?fmtCountdown(ms):'—')+'</div>'
-      +'<div class="sn-until">until the next release</div></div></div>'
-    +'<div class="sn-side">'
-      +'<div class="sn-cap">Next high-impact release</div>'
-      +'<div class="sn-ev" id="sn_nh_title">'+escHtml(next?next.t:'Nothing scheduled')+'</div>'
-      +'<div class="sn-when" id="sn_nh_when">'+(next?econWhen(next)+' · '+econPrecLabel(next):'—')+'</div>'
-      +'<div class="sn-say">'+risk.say+'</div>'
-      +'<div class="sn-do"><div><div class="k">What to do now</div><div class="v">'+risk.a+'</div></div>'
-        +'<div><div class="k">If you are already in</div><div class="v">'+risk.b+'</div></div></div>'
-      +'<div class="sn-nums"><span class="sn-num" id="sn_nh_fc">Forecast —</span>'
-        +'<span class="sn-num" id="sn_nh_pv">Previous —</span>'
-        +'<span class="sn-num" id="sn_nh_cmp">—</span></div>'
+   '<div class="sn-hero2 '+risk.lv+'">'
+    +'<div class="sn-h2top">'
+      +'<span class="sn-pill" style="color:'+risk.col+';border-color:'+risk.col+'">'+risk.word+'</span>'
+      +'<div class="sn-h2t"><b id="sn_nh_title">'+escHtml(next?next.t:'Nothing scheduled')+'</b>'
+        +'<i id="sn_nh_when">'+(next?econWhen(next)+' · '+econPrecLabel(next):'—')+'</i></div>'
+      +'<div class="sn-h2c"><b id="sn_clock">'+(next?fmtCountdown(ms):'—')+'</b><i>until release</i></div>'
+    +'</div>'
+    +'<div class="sn-h2bar"><span style="width:'+(p*100).toFixed(1)+'%;background:'+risk.col+'"></span></div>'
+    +'<div class="sn-h2say">'+risk.say+'</div>'
+    +'<div class="sn-h2do">'
+      +'<span><i>Now</i>'+risk.a+'</span>'
+      +'<span><i>Already in</i>'+risk.b+'</span>'
+      +'<span id="sn_nh_pv">Previous —</span>'
+      +'<span id="sn_nh_fc">Forecast —</span>'
+      +'<span id="sn_nh_cmp" class="hide"></span>'
     +'</div></div>'
    +'<div class="sn-moods">'+gauges+'</div>'
    /* Four boxes explaining what three ring colours mean was more furniture
@@ -14074,62 +14094,57 @@ function qvPlain(R){
   var z=R.vol.z, ver=R.vol.ver;
   var volWord=!isFinite(z)?'unknown'
     :z<-1?'much quieter than usual'
-    :z<-0.3?'a bit quieter than usual'
-    :z<=0.3?'about as busy as usual'
-    :z<1?'a bit busier than usual'
-    :z<2?'busier than usual':'far busier than usual';
+    :z<-0.3?'Quiet'
+    :z<=0.3?'Normal'
+    :z<1?'Active'
+    :z<2?'Busy':'Wild';
   L.push({k:'How much is it moving?',
     v:volWord,
-    d:'Its daily swing right now sits at the '+qvPct(R.vol.pct,0)+' mark of everything in this history.',
+    d:qvPct(R.vol.pct,0)+' of this history was calmer.',
     c:qvZCol(z)});
 
-  var verWord=!isFinite(ver)?'unknown'
-    :ver<0.75?'winding up — the range is tightening'
-    :ver<=1.25?'steady — no squeeze, no blow-off'
-    :ver<=1.5?'opening up — ranges are widening'
-    :'opening up fast';
-  L.push({k:'Is it speeding up or slowing down?',v:verWord,
-    d:'Short-term swing is '+qvNum(ver,2)+'× the long-term swing.'
-      +(isFinite(ver)&&ver<0.75?' Tight ranges tend to be followed by wider ones, but nothing here says which way.':''),
+  /* One word, because that is the whole answer. The ratio underneath is the
+     evidence; the sentence in between was noise. */
+  var verWord=!isFinite(ver)?'Unknown'
+    :ver<0.75?'Compressing'
+    :ver<=1.25?'Steady'
+    :ver<=1.5?'Expanding'
+    :'Expanding fast';
+  L.push({k:'Speeding up or slowing down?',v:verWord,
+    d:'Short swing '+qvNum(ver,2)+'× the long swing.',
     c:isFinite(ver)?(ver>1.5?'var(--red)':ver>1.25?'var(--amber)':'var(--green)'):null});
 
   if(R.hasVolume){
     var vz=R.volume.z;
     var ticks=R.volKind==='ticks';
-    var vw=ticks
-      ?(vz<-1?'quiet — the price is barely being requoted'
-        :vz<=1?'normal quote activity'
-        :vz<2?'busier than usual':'very busy — quotes are flying')
-      :(vz<-1?'thin — few people are trading'
-        :vz<=1?'normal participation'
-        :vz<2?'heavier than usual':'very heavy — a crowd is in');
-    L.push({k:ticks?'How active is the quote feed?':'How many people are trading?',v:vw,
-      d:'Today is '+qvNum(R.volume.surprise,2)+'× its 20-day average'
-        +(ticks?'. For spot FX and metals there is no central tape, so this counts price updates rather than size traded — an activity proxy, not participation.':'.'),
+    var vw=vz<-1?'Thin':vz<=1?'Normal':vz<2?'Heavy':'Very heavy';
+    L.push({k:ticks?'Quote activity':'Participation',v:vw,
+      d:qvNum(R.volume.surprise,2)+'× its 20-day average'
+        +(ticks?' · quote updates, not size traded':''),
       c:qvZCol(vz)});
     var d=R.vvd;
-    var dw=!isFinite(d)?'unknown'
-      :d>2?(ticks?'price is travelling without the quote traffic to match'
-                 :'price is moving a lot on few hands — moves like this often do not stick')
-      :d<-2?(ticks?'heavy requoting, little travel — the price is being worked in a tight area'
-                 :'lots of hands, little movement — someone is absorbing the flow')
-      :'movement and activity match up';
-    L.push({k:ticks?'Do the moves and the quote traffic agree?':'Do the moves and the crowd agree?',v:dw,
-      d:'The engine does not call this bullish or bearish — the history was tested and did not support either label.',
+    var dw=!isFinite(d)?'Unknown'
+      :d>2?'Move leads'
+      :d<-2?'Flow leads'
+      :'Aligned';
+    L.push({k:'Move vs '+(ticks?'quotes':'flow'),v:dw,
+      d:d>2?'Travelling on little '+(ticks?'quote traffic':'volume')+'.'
+        :d<-2?'Plenty of '+(ticks?'requoting':'volume')+', little travel.'
+        :'The two agree.',
       c:qvZCol(d)});
   }else{
-    L.push({k:'How many people are trading?',v:'cannot tell',
-      d:'This instrument has no published volume, so nothing here is guessed in its place.',c:'var(--mid)'});
+    L.push({k:'Participation',v:'No data',
+      d:'This instrument publishes no volume. Nothing is guessed in its place.',c:'var(--mid)'});
   }
 
   var val=R.validated?R.validated.length:0;
-  L.push({k:'Do the price’s numbers mean anything?',
-    v:val?val+' pattern'+(val===1?'':'s')+' held up':'no — none of them held up',
+  L.push({k:'Number patterns',
+    v:val?String(val)+' held':'None held',
     d:val
-      ? 'These survived testing on this history and out-of-sample: '+escHtml(R.validated.map(function(p){return p.name;}).join('; '))+'.'
+      ? escHtml(R.validated.map(function(p){return p.name;}).join('; '))+' survived out-of-sample.'
       : R.patterns
-        ? 'All '+R.patterns.length+' digit patterns were tested on '+R.sample.total+' past bars. None changed the odds of a reversal by more than chance would explain, so the engine gives them zero weight. That is the honest answer, not a broken one.'
-        : 'Not enough history loaded to test them yet.',
+        ? R.patterns.length+' tested on '+R.sample.total+' bars, none beat chance — zero weight.'
+        : 'Not enough history to test.',
     c:val?'var(--green)':'var(--mid)'});
 
   /* the one line that changes behaviour */
