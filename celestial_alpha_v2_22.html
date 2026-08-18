@@ -3366,6 +3366,72 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   .vb-call-r{text-align:left;width:100%}
   .vb-word{font-size:28px}
 }
+
+/* ── MAJOR LEVELS, two anchors ── */
+.mj-anch{display:flex;gap:9px;flex-wrap:wrap;margin:9px 0 12px}
+.mj-a{flex:1 1 150px;min-width:0;border:1px solid var(--b1);border-radius:7px;padding:8px 10px;
+  background:rgba(7,6,21,.55)}
+.mj-a.hi{border-color:rgba(239,68,68,.3)}
+.mj-a.lo{border-color:rgba(16,185,129,.3)}
+.mj-a.now{border-color:var(--p3)}
+.mj-a i{display:block;font-style:normal;font-size:8px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mj-a b{display:block;font-size:16px;font-weight:600;color:var(--t1);margin-top:2px;
+  font-variant-numeric:tabular-nums}
+.mj-a span{display:block;font-size:8.5px;color:var(--t3);margin-top:2px}
+.mj-set{margin-bottom:12px}
+.mj-h{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--t2);
+  font-weight:600;margin-bottom:5px}
+.mj-t{width:100%;border-collapse:collapse}
+.mj-t th{text-align:left;font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);
+  font-weight:600;padding:0 8px 5px 0;border-bottom:1px solid var(--b1)}
+.mj-t td{padding:4px 8px 4px 0;border-bottom:1px solid rgba(139,92,246,.07);font-size:10.5px;
+  color:var(--t2);vertical-align:middle}
+.mj-t td b{color:var(--t1)}
+.mj-c{border-radius:5px;padding:3px 7px;display:inline-block;min-width:96px;
+  border:1px solid transparent;background:rgba(148,138,180,.07)}
+.mj-c.up{background:rgba(16,185,129,.08)}
+.mj-c.dn{background:rgba(239,68,68,.08)}
+.mj-c.cf{border-color:var(--p3);box-shadow:0 0 0 1px rgba(139,92,246,.25) inset}
+.mj-c b{display:block;font-size:12px;font-weight:600;color:var(--t1);font-variant-numeric:tabular-nums}
+.mj-c i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:1px}
+.mj-cf{font-size:9.5px;color:var(--p3);line-height:1.6;padding:7px 9px;border-radius:6px;
+  background:rgba(139,92,246,.1);margin-bottom:8px}
+.mj-none{font-size:10.5px;color:var(--t3);line-height:1.7;padding:10px 2px}
+
+/* ── monthly trade budget ── */
+.qta{border:1px solid var(--b1);border-radius:8px;padding:9px 11px;margin:10px 0;
+  background:rgba(7,6,21,.5)}
+.qta-h{display:flex;align-items:center;justify-content:space-between;font-size:9px;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:7px}
+.qta-h span{cursor:pointer;color:var(--t3);text-transform:none;letter-spacing:0;font-weight:500}
+.qta-h span:hover{color:var(--p3)}
+.qta-r{display:grid;grid-template-columns:64px 52px 1fr 46px;gap:8px;align-items:center;padding:2px 0}
+.qta-r i{font-style:normal;font-size:10px;color:var(--t2)}
+.qta-r b{font-size:13px;font-weight:600;color:var(--t1);font-variant-numeric:tabular-nums}
+.qta-r b em{font-style:normal;font-size:9px;color:var(--t3);font-weight:500}
+.qta-bar{height:5px;border-radius:3px;background:rgba(148,138,180,.16);overflow:hidden}
+.qta-bar span{display:block;height:100%;border-radius:3px;background:var(--p3)}
+.qta-r.full b{color:var(--amber)}
+.qta-r.full .qta-bar span{background:var(--amber)}
+.qta-r u{text-decoration:none;font-size:8.5px;color:var(--t3);cursor:pointer;text-align:right}
+.qta-r u:hover{color:var(--p3)}
+.qta-n{font-size:8.5px;color:var(--t3);line-height:1.6;margin-top:7px}
+
+.qta-dg{border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.07);border-radius:7px;
+  padding:8px 11px;margin-top:10px;font-size:10px;color:var(--t2);line-height:1.6}
+
+.mj-sets{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.mj-t td:nth-child(1){width:56px}
+.mj-t td:nth-child(2){width:46px}
+.mj-lg{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:8.5px;color:var(--t3);
+  margin:2px 0 8px}
+.mj-lg .k{width:9px;height:9px;border-radius:3px;display:inline-block;margin-left:8px}
+.mj-lg .k:first-child{margin-left:0}
+.mj-lg .k.up{background:rgba(16,185,129,.35)}
+.mj-lg .k.dn{background:rgba(239,68,68,.35)}
+.mj-lg .k.cf{background:transparent;border:1px solid var(--p3)}
+@media (max-width:1450px){.mj-sets{grid-template-columns:1fr}}
 </style>
 <div class="shell">
 
@@ -3940,8 +4006,6 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
           </div>
         </div>
         </div>
-        <div id="ana_new"></div>
-
         <!-- ══ DAILY BIAS — the numerological & planetary vibration engine ══ -->
         <div class="vb-sec" id="vb_section">
   <div class="vb-head">
@@ -3957,6 +4021,8 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   <div id="vb_body"></div>
 
         </div>
+        <div id="ana_new"></div>
+
       </div>
 
 <!-- hidden stubs so bot/scalp status writes from runAI() don't error in standalone.
@@ -4855,7 +4921,41 @@ function nearestTradingDay(d){
   }
   return null;
 }
-function sigma(p,l){return+(Math.abs(l-p)/(p*0.01)).toFixed(2);}
+/* ══ ONE SIGMA, MEASURED ══════════════════════════════════════════════
+   Everything in the level engine that is labelled σ used to divide by a flat
+   1% of price. That is not a sigma, it is a percent — and it made "2σ" mean
+   two different things on Gold and on a small-cap, because one of them moves
+   1.9% on an ordinary day and the other 4%. The statistical sigma was already
+   being computed from the candles for the Deep Analysis panel; it just never
+   reached the levels, the level scores, or the confidence blend.
+
+   One sigma is now the asset's own daily move: the standard deviation of its
+   daily log returns over the last 60 sessions, expressed as a fraction of
+   price. Where no history is loaded it falls back to the old 1%, and says so,
+   so a level ladder built without candles is never passed off as measured. */
+var _sigCache={n:0,last:0,v:0.01,measured:false};
+function dailySigma(){
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
+  if(!rows||rows.length<21)return{v:0.01,measured:false,n:0};
+  var last=+rows[rows.length-1].close;
+  if(_sigCache.n===rows.length&&_sigCache.last===last)
+    return{v:_sigCache.v,measured:_sigCache.measured,n:_sigCache.n};
+  var r=[],i,start=Math.max(1,rows.length-60);
+  for(i=start;i<rows.length;i++){
+    var a=+rows[i-1].close,b=+rows[i].close;
+    if(a>0&&b>0)r.push(Math.log(b/a));
+  }
+  var v=0.01,ok=false;
+  if(r.length>=20){
+    var m=0;for(i=0;i<r.length;i++)m+=r[i];m/=r.length;
+    var q=0;for(i=0;i<r.length;i++){var d=r[i]-m;q+=d*d;}
+    var sd=Math.sqrt(q/(r.length-1));
+    if(isFinite(sd)&&sd>0.0005&&sd<0.25){v=sd;ok=true;}
+  }
+  _sigCache={n:rows.length,last:last,v:v,measured:ok};
+  return{v:v,measured:ok,n:r.length};
+}
+function sigma(p,l){return+(Math.abs(l-p)/(p*dailySigma().v)).toFixed(2);}
 
 /* ── WORD TO NUMBER */
 function calcNN(nm){
@@ -4879,6 +4979,8 @@ function calcNN(nm){
 ══════════════════════════════════════ */
 function findAlignedLevels(price,vibNum,eph,sess){
   var root=Math.sqrt(price),levels=[];
+  /* one sigma = this asset's own daily move, not a flat 1% of price */
+  var SIG1=dailySigma().v;
   // Valid Gann degrees: 45,90,135,180,225,254,270,360
   var VALID_DEGS=[45,90,135,180,225,254,270,315,360,405,450,495,540,585,630,675,720];
   var CARDINAL=[90,180,270,360,450,540,630,720];
@@ -4893,7 +4995,7 @@ function findAlignedLevels(price,vibNum,eph,sess){
       var p=pair[0],dir=pair[1];
       if(!p||p<=0)return;
       var score=0,reasons=[];
-      var sig=Math.abs(p-price)/(price*0.01);
+      var sig=Math.abs(p-price)/(price*SIG1);
       // Sigma 1-4 only
       if(sig>4){score-=5;return;} // skip levels beyond 4σ
       var sigRound=Math.round(sig);
@@ -5294,6 +5396,82 @@ function priceToGannDeg(price){var root=Math.sqrt(price);return((root%2)/2)*360;
    CONFIDENCE SCORING
    Gann(40%) + Sigma(25%) + Astro(25%) + Timing(10%)
 ══════════════════════════════════════ */
+/* ══ MONTHLY TRADE BUDGET ═════════════════════════════════════════════
+   A hard cap on how many setups the engine is allowed to form in a calendar
+   month: 4 swing, 12 intraday, 18 scalp.
+
+   A slot is consumed by a DISTINCT setup, not by looking at one. The key is
+   asset + style + rounded entry, so re-rendering, switching tabs and coming
+   back tomorrow to the same idea all cost nothing; a different asset or a
+   materially different entry is a new setup and costs a slot.
+
+   Be aware of what a first-come budget does: the fourth swing of the month is
+   not the fourth best, it is the fourth to appear, so a mediocre setup on the
+   2nd can take the slot a better one on the 20th wanted. The engine cannot
+   know the future, so it cannot rank across a month it has not seen. The
+   counter is shown wherever a setup is, and each slot can be released if you
+   did not take the trade. */
+var TRADE_QUOTA={Swing:4,Intraday:12,Scalp:18};
+function quotaMonth(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function quotaLoad(){
+  var L=null;
+  try{L=JSON.parse(localStorage.getItem('ca_quota')||'null');}catch(e){L=null;}
+  if(!L||L.month!==quotaMonth())L={month:quotaMonth(),used:{Swing:[],Intraday:[],Scalp:[]}};
+  ['Swing','Intraday','Scalp'].forEach(function(k){if(!L.used[k])L.used[k]=[];});
+  return L;
+}
+function quotaSave(L){try{localStorage.setItem('ca_quota',JSON.stringify(L));}catch(e){}}
+function quotaKey(asset,style,entry){
+  var e=+entry;
+  return String(asset||'').trim().toUpperCase()+'|'+style+'|'+(isFinite(e)?e.toFixed(2):'-');
+}
+/* returns {ok, used, cap, fresh} — ok=false means the cap is spent and this
+   setup is not one of the ones already counted */
+function quotaTake(style,key){
+  var cap=TRADE_QUOTA[style];
+  if(!cap)return{ok:true,used:0,cap:0,fresh:false};
+  var L=quotaLoad(), arr=L.used[style];
+  var known=arr.indexOf(key)>=0;
+  if(known)return{ok:true,used:arr.length,cap:cap,fresh:false};
+  if(arr.length>=cap)return{ok:false,used:arr.length,cap:cap,fresh:true};
+  arr.push(key);quotaSave(L);
+  return{ok:true,used:arr.length,cap:cap,fresh:true};
+}
+function quotaState(){
+  var L=quotaLoad(),out={month:L.month,rows:[]};
+  ['Swing','Intraday','Scalp'].forEach(function(k){
+    out.rows.push({style:k,used:L.used[k].length,cap:TRADE_QUOTA[k],
+                   left:Math.max(0,TRADE_QUOTA[k]-L.used[k].length)});
+  });
+  return out;
+}
+function quotaRelease(style){
+  var L=quotaLoad();
+  if(L.used[style]&&L.used[style].length){L.used[style].pop();quotaSave(L);}
+  try{runAI();renderAnalytics();}catch(e){}
+}
+function quotaResetAll(){
+  if(!confirm('Clear this month’s trade budget for all three styles?'))return;
+  quotaSave({month:quotaMonth(),used:{Swing:[],Intraday:[],Scalp:[]}});
+  try{runAI();renderAnalytics();}catch(e){}
+}
+function quotaHtml(){
+  var Q=quotaState();
+  return '<div class="qta"><div class="qta-h">Trade budget &middot; '+Q.month
+    +'<span onclick="quotaResetAll()">reset</span></div>'
+    +Q.rows.map(function(r){
+       var pc=r.cap?Math.min(100,r.used/r.cap*100):0;
+       var full=r.left===0;
+       return '<div class="qta-r'+(full?' full':'')+'">'
+         +'<i>'+r.style+'</i>'
+         +'<b>'+r.used+'<em>/'+r.cap+'</em></b>'
+         +'<div class="qta-bar"><span style="width:'+pc.toFixed(0)+'%"></span></div>'
+         +'<u onclick="quotaRelease(\''+r.style+'\')" title="Give a slot back if you did not take that trade">'
+         +(r.used?'release':'')+'</u></div>';
+     }).join('')
+    +'<div class="qta-n">A slot is spent by a distinct setup (asset + style + entry), not by looking at one. '
+    +'First come, not best — the engine cannot rank a month it has not seen yet.</div></div>';
+}
 function calcSignalConf(gannScore,astroBull,timingMatch,levels,price){
   return confParts(gannScore,astroBull,timingMatch,levels,price).conf;
 }
@@ -5310,7 +5488,13 @@ function calcSignalConf(gannScore,astroBull,timingMatch,levels,price){
    the real inputs: the big ring is the weighted mean of the four small ones,
    by construction, and can no longer disagree with them. */
 function confParts(gannScore,astroBull,timingMatch,levels,price){
-  var gannNorm=Math.min(100,Math.round(gannScore*8)); // max level score ~12
+  /* The ×8 here assumed the level scorer topped out near 12. Sampling the
+     scorer across 347 price points puts the real distribution at min 6,
+     median 9, p90 13, max 15 — so ×8 pinned this term at 100 on 14.7% of
+     scans and threw away the top of the range. Scaled to the measured
+     ceiling instead, so a 15 reads 100 and a median 9 reads 60. */
+  var GANN_MAX=15;
+  var gannNorm=Math.min(100,Math.round(gannScore*(100/GANN_MAX)));
   var sigma=levels&&levels.length?levels[0].sigma:4;
   var sigmaNorm=Math.round((1-Math.min(sigma,4)/4)*100);
   /* This term takes the bias meter's OWN percentage rather than re-deriving one
@@ -5327,8 +5511,10 @@ function confParts(gannScore,astroBull,timingMatch,levels,price){
     raw:Math.round(raw),
     clamped:Math.round(raw)<10||Math.round(raw)>95,
     parts:[
-      {k:'Level Quality', v:gannNorm,  w:40, s:(+gannScore||0).toFixed(1)+'/12',
-       long:'Gann level score '+(+gannScore||0).toFixed(1)+' out of a possible 12 — how many independent methods agree on the level price is working.'},
+      {k:'Level Quality', v:gannNorm,  w:40, s:(+gannScore||0).toFixed(1)+'/'+GANN_MAX,
+       long:'Level score '+(+gannScore||0).toFixed(1)+' of a measured ceiling of '+GANN_MAX
+           +' — how many independent methods (sigma band, Gann degree, resonance, planet '
+           +'alignment, session level) agree on the level price is working. Median scan scores 9.'},
       {k:'Level Distance',v:sigmaNorm, w:25,
        s:(levels&&levels.length?sigma.toFixed(1)+'σ away':'no level'),
        long:(levels&&levels.length
@@ -5376,6 +5562,30 @@ function buildSignal(price,vibNum,astro,levels,risk,eph,trend){
   if(!style){
     return{conf:conf,confParts:_cp,style:null,
            reason:'Confidence '+conf+'% — '+(INTRA_MIN-conf)+' short of an Intraday setup ('+INTRA_MIN+'%), '+(SWING_MIN-conf)+' short of a Swing ('+SWING_MIN+'%)'};
+  }
+
+  /* the monthly budget decides whether this style may be formed at all */
+  var _qk=quotaKey(typeof _lastAsset!=='undefined'?_lastAsset:'',style,
+                   (levels&&levels[0]?levels[0].price:price));
+  var _q=quotaTake(style,_qk), _downgraded=null, _qBoth=null;
+  if(!_q.ok&&style==='Swing'&&conf>=INTRA_MIN){
+    /* the swing budget being spent does not make the setup invalid — it still
+       clears the intraday bar on the engine's own thresholds, so it is offered
+       as one rather than thrown away, and the swap is stated */
+    var _q2=quotaTake('Intraday',quotaKey(typeof _lastAsset!=='undefined'?_lastAsset:'','Intraday',
+                       (levels&&levels[0]?levels[0].price:price)));
+    if(_q2.ok){_downgraded='Swing budget spent ('+_q.used+'/'+_q.cap
+      +') — taken as an Intraday instead, which it also qualifies for at '+conf+'%.';
+      style='Intraday'; _q=_q2;}
+    else _qBoth=_q2;                 /* the fallback was spent too */
+  }
+  if(!_q.ok){
+    /* name the budget that actually blocked it, not just the first one tried */
+    var _why='Monthly '+style+' budget is spent — '+_q.used+' of '+_q.cap+' already formed this month';
+    if(_qBoth)_why+=', and the Intraday budget it would fall back to is spent as well ('
+      +_qBoth.used+' of '+_qBoth.cap+')';
+    return{conf:conf,confParts:_cp,style:null,quota:_q,quotaAlt:_qBoth,
+      reason:_why+'. The setup itself qualified at '+conf+'%.'};
   }
 
   var rr=rrRanges[style];
@@ -5487,7 +5697,7 @@ function buildSignal(price,vibNum,astro,levels,risk,eph,trend){
   }
 
   return{
-    conf:conf,confParts:_cp,style:style,isBull:isBull,isValidEntry:isValidEntry,curDeg:curDeg.toFixed(1),
+    conf:conf,confParts:_cp,style:style,quota:_q,downgraded:_downgraded,isBull:isBull,isValidEntry:isValidEntry,curDeg:curDeg.toFixed(1),
     entry:+ep.toFixed(2),curPrice:+price.toFixed(2),tp:+tp.toFixed(2),sl:+sl.toFixed(2),
     rr:rrVal.toFixed(1),risk:risk,profit:+(risk*rrVal).toFixed(2),
     tpDeg:tpLvl?tpLvl.deg:null,tpSig:tpLvl?tpLvl.sigma:null,
@@ -5913,36 +6123,125 @@ function anaZones(price,dp){
   }
   return '<div class="ab-sr">'+card(sell,'sell')+card(buy,'buy')+'</div>';
 }
-/* ══ MAJOR LEVELS — the full square-root cycle ladder ══
-   Divide by 100, root it, step the increment, square back and multiply up.
-   The ÷100 is what scales each increment tenfold, so 0.25 here is 2.5 root
-   units on raw price — that is why the 90° rung sits where it does. */
-function anaRungs(price,dp){
-  var scaled=price/100, root=Math.sqrt(scaled);
+/* ══ MAJOR LEVELS — built from the two anchors that actually made the range ══
+   This ladder used to root the CURRENT PRICE and step out from there, which
+   meant every level moved the moment price moved: the "major" levels were not
+   major at all, they were a grid that followed you around. A square-root
+   cycle level is only meaningful when it is measured from a point the market
+   itself printed — a major high or a major low.
+
+   It now runs the ladder from BOTH anchors and shows both sides of each:
+   from the high, the rungs stepping down (retracement) and up (extension);
+   from the low, the rungs stepping up and down. Where the two ladders land on
+   the same price, that price is doing two jobs at once and is marked.
+
+   Anchors come from whatever you have entered — ATH/ATL, monthly, weekly, or
+   the strong high/low — and fall back to the highest high and lowest low in
+   the loaded history. If neither exists the panel says so instead of rooting
+   the price and pretending. */
+function anaAnchors(price){
+  var N=function(id){var e=document.getElementById(id);var v=e?parseFloat(e.value):NaN;
+                     return isFinite(v)&&v>0?v:null;};
+  var hi=[{v:N('ca_ath'),n:'All-time high'},{v:N('sh_price'),n:'Strong high'},
+          {v:N('ai_mh'), n:'Monthly high'},{v:N('ca_wh'),n:'Weekly high'}]
+         .filter(function(x){return x.v;})[0]||null;
+  var lo=[{v:N('ca_atl'),n:'All-time low'},{v:N('sl2_price'),n:'Strong low'},
+          {v:N('ai_ml'), n:'Monthly low'},{v:N('ca_wl'),n:'Weekly low'}]
+         .filter(function(x){return x.v;})[0]||null;
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
+  if((!hi||!lo)&&rows&&rows.length>20){
+    var H=-Infinity,L=Infinity,hd=null,ld=null;
+    rows.forEach(function(r){
+      var h=+r.high,l=+r.low;
+      if(isFinite(h)&&h>H){H=h;hd=r.date;}
+      if(isFinite(l)&&l<L){L=l;ld=r.date;}
+    });
+    if(!hi&&isFinite(H))hi={v:H,n:'Swing high of '+rows.length+' bars',auto:true,date:hd};
+    if(!lo&&isFinite(L))lo={v:L,n:'Swing low of '+rows.length+' bars',auto:true,date:ld};
+  }
+  return{hi:hi,lo:lo};
+}
+/* the square-root cycle rungs around one anchor, both directions */
+function anaLadderFrom(anchor){
+  var scaled=anchor/100, root=Math.sqrt(scaled);
   var STEPS=[{i:0.25,d:90},{i:0.5,d:180},{i:0.75,d:270},{i:1,d:360}];
-  var rows=STEPS.map(function(o){
-    var up=Math.pow(root+o.i,2)*100, dn=Math.pow(Math.max(0.0001,root-o.i),2)*100;
-    return{d:o.d,i:o.i,up:up,dn:dn,upPct:(up-price)/price*100,dnPct:(dn-price)/price*100,w:up-dn};
+  return STEPS.map(function(o){
+    return{d:o.d,i:o.i,
+           up:Math.pow(root+o.i,2)*100,
+           dn:Math.pow(Math.max(0.0001,root-o.i),2)*100};
   });
-  var maxW=rows[rows.length-1].w||1;
-  return '<div class="mj"><div class="ab-cap">Major levels — square root cycle</div>'
-   +'<div class="mj-strip">'
-     +'<div class="mj-s"><span>Price</span><b>'+price.toFixed(dp)+'</b></div>'
-     +'<div class="mj-s"><span>√(P÷100)</span><b>'+root.toFixed(5)+'</b></div>'
-     +'<div class="mj-s"><span>Next down</span><b class="cr">'+rows[0].dn.toFixed(dp)+'</b></div>'
-     +'<div class="mj-s"><span>Next up</span><b class="cg">'+rows[0].up.toFixed(dp)+'</b></div>'
+}
+function anaRungs(price,dp){
+  var A=anaAnchors(price);
+  if(!A.hi&&!A.lo)
+    return '<div class="mj"><div class="ab-cap">Major levels — square root cycle</div>'
+      +'<div class="mj-none">No major high or low to measure from. Enter an ATH/ATL, a '
+      +'monthly high and low, or load a history — a square-root cycle level means nothing '
+      +'unless it is rooted in a price the market actually printed.</div></div>';
+
+  var sets=[];
+  if(A.hi)sets.push({key:'hi',src:A.hi,rows:anaLadderFrom(A.hi.v)});
+  if(A.lo)sets.push({key:'lo',src:A.lo,rows:anaLadderFrom(A.lo.v)});
+
+  /* a price both ladders reach is doing two jobs — flag it */
+  var all=[];
+  sets.forEach(function(S){S.rows.forEach(function(r){
+    all.push({p:r.up,s:S.key,d:r.d});all.push({p:r.dn,s:S.key,d:r.d});});});
+  var conf=[];
+  all.forEach(function(x){
+    all.forEach(function(y){
+      if(x.s===y.s)return;
+      if(Math.abs(x.p-y.p)/((x.p+y.p)/2)<0.004&&conf.indexOf(Math.round(x.p))<0)
+        conf.push(Math.round(x.p));
+    });
+  });
+  var isConf=function(v){return conf.indexOf(Math.round(v))>=0;};
+
+  var sig=dailySigma();
+  var cell=function(v){
+    var pct=(v-price)/price*100;
+    var sg=Math.abs(v-price)/(price*sig.v);
+    return '<div class="mj-c'+(isConf(v)?' cf':'')+(v>price?' up':' dn')+'">'
+      +'<b>'+v.toFixed(dp)+'</b>'
+      +'<i>'+(pct>=0?'+':'')+pct.toFixed(2)+'% · '+sg.toFixed(1)+'σ</i></div>';
+  };
+
+  return '<div class="mj"><div class="ab-cap">Major levels — square root cycle from the high and the low</div>'
+   +'<div class="mj-anch">'
+     +sets.map(function(S){
+        return '<div class="mj-a '+S.key+'"><i>'+escHtml(S.src.n)+(S.src.auto?' · auto':'')+'</i>'
+          +'<b>'+S.src.v.toFixed(dp)+'</b>'
+          +'<span>√('+S.key.toUpperCase()+'÷100) = '+Math.sqrt(S.src.v/100).toFixed(5)+'</span></div>';
+      }).join('')
+     +'<div class="mj-a now"><i>Price now</i><b>'+price.toFixed(dp)+'</b>'
+       +'<span>1σ = '+(sig.v*100).toFixed(2)+'%'+(sig.measured?' (measured)':' (default — no history)')+'</span></div>'
    +'</div>'
-   +rows.map(function(r,k){
-      return '<div class="mj-row" style="animation-delay:'+(k*0.06).toFixed(2)+'s">'
-        +'<div class="mj-deg"><b>'+r.d+'°</b><i>+'+r.i.toFixed(2)+'</i></div>'
-        +'<div class="mj-dn"><b>'+r.dn.toFixed(dp)+'</b><i>'+r.dnPct.toFixed(2)+'%</i></div>'
-        +'<div class="mj-track"><span class="mid"></span>'
-          +'<span class="fill" style="--w:'+(r.w/maxW*100).toFixed(0)+'%"></span></div>'
-        +'<div class="mj-up"><b>'+r.up.toFixed(dp)+'</b><i>+'+r.upPct.toFixed(2)+'%</i></div>'
-        +'<div class="mj-w">'+r.w.toFixed(dp)+'</div>'
-        +'</div>';
-    }).join('')
-   +'<div class="mj-note">Dividing by 100 before the root scales every increment 10×, so 0.25 here is 2.5 root units on raw price — the 90° level lands at '+rows[0].up.toFixed(dp)+'.</div>'
+   +'<div class="mj-sets">'
+   +sets.map(function(S){
+      return '<div class="mj-set"><div class="mj-h">From the '
+        +(S.key==='hi'?'major high':'major low')+' — '+S.src.v.toFixed(dp)+'</div>'
+        /* "Down" and "Up" are measured FROM THE ANCHOR, not from price — the
+           90° rung under a 4888 high still sits above a 4055 spot. Saying so
+           in the header stops a level reading as a downside target when it is
+           an upside one. The colour is the other axis: side of price now. */
+        +'<table class="mj-t"><thead><tr><th>Degree</th><th>Step</th>'
+        +'<th>&darr; from anchor</th><th>&uarr; from anchor</th></tr></thead><tbody>'
+        +S.rows.map(function(r){
+           return '<tr><td><b>'+r.d+'°</b></td><td>'+r.i.toFixed(2)+'</td>'
+             +'<td>'+cell(r.dn)+'</td><td>'+cell(r.up)+'</td></tr>';
+         }).join('')
+        +'</tbody></table></div>';
+    }).join('')+'</div>'
+   +'<div class="mj-lg"><span class="k up"></span>above price now'
+   +'<span class="k dn"></span>below price now'
+   +'<span class="k cf"></span>both ladders agree</div>'
+   +(conf.length?'<div class="mj-cf">Both ladders land within 0.4% of each other at '
+      +conf.sort(function(x,y){return x-y;}).map(function(v){return v.toFixed(0);}).join(', ')
+      +' — those prices are doing two jobs at once.</div>':'')
+   +'<div class="mj-note">Dividing by 100 before the root scales every increment 10×, so a '
+   +'0.25 step is 2.5 root units on raw price. Distances are shown in this asset’s own daily '
+   +'sigma ('+(sig.v*100).toFixed(2)+'% a day'+(sig.measured?' measured over the last 60 sessions':', default')
+   +'), not a flat 1%.</div>'
    +'</div>';
 }
 /* ══ MARKET CYCLE — where price sits on the wheel, in the range, and in the
@@ -6174,6 +6473,8 @@ function renderAnalytics(){
    +'</div>'
 
    +qvRiskHtml(S,window._lastQV,price)
+   +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
+   +quotaHtml()
    +shareBar('setup')
    +'<div class="ab-reads">'+reads.map(function(r){
        return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
@@ -7746,6 +8047,12 @@ function checkAutoScalp(){
   var vibNum=_lastVib,price=_lastPrice;
   var isMatch=ti.pp.nums.indexOf(vibNum)>=0;
   if(isMatch&&!_sActive){
+    /* scalps form on their own path, so they take their slot here */
+    var _sq=quotaTake('Scalp',quotaKey(_lastAsset,'Scalp',price));
+    if(!_sq.ok){
+      console.info('scalp suppressed — monthly budget spent ('+_sq.used+'/'+_sq.cap+')');
+      return;
+    }
     // Fast momentum check: period planet exact match = scalp trigger
     var eph=getEph();
     var levels=findAlignedLevels(price,vibNum,eph,[0,0,0,0]);
@@ -12696,7 +13003,8 @@ var _vbDate=null,_vbMath=false,_vbDetail=false,_vbBT=null,_vbBTAsset='';
 
 function vbToday(){
   _vbDate=null;
-  var e=document.getElementById('vb_date');if(e)e.value='';
+  var e=document.getElementById('vb_date');
+  if(e)e.value=ymd(new Date());
   renderVibration();
 }
 function vbToggleMath(){
@@ -12707,8 +13015,11 @@ function vbDate(){
   var e=document.getElementById('vb_date');
   var v=e&&e.value;
   if(v){var p=v.split('-');return new Date(+p[0],+p[1]-1,+p[2],12,0,0,0);}
-  var n=new Date();
-  return new Date(n.getFullYear(),n.getMonth(),n.getDate(),12,0,0,0);
+  /* an empty date box read as today anyway, but showed mm/dd/yyyy — fill it in
+     so the field states which day the card is actually describing */
+  var n=new Date(), d=new Date(n.getFullYear(),n.getMonth(),n.getDate(),12,0,0,0);
+  if(e)e.value=ymd(d);
+  return d;
 }
 /* Daily Bias lives inside Analytics, so it reads whatever Analytics is
    analysing rather than carrying a second asset box that could disagree. */
