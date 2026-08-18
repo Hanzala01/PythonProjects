@@ -3526,6 +3526,16 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 .sn-h2do span i{font-style:normal;font-size:8px;letter-spacing:.07em;text-transform:uppercase;
   color:var(--t3);margin-right:6px}
 .sn-h2do span.hide{display:none}
+
+.mj-in{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:9px 0 12px;
+  padding:9px 11px;border:1px solid var(--b1);border-radius:9px;background:rgba(7,6,21,.45)}
+.mj-in label{display:flex;align-items:center;gap:6px}
+.mj-in i{font-style:normal;font-size:8.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--t3)}
+.mj-in input{width:110px;background:var(--card);border:1px solid var(--b1);border-radius:6px;
+  color:var(--t1);font-size:12px;padding:5px 8px;font-family:inherit;font-variant-numeric:tabular-nums}
+.mj-in input:focus{outline:none;border-color:var(--p3)}
+.mj-using{flex:1;min-width:180px;font-size:9px;color:var(--t3);line-height:1.5}
+.mj-using b{color:var(--p3);font-weight:600}
 </style>
 <div class="shell">
 
@@ -6246,13 +6256,15 @@ function anaAnchors(price){
      to trade against; the recent extreme is the one price is currently working
      around. Anything typed into the form still wins, so a level you know
      matters can always be forced. */
-  /* weekly first, then daily — both are already derived from the candles by
-     applySessionLevels, so this needs no new inputs from anyone */
-  var hi=[{v:N('ca_wh'),n:'Weekly high'},{v:N('sl_pwh'),n:'Prev week high'},
-          {v:N('sl_pdh'),n:'Prev day high'},{v:N('sh_price'),n:'Strong high'}]
+  /* STRONG HIGH AND STRONG LOW COME FIRST. They are the levels you picked by
+     hand as the ones that matter, so nothing derived from candles is allowed
+     to outrank them. The weekly and daily values below are only a fallback for
+     when you have not named a strong level yet. */
+  var hi=[{v:N('sh_price'),n:'Strong high'},{v:N('ca_wh'),n:'Weekly high'},
+          {v:N('sl_pwh'),n:'Prev week high'},{v:N('sl_pdh'),n:'Prev day high'}]
          .filter(function(x){return x.v;})[0]||null;
-  var lo=[{v:N('ca_wl'),n:'Weekly low'},{v:N('sl_pwl'),n:'Prev week low'},
-          {v:N('sl_pdl'),n:'Prev day low'},{v:N('sl2_price'),n:'Strong low'}]
+  var lo=[{v:N('sl2_price'),n:'Strong low'},{v:N('ca_wl'),n:'Weekly low'},
+          {v:N('sl_pwl'),n:'Prev week low'},{v:N('sl_pdl'),n:'Prev day low'}]
          .filter(function(x){return x.v;})[0]||null;
 
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
@@ -6312,6 +6324,34 @@ function anaMjBlock(title,sub,origin,price,dp,tone){
     }).join('')
    +'</div>';
 }
+/* The strong high and strong low are the whole basis of this panel, so they
+   are editable here rather than buried inside the collapsed Session Levels
+   section. These write the same fields the rest of the engine reads. */
+function anaAnchorInputs(A,dp){
+  var v=function(id){var e=document.getElementById(id);return e&&e.value?e.value:'';};
+  var usingH=A.hi?A.hi.n:'—', usingL=A.lo?A.lo.n:'—';
+  return '<div class="mj-in">'
+   +'<label><i>Strong high</i><input type="number" step="0.01" id="mj_sh" value="'+v('sh_price')+'"'
+     +' placeholder="e.g. 4888" oninput="anaSetAnchor(\'sh_price\',this.value)"></label>'
+   +'<label><i>Strong low</i><input type="number" step="0.01" id="mj_sl" value="'+v('sl2_price')+'"'
+     +' placeholder="e.g. 3942" oninput="anaSetAnchor(\'sl2_price\',this.value)"></label>'
+   +'<div class="mj-using">Using <b>'+escHtml(usingH)+'</b> and <b>'+escHtml(usingL)+'</b>.'
+   +(A.hi&&A.hi.n==='Strong high'?'':' Type a strong high and low to override.')+'</div>'
+   +'</div>';
+}
+var _mjT=null;
+function anaSetAnchor(id,val){
+  var e=document.getElementById(id);
+  if(e)e.value=val;
+  /* redraw on a short debounce so typing 4888 does not rebuild four times */
+  if(_mjT)clearTimeout(_mjT);
+  _mjT=setTimeout(function(){
+    var f=document.activeElement, k=f&&f.id, pos=f&&f.selectionStart;
+    try{renderAnalytics();}catch(e){}
+    if(k){var n=document.getElementById(k);
+      if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(e){}}}
+  },500);
+}
 function anaRungs(price,dp){
   var A=anaAnchors(price), sig=dailySigma(), blocks=[];
   if(A.hi)blocks.push(anaMjBlock('From the major high',A.hi.n+(A.hi.auto?' · auto':''),A.hi.v,price,dp,'hi'));
@@ -6320,10 +6360,10 @@ function anaRungs(price,dp){
 
   if(!A.hi&&!A.lo)
     return '<div class="mj"><div class="ab-cap">Major levels — square root cycle</div>'
-      +'<div class="mj-none">No major high or low to measure from. Enter a weekly or daily '
-      +'high and low, or load a history — a square-root cycle level means nothing unless it is '
-      +'rooted in a price the market actually printed.</div>'
-      +blocks.join('')+'</div>';
+      +'<div class="mj-none">No high or low to measure from yet. Type a strong high and a '
+      +'strong low below — a square-root cycle level means nothing unless it is rooted in a '
+      +'price the market actually printed.</div>'
+      +anaAnchorInputs(A,dp)+blocks.join('')+'</div>';
 
   /* a price both anchor ladders reach is doing two jobs */
   var all=[];
@@ -6339,6 +6379,7 @@ function anaRungs(price,dp){
 
   return '<div class="mj"><div class="ab-cap">Major levels — square root cycle, '
    +'from the high, the low, and price</div>'
+   +anaAnchorInputs(A,dp)
    +blocks.join('')
    +(conf.length?'<div class="mj-cf">The high and low ladders land within 0.4% of each other at '
       +conf.sort(function(x,y){return x-y;}).map(function(v){return v.toFixed(0);}).join(', ')
