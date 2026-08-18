@@ -3335,6 +3335,37 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   .vb-hero{grid-template-columns:1fr}
   .vb-hero-r{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
+
+/* ── DAILY BIAS — the verdict card, which is all the front shows ── */
+.vb-call{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;
+  border:1px solid var(--b1);border-radius:10px;padding:16px 18px;
+  background:linear-gradient(105deg,rgba(24,14,52,.85),rgba(12,8,30,.6))}
+.vb-call.bull{border-color:rgba(16,185,129,.35);background:linear-gradient(105deg,rgba(6,44,34,.6),rgba(12,8,30,.6))}
+.vb-call.bear{border-color:rgba(239,68,68,.32);background:linear-gradient(105deg,rgba(52,14,18,.55),rgba(12,8,30,.6))}
+.vb-call.flat{border-color:rgba(245,158,11,.3)}
+.vb-call.mixed{border-style:dashed}
+.vb-word{font-size:34px;font-weight:700;letter-spacing:-.01em;line-height:1.1;margin-top:5px}
+.vb-say{margin-top:7px;font-size:12px;color:var(--t2);line-height:1.6;max-width:640px}
+.vb-call-r{text-align:right;width:210px;flex:none}
+.vb-mtr{position:relative;height:7px;border-radius:4px;margin-bottom:9px;
+  background:linear-gradient(90deg,var(--red),rgba(148,138,180,.35) 50%,var(--green))}
+.vb-mtr i{position:absolute;top:-3px;width:3px;height:13px;border-radius:2px;background:var(--t1);
+  box-shadow:0 0 6px rgba(255,255,255,.5);transform:translateX(-50%)}
+.vb-mtr .lo,.vb-mtr .hi{position:absolute;top:11px;font-size:7.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--t3)}
+.vb-mtr .lo{left:0}.vb-mtr .hi{right:0}
+.vb-pct{font-size:26px;font-weight:700;margin-top:13px;font-variant-numeric:tabular-nums;line-height:1}
+.vb-pct em{font-style:normal;font-size:10px;font-weight:500;color:var(--t3);margin-left:3px}
+.vb-sub2{font-size:9px;color:var(--t3);margin-top:5px;line-height:1.5}
+.vb-acts{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:11px}
+.vb-hint{font-size:9.5px;color:var(--t3)}
+.vb-mathbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.vb-mathbar span{font-size:9.5px;color:var(--t3)}
+@media (max-width:1450px){
+  .vb-call{grid-template-columns:1fr}
+  .vb-call-r{text-align:left;width:100%}
+  .vb-word{font-size:28px}
+}
 </style>
 <div class="shell">
 
@@ -3916,18 +3947,12 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
   <div class="vb-head">
     <div>
       <h2 class="vb-title">Daily Bias</h2>
-      <div class="vb-sub">Date number · weekday planet · real sky events · composite &mdash; every step shown</div>
+      <div class="vb-sub">Is today biased up, down or neither &mdash; for the asset above</div>
     </div>
     <div class="vb-ctl">
       <label>Date<input type="date" id="vb_date" onchange="renderVibration()"></label>
       <button class="btn btn-g btn-sm" onclick="vbToday()">Today</button>
-      <button class="btn btn-g btn-sm" onclick="vbToggleMath()" id="vb_mathbtn">Show the arithmetic</button>
     </div>
-  </div>
-  <div class="vb-warn">
-    <b>Research framework.</b> Nothing on this page is evidence that numbers or planetary
-    geometry move price. The astronomy is calculated and checkable; the market meaning is a
-    hypothesis, and it stays labelled as one until the backtest below earns otherwise.
   </div>
   <div id="vb_body"></div>
 
@@ -12667,7 +12692,7 @@ return{profile:profile,signatureFast:signatureFast,backtest:backtest,
    arithmetic is one click away, and nothing that has not been measured is
    allowed to look like it has. Every number on this page can be rebuilt by
    hand from the inputs printed next to it. */
-var _vbDate=null,_vbMath=false,_vbBT=null,_vbBTAsset='';
+var _vbDate=null,_vbMath=false,_vbDetail=false,_vbBT=null,_vbBTAsset='';
 
 function vbToday(){
   _vbDate=null;
@@ -12676,9 +12701,7 @@ function vbToday(){
 }
 function vbToggleMath(){
   _vbMath=!_vbMath;
-  var b=document.getElementById('vb_mathbtn');
-  if(b)b.textContent=_vbMath?'Hide the arithmetic':'Show the arithmetic';
-  renderVibration();
+  try{vbRenderDetail(vbAsset(),vbDate());}catch(e){}
 }
 function vbDate(){
   var e=document.getElementById('vb_date');
@@ -12728,7 +12751,10 @@ function vbChip(k,v,cls){
 
 /* §1–4 + §11, the whole chain, only when asked for */
 function vbMathBlock(P){
-  if(!_vbMath)return '';
+  if(!_vbMath)
+    return '<div class="vb-mathbar"><button class="btn btn-g btn-sm" onclick="vbToggleMath()">'
+      +'Show the arithmetic</button><span>Every digit, every event number, and the sum that '
+      +'produces the composite.</span></div>';
   var L=[];
   L.push(vbRow('1 · Date digits',P.dateNumber.expr,
     'Every digit of the printed date, leading zeros included.'));
@@ -12751,7 +12777,8 @@ function vbMathBlock(P){
   }
   L.push(vbRow('11 · Final composite',P.final.expr,
     'Date root + weekday number + every reduced event number.','',true));
-  return '<div class="card vb-card"><div class="chd">The arithmetic, step by step</div>'
+  return '<div class="card vb-card"><div class="chd">The arithmetic, step by step'
+    +'<span class="chd-sub" style="cursor:pointer" onclick="vbToggleMath()">hide</span></div>'
     +'<div class="cbd vb-math">'+L.join('')+'</div></div>';
 }
 function vbRow(k,v,why,raw,strong){
@@ -12979,32 +13006,138 @@ function vbReferenceHtml(){
        +'the orbs to make the signature more selective.')
    +'</tbody></table></div></div>';
 }
+/* ══ THE VERDICT ══════════════════════════════════════════════════════
+   The front of this section answers one question — is today biased up,
+   down, or neither, and how hard. Everything else the engine computes is
+   still computed; it just lives behind the Details button, because a wall
+   of tables is not an answer.
+
+   The grade comes from the asset's own bias meter, the same reading the
+   Timing tab and the dashboard use, so the three can never contradict each
+   other. The numerology composite does NOT vote: its backtest has not
+   validated a single one of the nine numbers, so letting it move a bull or
+   bear call would be inventing a signal the measurement refused to grant.
+   It is shown in the details as context and labelled as such.
+
+   "Mixed" is a real state, not a hedge: it fires when the day's angles are
+   genuinely split — both sides present and neither clearly ahead — so a
+   modest net reading that hides a fight is not sold as a clean lean. */
+function vbGrade(bull){
+  if(bull>=70)return{k:'Strong Bull',t:'bull',s:3};
+  if(bull>=62)return{k:'Bull',      t:'bull',s:2};
+  if(bull>=56)return{k:'Weak Bull', t:'bull',s:1};
+  if(bull<=30)return{k:'Strong Bear',t:'bear',s:3};
+  if(bull<=38)return{k:'Bear',      t:'bear',s:2};
+  if(bull<=44)return{k:'Weak Bear', t:'bear',s:1};
+  return{k:'Neutral',t:'flat',s:0};
+}
+function vbTones(asset,eph){
+  var c={bull:0,bear:0,flat:0};
+  try{
+    liveAspects(eph,5).forEach(function(x){
+      var r=aspectRead(x,asset,eph);
+      if(r.w)c[r.tone]++;              /* bodies that rule this asset only */
+    });
+  }catch(e){}
+  return c;
+}
+function vbVerdict(asset,date){
+  var eph=getEphemeris(date);
+  var B=calcAstroBias(asset,eph,date);
+  var T=vbTones(asset,eph);
+  var g=vbGrade(B.bull);
+  var lo=Math.min(T.bull,T.bear), hi=Math.max(T.bull,T.bear);
+  /* both sides represented, and neither running away with it */
+  var mixed=lo>=2&&hi<=lo*1.6;
+  return{bias:B,tones:T,grade:g,mixed:mixed,
+         label:mixed?(g.s?g.k+' · mixed':'Mixed'):g.k};
+}
+function vbSay(asset,V){
+  var a=escHtml(asset), g=V.grade;
+  var core=g.s===3?'The sky leans clearly '+(g.t==='bull'?'up':'down')+' for '+a+' today.'
+         :g.s===2?'The sky leans '+(g.t==='bull'?'up':'down')+' for '+a+' today.'
+         :g.s===1?'A slight '+(g.t==='bull'?'upward':'downward')+' lean for '+a+' — there is not much in it.'
+         :'No directional lean for '+a+' today.';
+  if(V.mixed)
+    core+=' Today’s angles are split — '+V.tones.bull+' support it, '+V.tones.bear
+         +' work against it — so treat it as mixed rather than a clean read.';
+  return core;
+}
+
 function renderVibration(){
   var host=document.getElementById('vb_body');
   if(!host)return;
   var d=vbDate(), asset=vbAsset();
-  var P;
-  try{P=VIBP.profile(d);}
+  var V;
+  try{V=vbVerdict(asset,d);}
   catch(e){
-    host.innerHTML='<div class="card vb-card"><div class="cbd"><div class="vb-empty">'
-      +'ASTRONOMICAL DATA UNAVAILABLE — '+escHtml(e.message)+'</div></div></div>';
+    host.innerHTML='<div class="vb-empty">ASTRONOMICAL DATA UNAVAILABLE — '+escHtml(e.message)+'</div>';
     return;
   }
+  var g=V.grade, bull=V.bias.bull;
+  var col=g.t==='bull'?'var(--green)':g.t==='bear'?'var(--red)':'var(--amber)';
+  var evN=V.tones.bull+V.tones.bear+V.tones.flat;
+
+  var card='<div class="vb-call '+g.t+(V.mixed?' mixed':'')+'">'
+   +'<div class="vb-call-l">'
+     +'<div class="vb-cap">'+d.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long'})
+       +' &middot; '+escHtml(asset)+'</div>'
+     +'<div class="vb-word" style="color:'+col+'">'+escHtml(V.label)+'</div>'
+     +'<div class="vb-say">'+vbSay(asset,V)+'</div>'
+   +'</div>'
+   +'<div class="vb-call-r">'
+     +'<div class="vb-mtr"><i style="left:'+bull+'%"></i>'
+       +'<span class="lo">bear</span><span class="hi">bull</span></div>'
+     +'<div class="vb-pct" style="color:'+col+'">'+bull+'<em>% bull</em></div>'
+     +'<div class="vb-sub2">'+evN+' angle'+(evN===1?'':'s')+' on this asset today'
+       +(evN?' &middot; '+V.tones.bull+' up, '+V.tones.bear+' down':'')+'</div>'
+   +'</div></div>';
+
+  var actions='<div class="vb-acts">'
+   +'<button class="btn btn-g btn-sm" onclick="vbToggleDetail()" id="vb_detbtn">'
+     +(_vbDetail?'Hide the working':'Show the working')+'</button>'
+   +'<button class="btn btn-g btn-sm" onclick="goTab(\'timing\',document.querySelector(\'.nav-item[onclick*=&quot;timing&quot;]\'))">'
+     +'Long view &rarr; Timing Engine</button>'
+   +'<span class="vb-hint">This is today only. Which day and which hours to trade lives in the Timing Engine.</span>'
+   +'</div>';
+
+  host.innerHTML=card+actions+'<div id="vb_detail"'+(_vbDetail?'':' style="display:none"')+'></div>';
+  if(_vbDetail)vbRenderDetail(asset,d);
+}
+
+/* everything the engine computes, on request — nothing was removed, it just
+   stopped being the first thing you see */
+function vbToggleDetail(){
+  _vbDetail=!_vbDetail;
+  renderVibration();
+}
+function vbRenderDetail(asset,d){
+  var el=document.getElementById('vb_detail');
+  if(!el)return;
+  var P;
+  try{P=VIBP.profile(d);}
+  catch(e){el.innerHTML='<div class="vb-empty">ASTRONOMICAL DATA UNAVAILABLE</div>';return;}
   var bt=vbRunBacktest(asset);
   var notes=P.notes.length
     ?'<div class="vb-notes">'+P.notes.map(function(n){return '<div>'+escHtml(n)+'</div>';}).join('')+'</div>'
     :'';
-  host.innerHTML=vbHero(P)+notes+vbMathBlock(P)
-    +'<div class="vb-grid">'+vbAspects(P)+vbEvents(P)+'</div>'
-    +vbMarket(P,asset,bt)+vbSky(P)
-    +'<div class="vb-legal">Configuration in force: planet table as supplied · orbs '
-    +VIB.CFG.aspects.map(function(a){return a.ang+'°±'+a.orb;}).join(', ')
-    +' · master numbers '+(VIB.CFG.masterNumbers.enabled?'on':'off')
-    +' · sign→number mapping '+(VIB.CFG.signNumbers?'configured':'NOT configured, so sign changes score nothing')
-    +'. Ephemeris: low-order analytic series; lunation instants agree with an independent '
-    +'Meeus implementation to within 11 minutes, and the 2026 eclipse screen recovers exactly '
-    +'the four real eclipses. Good enough for sign, degree, aspect and phase; not a substitute '
-    +'for a full eclipse canon.</div>';
+  el.innerHTML='<div class="vb-warn">'
+   +'<b>Research framework.</b> Nothing below is evidence that numbers or planetary geometry move '
+   +'price. The astronomy is calculated and checkable; the market meaning is a hypothesis, and it '
+   +'stays labelled as one until the backtest earns otherwise. The composite number does not move '
+   +'the call above &mdash; no composite has passed validation, so it carries no weight.'
+   +'</div>'
+   +vbHero(P)+notes+vbMathBlock(P)
+   +'<div class="vb-grid">'+vbAspects(P)+vbEvents(P)+'</div>'
+   +vbMarket(P,asset,bt)+vbSky(P)
+   +'<div class="vb-legal">Configuration in force: planet table as supplied · orbs '
+   +VIB.CFG.aspects.map(function(a){return a.ang+'°±'+a.orb;}).join(', ')
+   +' · master numbers '+(VIB.CFG.masterNumbers.enabled?'on':'off')
+   +' · sign→number mapping '+(VIB.CFG.signNumbers?'configured':'NOT configured, so sign changes score nothing')
+   +'. Ephemeris: low-order analytic series; lunation instants agree with an independent '
+   +'Meeus implementation to within 11 minutes, and the 2026 eclipse screen recovers exactly '
+   +'the four real eclipses. Good enough for sign, degree, aspect and phase; not a substitute '
+   +'for a full eclipse canon.</div>';
 }
 
 function shareLines(kind){
