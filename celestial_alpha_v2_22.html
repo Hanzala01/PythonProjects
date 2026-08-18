@@ -3536,6 +3536,37 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 .mj-in input:focus{outline:none;border-color:var(--p3)}
 .mj-using{flex:1;min-width:180px;font-size:9px;color:var(--t3);line-height:1.5}
 .mj-using b{color:var(--p3);font-weight:600}
+
+/* a rung that coincides with a key zone or with the trade's own levels */
+.mj-row.key{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
+.mj-dn.hit b,.mj-up.hit b{text-shadow:0 0 12px currentColor}
+.mj-hit{display:inline-block;margin-top:3px;font-style:normal;font-size:7.5px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;border:1px solid;border-radius:4px;padding:1px 5px;
+  white-space:nowrap}
+/* two-line ladder rows: the price rides with the label */
+.tl-t b u{text-decoration:none;font-variant-numeric:tabular-nums;margin-left:4px}
+.tl-t b i.tag{font-style:normal;font-size:8.5px;font-weight:600;color:var(--t3);margin-left:4px}
+.tl-row .tl-n{display:none}
+.qp-l.two{display:block}
+.qp-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.qp-h i{font-style:normal;font-size:9.5px;color:var(--t3)}
+.qp-h b{font-size:12.5px;font-weight:600}
+.qp-l.two>span{display:block;font-size:9.5px;color:var(--t3);line-height:1.5;margin-top:2px}
+
+.mj-hit.off{border-color:var(--b1);color:var(--t3);font-weight:500;text-transform:none;
+  letter-spacing:0;opacity:.75}
+.mj-hit.on{box-shadow:0 0 10px -2px currentColor}
+
+/* exactly two lines: name + price + move on the first, meaning on the second.
+   The tags were block-level children of a block <b>, so each dropped onto its
+   own line and the "two line" row became four. */
+.tl-t b{display:flex!important;align-items:baseline;gap:7px;flex-wrap:nowrap;
+  white-space:nowrap;overflow:hidden}
+.tl-t b u{flex:none}
+.tl-t b i.tag,.tl-t b em{flex:none;display:inline-block!important;margin:0}
+.tl-t i{white-space:normal;overflow:hidden;text-overflow:ellipsis;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.tl-row{padding-top:7px!important;padding-bottom:7px!important}
 </style>
 <div class="shell">
 
@@ -6247,6 +6278,40 @@ function anaZones(price,dp){
    the strong high/low — and fall back to the highest high and lowest low in
    the loaded history. If neither exists the panel says so instead of rooting
    the price and pretending. */
+/* ══ THE MAJOR HIGH AND LOW, FOUND RATHER THAN TYPED ══
+   Nobody should have to enter these: the history is already loaded and a
+   swing high is a definition, not an opinion — a bar whose high is above the
+   five bars either side of it, confirmed by the five that followed. The
+   highest such pivot is the major high, the lowest is the major low.
+
+   Confirmed pivots only, so the most recent five bars can never produce one;
+   that is deliberate. A "high" that has not yet been tested from the right is
+   not a high, it is the current bar, and rooting a level ladder on it would
+   move every rung each time price ticked.
+
+   The lookback shrinks on a short history rather than giving up, and if even
+   that finds nothing the caller falls back to the weekly and daily values. */
+function anaAutoStrong(){
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
+  if(!rows||rows.length<25)return{hi:null,lo:null};
+  var lbs=[5,4,3];
+  for(var q=0;q<lbs.length;q++){
+    var sp=swingPoints(rows,lbs[q]);
+    if(!sp.hi.length||!sp.lo.length)continue;
+    var H=sp.hi.slice().sort(function(a,b){return b.p-a.p;})[0];
+    var L=sp.lo.slice().sort(function(a,b){return a.p-b.p;})[0];
+    var lab=function(d){
+      if(!d)return '';
+      var x=new Date(String(d).length===10?d+'T00:00:00':d);
+      return isFinite(+x)?' · '+x.toLocaleDateString('en',{day:'numeric',month:'short'}):'';
+    };
+    return{
+      hi:{v:H.p,n:'Swing high'+lab(H.d),auto:true,date:H.d,pivots:sp.hi.length,lb:lbs[q]},
+      lo:{v:L.p,n:'Swing low'+lab(L.d), auto:true,date:L.d,pivots:sp.lo.length,lb:lbs[q]}
+    };
+  }
+  return{hi:null,lo:null};
+}
 function anaAnchors(price){
   var N=function(id){var e=document.getElementById(id);var v=e?parseFloat(e.value):NaN;
                      return isFinite(v)&&v>0?v:null;};
@@ -6256,16 +6321,18 @@ function anaAnchors(price){
      to trade against; the recent extreme is the one price is currently working
      around. Anything typed into the form still wins, so a level you know
      matters can always be forced. */
-  /* STRONG HIGH AND STRONG LOW COME FIRST. They are the levels you picked by
-     hand as the ones that matter, so nothing derived from candles is allowed
-     to outrank them. The weekly and daily values below are only a fallback for
-     when you have not named a strong level yet. */
-  var hi=[{v:N('sh_price'),n:'Strong high'},{v:N('ca_wh'),n:'Weekly high'},
-          {v:N('sl_pwh'),n:'Prev week high'},{v:N('sl_pdh'),n:'Prev day high'}]
-         .filter(function(x){return x.v;})[0]||null;
-  var lo=[{v:N('sl2_price'),n:'Strong low'},{v:N('ca_wl'),n:'Weekly low'},
-          {v:N('sl_pwl'),n:'Prev week low'},{v:N('sl_pdl'),n:'Prev day low'}]
-         .filter(function(x){return x.v;})[0]||null;
+  /* Typed values win, but nothing has to be typed: the strong high and low
+     are found from the candles below. Weekly and daily remain only as a last
+     resort for a history too short to hold a confirmed pivot. */
+  var hi=[{v:N('sh_price'),n:'Strong high'}].filter(function(x){return x.v;})[0]||null;
+  var lo=[{v:N('sl2_price'),n:'Strong low'}].filter(function(x){return x.v;})[0]||null;
+  var auto=anaAutoStrong();
+  if(!hi&&auto.hi)hi=auto.hi;
+  if(!lo&&auto.lo)lo=auto.lo;
+  if(!hi)hi=[{v:N('ca_wh'),n:'Weekly high'},{v:N('sl_pwh'),n:'Prev week high'},
+             {v:N('sl_pdh'),n:'Prev day high'}].filter(function(x){return x.v;})[0]||null;
+  if(!lo)lo=[{v:N('ca_wl'),n:'Weekly low'},{v:N('sl_pwl'),n:'Prev week low'},
+             {v:N('sl_pdl'),n:'Prev day low'}].filter(function(x){return x.v;})[0]||null;
 
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
   if((!hi||!lo)&&rows&&rows.length>=5){
@@ -6297,6 +6364,42 @@ function anaLadderFrom(anchor){
    track, the level above, and the span. It is simply drawn three times now,
    once per origin: the major high, the major low, and price itself. Nothing
    about the look changed; there are three of them instead of one. */
+/* ══ WHERE A MAJOR LEVEL LANDS ON A KEY ZONE ══
+   Two independent calculations agreeing on a price is the only thing on this
+   board worth more than either of them alone. A square-root rung is geometry
+   from an anchor; an aligned level is Gann degree, sigma band, resonance and
+   planet angle scored together; the trade's own entry, stop and target come
+   from the signal. When a rung sits inside the same pocket as one of those,
+   it is called out — and the tolerance is this asset's own daily move, not a
+   flat percentage, so "the same pocket" means the same thing on gold as on a
+   stock that swings three times as far. */
+function anaKeyHits(v,price){
+  if(!(v>0)||!(price>0))return{hits:[],near:null,tol:0};
+  var tol=price*dailySigma().v*0.3;          /* under a third of a day's move */
+  var hits=[], near=null;
+  var consider=function(p,label,col,rank){
+    if(!(p>0))return;
+    var g=Math.abs(p-v);
+    if(g<=tol)hits.push({t:label,c:col,g:g});
+    if(!near||g<near.g)near={t:label,c:col,g:g,rank:rank};
+  };
+  var S=window._lastSig;
+  if(S&&S.style){
+    consider(S.entry,'Entry','var(--p3)',3);
+    consider(S.sl,'Stop','var(--red)',3);
+    consider(S.tp,'Target','var(--green)',3);
+  }
+  (window._lastLevels||[]).forEach(function(l){
+    if(!(l.price>0)||l.score<4)return;
+    consider(l.price,(l.score>=7?'Key level ':'Level ')+l.score,
+             l.score>=7?'var(--amber)':'var(--t2)',l.score);
+  });
+  /* A tag that appears only on a coincidence is invisible most of the time and
+     reads as broken. The nearest key level is always named with its gap, and
+     the row only lights up when the gap is inside the tolerance — so "no
+     overlap here" is stated rather than left blank. */
+  return{hits:hits,near:near,tol:tol};
+}
 function anaMjBlock(title,sub,origin,price,dp,tone){
   var rows=anaLadderFrom(origin), sig=dailySigma();
   var maxW=rows[rows.length-1].up-rows[rows.length-1].dn||1;
@@ -6311,14 +6414,26 @@ function anaMjBlock(title,sub,origin,price,dp,tone){
    +rows.map(function(r,k){
       var w=r.up-r.dn;
       var dnPct=(r.dn-price)/price*100, upPct=(r.up-price)/price*100;
-      return '<div class="mj-row" style="animation-delay:'+(k*0.06).toFixed(2)+'s">'
+      var hd=anaKeyHits(r.dn,price), hu=anaKeyHits(r.up,price);
+      var tag=function(h,dpx){
+        if(h.hits.length)
+          return '<em class="mj-hit on" style="color:'+h.hits[0].c+';border-color:'+h.hits[0].c+'">'
+            +escHtml(h.hits.map(function(x){return x.t;}).join(' + '))+'</em>';
+        if(h.near)
+          return '<em class="mj-hit off">'+escHtml(h.near.t)+' '+(h.near.g).toFixed(dpx>2?2:0)+' away</em>';
+        return '';
+      };
+      return '<div class="mj-row'+(hd.hits.length||hu.hits.length?' key':'')
+        +'" style="animation-delay:'+(k*0.06).toFixed(2)+'s">'
         +'<div class="mj-deg"><b>'+r.d+'°</b><i>+'+r.i.toFixed(2)+'</i></div>'
-        +'<div class="mj-dn"><b>'+r.dn.toFixed(dp)+'</b><i>'+dnPct.toFixed(2)+'% · '
-          +(Math.abs(r.dn-price)/(price*sig.v)).toFixed(1)+'σ</i></div>'
+        +'<div class="mj-dn'+(hd.hits.length?' hit':'')+'"><b>'+r.dn.toFixed(dp)+'</b>'
+          +'<i>'+dnPct.toFixed(2)+'% · '+(Math.abs(r.dn-price)/(price*sig.v)).toFixed(1)+'σ</i>'
+          +tag(hd,dp)+'</div>'
         +'<div class="mj-track"><span class="mid"></span>'
           +'<span class="fill" style="--w:'+(w/maxW*100).toFixed(0)+'%"></span></div>'
-        +'<div class="mj-up"><b>'+r.up.toFixed(dp)+'</b><i>+'+upPct.toFixed(2)+'% · '
-          +(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i></div>'
+        +'<div class="mj-up'+(hu.hits.length?' hit':'')+'"><b>'+r.up.toFixed(dp)+'</b>'
+          +'<i>+'+upPct.toFixed(2)+'% · '+(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i>'
+          +tag(hu,dp)+'</div>'
         +'<div class="mj-w">'+w.toFixed(dp)+'</div>'
         +'</div>';
     }).join('')
@@ -6335,8 +6450,9 @@ function anaAnchorInputs(A,dp){
      +' placeholder="e.g. 4888" oninput="anaSetAnchor(\'sh_price\',this.value)"></label>'
    +'<label><i>Strong low</i><input type="number" step="0.01" id="mj_sl" value="'+v('sl2_price')+'"'
      +' placeholder="e.g. 3942" oninput="anaSetAnchor(\'sl2_price\',this.value)"></label>'
-   +'<div class="mj-using">Using <b>'+escHtml(usingH)+'</b> and <b>'+escHtml(usingL)+'</b>.'
-   +(A.hi&&A.hi.n==='Strong high'?'':' Type a strong high and low to override.')+'</div>'
+   +'<div class="mj-using">Using <b>'+escHtml(usingH)+'</b> and <b>'+escHtml(usingL)+'</b>'
+   +((A.hi&&A.hi.auto)||(A.lo&&A.lo.auto)?', found from the candles'
+     :', entered by hand')+'. Leave the boxes empty to keep it automatic.</div>'
    +'</div>';
 }
 var _mjT=null;
@@ -6505,12 +6621,18 @@ function anaLadder(pts,price,lo,hi,dp,S,dir){
     var side=x.k==='now'?'':(d>=0?'above':'below');
     return '<div class="tl-row '+x.k+(off(x.p)?' faded':'')+'" style="animation-delay:'+(i*0.04).toFixed(2)+'s">'
       +'<span class="dotl" style="background:'+x.c+'"></span>'
-      +'<div class="tl-t"><b style="color:'+x.c+'">'+escHtml(x.l)+(off(x.p)?' <em>off rail</em>':'')+'</b>'
-        +'<i>'+escHtml(LADDER_MEAN[x.l]||'')+'</i></div>'
-      +'<div class="tl-n"><b>'+anaFmt(x.p,dp)+'</b>'
-        +(x.k==='now'?'<i>live</i>'
-          :'<i>'+(d>=0?'+':'')+d.toFixed(2)+'% · '+(abs>=0?'+':'')+anaFmt(abs,dp)+' '+side+'</i>')
-      +'</div></div>';
+      /* two lines: name and price together on the first, the meaning on the
+         second. The price used to sit in a separate right-hand column, which
+         is the first thing to get cut on a narrow screen and the last thing
+         the eye finds — it belongs next to the thing it prices. */
+      +'<div class="tl-t"><b style="color:'+x.c+'">'+escHtml(x.l)
+        +' <u>'+anaFmt(x.p,dp)+'</u>'
+        +(x.k==='now'?' <i class="tag">live</i>'
+          :' <i class="tag">'+(d>=0?'+':'')+d.toFixed(2)+'%</i>')
+        +(off(x.p)?' <em>off rail</em>':'')+'</b>'
+        +'<i>'+escHtml(LADDER_MEAN[x.l]||'')
+        +(x.k==='now'?'':' · '+(abs>=0?'+':'')+anaFmt(abs,dp)+' '+side)+'</i></div>'
+      +'</div>';
   }).join('');
 
   var head='';
@@ -14220,9 +14342,11 @@ function qvPlainHtml(R){
    +'<div class="qp-top"><b>In plain words</b><span>'+escHtml(P.regime.name)+'</span></div>'
    +qvSpark(R)
    +P.lines.map(function(l,i){
-      return '<div class="qp-l" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
-        +'<i>'+escHtml(l.k)+'</i>'
-        +'<b'+(l.c?' style="color:'+l.c+'"':'')+'>'+l.v+'</b>'
+      /* question and answer on one line, evidence on the next — three stacked
+         lines per item made a five-item block read like a page of prose */
+      return '<div class="qp-l two" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
+        +'<div class="qp-h"><i>'+escHtml(l.k)+'</i>'
+          +'<b'+(l.c?' style="color:'+l.c+'"':'')+'>'+l.v+'</b></div>'
         +'<span>'+l.d+'</span></div>';
     }).join('')
    +'<div class="qp-act"><i>So what do I do?</i><span>'+escHtml(P.action)+'</span></div>'
