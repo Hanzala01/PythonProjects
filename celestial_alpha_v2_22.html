@@ -3432,6 +3432,44 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 .mj-lg .k.dn{background:rgba(239,68,68,.35)}
 .mj-lg .k.cf{background:transparent;border:1px solid var(--p3)}
 @media (max-width:1450px){.mj-sets{grid-template-columns:1fr}}
+
+/* ── MARKET INTELLIGENCE, quieter ── */
+#pane_sentiment{padding-right:16px}
+.sn-key{font-size:9.5px;color:var(--t3);line-height:1.65;padding:8px 11px;border-radius:8px;
+  border:1px solid var(--b1);background:rgba(7,6,21,.4);margin-bottom:12px}
+.sn-det{border:1px solid var(--b1);border-radius:9px;margin:12px 0;background:rgba(7,6,21,.4)}
+.sn-det>summary{cursor:pointer;padding:9px 12px;font-size:11px;font-weight:600;color:var(--t2);
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;list-style:none}
+.sn-det>summary::-webkit-details-marker{display:none}
+.sn-det>summary span{font-size:9px;color:var(--t3);font-weight:400}
+.sn-det[open]>summary{border-bottom:1px solid var(--b1)}
+.sn-det .sn-src{padding:10px 12px}
+.sn-fg{position:relative;border:1px solid var(--b1);border-radius:9px;padding:11px 13px;margin-bottom:11px;
+  background:rgba(7,6,21,.45)}
+.sn-fg i{font-style:normal;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.sn-fg b{font-size:22px;font-weight:700;margin:0 8px 0 10px;font-variant-numeric:tabular-nums}
+.sn-fg u{text-decoration:none;font-size:12px;color:var(--t2)}
+.sn-fgbar{position:relative;height:5px;border-radius:3px;margin:9px 0 6px;
+  background:linear-gradient(90deg,var(--red),var(--amber) 50%,var(--green))}
+.sn-fgbar span{position:absolute;top:-3px;width:3px;height:11px;border-radius:2px;background:var(--t1);
+  transform:translateX(-50%);box-shadow:0 0 5px rgba(255,255,255,.5)}
+.sn-fg s{display:block;text-decoration:none;font-size:9px;color:var(--t3);line-height:1.5}
+.sn-mac{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.sn-macg{border:1px solid var(--b1);border-radius:9px;padding:9px 11px;background:rgba(7,6,21,.4);min-width:0}
+.sn-macgh{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);
+  font-weight:600;margin-bottom:6px}
+.sn-macr{display:grid;grid-template-columns:1fr auto;grid-template-areas:'k v' 'd w';
+  gap:0 8px;padding:4px 0;border-bottom:1px solid rgba(139,92,246,.07)}
+.sn-macr:last-child{border-bottom:0}
+.sn-macr i{grid-area:k;font-style:normal;font-size:10px;color:var(--t2);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.sn-macr b{grid-area:v;font-size:12px;font-weight:600;color:var(--t1);font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.sn-macr em{grid-area:w;font-style:normal;font-size:8.5px;text-align:right;white-space:nowrap}
+.sn-macr em.up{color:var(--green)}.sn-macr em.dn{color:var(--red)}
+.sn-macr span{grid-area:d;font-size:8px;color:var(--t3);white-space:nowrap}
+.sn-macn{font-size:8.5px;color:var(--t3);margin-top:8px;line-height:1.6}
+@media (max-width:1450px){.sn-mac{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <div class="shell">
 
@@ -6146,22 +6184,33 @@ function anaZones(price,dp){
 function anaAnchors(price){
   var N=function(id){var e=document.getElementById(id);var v=e?parseFloat(e.value):NaN;
                      return isFinite(v)&&v>0?v:null;};
-  var hi=[{v:N('ca_ath'),n:'All-time high'},{v:N('sh_price'),n:'Strong high'},
-          {v:N('ai_mh'), n:'Monthly high'},{v:N('ca_wh'),n:'Weekly high'}]
+  /* Anchors are the DAILY or WEEKLY high and low, not the all-time or monthly
+     extreme. A square-root cycle measured from a five-year high produces rungs
+     thousands of points from spot, which are arithmetically real and useless
+     to trade against; the recent extreme is the one price is currently working
+     around. Anything typed into the form still wins, so a level you know
+     matters can always be forced. */
+  /* weekly first, then daily — both are already derived from the candles by
+     applySessionLevels, so this needs no new inputs from anyone */
+  var hi=[{v:N('ca_wh'),n:'Weekly high'},{v:N('sl_pwh'),n:'Prev week high'},
+          {v:N('sl_pdh'),n:'Prev day high'},{v:N('sh_price'),n:'Strong high'}]
          .filter(function(x){return x.v;})[0]||null;
-  var lo=[{v:N('ca_atl'),n:'All-time low'},{v:N('sl2_price'),n:'Strong low'},
-          {v:N('ai_ml'), n:'Monthly low'},{v:N('ca_wl'),n:'Weekly low'}]
+  var lo=[{v:N('ca_wl'),n:'Weekly low'},{v:N('sl_pwl'),n:'Prev week low'},
+          {v:N('sl_pdl'),n:'Prev day low'},{v:N('sl2_price'),n:'Strong low'}]
          .filter(function(x){return x.v;})[0]||null;
+
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
-  if((!hi||!lo)&&rows&&rows.length>20){
-    var H=-Infinity,L=Infinity,hd=null,ld=null;
-    rows.forEach(function(r){
+  if((!hi||!lo)&&rows&&rows.length>=5){
+    /* weekly = the last five sessions, which is the window the level engine
+       and the trend read both already work in */
+    var win=rows.slice(-5), H=-Infinity, L=Infinity, hd=null, ld=null;
+    win.forEach(function(r){
       var h=+r.high,l=+r.low;
       if(isFinite(h)&&h>H){H=h;hd=r.date;}
       if(isFinite(l)&&l<L){L=l;ld=r.date;}
     });
-    if(!hi&&isFinite(H))hi={v:H,n:'Swing high of '+rows.length+' bars',auto:true,date:hd};
-    if(!lo&&isFinite(L))lo={v:L,n:'Swing low of '+rows.length+' bars',auto:true,date:ld};
+    if(!hi&&isFinite(H))hi={v:H,n:'Weekly high (last 5 sessions)',auto:true,date:hd};
+    if(!lo&&isFinite(L))lo={v:L,n:'Weekly low (last 5 sessions)',auto:true,date:ld};
   }
   return{hi:hi,lo:lo};
 }
@@ -6174,6 +6223,29 @@ function anaLadderFrom(anchor){
            up:Math.pow(root+o.i,2)*100,
            dn:Math.pow(Math.max(0.0001,root-o.i),2)*100};
   });
+}
+/* ══ the original ladder, rooted on price ══
+   Kept because it answers a different question from the anchor ladders: those
+   say where the rungs of the swing sit, this says where the rungs sit around
+   wherever price happens to be right now. Same arithmetic, different origin. */
+function anaRungsFromPrice(price,dp){
+  var rows=anaLadderFrom(price), sig=dailySigma();
+  return '<div class="mj-set mj-now"><div class="mj-h">From price now — '+price.toFixed(dp)
+   +' <em>(the original ladder)</em></div>'
+   +'<table class="mj-t"><thead><tr><th>Degree</th><th>Step</th>'
+   +'<th>&darr; from price</th><th>&uarr; from price</th><th>Width</th></tr></thead><tbody>'
+   +rows.map(function(r){
+      var w=r.up-r.dn;
+      return '<tr><td><b>'+r.d+'°</b></td><td>'+r.i.toFixed(2)+'</td>'
+        +'<td><div class="mj-c dn"><b>'+r.dn.toFixed(dp)+'</b><i>'
+          +((r.dn-price)/price*100).toFixed(2)+'% · '
+          +(Math.abs(r.dn-price)/(price*sig.v)).toFixed(1)+'σ</i></div></td>'
+        +'<td><div class="mj-c up"><b>'+r.up.toFixed(dp)+'</b><i>+'
+          +((r.up-price)/price*100).toFixed(2)+'% · '
+          +(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i></div></td>'
+        +'<td class="mj-w">'+w.toFixed(dp)+'</td></tr>';
+    }).join('')
+   +'</tbody></table></div>';
 }
 function anaRungs(price,dp){
   var A=anaAnchors(price);
@@ -6220,6 +6292,7 @@ function anaRungs(price,dp){
      +'<div class="mj-a now"><i>Price now</i><b>'+price.toFixed(dp)+'</b>'
        +'<span>1σ = '+(sig.v*100).toFixed(2)+'%'+(sig.measured?' (measured)':' (default — no history)')+'</span></div>'
    +'</div>'
+   +anaRungsFromPrice(price,dp)
    +'<div class="mj-sets">'
    +sets.map(function(S){
       return '<div class="mj-set"><div class="mj-h">From the '
@@ -9629,7 +9702,11 @@ function goTab(name,btn){
     loadTimFrames();renderCycleCountdown();
     try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
   }
-  if(name==='sentiment'){renderSentiment();}
+  if(name==='sentiment'){
+    renderSentiment();
+    /* the previous prints arrive asynchronously; repaint once they have */
+    econLoadAll(function(){try{renderSentiment();}catch(e){}});
+  }
 
   if(name==='fundamentals'){try{renderFundamentals();}catch(e){console.error('fundamentals:',e);}}
   if(name==='reference'){
@@ -9646,47 +9723,120 @@ function goTab(name,btn){
 /* ══ ECONOMIC CALENDAR — recurring high-impact events, live countdown ══ */
 var _newsTimer=null;
 /* Recurring US high-impact events. FOMC=8x/yr approx 6wk cadence; CPI/NFP monthly. Times in local. */
+/* ══ ECONOMIC CALENDAR ════════════════════════════════════════════════
+   What was wrong here:
+     · CPI was pinned to the 13th of every month. BLS does not release on a
+       fixed day of the month, so that date was simply invented.
+     · PPI was missing altogether.
+     · The rate decision carried fc:'3.75%' and pv:'3.75%' hardcoded — a
+       forecast and a previous print typed into the source, which is exactly
+       the thing this app is not allowed to do.
+
+   What it does now: every date is tagged with how it was obtained, and the
+   previous value is read from the live macro chain rather than typed in.
+
+     'scheduled' — a published calendar date (the FOMC dates below)
+     'rule'      — a documented release rule (NFP: first Friday)
+     'window'    — no fixed rule; a range is shown, not a false exact day
+   Forecasts have no source wired, so they stay '—'. A consensus forecast is
+   not something the engine can derive, and guessing one would be worse than
+   leaving it blank. */
+function econPrev(name){
+  var c=(typeof _macroCache!=='undefined'&&_macroCache)?_macroCache[name]:null;
+  var r=c&&c.res;
+  if(!r||!isFinite(r.latest))return{txt:'—',date:null,stale:false};
+  var M=MACRO[name]||{}, v=+r.latest;
+  /* PAYEMS and CES0000000001 are the EMPLOYMENT LEVEL, not the monthly change
+     everyone means by "NFP". Printing 159.07M next to a payrolls headline reads
+     as a 159-million payroll gain, so the unit is stated. The change itself
+     needs two observations and these sources return one. */
+  var txt=M.kind==='rate'?v.toFixed(2)+'%'
+        :M.kind==='payrolls'?((v>=1000?(v/1000).toFixed(2)+'M':v.toFixed(0)+'k')+' total jobs')
+        :M.kind==='CPI'?v.toFixed(1)+' index'
+        :M.kind==='PPI'?v.toFixed(1)+' index'
+        :v.toFixed(1);
+  return{txt:txt,date:r.date||null,stale:!!r.stale,age:r.age};
+}
+/* Pull every series the calendar shows, not just the next one — the previous
+   print for CPI used to be blank whenever the nearest release was payrolls. */
+var _econLoading=false;
+function econLoadAll(done){
+  if(_econLoading)return;
+  var names=Object.keys(MACRO), left=names.length;
+  if(!left){if(done)done();return;}
+  _econLoading=true;
+  names.forEach(function(nm){
+    macroFetch(nm,function(){ if(--left===0){_econLoading=false;if(done)done();} });
+  });
+}
 function buildEconEvents(){
-  var now=new Date();
-  var out=[];
-  /* NFP: first Friday of each month, 08:30 ET ≈ 18:30 PKT (release time varies by user zone; we use local 18:30 as approx display) */
+  var now=new Date(), out=[];
   function nthWeekdayOfMonth(y,m,weekday,n){
     var d=new Date(y,m,1),cnt=0;
     while(d.getMonth()===m){ if(d.getDay()===weekday){cnt++; if(cnt===n)return new Date(d);} d.setDate(d.getDate()+1);}
     return null;
   }
-  function addMonths(base,k){return new Date(base.getFullYear(),base.getMonth()+k,base.getDate(),base.getHours(),base.getMinutes());}
-  var y=now.getFullYear(),m=now.getMonth();
-  /* generate next 4 months of monthly events */
+  var y=now.getFullYear(), m=now.getMonth();
+
   for(var k=0;k<5;k++){
     var yy=y, mm=m+k; while(mm>11){mm-=12;yy++;}
-    /* NFP — 1st Friday 18:30 local */
-    var nfp=nthWeekdayOfMonth(yy,mm,5,1); if(nfp){nfp.setHours(18,30,0,0);
-      out.push({t:'Non-Farm Payrolls',d:nfp,fc:'—',pv:'—',impact:'High'});}
-    /* CPI — ~13th of month 18:30 local (approx) */
-    var cpi=new Date(yy,mm,13,18,30,0,0);
-    out.push({t:'CPI (Inflation)',d:cpi,fc:'—',pv:'—',impact:'High'});
-    /* FOMC Rate — ~last Wednesday of month, but only ~every 6-7 weeks. We include a quarterly-ish set. */
+
+    /* NFP — the Employment Situation is released on the first Friday of the
+       month. That is a real published rule; it does shift occasionally around
+       holidays, which the note says rather than pretending otherwise. */
+    var nfp=nthWeekdayOfMonth(yy,mm,5,1);
+    if(nfp){
+      nfp.setHours(18,30,0,0);
+      out.push({t:'Non-Farm Payrolls',d:nfp,prec:'rule',
+        note:'First Friday of the month, 08:30 ET. BLS shifts this around some holidays.',
+        fc:'—',impact:'High'});
+    }
+    /* CPI and PPI — released mid-month on a BLS schedule with no day-of-month
+       rule. Showing an exact day would be inventing one, so the midpoint of
+       the real window is used for ordering and the window itself is shown. */
+    var cpi=new Date(yy,mm,12,18,30,0,0);
+    out.push({t:'CPI (Inflation)',d:cpi,prec:'window',winFrom:10,winTo:15,
+      note:'BLS releases CPI mid-month, typically the 10th–15th. No fixed day of month — check the BLS schedule for the exact date.',
+      fc:'—',impact:'High'});
+    var ppi=new Date(yy,mm,15,18,30,0,0);
+    out.push({t:'PPI (Producer Prices)',d:ppi,prec:'window',winFrom:13,winTo:18,
+      note:'BLS releases PPI in the days around CPI, typically the 13th–18th. No fixed day of month.',
+      fc:'—',impact:'Medium'});
   }
-  /* FOMC meeting dates 2026 (scheduled, 23:00 local approx for PKT) */
-  /* Confirmed 2026 FOMC schedule. Once these are all in the past the calendar
-     would simply lose the rate decision, so later years are projected 52 weeks
-     forward (keeps the weekday) and labelled "est." — the real schedule is
-     published a year ahead, so replace FOMC_YEAR/fomc when it is announced. */
+
+  /* FOMC — these are the published 2026 meeting dates. Beyond the published
+     schedule nothing is projected: a made-up 2027 meeting date is worse than
+     no row, so the calendar simply runs out and says so. */
   var FOMC_YEAR=2026;
   var fomc=[[0,28],[2,18],[3,29],[5,17],[6,29],[8,16],[9,28],[11,9]];
-  for(var yOff=0;yOff<=2;yOff++){
-    fomc.forEach(function(f){
-      var d=new Date(FOMC_YEAR,f[0],f[1],23,0,0,0);
-      if(yOff)d=new Date(d.getTime()+yOff*52*7*86400000);
-      if(d<=now)return;
-      out.push({t:'Federal Funds Rate'+(yOff?' (est.)':''),d:d,
-                fc:yOff?'—':'3.75%',pv:yOff?'—':'3.75%',impact:'High'});
-    });
-  }
-  /* keep only future events, sort ascending */
+  fomc.forEach(function(f){
+    var d=new Date(FOMC_YEAR,f[0],f[1],23,0,0,0);
+    if(d<=now)return;
+    out.push({t:'Federal Funds Rate',d:d,prec:'scheduled',
+      note:'Published FOMC meeting date. Decision at 14:00 ET on the second day.',
+      fc:'—',impact:'High'});
+  });
+
   out=out.filter(function(e){return e.d>now;}).sort(function(a,b){return a.d-b.d;});
+  /* the previous print comes from the live macro chain, never from a literal */
+  out.forEach(function(e){
+    var pv=econPrev(e.t);
+    e.pv=pv.txt; e.pvDate=pv.date; e.pvStale=pv.stale;
+  });
   return out;
+}
+/* how the date should be spoken, given how it was obtained */
+function econWhen(e){
+  if(!e)return '—';
+  var base=e.d.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'});
+  if(e.prec==='window')
+    return e.d.toLocaleDateString('en',{month:'short'})+' '+e.winFrom+'–'+e.winTo+' (window)';
+  return base+' at '+e.d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+}
+function econPrecLabel(e){
+  return e&&e.prec==='scheduled'?'scheduled'
+       : e&&e.prec==='rule'?'by rule'
+       : e&&e.prec==='window'?'estimated window':'';
 }
 function fmtCountdown(ms){
   if(ms<0)ms=0;
@@ -10889,7 +11039,11 @@ var MACRO={
   'CPI (Inflation)':   {kind:'CPI',    unit:'idx',maxAgeDays:70,
     dbn:'BLS/cu/CUSR0000SA0',  bls:'CUSR0000SA0', fmp:'CPI', fred:'CPIAUCSL'},
   'Non-Farm Payrolls': {kind:'payrolls',unit:'k', maxAgeDays:70,
-    dbn:'BLS/ce/CES0000000001',bls:'CES0000000001', fmp:'totalNonfarmPayroll', fred:'PAYEMS'}
+    dbn:'BLS/ce/CES0000000001',bls:'CES0000000001', fmp:'totalNonfarmPayroll', fred:'PAYEMS'},
+  /* PPI final demand — the calendar listed it nowhere, so a release the desk
+     watches had no entry and no previous print at all */
+  'PPI (Producer Prices)':{kind:'PPI', unit:'idx',maxAgeDays:70,
+    dbn:'BLS/wp/WPUFD4',       bls:'WPUFD4',        fmp:null,  fred:'PPIFIS'}
 };
 var _macroCache={};
 function ageDays(dateStr){
@@ -11068,7 +11222,7 @@ function renderSentiment(){
   setT('nh_fc','Forecast '+next.fc);
   setT('nh_pv','Previous '+next.pv);
   setT('nh_cmp',next.fc===next.pv&&next.fc!=='—'?'Forecast in line vs previous':(next.fc!=='—'?'Forecast differs vs previous':'Awaiting forecast data'));
-  setT('nh_when',fmtEventTime(next.d)+' (local)');
+  setT('nh_when',econWhen(next)+' · '+econPrecLabel(next));
   loadFredForEvent(next,setT);
   loadNewsFeed();
   /* calendar list */
@@ -11079,7 +11233,7 @@ function renderSentiment(){
       var days=Math.ceil((e.d-new Date())/86400000);
       return '<div class="br" style="align-items:center;padding:11px 0">'
         +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--tw);font-weight:600;margin-bottom:3px">'+e.t+'</div>'
-        +'<div style="font-size:10px;color:var(--tm)">'+fmtEventTime(e.d)+' · in '+(days<=0?'today':days+'d')+'</div></div>'
+        +'<div style="font-size:10px;color:var(--tm)">'+econWhen(e)+' · '+econPrecLabel(e)+' · in '+(days<=0?'today':days+'d')+'</div></div>'
         +'<span class="tag '+tc+'" style="margin-left:10px;flex-shrink:0">'+e.impact+'</span></div>';
     }).join('');
   }
@@ -11237,63 +11391,78 @@ function epTile(label,o,unit,dp,note,invert){
     +'<b>'+epFmt(o.value,unit,dp)+epDelta(o,unit,dp,invert)+'</b>'
     +'<span>'+escHtml(note||'')+(o.date?' · '+o.date:'')+'</span></div>';
 }
+/* ══ THE BACKDROP ══
+   Sixteen equal-weight tiles across four headed rows was a wall — every
+   number shouting at the same volume, and the section three screens tall.
+   Same figures, one dense table: name, value, change, when it was observed.
+   Nothing was dropped; it just stopped competing with itself. */
 function senPaintMacro(){
   var host=document.getElementById('sn_macro');
   if(!host)return;
   host.innerHTML='<div class="qv-empty">Reading the macro feed…</div>';
   epFetch(function(d,err){
-    if(!d){host.innerHTML=qvEmpty('EconPulse did not answer ('+escHtml(err||'unreachable')+'). The release figures above fall back to the other sources.');return;}
+    if(!d){host.innerHTML=qvEmpty('EconPulse did not answer ('+escHtml(err||'unreachable')
+      +'). The release figures above fall back to the other sources.');return;}
     var P=function(p){return epPick(d,p);};
-    var cpi=P('inflation.cpi'), core=P('inflation.core_cpi');
-    var groups=[
-      {h:'Rates',cells:[
-        epTile('Fed funds',P('rates.fed_funds'),'%',2,'policy rate'),
-        epTile('10-year',P('rates.treasury_10yr'),'%',2,'long end'),
-        epTile('2-year',P('rates.treasury_2yr'),'%',2,'policy expectations'),
-        epTile('10y TIPS',P('rates.tips_10yr'),'%',2,'real yield')]},
-      {h:'Inflation',cells:[
-        '<div class="ep-t"><i>CPI</i><b>'+(cpi?epFmt(cpi.value,'',3):'—')
-          +(cpi&&isFinite(cpi.yoy_pct)?'<em class="'+(cpi.yoy_pct>3?'dn':'up')+'">'+cpi.yoy_pct.toFixed(2)+'% y/y</em>':'')
-          +'</b><span>'+(cpi&&isFinite(cpi.mom_pct)?cpi.mom_pct.toFixed(2)+'% m/m · ':'')+(cpi?cpi.date:'')+'</span></div>',
-        '<div class="ep-t"><i>Core CPI</i><b>'+(core?epFmt(core.value,'',3):'—')
-          +(core&&isFinite(core.yoy_pct)?'<em class="'+(core.yoy_pct>3?'dn':'up')+'">'+core.yoy_pct.toFixed(2)+'% y/y</em>':'')
-          +'</b><span>strips food and energy'+(core?' · '+core.date:'')+'</span></div>',
-        epTile('PPI',P('inflation.ppi'),'',3,'producer prices'),
-        epTile('Consumer sentiment',P('inflation.consumer_sentiment'),'',1,'survey')]},
-      {h:'Jobs and growth',cells:[
-        epTile('Unemployment',P('employment.unemployment'),'%',1,'rate',true),
-        epTile('Jobless claims',P('employment.jobless_claims'),'',0,'weekly',true),
-        epTile('Job openings',P('employment.jolts'),'',0,'JOLTS'),
-        epTile('GDP nowcast',P('economy.gdp_nowcast'),'%',2,'annualised')]},
-      {h:'Market gauges',cells:[
-        epTile('VIX',P('markets.vix'),'',2,'equity volatility',true),
-        epTile('Dollar index',P('markets.dxy'),'',2,'DXY'),
-        epTile('WTI crude',P('energy.wti_crude'),'$',2,'oil'),
-        epTile('Gold',P('markets.gold'),'$',2,'spot')]}
+    var row=function(group,label,o,unit,dp,note){
+      if(!o)return{g:group,k:label,v:'—',d:'',w:'',n:note||''};
+      var v=o.value;
+      var val=isFinite(v)?(dp!=null?(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp}):v)+unit:'—';
+      var ch='';
+      if(o.change!=null&&isFinite(o.change))
+        ch='<em class="'+(o.change>=0?'up':'dn')+'">'+(o.change>=0?'▲':'▼')+' '
+          +Math.abs(o.change).toLocaleString('en',{maximumFractionDigits:3})+'</em>';
+      else if(isFinite(o.yoy_pct))
+        ch='<em class="'+(o.yoy_pct>3?'dn':'up')+'">'+o.yoy_pct.toFixed(2)+'% y/y</em>';
+      return{g:group,k:label,v:val,d:o.date||'',w:ch,n:note||''};
+    };
+    var rows=[
+      row('Rates','Fed funds',P('rates.fed_funds'),'%',2,'policy rate'),
+      row('Rates','2-year',P('rates.treasury_2yr'),'%',2,'policy expectations'),
+      row('Rates','10-year',P('rates.treasury_10yr'),'%',2,'long end'),
+      row('Rates','10y TIPS',P('rates.tips_10yr'),'%',2,'real yield'),
+      row('Inflation','CPI',P('inflation.cpi'),'',3,'index'),
+      row('Inflation','Core CPI',P('inflation.core_cpi'),'',3,'ex food & energy'),
+      row('Inflation','PPI',P('inflation.ppi'),'',3,'producer prices'),
+      row('Inflation','Consumer sentiment',P('inflation.consumer_sentiment'),'',1,'survey'),
+      row('Jobs & growth','Unemployment',P('employment.unemployment'),'%',1,'rate'),
+      row('Jobs & growth','Jobless claims',P('employment.jobless_claims'),'',0,'weekly'),
+      row('Jobs & growth','Job openings',P('employment.jolts'),'',0,'JOLTS'),
+      row('Jobs & growth','GDP nowcast',P('economy.gdp_nowcast'),'%',2,'annualised'),
+      row('Gauges','VIX',P('markets.vix'),'',2,'equity volatility'),
+      row('Gauges','Dollar index',P('markets.dxy'),'',2,'DXY'),
+      row('Gauges','WTI crude',P('markets.wti_crude'),'',2,'oil'),
+      row('Gauges','Gold',P('markets.gold'),'',2,'spot')
     ];
     var fg=P('sentiment.fear_greed');
-    var fgv=fg?fg.value:null;
-    var fgw=fgv==null?'':fgv<25?'Extreme fear':fgv<45?'Fear':fgv<55?'Neutral':fgv<75?'Greed':'Extreme greed';
-    var fgc=fgv==null?'var(--mid)':fgv<25?'var(--red)':fgv<45?'var(--amber)':fgv<55?'var(--ts)':fgv<75?'var(--green)':'var(--amber)';
+    var fgv=fg&&isFinite(fg.value)?Math.round(fg.value):null;
+    var fgLbl=fgv==null?'—':fgv<25?'Extreme fear':fgv<45?'Fear':fgv<55?'Neutral'
+             :fgv<75?'Greed':'Extreme greed';
+    var fgCol=fgv==null?'var(--t3)':fgv<45?'var(--red)':fgv<55?'var(--amber)':'var(--green)';
+
+    var groups=['Rates','Inflation','Jobs & growth','Gauges'];
     host.innerHTML=
-      (fgv!=null?'<div class="ep-fg"><div class="ep-fgl"><i>Fear &amp; greed</i>'
-        +'<b style="color:'+fgc+'">'+Math.round(fgv)+' · '+fgw+'</b>'
-        +'<span>A crowd gauge, not a signal. Extremes mark where positioning is stretched, not when it turns.</span></div>'
-        +'<div class="ep-fgb"><i style="left:'+Math.max(0,Math.min(100,fgv))+'%;background:'+fgc+'"></i></div>'
-        +'<div class="ep-fgs"><span>fear</span><span>neutral</span><span>greed</span></div></div>':'')
+      (fgv!=null?'<div class="sn-fg"><i>Fear &amp; greed</i>'
+        +'<b style="color:'+fgCol+'">'+fgv+'</b><u>'+fgLbl+'</u>'
+        +'<div class="sn-fgbar"><span style="left:'+fgv+'%"></span></div>'
+        +'<s>A crowd gauge, not a signal. Extremes mark where positioning is stretched, not when it turns.</s>'
+        +'</div>':'')
+      +'<div class="sn-mac">'
       +groups.map(function(g){
-        return '<div class="ep-h">'+g.h+'</div><div class="ep-g">'+g.cells.join('')+'</div>';
-      }).join('')
-      +'<div class="ep-f">One EconPulse request, '+(d.usingDemo?'on the shared demo key':'on your key')
-      +' · snapshot '+escHtml(String(d.timestamp||'').slice(0,16).replace('T',' '))
-      +(_epKeyState==='rejected'?' · your saved key was rejected, so the demo key is being used':'')
-      +'. Each figure carries its own observation date — they are not all from today.</div>';
+         return '<div class="sn-macg"><div class="sn-macgh">'+g+'</div>'
+           +rows.filter(function(r){return r.g===g;}).map(function(r){
+              return '<div class="sn-macr"><i>'+escHtml(r.k)+'</i>'
+                +'<b>'+r.v+'</b>'+(r.w||'<em></em>')
+                +'<span title="'+escHtml(r.n)+'">'+escHtml(r.d)+'</span></div>';
+            }).join('')
+           +'</div>';
+       }).join('')
+      +'</div>'
+      +'<div class="sn-macn">One EconPulse request. Each figure carries its own observation '
+      +'date — they are not all from today.</div>';
   });
 }
 
-/* Which source answered for each release figure, how old it is, and the one
-   action that fixes a stale reading. This replaced a bare "temporarily
-   unavailable" line that named nothing and suggested nothing. */
 function senPaintSources(){
   var host=document.getElementById('sn_src');
   if(!host)return;
@@ -11397,7 +11566,7 @@ function renderSentimentV3(){
     var day=new Date(today.getTime()+d*86400000);
     var hits=evs.filter(function(e){return e.d.getFullYear()===day.getFullYear()&&e.d.getMonth()===day.getMonth()&&e.d.getDate()===day.getDate();});
     week+='<div class="sn-day'+(hits.length?' hot':'')+(d===0?' today':'')+'" style="animation-delay:'+(d*0.035).toFixed(2)+'s"'
-      +' title="'+(hits.length?hits.map(function(e){return e.t+' — '+fmtEventTime(e.d);}).join(' | '):'No scheduled high-impact release')+'">'
+      +' title="'+(hits.length?hits.map(function(e){return e.t+' — '+econWhen(e);}).join(' | '):'No scheduled high-impact release')+'">'
       +'<div class="w">'+(d===0?'TODAY':day.toLocaleDateString('en',{weekday:'short'}).toUpperCase())+'</div>'
       +'<div class="d">'+day.getDate()+'</div>'
       +'<div class="s">'+(hits.length?(hits.length>1?hits.length+' EVENTS':'EVENT'):'CLEAR')+'</div></div>';
@@ -11409,7 +11578,7 @@ function renderSentimentV3(){
     return '<div class="sn-evc" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
       +'<div class="cd">'+(days<=0?'today':'in '+days+'d')+'</div>'
       +'<div class="n">'+escHtml(e.t)+'</div>'
-      +'<div class="w">'+fmtEventTime(e.d)+' · your local time · '+e.impact+' impact</div>'
+      +'<div class="w">'+econWhen(e)+' · '+econPrecLabel(e)+' · '+e.impact+' impact</div>'
       +'<div class="x">'+escHtml(senWhat(e.t))+'</div></div>';
   }).join('');
 
@@ -11423,7 +11592,7 @@ function renderSentimentV3(){
     +'<div class="sn-side">'
       +'<div class="sn-cap">Next high-impact release</div>'
       +'<div class="sn-ev" id="sn_nh_title">'+escHtml(next?next.t:'Nothing scheduled')+'</div>'
-      +'<div class="sn-when" id="sn_nh_when">'+(next?fmtEventTime(next.d)+' (local)':'—')+'</div>'
+      +'<div class="sn-when" id="sn_nh_when">'+(next?econWhen(next)+' · '+econPrecLabel(next):'—')+'</div>'
       +'<div class="sn-say">'+risk.say+'</div>'
       +'<div class="sn-do"><div><div class="k">What to do now</div><div class="v">'+risk.a+'</div></div>'
         +'<div><div class="k">If you are already in</div><div class="v">'+risk.b+'</div></div></div>'
@@ -11432,22 +11601,22 @@ function renderSentimentV3(){
         +'<span class="sn-num" id="sn_nh_cmp">—</span></div>'
     +'</div></div>'
    +'<div class="sn-moods">'+gauges+'</div>'
-   +'<div class="sn-help">'
-     +'<div><b>Why this matters</b><span>Charts cannot see a scheduled release. The ring is the one thing on this page that is known in advance.</span></div>'
-     +'<div><b>Green ring</b><span>All clear. Trade the levels on the Analytics board at normal size.</span></div>'
-     +'<div><b>Amber ring</b><span>Release inside 2 hours. Half size, and expect your level to be swept first.</span></div>'
-     +'<div><b>Red ring</b><span>Minutes to go. Nothing new gets opened. Protect what is already on.</span></div>'
-   +'</div>'
-   +'<div class="sn-sech"><b>Next 10 days</b><span>red = a release lands that day · hover a tile for the name</span></div>'
+   /* Four boxes explaining what three ring colours mean was more furniture
+      than information — one line says the same thing. */
+   +'<div class="sn-key">Green: trade normally &middot; Amber: release inside 2 hours, half size '
+     +'&middot; Red: minutes away, protect what is on. A scheduled release is the one thing on '
+     +'this screen a chart cannot see coming.</div>'
+   +'<div class="sn-sech"><b>Next 10 days</b><span>red = a release lands that day</span></div>'
    +'<div class="sn-week">'+week+'</div>'
    +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
    +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
    +'<div class="sn-sech"><b>The backdrop</b><span>what the next print is landing into</span></div>'
    +'<div id="sn_macro"></div>'
    +shareBar('sentiment')
-   +'<div class="sn-sech"><b>Data sources</b><span>where the release figures above come from</span></div>'
-   +'<div class="sn-src" id="sn_src"></div>'
-   +'<div class="sn-sech"><b>The wire</b><span>headlines scored bullish / bearish by keyword — a tone check, not a signal</span></div>'
+   +'<details class="sn-det"><summary>Data sources &amp; API keys'
+     +'<span>where every figure above comes from, and how old it is</span></summary>'
+     +'<div class="sn-src" id="sn_src"></div></details>'
+   +'<div class="sn-sech"><b>The wire</b><span>headlines scored by keyword — a tone check, not a signal</span></div>'
    +'<div id="sn_news"></div>';
 
   /* the macro loader writes live numbers into the hidden legacy hero — mirror
@@ -13525,7 +13694,7 @@ function shareLines(kind){
     var risk=senRisk(nx);
     push('*Market risk radar*');
     push(risk.word+' — '+risk.say);
-    if(nx)push('Next release: '+nx.t+'  ·  '+fmtEventTime(nx.d)+'  ·  in '+fmtCountdown(nx.d-new Date()));
+    if(nx)push('Next release: '+nx.t+'  ·  '+econWhen(nx)+' ('+econPrecLabel(nx)+')  ·  in '+fmtCountdown(nx.d-new Date()));
     push('Now: '+risk.a);
     push('If already in: '+risk.b);
     var nm=senNewsMood(window._newsItems);
