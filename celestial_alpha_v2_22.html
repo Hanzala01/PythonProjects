@@ -3614,6 +3614,43 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 .otr-note{margin-top:9px;font-size:9.5px;color:var(--t2);border:1px solid var(--b1);
   border-radius:6px;padding:7px 10px;line-height:1.5}
 @media (max-width:1450px){.sgc-w{font-size:34px}.sgc-grid b{font-size:18px}.otr-p{font-size:26px}}
+
+/* ── FUNDAMENTALS: index / stock ── */
+.fx-tabs{display:flex;gap:6px;margin-bottom:12px}
+.fx-tabs span{font-size:11px;font-weight:600;color:var(--t3);cursor:pointer;
+  border:1px solid var(--b1);border-radius:7px;padding:7px 14px;background:rgba(7,6,21,.5)}
+.fx-tabs span:hover{color:var(--t1)}
+.fx-tabs span.on{color:var(--t1);border-color:var(--p3);background:rgba(139,92,246,.14)}
+.fx-mk{display:flex;gap:6px;margin-bottom:12px}
+.fx-mk span{font-size:9.5px;font-weight:600;letter-spacing:.05em;color:var(--t3);cursor:pointer;
+  border:1px solid var(--b1);border-radius:99px;padding:5px 13px}
+.fx-mk span.on{color:var(--p3);border-color:var(--p3);background:rgba(139,92,246,.12)}
+.fx-head{margin-bottom:11px}
+.fx-head b{display:block;font-size:17px;font-weight:600;color:var(--t1)}
+.fx-head span{display:block;font-size:9.5px;color:var(--t3);margin-top:3px}
+.fx-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.fx-c{border:1px solid var(--b1);border-radius:10px;padding:13px 14px;background:rgba(7,6,21,.5);
+  position:relative;min-width:0;transition:border-color .18s,transform .18s}
+.fx-c:hover{border-color:var(--p3);transform:translateY(-2px)}
+.fx-ic{font-size:19px;line-height:1}
+.fx-k{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);margin-top:8px}
+.fx-s{font-size:20px;font-weight:700;color:var(--t1);letter-spacing:.01em;line-height:1.15}
+.fx-px{margin-top:5px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;min-height:19px}
+.fx-px b{font-size:14px;font-weight:600;color:var(--t1);font-variant-numeric:tabular-nums}
+.fx-px em{font-style:normal;font-size:10px;font-weight:600}
+.fx-px em.up{color:var(--green)} .fx-px em.dn{color:var(--red)}
+.fx-px s{text-decoration:none;font-size:8.5px;color:var(--t3)}
+.fx-px i.na{font-style:normal;font-size:9px;color:var(--t3)}
+.fx-why{font-size:9px;color:var(--t3);line-height:1.5;margin-top:7px;min-height:27px}
+.fx-go{margin-top:9px;width:100%;font-size:9.5px;font-weight:600;color:var(--t2);cursor:pointer;
+  border:1px solid var(--b1);border-radius:6px;padding:6px;background:rgba(139,92,246,.08);
+  font-family:inherit}
+.fx-go:hover{color:var(--t1);border-color:var(--p3)}
+.fx-note{margin-top:12px;font-size:9px;color:var(--t3);line-height:1.7;
+  border-left:2px solid rgba(139,92,246,.35);padding:8px 11px;background:rgba(139,92,246,.05);
+  border-radius:0 7px 7px 0}
+.fx-note b{color:var(--t2)}
+@media (max-width:1450px){.fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <div class="shell">
 
@@ -3637,7 +3674,7 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Market Intelligence</div>
     <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
-    <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>Stock Fundamentals</div>
+    <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>Fundamentals</div>
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7M10 20a2.2 2.2 0 004 0"/></svg>Alerts</div>
     <div class="nav-item" onclick='goTab("bot",this)'><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M8 4h8"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/></svg>Bot</div>
@@ -4229,10 +4266,22 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
       <div class="pane hidden" id="pane_fundamentals">
         <div class="card">
           <div class="ch">
-            <div class="ct"><div class="dot" style="background:var(--green)"></div>Fundamentals — what the company is</div>
-            <div class="cs">the business behind the ticker, in plain terms</div>
+            <div class="ct"><div class="dot" style="background:var(--green)"></div>Fundamentals</div>
+            <div class="cs">the business behind the ticker, and the market it sits in</div>
           </div>
           <div class="cb">
+            <div class="fx-tabs">
+              <span id="fx_t_stock" class="on" onclick="fxTab('stock')">Stock analysis</span>
+              <span id="fx_t_index" onclick="fxTab('index')">Index analysis</span>
+            </div>
+            <div id="fx_index" class="hidden">
+              <div class="fx-mk">
+                <span id="fx_m_psx" class="on" onclick="fxMarket('psx')">PSX &middot; KSE-100</span>
+                <span id="fx_m_ndx" onclick="fxMarket('ndx')">NASDAQ</span>
+              </div>
+              <div id="fx_body"></div>
+            </div>
+            <div id="fx_stock">
             <div class="fd-bar">
               <label>Ticker<input type="text" id="fund_sym" value="AAPL" placeholder="AAPL" onkeydown="if(event.key==='Enter')renderFundamentals()"></label>
               <button class="btn btn-a btn-sm" onclick="renderFundamentals()">Load</button>
@@ -4247,6 +4296,7 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
               </div>
             </div>
             <div id="fund_body"><div class="qv-empty">Pick a ticker and press Load.</div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -10054,7 +10104,10 @@ function goTab(name,btn){
     econLoadAll(function(){try{renderSentiment();}catch(e){}});
   }
 
-  if(name==='fundamentals'){try{renderFundamentals();}catch(e){console.error('fundamentals:',e);}}
+  if(name==='fundamentals'){
+    try{if(_fxTab==='index')renderIndex();else renderFundamentals();}
+    catch(e){console.error('fundamentals:',e);}
+  }
   if(name==='reference'){
     /* compute on demand — opening Reference before Analytics used to show an
        empty table, which read as broken rather than as "nothing run yet" */
@@ -14177,6 +14230,122 @@ function fundVerdict(m,price){
   if(pe!=null&&pe>40)cons.push('the price already assumes a lot of growth');
   else if(pe!=null&&pe<15&&eps!=null&&eps>0)pros.push('it is not expensively priced');
   return{pros:pros,cons:cons};
+}
+/* ══ INDEX ANALYSIS ═══════════════════════════════════════════════════
+   A market broken into its sectors, each with the name that leads it.
+
+   What is configuration and what is data, stated plainly because the two get
+   confused constantly: the sector list and the leader for each sector are an
+   EDITORIAL MAP — a considered choice about which name represents a sector,
+   not a measurement. It is written here so it can be argued with and changed.
+
+   Everything with a number attached is fetched: the price, the day's move,
+   and for US names the market value, yield and P/E. Index weights and
+   dividend yields for PSX have no free source this app can reach, so those
+   cells say so instead of carrying a figure typed in from a screenshot. A
+   number on a trading screen has to come from somewhere. */
+var FX_MARKETS={
+  psx:{name:'PSX · KSE-100',note:'Pakistan Stock Exchange',cur:'PKR',
+    sectors:[
+      {k:'Fertiliser',lead:'FFC', icon:'🌾',why:'Urea and DAP pricing, gas cost pass-through'},
+      {k:'Banking',   lead:'MEBL',icon:'🏦',why:'Policy rate drives net interest margin'},
+      {k:'Cement',    lead:'LUCK',icon:'🏗️',why:'Construction cycle and coal cost'},
+      {k:'Oil & Gas', lead:'OGDC',icon:'🛢️',why:'Crude, circular debt, exploration'},
+      {k:'Power',     lead:'HUBC',icon:'⚡',why:'IPP contracts and payout history'},
+      {k:'Technology',lead:'SYS', icon:'💻',why:'Export revenue earned in dollars'}
+    ]},
+  ndx:{name:'NASDAQ',note:'US listings',cur:'USD',
+    sectors:[
+      {k:'Semiconductors',lead:'NVDA',icon:'🔲',why:'AI capex cycle'},
+      {k:'Software',      lead:'MSFT',icon:'💻',why:'Cloud and licence renewals'},
+      {k:'Consumer tech', lead:'AAPL',icon:'📱',why:'Device cycle and services mix'},
+      {k:'E-commerce',    lead:'AMZN',icon:'📦',why:'Retail margin and AWS'},
+      {k:'Advertising',   lead:'GOOGL',icon:'🔍',why:'Ad spend and search share'},
+      {k:'EV & energy',   lead:'TSLA',icon:'🚗',why:'Deliveries and price cuts'}
+    ]}
+};
+var _fxMarket='psx', _fxTab='stock', _fxCache={};
+
+function fxTab(which){
+  _fxTab=which;
+  var si=document.getElementById('fx_index'), st=document.getElementById('fx_stock');
+  if(si)si.classList.toggle('hidden',which!=='index');
+  if(st)st.classList.toggle('hidden',which!=='stock');
+  var a=document.getElementById('fx_t_stock'), b=document.getElementById('fx_t_index');
+  if(a)a.classList.toggle('on',which==='stock');
+  if(b)b.classList.toggle('on',which==='index');
+  if(which==='index')renderIndex();
+}
+function fxMarket(m){
+  _fxMarket=m;
+  ['psx','ndx'].forEach(function(k){
+    var e=document.getElementById('fx_m_'+k);
+    if(e)e.classList.toggle('on',k===m);
+  });
+  renderIndex();
+}
+/* one quote per leader, from whichever source covers that market */
+function fxQuote(market,sym,cb){
+  var key=market+':'+sym;
+  if(_fxCache[key]){cb(_fxCache[key]);return;}
+  var done=function(o){_fxCache[key]=o;cb(o);};
+  if(market==='psx'){
+    psxQuote(sym,function(last,prev){
+      if(!(last>0)){done({err:'no PSX data'});return;}
+      done({px:last,prev:prev,chg:prev>0?(last-prev)/prev*100:null,src:'PSX relay'});
+    });
+    return;
+  }
+  fundFetch(sym,function(F){
+    var m=F.metric||{}, p=F.profile||{};
+    var px=fNum(m['currentPrice'])||fNum(p.price)||null;
+    done({px:px,chg:null,cap:p.marketCapitalization||m.marketCapitalization||null,
+          pe:fNum(m['peTTM']),yld:fNum(m['currentDividendYieldTTM']),
+          name:p.name||null,src:'Finnhub',err:(!px&&F.errs.length)?F.errs.join(' · '):null});
+  });
+}
+function renderIndex(){
+  var host=document.getElementById('fx_body');
+  if(!host)return;
+  var M=FX_MARKETS[_fxMarket];
+  if(!M){host.innerHTML=qvEmpty('Unknown market.');return;}
+  host.innerHTML='<div class="fx-head"><b>'+escHtml(M.name)+'</b>'
+    +'<span>'+escHtml(M.note)+' · '+M.sectors.length+' sectors, one leader each</span></div>'
+    +'<div class="fx-grid">'+M.sectors.map(function(sec,i){
+       return '<div class="fx-c" id="fxc_'+i+'">'
+         +'<div class="fx-ic">'+sec.icon+'</div>'
+         +'<div class="fx-k">'+escHtml(sec.k)+'</div>'
+         +'<div class="fx-s">'+escHtml(sec.lead)+'</div>'
+         +'<div class="fx-px" id="fxp_'+i+'">…</div>'
+         +'<div class="fx-why">'+escHtml(sec.why)+'</div>'
+         +'<button class="fx-go" onclick="fxOpenStock(\''+sec.lead+'\')">Analyse</button>'
+         +'</div>';
+     }).join('')+'</div>'
+    +'<div class="fx-note"><b>What is a choice and what is a measurement.</b> '
+    +'The sectors and the one name picked to lead each are an editorial map — arguable, and '
+    +'written into the config so it can be changed. Prices and moves below them are fetched live. '
+    +'Index weights and dividend yields'+(_fxMarket==='psx'?' for PSX':'')+' have no free source '
+    +'this app can reach, so no figure is shown for them rather than one being typed in.</div>';
+
+  M.sectors.forEach(function(sec,i){
+    fxQuote(_fxMarket,sec.lead,function(q){
+      var el=document.getElementById('fxp_'+i);
+      if(!el)return;
+      if(!q||!(q.px>0)){el.innerHTML='<i class="na">'+escHtml(q&&q.err?q.err:'no quote')+'</i>';return;}
+      var dp=q.px<10?3:2;
+      el.innerHTML='<b>'+q.px.toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp})+'</b>'
+        +(isFinite(q.chg)&&q.chg!=null
+           ?'<em class="'+(q.chg>=0?'up':'dn')+'">'+(q.chg>=0?'+':'')+q.chg.toFixed(2)+'%</em>':'')
+        +(q.pe?'<s>P/E '+q.pe.toFixed(1)+'</s>':'')
+        +(q.yld?'<s>yield '+q.yld.toFixed(2)+'%</s>':'');
+    });
+  });
+}
+function fxOpenStock(sym){
+  var e=document.getElementById('fund_sym');
+  if(e)e.value=sym;
+  fxTab('stock');
+  try{renderFundamentals();}catch(err){}
 }
 function renderFundamentals(){
   var host=document.getElementById('fund_body');
