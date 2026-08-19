@@ -3567,6 +3567,53 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 .tl-t i{white-space:normal;overflow:hidden;text-overflow:ellipsis;
   display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
 .tl-row{padding-top:7px!important;padding-bottom:7px!important}
+
+/* ── THE CARD YOU SEND ── */
+.sgc{border:1px solid var(--b1);border-radius:12px;padding:16px 18px 14px;margin:12px 0;
+  background:linear-gradient(160deg,rgba(14,10,32,.95),rgba(7,6,21,.9));text-align:center}
+.sgc.buy{border-color:rgba(16,185,129,.4)}
+.sgc.sell{border-color:rgba(239,68,68,.4)}
+.sgc.none{border-color:var(--b1)}
+.sgc-w{font-size:42px;font-weight:800;letter-spacing:.06em;line-height:1}
+.sgc.buy .sgc-w{color:var(--green);text-shadow:0 0 26px rgba(16,185,129,.4)}
+.sgc.sell .sgc-w{color:var(--red);text-shadow:0 0 26px rgba(239,68,68,.4)}
+.sgc.none .sgc-w{color:var(--t3);font-size:26px;text-shadow:none}
+.sgc-tags{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.sgc-tags span{font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--b1);border-radius:5px;padding:4px 11px;color:var(--t2)}
+.sgc-tags span.on{border-color:var(--p3);color:var(--p3)}
+.sgc-sub{margin-top:10px;font-size:11px;color:var(--t3);line-height:1.6}
+.sgc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:14px;
+  background:var(--b1);border:1px solid var(--b1);border-radius:9px;overflow:hidden}
+.sgc-grid>div{background:rgba(7,6,21,.9);padding:11px 13px;text-align:left}
+.sgc-grid i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.sgc-grid b{display:block;font-size:21px;font-weight:600;color:var(--t1);margin-top:4px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.sgc-grid b.r{color:var(--red)} .sgc-grid b.g{color:var(--amber)}
+.sgc-grid s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:3px}
+.sgc-foot{margin-top:11px;font-size:9.5px;color:var(--t3);letter-spacing:.03em}
+
+/* ── OPEN TRADE ── */
+.otr-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.otr{border:1px solid var(--b1);border-radius:10px;padding:13px 15px;background:rgba(7,6,21,.6)}
+.otr.up{border-color:rgba(16,185,129,.3)} .otr.dn{border-color:rgba(239,68,68,.3)}
+.otr-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.otr-h b{font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--t1)}
+.otr-h span{font-size:9px;letter-spacing:.06em;color:var(--t3)}
+.otr-p{font-size:32px;font-weight:700;margin-top:8px;font-variant-numeric:tabular-nums;line-height:1.05}
+.otr.up .otr-p{color:var(--green)} .otr.dn .otr-p{color:var(--red)}
+.otr-bar{position:relative;height:6px;border-radius:3px;background:rgba(148,138,180,.16);margin:11px 0 5px}
+.otr-bar .fill{position:absolute;top:0;height:100%;border-radius:3px;background:currentColor}
+.otr.up .otr-bar{color:var(--green)} .otr.dn .otr-bar{color:var(--red)}
+.otr-bar em{position:absolute;top:-3px;width:2px;height:12px;border-radius:1px;transform:translateX(-50%)}
+.otr-bar em.e{background:rgba(255,255,255,.35)}
+.otr-bar em.n{background:var(--t1);width:3px;box-shadow:0 0 6px rgba(255,255,255,.6)}
+.otr-ends{display:flex;justify-content:space-between;font-size:8.5px;color:var(--t3);
+  font-variant-numeric:tabular-nums}
+.otr-note{margin-top:9px;font-size:9.5px;color:var(--t2);border:1px solid var(--b1);
+  border-radius:6px;padding:7px 10px;line-height:1.5}
+@media (max-width:1450px){.sgc-w{font-size:34px}.sgc-grid b{font-size:18px}.otr-p{font-size:26px}}
 </style>
 <div class="shell">
 
@@ -6583,6 +6630,107 @@ var LADDER_MEAN={
   'Monthly low':'Bottom of this month’s expansion range — buyers have defended it.',
   'Now':'Live price.'
 };
+/* ══ THE CARD YOU SEND ═════════════════════════════════════════════════
+   The board answers "why". This answers "what do I do", in one block small
+   enough to screenshot. Nothing here is a new calculation — entry, stop and
+   target come from the same signal the board is already showing; the only
+   added number is where to move the stop, and it is stated arithmetically:
+   two times the risk, or two thirds of the way to target on a trade too
+   short for that, whichever comes first. */
+function tcBeLevel(S){
+  if(!S||!S.style)return null;
+  var d=S.isBull?1:-1;
+  var risk=Math.abs(S.entry-S.sl), tp=Math.abs(S.tp-S.entry);
+  if(!(risk>0)||!(tp>0))return null;
+  var step=Math.min(2*risk,0.66*tp);
+  return{p:S.entry+d*step,r:(step/risk)};
+}
+function tcFmt(v,dp){
+  return isFinite(v)?(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp}):'—';
+}
+function tradeCardHtml(){
+  var S=window._lastSig, asset=(document.getElementById('ai_asset_txt')||{}).value||_lastAsset||'—';
+  var px=parseFloat((document.getElementById('ai_price')||{}).value)||_lastPrice||0;
+  var dp=px&&px<10?4:2;
+  if(!S||!S.style){
+    return '<div class="sgc none"><div class="sgc-w">NO TRADE</div>'
+      +'<div class="sgc-sub">'+escHtml(S&&S.reason?S.reason:'Nothing qualifies right now.')+'</div></div>';
+  }
+  var buy=S.isBull, be=tcBeLevel(S);
+  var risk=Math.abs(S.entry-S.sl), reward=Math.abs(S.tp-S.entry);
+  var money=+S.risk||0, target=money*(reward/risk);
+  var hold=S.style==='Swing'?'Give it room and time. Can sit for a few days.'
+         :S.style==='Intraday'?'One session. Out before the close if it has not moved.'
+         :'Fast. In and out inside the hour.';
+  return '<div class="sgc '+(buy?'buy':'sell')+'">'
+   +'<div class="sgc-w">'+(buy?'BUY':'SELL')+'</div>'
+   +'<div class="sgc-tags"><span>'+escHtml(S.style)+'</span><span class="on">'
+     +escHtml(String(asset).toUpperCase())+'</span></div>'
+   +'<div class="sgc-sub">'+escHtml(hold)+'</div>'
+   +'<div class="sgc-grid">'
+     +'<div><i>Entry</i><b>'+tcFmt(S.entry,dp)+'</b><s>'
+       +(S.isPending?'limit at the zone edge':'at market')+'</s></div>'
+     +'<div><i>Stop loss</i><b class="r">'+tcFmt(S.sl,dp)+'</b><s>risking $'+money.toFixed(2)+'</s></div>'
+     +'<div><i>Take profit</i><b class="g">'+tcFmt(S.tp,dp)+'</b><s>targeting $'+target.toFixed(2)+'</s></div>'
+     +(be?'<div><i>Move stop to entry</i><b>'+tcFmt(be.p,dp)+'</b><s>take a third off here · '
+       +be.r.toFixed(1)+'R</s></div>':'')
+   +'</div>'
+   +'<div class="sgc-foot">1 : '+S.rr+' · confidence '+S.conf+'%'
+     +(S.counter?' · counter-trend, size down':'')+'</div>'
+   +'</div>';
+}
+
+/* ══ OPEN TRADE ══
+   Every position logged as open, marked to the live price, with the bar
+   showing where it sits between the stop and the target. */
+function openTradesHtml(){
+  var J=(typeof JRNL!=='undefined'&&JRNL)||[];
+  var open=J.filter(function(j){return j&&j.r==='open';});
+  if(!open.length)return '';
+  var live=parseFloat((document.getElementById('ai_price')||{}).value)||_lastPrice||0;
+  var cards=open.map(function(j,i){
+    var here=(String(j.a||'').toUpperCase()===String(_lastAsset||'').toUpperCase())&&live>0;
+    var px=here?live:+j.en;
+    var dp=px<10?4:2;
+    var buy=j.dir==='buy', d=buy?1:-1;
+    var risk=Math.abs(+j.en-+j.sl)||0;
+    var money=+j.riskAmt||0;
+    var rMove=risk>0?((px-+j.en)*d/risk):0;
+    /* Price can be past the stop or the target by the time this is drawn — a
+       position is not still open beyond either. Showing the raw distance there
+       prints 7.7R on a 4R trade, which is a number the trade could never have
+       made. The move is capped at whichever level it passed and the row says
+       which, so the figure is what the plan would actually have paid. */
+    var rMax=Math.abs(+j.tp-+j.en)/risk, hitT=rMove>=rMax, hitS=rMove<=-1;
+    if(hitT)rMove=rMax; if(hitS)rMove=-1;
+    var pnl=rMove*money;
+    var state=hitT?'target reached':hitS?'stop hit':null;
+    var lo=Math.min(+j.sl,+j.tp), hi=Math.max(+j.sl,+j.tp);
+    var pos=hi>lo?Math.max(0,Math.min(100,(px-lo)/(hi-lo)*100)):50;
+    var epos=hi>lo?Math.max(0,Math.min(100,(+j.en-lo)/(hi-lo)*100)):50;
+    var be=tcBeLevel({isBull:buy,entry:+j.en,sl:+j.sl,tp:+j.tp,style:'x'});
+    return '<div class="otr '+(pnl>=0?'up':'dn')+'">'
+     +'<div class="otr-h"><b>'+(state?escHtml(state.toUpperCase()):'OPEN TRADE')+'</b>'
+       +'<span>'+escHtml(String(j.a||'').toUpperCase())
+       +' · '+(buy?'BUY':'SELL')+(here?' · LIVE':' · last logged price')+'</span></div>'
+     +'<div class="otr-p">'+(pnl>=0?'+':'-')+'$'+Math.abs(pnl).toFixed(2)+'</div>'
+     +'<div class="otr-bar"><span class="fill" style="left:'+Math.min(epos,pos).toFixed(1)+'%;'
+       +'width:'+Math.abs(pos-epos).toFixed(1)+'%"></span>'
+       +'<em class="e" style="left:'+epos.toFixed(1)+'%"></em>'
+       +'<em class="n" style="left:'+pos.toFixed(1)+'%"></em></div>'
+     +'<div class="otr-ends"><span>Stop '+tcFmt(+j.sl,dp)+'</span>'
+       +'<span>Entry '+tcFmt(+j.en,dp)+'</span>'
+       +'<span>Target '+tcFmt(+j.tp,dp)+'</span></div>'
+     +(state
+        ?'<div class="otr-note">Price is past the '+(hitT?'target':'stop')+' at '
+          +tcFmt(hitT?+j.tp:+j.sl,dp)+'. The figure above is what the plan paid to that level, '
+          +'not the distance price has since travelled. Close it in the journal.</div>'
+        :be?'<div class="otr-note">Take a third off at '+tcFmt(be.p,dp)
+          +' and move the stop to entry.</div>':'')
+     +'</div>';
+  }).join('');
+  return '<div class="otr-wrap">'+cards+'</div>';
+}
 function anaLadder(pts,price,lo,hi,dp,S,dir){
   /* The rail scales to the TRADE, not to the widest level on the board. A
      monthly low 9% away would otherwise squash entry, stop and target into a
@@ -6761,6 +6909,8 @@ function renderAnalytics(){
      +'</div>'
    +'</div>'
 
+   +tradeCardHtml()
+   +openTradesHtml()
    +qvRiskHtml(S,window._lastQV,price)
    +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
    +quotaHtml()
