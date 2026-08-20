@@ -3625,6 +3625,103 @@ body{background:var(--bg0)}
   border:1px solid var(--b1);border-radius:7px;padding:7px 14px;background:rgba(7,6,21,.5)}
 .fx-tabs span:hover{color:var(--t1)}
 .fx-tabs span.on{color:var(--t1);border-color:var(--p3);background:rgba(139,92,246,.14)}
+/* ── FINANCIAL REPORT — the 30 accounting formulas, run on a company's own
+      filings. The surface stays deliberately plain: a verdict, five bars and
+      five words. Every number behind them is one click away in the working,
+      because a score nobody can audit is just an opinion with a font. ── */
+.fr-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;padding:12px 14px;margin-bottom:12px;
+  border:1px solid var(--b1);border-radius:12px;background:rgba(7,6,21,.55)}
+.fr-bar label{font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--t3)}
+.fr-bar input{display:block;margin-top:5px;padding:8px 11px;font-size:13px;border-radius:9px;width:130px;
+  background:rgba(2,2,12,.8);border:1px solid var(--b1);color:var(--t1);font-weight:600}
+.fr-picks{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+
+.fr-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.fr-head b{font-size:17px;font-weight:600;color:var(--t1)}
+.fr-head span{font-size:9.5px;color:var(--t3)}
+
+/* the verdict block */
+.fr-v{display:flex;align-items:center;gap:18px;padding:16px 18px;border-radius:14px;margin-bottom:14px;
+  border:1px solid var(--b1);background:linear-gradient(150deg,rgba(139,92,246,.09),rgba(7,6,21,.7))}
+.fr-dial{position:relative;width:88px;height:88px;flex:none}
+.fr-dial svg{width:88px;height:88px;transform:rotate(-90deg)}
+.fr-dial i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;
+  font-family:'Space Grotesk';font-size:24px;font-weight:700;color:var(--t1)}
+.fr-vt{min-width:0}
+.fr-vt b{display:block;font-family:'Space Grotesk';font-size:23px;font-weight:700;letter-spacing:.04em}
+.fr-vt p{font-size:11.5px;color:var(--t2);line-height:1.65;margin:5px 0 0}
+.fr-vt em{display:block;font-style:normal;font-size:9.5px;color:var(--t3);margin-top:6px}
+.fr-strong{color:var(--up)}.fr-solid{color:#86efac}.fr-mixed{color:var(--warn)}
+.fr-weak{color:#fb923c}.fr-fragile{color:var(--dn)}.fr-none{color:var(--t3)}
+
+/* five pillars, one line each */
+.fr-p{display:grid;grid-template-columns:128px minmax(90px,1fr) 96px minmax(0,1.35fr);gap:12px;align-items:center;
+  padding:9px 12px;border-radius:10px;border:1px solid var(--b1);background:rgba(7,6,21,.45);margin-bottom:6px}
+.fr-p.na{opacity:.5}
+.fr-pn{font-size:11px;font-weight:600;color:var(--t1)}
+.fr-pn s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);font-weight:400;margin-top:1px}
+.fr-track{height:7px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}
+.fr-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.fr-pw{font-size:11px;font-weight:700;text-align:right}
+.fr-pf{font-size:10px;color:var(--t2);font-variant-numeric:tabular-nums}
+.fr-pf s{text-decoration:none;color:var(--t3)}
+
+/* the integrity strip: does the filing reconcile with itself */
+.fr-chk{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.fr-chk span{font-size:9.5px;padding:5px 11px;border-radius:99px;border:1px solid var(--b1);
+  color:var(--t2);background:rgba(7,6,21,.5)}
+.fr-chk span.ok{border-color:rgba(34,197,94,.4);color:#86efac}
+.fr-chk span.off{border-color:rgba(239,68,68,.45);color:#fca5a5}
+.fr-chk span.na{opacity:.55}
+
+/* five-year direction */
+.fr-tr{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px;margin-bottom:12px}
+.fr-trc{border:1px solid var(--b1);border-radius:10px;padding:10px 12px;background:rgba(7,6,21,.5)}
+.fr-trc i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.fr-trc b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:700;color:var(--t1);margin-top:3px}
+.fr-trc u{display:block;text-decoration:none;font-size:9.5px;margin-top:2px}
+.fr-spark{display:block;width:100%;height:22px;margin-top:6px;overflow:visible}
+
+.fr-note{font-size:10px;color:var(--warn);border:1px solid rgba(245,158,11,.32);border-radius:10px;
+  padding:9px 12px;background:rgba(245,158,11,.07);margin-bottom:12px;line-height:1.6}
+
+/* the working */
+.fr-more{margin-top:4px}
+.fr-more>summary{cursor:pointer;font-size:11px;font-weight:700;color:var(--p3);padding:9px 0;
+  list-style:none;letter-spacing:.03em}
+.fr-more>summary::-webkit-details-marker{display:none}
+.fr-more>summary:before{content:'▸ '}
+.fr-more[open]>summary:before{content:'▾ '}
+.fr-grp{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);
+  margin:14px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
+.fr-f{display:grid;grid-template-columns:22px 1fr 150px;gap:10px;align-items:baseline;
+  padding:8px 10px;border-radius:9px;border:1px solid transparent}
+.fr-f:nth-child(odd){background:rgba(255,255,255,.018)}
+.fr-f:hover{border-color:var(--b1)}
+.fr-no{font-size:9.5px;color:var(--t3);font-variant-numeric:tabular-nums}
+.fr-fn{min-width:0}
+.fr-fn b{display:block;font-size:11px;font-weight:600;color:var(--t1)}
+.fr-fn code{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;
+  color:var(--t3);margin-top:3px;word-break:break-word;line-height:1.55}
+.fr-fn code em{font-style:normal;color:var(--p3)}
+.fr-fv{text-align:right;font-family:'Space Grotesk';font-size:14px;font-weight:700;
+  color:var(--t1);font-variant-numeric:tabular-nums}
+.fr-fv s{display:block;text-decoration:none;font-family:'Inter',sans-serif;font-size:9px;
+  font-weight:400;color:var(--t3);margin-top:2px}
+.fr-fv.dim{color:var(--t3);font-size:12px}
+.fr-roi{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;padding:12px 14px;margin-top:10px;
+  border:1px dashed var(--b1);border-radius:10px}
+.fr-roi label{font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.fr-roi input{display:block;margin-top:4px;width:120px;padding:6px 9px;font-size:12px;border-radius:8px;
+  background:rgba(2,2,12,.8);border:1px solid var(--b1);color:var(--t1)}
+.fr-roi b{font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t1);margin-left:auto}
+.fr-foot{margin-top:13px;font-size:9.5px;color:var(--t3);line-height:1.65}
+@media (max-width:1200px){
+  .fr-p{grid-template-columns:92px 1fr 76px;row-gap:4px}
+  .fr-pf{grid-column:1/-1;text-align:right}
+  .fr-f{grid-template-columns:20px 1fr;row-gap:4px}
+  .fr-fv{grid-column:1/-1;text-align:left}
+}
 .fx-mk{display:flex;gap:6px;margin-bottom:12px}
 .fx-mk span{font-size:9.5px;font-weight:600;letter-spacing:.05em;color:var(--t3);cursor:pointer;
   border:1px solid var(--b1);border-radius:99px;padding:5px 13px}
@@ -4267,7 +4364,24 @@ body{background:var(--bg0)}
           <div class="cb">
             <div class="fx-tabs">
               <span id="fx_t_stock" class="on" onclick="fxTab('stock')">Stock analysis</span>
+              <span id="fx_t_report" onclick="fxTab('report')">Financial report</span>
               <span id="fx_t_index" onclick="fxTab('index')">Index analysis</span>
+            </div>
+            <div id="fx_report" class="hidden">
+              <div class="fr-bar">
+                <label>Ticker<input type="text" id="fr_sym" value="AAPL" placeholder="AAPL" onkeydown="if(event.key==='Enter')renderFinReport()"></label>
+                <button class="btn btn-a btn-sm" onclick="renderFinReport()">Read the filings</button>
+                <button class="btn btn-g btn-sm" onclick="finLoadFromStock()">Use ticker from Stock analysis</button>
+                <div class="fr-picks">
+                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='AAPL';renderFinReport()">AAPL</span>
+                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='MSFT';renderFinReport()">MSFT</span>
+                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='TSLA';renderFinReport()">TSLA</span>
+                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='WMT';renderFinReport()">WMT</span>
+                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='KO';renderFinReport()">KO</span>
+                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='JPM';renderFinReport()">JPM</span>
+                </div>
+              </div>
+              <div id="fr_body"><div class="qv-empty">Pick a ticker and press Read the filings.</div></div>
             </div>
             <div id="fx_index" class="hidden">
               <div class="fx-mk">
@@ -14263,13 +14377,18 @@ var _fxMarket='psx', _fxTab='stock', _fxCache={};
 
 function fxTab(which){
   _fxTab=which;
-  var si=document.getElementById('fx_index'), st=document.getElementById('fx_stock');
-  if(si)si.classList.toggle('hidden',which!=='index');
-  if(st)st.classList.toggle('hidden',which!=='stock');
-  var a=document.getElementById('fx_t_stock'), b=document.getElementById('fx_t_index');
-  if(a)a.classList.toggle('on',which==='stock');
-  if(b)b.classList.toggle('on',which==='index');
+  ['stock','index','report'].forEach(function(k){
+    var pane=document.getElementById('fx_'+k), tab=document.getElementById('fx_t_'+k);
+    if(pane)pane.classList.toggle('hidden',k!==which);
+    if(tab)tab.classList.toggle('on',k===which);
+  });
   if(which==='index')renderIndex();
+  /* the report costs three API calls, so it is not fetched until asked for,
+     and the cache means coming back to the tab is free */
+  if(which==='report'){
+    var host=document.getElementById('fr_body');
+    if(host&&!host.querySelector('.fr-head'))renderFinReport();
+  }
 }
 function fxMarket(m){
   _fxMarket=m;
@@ -14440,6 +14559,581 @@ function renderFundamentals(){
       +'Figures are trailing twelve months from Finnhub'+(p.weburl?' · <a href="'+escHtml(p.weburl)+'" target="_blank" rel="noopener">company site</a>':'')
       +(F.errs.length?' · '+escHtml(F.errs.join(' · ')):'')+'</div>';
   });
+}
+/* ══════════════════════════════════════════════════════════════════════
+   FINANCIAL REPORT — the 30 accounting formulas, run on a company's own
+   filed income statement, balance sheet and cash flow.
+
+   Two rules run through the whole module:
+     · nothing is invented. A formula whose inputs are missing returns null
+       and the row says which line item was absent. It never falls back to
+       a plausible-looking number.
+     · where the textbook formula needs a figure filings do not disclose —
+       credit sales, credit purchases — the proxy actually used is printed
+       on the row, so the reader knows what they are looking at.
+
+   The surface shows a verdict and five words. The working underneath shows
+   every substitution, because a score nobody can audit is just an opinion.
+   ══════════════════════════════════════════════════════════════════════ */
+var FIN_KEY_LIMIT=5;                 /* the FMP plan caps statement history at 5 years */
+var _finCache={};
+
+function finN(v){ return (v==null||v===''||!isFinite(+v))?null:+v; }
+function finDiv(a,b){ a=finN(a); b=finN(b); return (a==null||b==null||b===0)?null:a/b; }
+function finSub(a,b){ a=finN(a); b=finN(b); return (a==null||b==null)?null:a-b; }
+function finAdd(a,b){ a=finN(a); b=finN(b); return (a==null||b==null)?null:a+b; }
+function finAvg(a,b){ a=finN(a); b=finN(b); if(a==null&&b==null)return null;
+  if(a==null)return b; if(b==null)return a; return (a+b)/2; }
+
+/* ── the 30 ─────────────────────────────────────────────────────────── */
+function finCompute(cur,prv){
+  var I=(cur&&cur.inc)||{}, B=(cur&&cur.bal)||{}, C=(cur&&cur.cf)||{};
+  var pB=(prv&&prv.bal)||{}; var R={};
+
+  /* 1 — not a ratio: a check that the balance sheet actually balances. If it
+     fails the source data is wrong and everything below it is suspect. */
+  var lhs=finN(B.totalAssets),
+      rhs=finAdd(B.totalLiabilities, finN(B.totalEquity)!=null?B.totalEquity:B.totalStockholdersEquity);
+  R.equation={assets:lhs,liabPlusEquity:rhs,
+    gap:(lhs!=null&&rhs!=null)?lhs-rhs:null,
+    ok:(lhs!=null&&rhs!=null)?Math.abs(lhs-rhs)<=Math.abs(lhs)*1e-6+1:null};
+
+  R.workingCapital = finSub(B.totalCurrentAssets,B.totalCurrentLiabilities);       /* 2 */
+  R.grossProfit    = finSub(I.revenue,I.costOfRevenue);                            /* 3 */
+  R.operatingProfit= finSub(R.grossProfit,I.operatingExpenses);                    /* 4 */
+  /* 5 — filings net the non-operating items into one figure, so the textbook's
+     "+ income − expenses" collapses into a single addition */
+  R.profitBeforeTax= finAdd(R.operatingProfit,I.totalOtherIncomeExpensesNet);
+  R.netProfit      = finSub(R.profitBeforeTax,I.incomeTaxExpense);                 /* 6 */
+  R.grossMargin    = finDiv(R.grossProfit,I.revenue);                              /* 7 */
+  R.operatingMargin= finDiv(R.operatingProfit,I.revenue);                          /* 8 */
+  R.netMargin      = finDiv(R.netProfit,I.revenue);                                /* 9 */
+
+  var eb=[finN(I.netIncome),finN(I.interestExpense),finN(I.incomeTaxExpense),
+          finN(I.depreciationAndAmortization)];
+  R.ebitda = eb.some(function(x){return x==null;})?null                            /* 10 */
+           : eb.reduce(function(a,b){return a+b;},0);
+
+  R.currentRatio = finDiv(B.totalCurrentAssets,B.totalCurrentLiabilities);         /* 11 */
+  var qn=(finN(B.totalCurrentAssets)==null)?null
+        : finN(B.totalCurrentAssets)-(finN(B.inventory)||0)-(finN(B.prepaids)||0);
+  R.quickRatio   = finDiv(qn,B.totalCurrentLiabilities);                           /* 12 */
+  R.cashRatio    = finDiv(B.cashAndCashEquivalents,B.totalCurrentLiabilities);     /* 13 */
+
+  var eq=finN(B.totalStockholdersEquity);
+  R.debtToEquity = finDiv(B.totalDebt,eq);                                         /* 14 */
+  R.debtRatio    = finDiv(B.totalLiabilities,B.totalAssets);                       /* 15 */
+  R.equityRatio  = finDiv(eq,B.totalAssets);                                       /* 16 */
+  /* 17 — a company with no borrowings files zero interest, which is not
+     "infinite coverage"; it is a ratio that does not apply */
+  R.interestCover= finDiv(I.ebit, finN(I.interestExpense)?Math.abs(finN(I.interestExpense)):null);
+
+  R.roa = finDiv(I.netIncome, finAvg(B.totalAssets,pB.totalAssets));               /* 18 */
+  R.roe = finDiv(I.netIncome, finAvg(eq,pB.totalStockholdersEquity));              /* 19 */
+  R.roi = null;   /* 20 — an investor's number; needs a price paid, which no filing carries */
+
+  var invAvg=finAvg(B.inventory,pB.inventory);
+  R.inventoryTurnover=finDiv(I.costOfRevenue,invAvg);                              /* 21 */
+  R.dio=(function(){var t=finDiv(invAvg,I.costOfRevenue);return t==null?null:t*365;})(); /* 22 */
+  /* 23/24 — filings do not split cash sales from credit sales, so revenue
+     stands in for net credit sales. Named as a proxy on the row. */
+  var arAvg=finAvg(B.netReceivables,pB.netReceivables);
+  R.arTurnover=finDiv(I.revenue,arAvg);                                            /* 23 */
+  R.dso=(function(){var t=finDiv(arAvg,I.revenue);return t==null?null:t*365;})();  /* 24 */
+  /* 25/26 — same for credit purchases; cost of revenue stands in, which is
+     also what the sheet itself uses for DPO */
+  var apAvg=finAvg(B.accountPayables,pB.accountPayables);
+  R.apTurnover=finDiv(I.costOfRevenue,apAvg);                                      /* 25 */
+  R.dpo=(function(){var t=finDiv(apAvg,I.costOfRevenue);return t==null?null:t*365;})(); /* 26 */
+  R.ccc=(R.dso==null||R.dio==null||R.dpo==null)?null:R.dso+R.dio-R.dpo;            /* 27 */
+
+  /* 28 — rebuilt from net income the way the sheet writes it, then compared
+     with the figure the company itself reported. A match is evidence the
+     inputs are being read correctly; a gap is worth showing, not hiding. */
+  var op=[finN(C.netIncome),finN(C.depreciationAndAmortization),finN(C.stockBasedCompensation),
+          finN(C.deferredIncomeTax),finN(C.otherNonCashItems),finN(C.changeInWorkingCapital)];
+  R.ocfBuilt=op.every(function(x){return x!=null;})?op.reduce(function(a,b){return a+b;},0):null;
+  R.ocfReported=finN(C.operatingCashFlow)!=null?finN(C.operatingCashFlow)
+               :finN(C.netCashProvidedByOperatingActivities);
+  R.ocf=R.ocfReported!=null?R.ocfReported:R.ocfBuilt;
+  R.ocfGap=(R.ocfBuilt!=null&&R.ocfReported!=null)?R.ocfBuilt-R.ocfReported:null;
+
+  R.capex=finN(C.capitalExpenditure);                 /* filed negative, so this adds */
+  R.fcf=(R.ocf==null||R.capex==null)?null:R.ocf+R.capex;                           /* 29 */
+
+  /* 30 — the roll-forward, then checked against the closing balance. The
+     textbook stops at dividends, but many companies charge share buybacks
+     straight to retained earnings — Apple's FY2025 buyback is $90.7bn against
+     a closing balance of −$14.3bn — so the buyback is carried as a named
+     second step and whatever is left is reported as residual. */
+  var openRE=finN(pB.retainedEarnings), dv=finN(C.netDividendsPaid),
+      bb=finN(C.commonStockRepurchased);
+  R.reOpening=openRE; R.dividends=dv; R.buyback=bb;
+  R.reBuilt=(openRE==null||finN(I.netIncome)==null)?null:openRE+finN(I.netIncome)+(dv||0);
+  R.reWithBuyback=(R.reBuilt==null)?null:R.reBuilt+(bb||0);
+  R.reReported=finN(B.retainedEarnings);
+  R.reResidual=(R.reWithBuyback!=null&&R.reReported!=null)?R.reWithBuyback-R.reReported:null;
+
+  /* what the filing itself states, kept beside what the formulas produce.
+     They differ for real reasons — filed net income is after minority
+     interests and discontinued operations, which formula 6 does not reach. */
+  R.netProfitReported=finN(I.netIncome);
+  R.netProfitGap=(R.netProfit!=null&&R.netProfitReported!=null)?R.netProfit-R.netProfitReported:null;
+  R.ebitdaReported=finN(I.ebitda);
+  R.ebitdaGap=(R.ebitda!=null&&R.ebitdaReported!=null)?R.ebitda-R.ebitdaReported:null;
+
+  R.revenue=finN(I.revenue); R.cogs=finN(I.costOfRevenue); R.netIncome=finN(I.netIncome);
+  R.opex=finN(I.operatingExpenses); R.tax=finN(I.incomeTaxExpense);
+  R.otherNet=finN(I.totalOtherIncomeExpensesNet); R.da=finN(I.depreciationAndAmortization);
+  R.interest=finN(I.interestExpense); R.ebit=finN(I.ebit);
+  R.ca=finN(B.totalCurrentAssets); R.cl=finN(B.totalCurrentLiabilities);
+  R.inv=finN(B.inventory); R.prepaid=finN(B.prepaids); R.cash=finN(B.cashAndCashEquivalents);
+  R.assets=finN(B.totalAssets); R.liab=finN(B.totalLiabilities); R.equity=eq;
+  R.totalDebt=finN(B.totalDebt); R.ar=finN(B.netReceivables); R.ap=finN(B.accountPayables);
+  R.invAvg=invAvg; R.arAvg=arAvg; R.apAvg=apAvg;
+  R.assetsAvg=finAvg(B.totalAssets,pB.totalAssets);
+  R.equityAvg=finAvg(eq,pB.totalStockholdersEquity);
+  R.hasPrior=!!(prv&&prv.bal);
+  R.fy=I.fiscalYear||B.fiscalYear||null; R.period=I.period||null;
+  R.date=I.date||B.date||null; R.filed=I.filingDate||B.filingDate||null;
+  R.ccy=I.reportedCurrency||B.reportedCurrency||'';
+  return R;
+}
+
+/* ── is this a bank, an insurer, a lender? ────────────────────────────
+   It matters, because the thresholds below are written for companies that
+   sell goods. A bank funds itself with deposits, so a current ratio of 0.5
+   and debt-to-equity of 2.6 are how the business is meant to look. Scored
+   on retail thresholds JPMorgan lands 0/100 on leverage, which says nothing
+   true about JPMorgan. Detected from the industry string when the profile
+   supplies one, otherwise from the balance sheet's own shape. */
+var FIN_SECTOR_RE=/bank|insur|capital market|credit servic|asset manage|mortgage|thrift|savings|reinsur|financial servic|financial conglomerate|diversified financ|brokerage/i;
+function finIsFinancial(industry,R){
+  if(industry&&FIN_SECTOR_RE.test(String(industry)))return true;
+  if(R&&R.equityRatio!=null&&R.equityRatio<0.15&&(R.inventoryTurnover==null||R.dio===0))return true;
+  return false;
+}
+
+/* ── scoring ───────────────────────────────────────────────────────────
+   Five pillars, each 0–100 against thresholds that are conventional rules of
+   thumb and are printed on screen. Missing inputs reduce a pillar's weight
+   rather than scoring it zero, so a thin filing lowers confidence instead of
+   manufacturing a bad verdict. */
+function finBand(v,lo,hi){ return v==null?null:Math.max(0,Math.min(100,(v-lo)/(hi-lo)*100)); }
+function finBandDn(v,good,bad){ return v==null?null:Math.max(0,Math.min(100,(bad-v)/(bad-good)*100)); }
+function finPillars(R){
+  function mix(parts){
+    var got=parts.filter(function(p){return p.s!=null;});
+    if(!got.length)return {score:null,cover:0};
+    var w=got.reduce(function(a,p){return a+p.w;},0);
+    return {score:got.reduce(function(a,p){return a+p.s*p.w;},0)/w,
+            cover:w/parts.reduce(function(a,p){return a+p.w;},0)};
+  }
+  return {
+    profit:mix([{s:finBand(R.netMargin,0,0.20),w:3},{s:finBand(R.operatingMargin,0,0.25),w:2},
+                {s:finBand(R.roe,0,0.25),w:3},{s:finBand(R.roa,0,0.12),w:2}]),
+    liquid:mix([{s:finBand(R.currentRatio,0.5,2.0),w:3},{s:finBand(R.quickRatio,0.3,1.5),w:3},
+                {s:finBand(R.cashRatio,0.05,0.75),w:2},
+                {s:R.workingCapital==null?null:(R.workingCapital>0?100:25),w:2}]),
+    lever :mix([{s:finBandDn(R.debtToEquity,0.3,2.5),w:3},{s:finBandDn(R.debtRatio,0.35,0.85),w:2},
+                {s:finBand(R.equityRatio,0.15,0.65),w:2},{s:finBand(R.interestCover,1.5,12),w:3}]),
+    effic :mix([{s:finBandDn(R.ccc,0,120),w:4},{s:finBand(R.inventoryTurnover,1,12),w:2},
+                {s:finBand(R.arTurnover,2,14),w:2},{s:finBandDn(R.dso,20,120),w:2}]),
+    cash  :mix([{s:R.fcf==null?null:(R.fcf>0?finBand(finDiv(R.fcf,R.revenue),0,0.20):10),w:4},
+                {s:finDiv(R.ocf,R.netIncome)==null?null:finBand(finDiv(R.ocf,R.netIncome),0.5,1.4),w:4},
+                {s:(R.ebitda==null||R.revenue==null)?null:finBand(R.ebitda/R.revenue,0,0.30),w:2}])
+  };
+}
+var FIN_PILLARS=[
+  ['profit','Profitability','does it actually make money'],
+  ['liquid','Liquidity','can it pay what falls due this year'],
+  ['lever','Leverage','how much of it belongs to lenders'],
+  ['effic','Efficiency','how fast cash goes out and comes back'],
+  ['cash','Cash quality','do the profits arrive as cash']
+];
+var FIN_WORDS={
+  profit:[[75,'Strong'],[55,'Healthy'],[35,'Thin'],[15,'Weak'],[0,'Losing']],
+  liquid:[[75,'Comfortable'],[55,'Adequate'],[35,'Tight'],[15,'Strained'],[0,'Critical']],
+  lever :[[75,'Light'],[55,'Moderate'],[35,'Heavy'],[15,'Stretched'],[0,'Dangerous']],
+  effic :[[75,'Fast'],[55,'Steady'],[35,'Slow'],[15,'Sluggish'],[0,'Stalled']],
+  cash  :[[75,'Excellent'],[55,'Solid'],[35,'Patchy'],[15,'Poor'],[0,'Draining']]
+};
+function finWord(k,s){
+  if(s==null)return '—';
+  var t=FIN_WORDS[k];
+  for(var i=0;i<t.length;i++) if(s>=t[i][0]) return t[i][1];
+  return t[t.length-1][1];
+}
+/* The headline. Two guards sit in front of the label: a lender loses its
+   liquidity and leverage pillars from the score, and a filing that fills less
+   than 55% of the inputs gets no adjective at all — an earlier build read
+   "STRONG 100/100" off an income statement with no balance sheet behind it. */
+function finVerdict(P,financial){
+  var W={profit:3,liquid:2,lever:2.5,effic:1.5,cash:3};
+  if(financial){delete W.liquid;delete W.lever;}
+  var num=0,den=0,cov=0,covDen=0;
+  Object.keys(W).forEach(function(k){
+    covDen+=W[k];
+    if(P[k]&&P[k].score!=null){num+=P[k].score*W[k]*P[k].cover;den+=W[k]*P[k].cover;cov+=W[k]*P[k].cover;}
+  });
+  if(!den)return {score:null,label:'NO DATA',cover:0,enough:false,financial:!!financial};
+  var c=cov/covDen,s=num/den;
+  if(c<0.55)return {score:s,label:'NOT ENOUGH DATA',cover:c,enough:false,financial:!!financial};
+  return {score:s,cover:c,enough:true,financial:!!financial,
+    label:s>=78?'STRONG':s>=62?'SOLID':s>=45?'MIXED':s>=30?'WEAK':'FRAGILE'};
+}
+
+/* ── fetch ─────────────────────────────────────────────────────────────
+   Three statements, five years each. A year is only used once all three
+   line up on the same fiscal year, so a ratio never mixes one year's
+   balance sheet with another's income statement. */
+function finFetch(sym,cb){
+  sym=String(sym||'').toUpperCase();
+  if(_finCache[sym]){cb(_finCache[sym]);return;}
+  var eps=['income-statement','balance-sheet-statement','cash-flow-statement'];
+  var keys=['inc','bal','cf'], got={}, errs=[], profile=null, left=eps.length+1;
+  function done(){
+    if(--left)return;
+    var years=[];
+    if(got.inc&&got.inc.length){
+      got.inc.forEach(function(I){
+        var key=String(I.fiscalYear)+'|'+I.period;
+        var B=(got.bal||[]).filter(function(x){return String(x.fiscalYear)+'|'+x.period===key;})[0];
+        var C=(got.cf||[]).filter(function(x){return String(x.fiscalYear)+'|'+x.period===key;})[0];
+        years.push({inc:I,bal:B||null,cf:C||null,fy:I.fiscalYear,date:I.date});
+      });
+      years.sort(function(a,b){return String(b.date).localeCompare(String(a.date));});
+    }
+    var out={sym:sym,years:years,errs:errs,profile:profile};
+    _finCache[sym]=out; cb(out);
+  }
+  /* the company's own name and industry. The industry is what tells the score
+     whether it is looking at a lender, so it is worth one extra call — but the
+     report still works without it: the balance sheet's shape is the fallback. */
+  if(_fundCache[sym]&&_fundCache[sym].profile){ profile=_fundCache[sym].profile; done(); }
+  else finGet('https://finnhub.io/api/v1/stock/profile2?symbol='+encodeURIComponent(sym)
+              +'&token='+FINNHUB_KEY,10000)
+    .then(function(d){ if(d&&d.ticker)profile=d; })
+    .catch(function(){}).then(done);
+  eps.forEach(function(ep,i){
+    finGet('https://financialmodelingprep.com/stable/'+ep+'?symbol='+encodeURIComponent(sym)
+          +'&limit='+FIN_KEY_LIMIT+'&apikey='+FMP_KEY)
+      .then(function(d){
+        if(Array.isArray(d)&&d.length)got[keys[i]]=d;
+        else errs.push(ep.split('-')[0]+': '+((d&&(d['Error Message']||d.message))||'no data'));
+      })
+      .catch(function(e){errs.push(ep.split('-')[0]+': '+(e&&e.message==='timeout'?'timed out':'unreachable'));})
+      .then(done);
+  });
+}
+/* A fetch with no deadline is not a fetch, it is a spinner. Behind a corporate
+   proxy or an offline machine these requests never settle, and the panel used
+   to sit on "Reading the filings…" for as long as the tab stayed open. This
+   gives up after 15 seconds and lets the caller report the failure. */
+function finGet(url,ms){
+  return new Promise(function(res,rej){
+    var settled=false;
+    var ac=(typeof AbortController!=='undefined')?new AbortController():null;
+    var t=setTimeout(function(){
+      if(settled)return; settled=true;
+      if(ac)try{ac.abort();}catch(e){}
+      rej(new Error('timeout'));
+    },ms||15000);
+    fetch(url,ac?{signal:ac.signal}:undefined)
+      .then(function(r){return r.json();})
+      .then(function(d){ if(settled)return; settled=true; clearTimeout(t); res(d); })
+      .catch(function(e){ if(settled)return; settled=true; clearTimeout(t); rej(e); });
+  });
+}
+
+/* ── formatting ───────────────────────────────────────────────────────── */
+function finMoney(v,ccy){
+  if(v==null||!isFinite(v))return '—';
+  var s=v<0?'-':'', a=Math.abs(v), c=(ccy==='USD'||!ccy)?'$':'';
+  if(a>=1e12)return s+c+(a/1e12).toFixed(2)+'T';
+  if(a>=1e9) return s+c+(a/1e9).toFixed(2)+'B';
+  if(a>=1e6) return s+c+(a/1e6).toFixed(1)+'M';
+  if(a>=1e3) return s+c+(a/1e3).toFixed(1)+'K';
+  return s+c+a.toFixed(0);
+}
+function finPct(v,d){ return (v==null||!isFinite(v))?'—':(v*100).toFixed(d==null?1:d)+'%'; }
+function finX(v,d){ return (v==null||!isFinite(v))?'—':v.toFixed(d==null?2:d)+'×'; }
+function finRat(v,d){ return (v==null||!isFinite(v))?'—':v.toFixed(d==null?2:d); }
+function finDays(v){ return (v==null||!isFinite(v))?'—':Math.round(v)+' days'; }
+function finScoreCol(s){
+  if(s==null)return 'var(--t3)';
+  return s>=75?'var(--up)':s>=55?'#86efac':s>=35?'var(--warn)':s>=15?'#fb923c':'var(--dn)';
+}
+
+/* ── the working: every formula, its substitution, its result ─────────── */
+function finFormulaRows(R){
+  var M=function(v){return finMoney(v,R.ccy);};
+  var G=[];
+  function grp(t){G.push({grp:t});}
+  function f(no,name,expr,val,fmt,note){
+    G.push({no:no,name:name,expr:expr,val:val,fmt:fmt||M,note:note||''});
+  }
+  var na='<em>not filed</em>';
+  var m=function(v){return v==null?na:'<em>'+finMoney(v,R.ccy)+'</em>';};
+
+  grp('Profit — what the year produced');
+  f(3,'Gross Profit','Revenue '+m(R.revenue)+' − Cost of Goods Sold '+m(R.cogs),R.grossProfit);
+  f(4,'Operating Profit','Gross Profit '+m(R.grossProfit)+' − Operating Expenses '+m(R.opex),R.operatingProfit);
+  f(5,'Profit Before Tax','Operating Profit '+m(R.operatingProfit)+' + net non-operating items '+m(R.otherNet),
+    R.profitBeforeTax,null,'filings net non-operating income and expense into one line');
+  f(6,'Net Profit','Profit Before Tax '+m(R.profitBeforeTax)+' − Income Tax '+m(R.tax),R.netProfit,null,
+    R.netProfitGap!=null&&Math.abs(R.netProfitGap)>Math.abs(R.netProfitReported||1)*0.002
+      ? 'the company files '+M(R.netProfitReported)+' — the difference is minority interests and discontinued operations, which this formula does not reach'
+      : 'matches the figure the company files');
+  f(10,'EBITDA','Net Income '+m(R.netIncome)+' + Interest '+m(R.interest)+' + Tax '+m(R.tax)
+    +' + Depreciation & Amortisation '+m(R.da),R.ebitda,null,
+    R.ebitdaGap!=null&&Math.abs(R.ebitdaGap)>Math.abs(R.ebitdaReported||1)*0.02
+      ? 'the company files '+M(R.ebitdaReported)+'; adding interest back is not meaningful where interest is a core cost of the business'
+      : '');
+  f(7,'Gross Profit Margin','Gross Profit '+m(R.grossProfit)+' ÷ Revenue '+m(R.revenue)+' × 100',R.grossMargin,finPct);
+  f(8,'Operating Profit Margin','Operating Profit '+m(R.operatingProfit)+' ÷ Revenue '+m(R.revenue)+' × 100',R.operatingMargin,finPct);
+  f(9,'Net Profit Margin','Net Profit '+m(R.netProfit)+' ÷ Revenue '+m(R.revenue)+' × 100',R.netMargin,finPct);
+
+  grp('Balance — what it owns against what it owes');
+  f(1,'Accounting Equation','Assets '+m(R.equation.assets)+' = Liabilities + Shareholders’ Equity '
+    +m(R.equation.liabPlusEquity),R.equation.gap,function(v){
+      return R.equation.ok==null?'—':(R.equation.ok?'balances':'off by '+M(v));},
+    'the one line here that is a test, not a ratio: if the balance sheet does not balance, nothing below it can be trusted');
+  f(2,'Working Capital','Current Assets '+m(R.ca)+' − Current Liabilities '+m(R.cl),R.workingCapital);
+  f(11,'Current Ratio','Current Assets '+m(R.ca)+' ÷ Current Liabilities '+m(R.cl),R.currentRatio,finRat);
+  f(12,'Quick Ratio','(Current Assets '+m(R.ca)+' − Inventory '+m(R.inv)+' − Prepaid '+m(R.prepaid)
+    +') ÷ Current Liabilities '+m(R.cl),R.quickRatio,finRat);
+  f(13,'Cash Ratio','Cash & Equivalents '+m(R.cash)+' ÷ Current Liabilities '+m(R.cl),R.cashRatio,finRat);
+  f(14,'Debt-to-Equity','Total Debt '+m(R.totalDebt)+' ÷ Shareholders’ Equity '+m(R.equity),R.debtToEquity,finRat);
+  f(15,'Debt Ratio','Total Liabilities '+m(R.liab)+' ÷ Total Assets '+m(R.assets),R.debtRatio,finRat);
+  f(16,'Equity Ratio','Shareholders’ Equity '+m(R.equity)+' ÷ Total Assets '+m(R.assets),R.equityRatio,finRat);
+  f(17,'Interest Coverage','EBIT '+m(R.ebit)+' ÷ Interest Expense '+m(R.interest),R.interestCover,finX,
+    R.interestCover==null&&!R.interest?'no interest expense filed — the ratio does not apply rather than being infinite':'');
+
+  grp('Returns — what the capital earned');
+  var avgNote=R.hasPrior?'':'no prior year available, so the single year-end figure is used in place of an average';
+  f(18,'Return on Assets','Net Income '+m(R.netIncome)+' ÷ Average Total Assets '+m(R.assetsAvg)+' × 100',
+    R.roa,finPct,avgNote);
+  f(19,'Return on Equity','Net Income '+m(R.netIncome)+' ÷ Average Shareholders’ Equity '+m(R.equityAvg)+' × 100',
+    R.roe,finPct,avgNote);
+  f(20,'Return on Investment','Net Profit from Investment ÷ Cost of Investment × 100',null,null,
+    'this one is yours, not the company’s — no filing carries the price you paid. Enter both below and it computes.');
+
+  grp('Cycle — how fast cash goes out and comes back');
+  f(21,'Inventory Turnover','Cost of Goods Sold '+m(R.cogs)+' ÷ Average Inventory '+m(R.invAvg),R.inventoryTurnover,finX);
+  f(22,'Days Inventory Outstanding','Average Inventory '+m(R.invAvg)+' ÷ Cost of Goods Sold '+m(R.cogs)+' × 365',R.dio,finDays);
+  f(23,'Accounts Receivable Turnover','Revenue '+m(R.revenue)+' ÷ Average Accounts Receivable '+m(R.arAvg),
+    R.arTurnover,finX,'filings do not split cash sales from credit sales, so revenue stands in for net credit sales');
+  f(24,'Days Sales Outstanding','Average Accounts Receivable '+m(R.arAvg)+' ÷ Revenue '+m(R.revenue)+' × 365',
+    R.dso,finDays,'same proxy: revenue in place of net credit sales');
+  f(25,'Accounts Payable Turnover','Cost of Goods Sold '+m(R.cogs)+' ÷ Average Accounts Payable '+m(R.apAvg),
+    R.apTurnover,finX,'credit purchases are not disclosed, so cost of goods sold stands in');
+  f(26,'Days Payable Outstanding','Average Accounts Payable '+m(R.apAvg)+' ÷ Cost of Goods Sold '+m(R.cogs)+' × 365',R.dpo,finDays);
+  f(27,'Cash Conversion Cycle','DSO '+(R.dso==null?na:'<em>'+Math.round(R.dso)+'d</em>')
+    +' + DIO '+(R.dio==null?na:'<em>'+Math.round(R.dio)+'d</em>')
+    +' − DPO '+(R.dpo==null?na:'<em>'+Math.round(R.dpo)+'d</em>'),R.ccc,finDays,
+    R.ccc!=null&&R.ccc<0?'negative: suppliers fund the business — customers pay before the bills do':'');
+
+  grp('Cash — what actually reached the bank');
+  f(28,'Operating Cash Flow','Net Income '+m(R.netIncome)+' + non-cash charges ± change in working capital '
+    +m(R.ocfBuilt!=null&&R.netIncome!=null?R.ocfBuilt-R.netIncome:null),R.ocfBuilt||R.ocf,null,
+    R.ocfGap!=null?(Math.abs(R.ocfGap)<=Math.abs(R.ocfReported||1)*0.005
+      ? 'rebuilt from the parts and it matches the '+M(R.ocfReported)+' the company reports'
+      : 'rebuilt figure sits '+M(R.ocfGap)+' from the '+M(R.ocfReported)+' reported'):'');
+  f(29,'Free Cash Flow','Operating Cash Flow '+m(R.ocf)+' − Capital Expenditure '+m(R.capex==null?null:-R.capex),R.fcf);
+  f(30,'Closing Retained Earnings','Opening '+m(R.reOpening)+' + Net Income '+m(R.netIncome)
+    +' − Dividends '+m(R.dividends==null?null:-R.dividends),R.reBuilt,null,
+    (function(){
+      if(R.reReported==null||R.reBuilt==null)return '';
+      var s='the balance sheet closes at '+M(R.reReported);
+      if(R.buyback)s+='; adding the '+M(-R.buyback)+' of share buybacks charged to retained earnings brings the roll to '
+        +M(R.reWithBuyback);
+      if(R.reResidual!=null)s+=', leaving '+M(R.reResidual)+' in other equity movements';
+      return s;
+    })());
+  return G;
+}
+
+/* ── the five-year direction strip ────────────────────────────────────── */
+function finTrend(rows){
+  function pick(key){ return rows.map(function(r){return r[key];}); }
+  function dir(v){
+    var s=v.filter(function(x){return x!=null;});
+    if(s.length<2)return null;
+    return s[0]>s[s.length-1]?1:s[0]<s[s.length-1]?-1:0;
+  }
+  return [
+    {k:'Revenue',       v:pick('revenue'),  fmt:'money'},
+    {k:'Net profit',    v:pick('netProfit'),fmt:'money'},
+    {k:'Free cash flow',v:pick('fcf'),      fmt:'money'},
+    {k:'Net margin',    v:pick('netMargin'),fmt:'pct'}
+  ].map(function(t){ t.dir=dir(t.v); return t; });
+}
+function finSpark(vals,col){
+  var s=vals.slice().reverse().filter(function(x){return x!=null&&isFinite(x);});
+  if(s.length<2)return '';
+  var lo=Math.min.apply(null,s), hi=Math.max.apply(null,s), rng=(hi-lo)||1;
+  var W=100,H=20;
+  var pts=s.map(function(v,i){
+    return (i/(s.length-1)*W).toFixed(1)+','+(H-((v-lo)/rng)*H).toFixed(1);
+  }).join(' ');
+  return '<svg class="fr-spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'
+    +'<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="1.6" '
+    +'stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>';
+}
+
+/* ── render ───────────────────────────────────────────────────────────── */
+function renderFinReport(){
+  var host=document.getElementById('fr_body');
+  if(!host)return;
+  var sym=((document.getElementById('fr_sym')||{}).value||'').trim().toUpperCase();
+  if(!sym){host.innerHTML=qvEmpty('Type a ticker above — AAPL, MSFT, TSLA — and press Load.');return;}
+  host.innerHTML='<div class="qv-empty">Reading '+escHtml(sym)+'’s filings…</div>';
+  finFetch(sym,function(F){
+    if(!F.years.length){
+      host.innerHTML=qvEmpty('No filed statements came back for "'+escHtml(sym)+'". '
+        +escHtml(F.errs.join(' · '))
+        +'. This provider covers listed companies that file with a regulator; PSX names and most private issuers are not included.');
+      return;
+    }
+    /* every year computed, so the trend strip is real history rather than one
+       snapshot repeated */
+    var rows=F.years.map(function(y,i){return finCompute(y,F.years[i+1]||null);});
+    var R=rows[0], P=finPillars(R);
+    var prof=F.profile||(_fundCache[sym]&&_fundCache[sym].profile)||{};
+    var ind=prof.finnhubIndustry||'';
+    var name=prof.name||sym;
+    var fin=finIsFinancial(ind,R);
+    var V=finVerdict(P,fin);
+    host.innerHTML=finReportHtml(sym,name,ind,R,rows,P,V,fin,F);
+  });
+}
+function finReportHtml(sym,name,ind,R,rows,P,V,fin,F){
+  var M=function(v){return finMoney(v,R.ccy);};
+  var cls={'STRONG':'fr-strong','SOLID':'fr-solid','MIXED':'fr-mixed','WEAK':'fr-weak',
+           'FRAGILE':'fr-fragile'}[V.label]||'fr-none';
+  var say={
+    'STRONG':fin
+      ? 'Profitable and generating cash. Liquidity and leverage were left out of this score, so the verdict rests on earnings and cash alone — for a lender those are the pillars that travel.'
+      : 'Profitable, funded and generating cash. Nothing in these statements is asking for attention.',
+    'SOLID':(fin?'Earnings and cash hold up. Liquidity and leverage are outside this score. ':'')
+      +'The business works. There are one or two places where the numbers are tighter than ideal.',
+    'MIXED':'Strengths and problems in roughly equal measure — read the five lines below before drawing a conclusion.',
+    'WEAK':'More than one pillar is under strain. Worth understanding why before anything else.',
+    'FRAGILE':'The statements show serious pressure across several pillars at once.',
+    'NOT ENOUGH DATA':'The filing that came back does not carry enough line items to judge the business. No verdict is given rather than a confident guess.',
+    'NO DATA':'Nothing computable came back.'
+  }[V.label]||'';
+  /* The dial. A score is only drawn once the filing carried enough inputs to
+     mean anything — an income statement on its own once produced a green 100
+     sitting beside the words NOT ENOUGH DATA, which is worse than no dial. */
+  var shown=V.enough?V.score:null;
+  var pctv=(shown==null)?0:Math.max(0,Math.min(100,shown));
+  var C=2*Math.PI*38;
+  var dial='<div class="fr-dial"><svg viewBox="0 0 88 88">'
+    +'<circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="8"/>'
+    +(shown==null?'':'<circle cx="44" cy="44" r="38" fill="none" stroke="'+finScoreCol(shown)+'" stroke-width="8"'
+      +' stroke-linecap="round" stroke-dasharray="'+(C*pctv/100).toFixed(1)+' '+C.toFixed(1)+'"/>')
+    +'</svg><i'+(shown==null?' style="color:var(--t3);font-size:19px"':'')+'>'
+    +(shown==null?'n/a':Math.round(shown))+'</i></div>';
+
+  var pillarsHtml=FIN_PILLARS.map(function(p){
+    var k=p[0], s=P[k].score;
+    var muted=fin&&(k==='liquid'||k==='lever');
+    var facts={
+      profit:'net margin '+finPct(R.netMargin)+' · ROE '+finPct(R.roe),
+      liquid:'current '+finRat(R.currentRatio)+' · quick '+finRat(R.quickRatio),
+      lever :'debt/equity '+finRat(R.debtToEquity)+' · cover '+finX(R.interestCover),
+      effic :'cash cycle '+finDays(R.ccc),
+      cash  :'free cash flow '+M(R.fcf)
+    }[k];
+    return '<div class="fr-p'+(s==null||muted?' na':'')+'">'
+      +'<div class="fr-pn">'+p[1]+'<s>'+p[2]+'</s></div>'
+      +'<div class="fr-track"><div class="fr-fill" style="width:'+(s==null?0:s.toFixed(0))+'%;'
+        +'background:'+finScoreCol(s)+'"></div></div>'
+      +'<div class="fr-pw" style="color:'+finScoreCol(s)+'">'+finWord(k,s)+'</div>'
+      +'<div class="fr-pf">'+facts+(muted?' <s>· not scored for a lender</s>':'')+'</div></div>';
+  }).join('');
+
+  /* the integrity strip — these are the reasons to believe the rest */
+  function chk(ok,onTrue,onFalse,naTxt){
+    if(ok==null)return '<span class="na">'+naTxt+'</span>';
+    return '<span class="'+(ok?'ok':'off')+'">'+(ok?'✓ ':'✗ ')+(ok?onTrue:onFalse)+'</span>';
+  }
+  var ocfOk=R.ocfGap==null?null:Math.abs(R.ocfGap)<=Math.abs(R.ocfReported||1)*0.005;
+  var reOk=R.reResidual==null?null:Math.abs(R.reResidual)<=Math.abs(R.assets||1)*0.01;
+  var checks='<div class="fr-chk">'
+    +chk(R.equation.ok,'Books balance','Balance sheet is off by '+M(R.equation.gap),'Balance sheet not filed')
+    +chk(ocfOk,'Cash flow reconciles','Cash flow rebuild differs by '+M(R.ocfGap),'Cash flow not filed')
+    +chk(reOk,'Equity roll-forward ties','Equity roll leaves '+M(R.reResidual)+' unexplained','No prior year to roll from')
+    +'<span class="'+(V.cover>=0.9?'ok':'na')+'">'+Math.round(V.cover*100)+'% of inputs present</span>'
+    +'</div>';
+
+  var tr=finTrend(rows);
+  var trend='<div class="fr-tr">'+tr.map(function(t){
+    var latest=t.v[0], col=t.dir==null?'var(--t3)':t.dir>0?'var(--up)':t.dir<0?'var(--dn)':'var(--t3)';
+    var arrow=t.dir==null?'':t.dir>0?'▲ rising':t.dir<0?'▼ falling':'— flat';
+    var span=t.v.filter(function(x){return x!=null;}).length;
+    return '<div class="fr-trc"><i>'+t.k+'</i>'
+      +'<b>'+(latest==null?'—':(t.fmt==='pct'?finPct(latest):M(latest)))+'</b>'
+      +'<u style="color:'+col+'">'+arrow+(span>1?' · '+span+'y':'')+'</u>'
+      +finSpark(t.v,col)+'</div>';
+  }).join('')+'</div>';
+
+  var finNote=fin?'<div class="fr-note">This is a lender or insurer. Liquidity and leverage are shown but '
+    +'left out of the score: a bank funds itself with deposits, so a current ratio near 0.5 and heavy '
+    +'debt-to-equity are how the business is meant to look, not a warning. Read profitability, efficiency '
+    +'and cash quality instead.</div>':'';
+
+  var working=finFormulaRows(R).map(function(g){
+    if(g.grp)return '<div class="fr-grp">'+escHtml(g.grp)+'</div>';
+    var val=(g.val==null)?'—':g.fmt(g.val);
+    return '<div class="fr-f"><div class="fr-no">'+g.no+'</div>'
+      +'<div class="fr-fn"><b>'+escHtml(g.name)+'</b><code>'+g.expr+'</code>'
+      +(g.note?'<code style="color:var(--t3);opacity:.85">'+g.note+'</code>':'')+'</div>'
+      +'<div class="fr-fv'+(g.val==null?' dim':'')+'">'+val+'</div></div>';
+  }).join('');
+
+  return '<div class="fr-head"><b>'+escHtml(name)+'</b>'
+      +'<span>'+escHtml(sym)+(ind?' · '+escHtml(ind):'')
+      +' · FY'+escHtml(R.fy||'?')+(R.period&&R.period!=='FY'?' '+escHtml(R.period):'')
+      +(R.date?' ending '+escHtml(R.date):'')
+      +(R.filed?' · filed '+escHtml(R.filed):'')
+      +(R.ccy?' · '+escHtml(R.ccy):'')+'</span></div>'
+    +'<div class="fr-v">'+dial+'<div class="fr-vt"><b class="'+cls+'">'+V.label+'</b>'
+      +'<p>'+say+'</p>'
+      +'<em>'+(shown==null?'no score given':'score '+Math.round(shown)+' / 100')
+      +' · five pillars, weighted · thresholds are conventional rules of thumb, not a law of nature</em>'
+      +'</div></div>'
+    +finNote
+    +pillarsHtml
+    +checks
+    +trend
+    +'<details class="fr-more"><summary>Show all 30 formulas with the numbers put in</summary>'
+      +working
+      +'<div class="fr-roi">'
+        +'<label>Cost of investment<input type="number" id="fr_roi_c" placeholder="10000" oninput="finRoi()"></label>'
+        +'<label>Net profit from it<input type="number" id="fr_roi_p" placeholder="1500" oninput="finRoi()"></label>'
+        +'<b id="fr_roi_v">ROI —</b></div>'
+    +'</details>'
+    +'<div class="fr-foot">Every figure above is read from '+escHtml(sym)+'’s own filed income statement, '
+      +'balance sheet and cash flow — nothing is estimated, and a formula whose inputs are missing shows a dash '
+      +'rather than a guess. Statements are annual and arrive months after the year ends, so this describes the '
+      +'business as last reported, not as it trades today. A strong company can still be a poor trade this week.'
+      +(F.errs.length?' · '+escHtml(F.errs.join(' · ')):'')+'</div>';
+}
+/* 20 — the one formula the filings cannot answer, so the reader supplies it */
+function finRoi(){
+  var c=parseFloat((document.getElementById('fr_roi_c')||{}).value),
+      p=parseFloat((document.getElementById('fr_roi_p')||{}).value),
+      out=document.getElementById('fr_roi_v');
+  if(!out)return;
+  out.textContent=(isFinite(c)&&c!==0&&isFinite(p))?('ROI '+(p/c*100).toFixed(1)+'%'):'ROI —';
+}
+function finLoadFromStock(){
+  var a=((document.getElementById('fund_sym')||{}).value||'').trim().toUpperCase();
+  var el=document.getElementById('fr_sym');
+  if(el&&a){el.value=a;renderFinReport();}
 }
 function fundLoadFromAnalysis(){
   var a=(document.getElementById('ai_asset_txt')||{}).value||'';
