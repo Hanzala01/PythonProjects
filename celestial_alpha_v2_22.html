@@ -3407,6 +3407,23 @@ body{background:var(--bg0)}
       from the headings on purpose; they belong in the sentence, where a reader
       who has never met a square-root cycle can still follow the reasoning. ── */
 .crit-lead{font-size:10.5px;color:var(--t2);line-height:1.75;margin-bottom:11px}
+.mj-anchs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.mj-anch{display:flex;flex-direction:column;gap:1px;padding:7px 12px;border-radius:9px;
+  border:1px solid var(--b1);background:rgba(7,6,21,.55);min-width:0}
+.mj-anch.up{border-color:rgba(239,68,68,.3)}
+.mj-anch.dn{border-color:rgba(34,197,94,.3)}
+.mj-anch b{font-family:'Space Grotesk';font-size:15px;font-weight:700;color:var(--t1);
+  font-variant-numeric:tabular-nums}
+.mj-anch i{font-style:normal;font-size:8.5px;color:var(--t3);letter-spacing:.02em}
+.mj-skip{font-size:9.5px;color:var(--t3);line-height:1.65;margin-top:6px}
+.mj-alt{display:inline-block;cursor:pointer;color:var(--p3);font-weight:700;border:1px solid var(--b1);border-radius:6px;padding:2px 8px;margin:2px 3px 0 0;font-variant-numeric:tabular-nums;transition:.15s}
+.mj-alt:hover{border-color:var(--p3);background:rgba(139,92,246,.14)}
+.mj-ovr{display:flex;gap:12px;flex-wrap:wrap;margin-top:9px}
+.mj-ovr label{display:block}
+.mj-ovr i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.mj-ovr input{width:190px;padding:7px 10px;font-size:12px;border-radius:8px;
+  background:rgba(2,2,12,.8);border:1px solid var(--b1);color:var(--t1)}
 .crit-c{border:1px solid var(--b1);border-radius:12px;padding:13px 15px;margin-bottom:9px;
   background:linear-gradient(155deg,rgba(139,92,246,.06),rgba(7,6,21,.6));position:relative}
 .crit-c.here{border-color:rgba(168,85,247,.45);box-shadow:0 0 0 1px rgba(168,85,247,.12)}
@@ -3562,14 +3579,19 @@ body{background:var(--bg0)}
   color:var(--t3);margin-right:6px}
 .sn-h2do span.hide{display:none}
 
-.mj-in{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:9px 0 12px;
-  padding:9px 11px;border:1px solid var(--b1);border-radius:9px;background:rgba(7,6,21,.45)}
+.mj-in{display:grid;grid-template-columns:auto minmax(240px,1fr);gap:10px 16px;
+  align-items:start;margin:9px 0 12px;
+  padding:11px 13px;border:1px solid var(--b1);border-radius:9px;background:rgba(7,6,21,.45)}
+/* the chips and the explanation share the top row; everything after it runs
+   full width, so the override boxes stop wrapping onto the ignored-pivot line */
+.mj-in>.mj-skip,.mj-in>.mj-ovr{grid-column:1/-1}
+.mj-in>.mj-anchs{margin:0}
 .mj-in label{display:flex;align-items:center;gap:6px}
 .mj-in i{font-style:normal;font-size:8.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--t3)}
 .mj-in input{width:110px;background:var(--card);border:1px solid var(--b1);border-radius:6px;
   color:var(--t1);font-size:12px;padding:5px 8px;font-family:inherit;font-variant-numeric:tabular-nums}
 .mj-in input:focus{outline:none;border-color:var(--p3)}
-.mj-using{flex:1;min-width:180px;font-size:9px;color:var(--t3);line-height:1.5}
+.mj-using{min-width:180px;font-size:9.5px;color:var(--t3);line-height:1.65}
 .mj-using b{color:var(--p3);font-weight:600}
 
 /* a rung that coincides with a key zone or with the trade's own levels */
@@ -6528,63 +6550,194 @@ function anaZones(price,dp){
 
    The lookback shrinks on a short history rather than giving up, and if even
    that finds nothing the caller falls back to the weekly and daily values. */
-function anaAutoStrong(){
-  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
-  if(!rows||rows.length<25)return{hi:null,lo:null};
-  var lbs=[5,4,3];
-  for(var q=0;q<lbs.length;q++){
-    var sp=swingPoints(rows,lbs[q]);
-    if(!sp.hi.length||!sp.lo.length)continue;
-    var H=sp.hi.slice().sort(function(a,b){return b.p-a.p;})[0];
-    var L=sp.lo.slice().sort(function(a,b){return a.p-b.p;})[0];
-    var lab=function(d){
-      if(!d)return '';
-      var x=new Date(String(d).length===10?d+'T00:00:00':d);
-      return isFinite(+x)?' · '+x.toLocaleDateString('en',{day:'numeric',month:'short'}):'';
-    };
-    return{
-      hi:{v:H.p,n:'Swing high'+lab(H.d),auto:true,date:H.d,pivots:sp.hi.length,lb:lbs[q]},
-      lo:{v:L.p,n:'Swing low'+lab(L.d), auto:true,date:L.d,pivots:sp.lo.length,lb:lbs[q]}
-    };
-  }
-  return{hi:null,lo:null};
+/* ══ ANCHORS — found, not typed ═════════════════════════════════════════
+   The anchors a square-root cycle is measured from have to be peaks: a real
+   pivot with bars either side confirming it, not "the highest print of the
+   last five sessions", which is only a window edge and moves every day.
+
+   Two timeframes are read, because a trader looking at a daily chart and the
+   same trader looking at a weekly chart pick out different peaks, and both
+   are true. Which side gets two anchors is decided by the trend: in a
+   downtrend price is falling away from highs, so two highs and one low; in an
+   uptrend two lows and one high; with no trend, two of each.
+
+   A pivot also has to be somewhere price could reach, and far enough away to
+   be worth measuring from — a peak 2% from spot puts every rung on top of the
+   current price. Anything outside that window is a real pivot and a useless
+   one, so it is named as ignored rather than quietly dropped.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* daily bars folded into real calendar weeks. Not five-bar chunks: one
+   holiday and those drift out of alignment with the chart the reader sees. */
+function anaWeekly(rows){
+  var out=[],by={};
+  (rows||[]).forEach(function(r){
+    var d=new Date(String(r.date).slice(0,10)+'T00:00:00Z');
+    if(!isFinite(+d))return;
+    var th=new Date(+d); th.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
+    var key=th.getUTCFullYear()+'-'+Math.ceil((((th-Date.UTC(th.getUTCFullYear(),0,1))/864e5)+1)/7);
+    if(!by[key]){ by[key]={date:r.date,open:+r.open,high:+r.high,low:+r.low,close:+r.close,n:1};
+                  out.push(by[key]); }
+    else{ var w=by[key];
+          w.high=Math.max(w.high,+r.high); w.low=Math.min(w.low,+r.low);
+          w.close=+r.close; w.n++; }
+  });
+  return out;
 }
+/* Prominence: how far a pivot stands above the higher of the two troughs
+   flanking it. A tall spike out of a shallow base beats a marginally higher
+   point buried inside a range, which is what "the deep one" means on a chart. */
+function anaPeaks(rows,lb,kind){
+  var sp=swingPoints(rows,lb);
+  var list=kind==='hi'?sp.hi:sp.lo, opp=kind==='hi'?sp.lo:sp.hi;
+  return list.map(function(p){
+    var before=null,after=null;
+    opp.forEach(function(o){ if(o.i<p.i)before=o; else if(after===null)after=o; });
+    var prom=0;
+    if(kind==='hi'){
+      var base=Math.max(before?before.p:-Infinity,after?after.p:-Infinity);
+      prom=isFinite(base)?p.p-base:0;
+    }else{
+      var cap=Math.min(before?before.p:Infinity,after?after.p:Infinity);
+      prom=isFinite(cap)?cap-p.p:0;
+    }
+    return{p:p.p,d:p.d,i:p.i,prom:prom};
+  }).filter(function(p){return p.prom>0;})
+    .sort(function(a,b){return b.prom-a.prom;});
+}
+function anaDateLabel(d){
+  if(!d)return '';
+  var x=new Date(String(d).length===10?d+'T00:00:00':d);
+  return isFinite(+x)?x.toLocaleDateString('en',{day:'numeric',month:'short',year:'2-digit'}):'';
+}
+/* Ranking. Prominence alone hands the anchor to the biggest peak in the whole
+   history, which can be a year old and a quarter of the way across the chart.
+   Distance alone hands it to the nearest bump. Prominence divided by distance
+   asks the useful question — how much structure is there, per unit of travel to
+   reach it — so a solid peak just ahead beats a slightly taller one far behind.
+   Everything else that qualified is kept and offered, because this is a
+   judgement call and the reader may want the other one. */
+function anaAnchorRank(list,price,sigma){
+  return list.map(function(p){
+    var distSig=Math.abs(p.p-price)/(price*(sigma||0.01));
+    return{p:p.p,d:p.d,i:p.i,prom:p.prom,distSig:distSig,score:p.prom/(1+distSig)};
+  }).sort(function(a,b){return b.score-a.score;});
+}
+/* one anchor per timeframe on the side asked for, plus the runners-up */
+function anaPickSide(daily,weekly,kind,price,reach,minGap,sigma){
+  var inWindow=function(p){
+    return kind==='hi' ? (p.p>=price*(1+minGap)&&p.p<=price*(1+reach))
+                       : (p.p<=price*(1-minGap)&&p.p>=price*(1-reach));
+  };
+  var W=anaAnchorRank(anaPeaks(weekly,3,kind).filter(inWindow),price,sigma);
+  var D=anaAnchorRank(anaPeaks(daily ,5,kind).filter(inWindow),price,sigma);
+  var out=[], alts=[];
+  var dup=function(v){
+    for(var j=0;j<out.length;j++) if(Math.abs(out[j].v-v)/v<0.002)return true;
+    return false;
+  };
+  if(W[0])out.push({v:W[0].p,tf:'weekly',date:W[0].d,prom:W[0].prom,kind:kind});
+  /* if the daily lands on the pivot the weekly already gave, step to its next
+     one — two anchors holding the same number are one measurement, not two */
+  for(var i=0;i<D.length;i++){
+    if(dup(D[i].p))continue;
+    out.push({v:D[i].p,tf:'daily',date:D[i].d,prom:D[i].prom,kind:kind});
+    break;
+  }
+  W.concat(D).forEach(function(c){
+    if(dup(c.p))return;
+    for(var k=0;k<alts.length;k++) if(Math.abs(alts[k].v-c.p)/c.p<0.002)return;
+    alts.push({v:c.p,kind:kind,date:c.d});
+  });
+  return{picked:out,alts:alts.slice(0,4)};
+}
+/* Everything the panel needs: the anchors, why those, and what was skipped. */
+function anaAutoAnchors(price){
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
+  var out={list:[],alts:[],trend:null,reach:null,minGap:null,skipped:[],why:''};
+  if(!rows||rows.length<60){
+    out.why='Needs about sixty daily candles before a confirmed peak can be found. '
+      +(rows?('Only '+rows.length+' loaded so far.'):'None loaded yet.');
+    return out;
+  }
+  if(!(price>0)){out.why='Needs a live price to measure from.';return out;}
+  var sig=dailySigma().v||0.01;
+  var reach=Math.min(0.5,Math.max(0.22,16*sig));   /* far enough to matter, near enough to reach */
+  var minGap=4*sig;                                /* closer than this and the rungs land on price */
+  out.reach=reach; out.minGap=minGap;
+  var weekly=anaWeekly(rows);
+  var T=(typeof calcMajorTrend==='function')?calcMajorTrend(rows,price):null;
+  out.trend=T;
+  var dir=(T&&T.dir)||'range';
+
+  var H=anaPickSide(rows,weekly,'hi',price,reach,minGap,sig);
+  var L=anaPickSide(rows,weekly,'lo',price,reach,minGap,sig);
+  var highs=H.picked, lows=L.picked;
+  if(dir==='bear')      out.list=highs.concat(lows.slice(0,1));
+  else if(dir==='bull') out.list=lows.concat(highs.slice(0,1));
+  else                  out.list=highs.concat(lows);
+  out.alts=H.alts.concat(L.alts).filter(function(a){
+    for(var i=0;i<out.list.length;i++) if(Math.abs(out.list[i].v-a.v)/a.v<0.002)return false;
+    return true;
+  }).sort(function(a,b){return b.v-a.v;});
+
+  /* pivots that exist but sit outside the window, named so the reader can see
+     what was left out and type one in if they disagree */
+  ['hi','lo'].forEach(function(k){
+    anaPeaks(weekly,3,k).slice(0,6).forEach(function(p){
+      var far=(k==='hi')?(p.p>price*(1+reach)):(p.p<price*(1-reach));
+      var near=(k==='hi')?(p.p<price*(1+minGap)&&p.p>price):(p.p>price*(1-minGap)&&p.p<price);
+      if(far||near)out.skipped.push({v:p.p,kind:k,date:p.d,
+        reason:far?'too far from price':'too close to price'});
+    });
+  });
+  out.skipped=out.skipped.sort(function(a,b){return b.v-a.v;}).slice(0,4);
+  if(!out.list.length)
+    out.why='No confirmed peak sits between '+(price*(1+minGap)).toFixed(2)+' and '
+      +(price*(1+reach)).toFixed(2)+' above, or between '+(price*(1-reach)).toFixed(2)+' and '
+      +(price*(1-minGap)).toFixed(2)+' below. Every pivot in this history is either on top of the '
+      +'current price or in a different market altogether.';
+  return out;
+}
+/* Typed values still win — a level you know matters can always be forced —
+   but nothing has to be typed for the panel to work. */
 function anaAnchors(price){
   var N=function(id){var e=document.getElementById(id);var v=e?parseFloat(e.value):NaN;
                      return isFinite(v)&&v>0?v:null;};
-  /* Anchors are the DAILY or WEEKLY high and low, not the all-time or monthly
-     extreme. A square-root cycle measured from a five-year high produces rungs
-     thousands of points from spot, which are arithmetically real and useless
-     to trade against; the recent extreme is the one price is currently working
-     around. Anything typed into the form still wins, so a level you know
-     matters can always be forced. */
-  /* Typed values win, but nothing has to be typed: the strong high and low
-     are found from the candles below. Weekly and daily remain only as a last
-     resort for a history too short to hold a confirmed pivot. */
-  var hi=[{v:N('sh_price'),n:'Strong high'}].filter(function(x){return x.v;})[0]||null;
-  var lo=[{v:N('sl2_price'),n:'Strong low'}].filter(function(x){return x.v;})[0]||null;
-  var auto=anaAutoStrong();
-  if(!hi&&auto.hi)hi=auto.hi;
-  if(!lo&&auto.lo)lo=auto.lo;
-  if(!hi)hi=[{v:N('ca_wh'),n:'Weekly high'},{v:N('sl_pwh'),n:'Prev week high'},
-             {v:N('sl_pdh'),n:'Prev day high'}].filter(function(x){return x.v;})[0]||null;
-  if(!lo)lo=[{v:N('ca_wl'),n:'Weekly low'},{v:N('sl_pwl'),n:'Prev week low'},
-             {v:N('sl_pdl'),n:'Prev day low'}].filter(function(x){return x.v;})[0]||null;
-
-  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
-  if((!hi||!lo)&&rows&&rows.length>=5){
-    /* weekly = the last five sessions, which is the window the level engine
-       and the trend read both already work in */
-    var win=rows.slice(-5), H=-Infinity, L=Infinity, hd=null, ld=null;
-    win.forEach(function(r){
-      var h=+r.high,l=+r.low;
-      if(isFinite(h)&&h>H){H=h;hd=r.date;}
-      if(isFinite(l)&&l<L){L=l;ld=r.date;}
+  var A=anaAutoAnchors(price);
+  var manualH=N('sh_price'), manualL=N('sl2_price');
+  /* A typed value replaces an automatic one of the same side rather than being
+     added to it — otherwise overriding the high quietly leaves you with three
+     highs and the panel reads as if nothing was overridden. The trend still
+     decides how many of each side there are, so the count never changes. */
+  var dir=(A.trend&&A.trend.dir)||'range';
+  var quota={hi:dir==='bull'?1:2, lo:dir==='bear'?1:2};
+  if(dir==='range'){quota.hi=2;quota.lo=2;}
+  var take=function(kind,manual){
+    var auto=A.list.filter(function(a){return a.kind===kind;});
+    var out=[];
+    if(manual)out.push({v:manual,tf:'typed',kind:kind,date:null,prom:null});
+    auto.forEach(function(a){
+      if(out.length>=quota[kind])return;
+      for(var i=0;i<out.length;i++) if(Math.abs(out[i].v-a.v)/a.v<0.002)return;
+      out.push(a);
     });
-    if(!hi&&isFinite(H))hi={v:H,n:'Weekly high (last 5 sessions)',auto:true,date:hd};
-    if(!lo&&isFinite(L))lo={v:L,n:'Weekly low (last 5 sessions)',auto:true,date:ld};
-  }
-  return{hi:hi,lo:lo};
+    return out;
+  };
+  A.list=take('hi',manualH).concat(take('lo',manualL));
+  A.manual=!!(manualH||manualL);
+  /* the two the rest of the app still asks for by name */
+  A.hi=A.list.filter(function(a){return a.kind==='hi';})[0]||null;
+  A.lo=A.list.filter(function(a){return a.kind==='lo';})[0]||null;
+  if(A.hi)A.hi.n=anaAnchorName(A.hi);
+  if(A.lo)A.lo.n=anaAnchorName(A.lo);
+  return A;
+}
+function anaAnchorName(a){
+  if(!a)return '—';
+  if(a.tf==='typed')return (a.kind==='hi'?'High':'Low')+' you entered';
+  return (a.kind==='hi'?'Peak':'Trough')+' on the '+a.tf+' chart'
+    +(a.date?' · '+anaDateLabel(a.date):'');
 }
 /* The square-root cycle rungs around one anchor, both directions.
 
@@ -6691,15 +6844,44 @@ function anaMjBlock(title,sub,origin,price,dp,tone){
    section. These write the same fields the rest of the engine reads. */
 function anaAnchorInputs(A,dp){
   var v=function(id){var e=document.getElementById(id);return e&&e.value?e.value:'';};
-  var usingH=A.hi?A.hi.n:'—', usingL=A.lo?A.lo.n:'—';
+  var chips=(A.list||[]).map(function(a){
+    return '<span class="mj-anch '+(a.kind==='hi'?'up':'dn')+'">'
+      +'<b>'+a.v.toFixed(dp)+'</b><i>'+escHtml(anaAnchorName(a))+'</i></span>';
+  }).join('');
+  var T=A.trend;
+  var why = !A.list.length ? ''
+    : (A.manual?'You have set one by hand; the rest were found from the candles. '
+               :'All of these were found from the candles — nothing was typed. ')
+      +(T&&T.dir==='bear'
+          ? 'The trend reads bearish, so two peaks are used and one trough: in a downtrend price '
+            +'is falling away from highs, and those are what it has to climb back through.'
+        : T&&T.dir==='bull'
+          ? 'The trend reads bullish, so two troughs are used and one peak: in an uptrend price '
+            +'is rising off lows, and those are what it has to hold.'
+          : 'The trend reads sideways, so both sides are used — two peaks and two troughs.')
+      +' One comes off the weekly chart and one off the daily, because the same market shows a '
+      +'different peak at each zoom and both are real. Only confirmed pivots count, never simply '
+      +'the highest print of the last few sessions.';
   return '<div class="mj-in">'
-   +'<label><i>Strong high</i><input type="number" step="0.01" id="mj_sh" value="'+v('sh_price')+'"'
-     +' placeholder="e.g. 4888" oninput="anaSetAnchor(\'sh_price\',this.value)"></label>'
-   +'<label><i>Strong low</i><input type="number" step="0.01" id="mj_sl" value="'+v('sl2_price')+'"'
-     +' placeholder="e.g. 3942" oninput="anaSetAnchor(\'sl2_price\',this.value)"></label>'
-   +'<div class="mj-using">Using <b>'+escHtml(usingH)+'</b> and <b>'+escHtml(usingL)+'</b>'
-   +((A.hi&&A.hi.auto)||(A.lo&&A.lo.auto)?', found from the candles'
-     :', entered by hand')+'. Leave the boxes empty to keep it automatic.</div>'
+   +(chips?'<div class="mj-anchs">'+chips+'</div>':'')
+   +(why?'<div class="mj-using">'+why+'</div>':'')
+   +((A.alts&&A.alts.length)
+      ? '<div class="mj-skip">Other confirmed peaks qualified too. Click one to use it instead: '
+        +A.alts.map(function(k){
+          return '<b class="mj-alt" onclick="anaSetAnchor(\''+(k.kind==='hi'?'sh_price':'sl2_price')
+            +'\','+k.v.toFixed(4)+')">'+k.v.toFixed(dp)+'</b>';}).join(' ')
+        +'</div>'
+      : '')
+   +(A.skipped&&A.skipped.length
+      ? '<div class="mj-skip">Ignored: '+A.skipped.map(function(k){
+          return k.v.toFixed(dp)+' ('+escHtml(k.reason)+')';}).join(', ')+'.</div>'
+      : '')
+   +'<div class="mj-ovr">'
+     +'<label><i>Override the high</i><input type="number" step="0.01" id="mj_sh" value="'+v('sh_price')+'"'
+       +' placeholder="leave empty for automatic" oninput="anaSetAnchor(\'sh_price\',this.value)"></label>'
+     +'<label><i>Override the low</i><input type="number" step="0.01" id="mj_sl" value="'+v('sl2_price')+'"'
+       +' placeholder="leave empty for automatic" oninput="anaSetAnchor(\'sl2_price\',this.value)"></label>'
+   +'</div>'
    +'</div>';
 }
 var _mjT=null;
@@ -6738,20 +6920,20 @@ var CRIT_MAX_SIG=12;            /* past twelve normal days it is real arithmetic
 /* every rung both anchors produce, each carrying where it came from so the
    sentence can name it later. The anchors themselves count as rungs: a step
    from the low landing on the high is the strongest agreement there is. */
-function anaRungPool(hi,lo,price){
+function anaRungPool(anchors,price){
   var out=[];
-  function add(src,anchor,deg,inc,dir,p){
-    if(!(p>0))return;
-    if(price>0&&(p<price*CRIT_NEAR[0]||p>price*CRIT_NEAR[1]))return;
-    out.push({src:src,anchor:anchor,deg:deg,inc:inc,dir:dir,p:p});
-  }
-  [[hi,'high'],[lo,'low']].forEach(function(pair){
-    var a=pair[0], src=pair[1];
-    if(!(a>0))return;
-    add(src,a,0,0,'at',a);
-    anaLadderFrom(a).forEach(function(r){
-      add(src,a,r.d,r.i,'up',r.up);
-      add(src,a,r.d,r.i,'dn',r.dn);
+  (anchors||[]).forEach(function(A,ix){
+    if(!A||!(A.v>0))return;
+    function add(deg,inc,dir,p){
+      if(!(p>0))return;
+      if(price>0&&(p<price*CRIT_NEAR[0]||p>price*CRIT_NEAR[1]))return;
+      out.push({ax:ix,anchor:A.v,kind:A.kind,tf:A.tf,date:A.date,
+                deg:deg,inc:inc,dir:dir,p:p});
+    }
+    add(0,0,'at',A.v);
+    anaLadderFrom(A.v).forEach(function(r){
+      add(r.d,r.i,'up',r.up);
+      add(r.d,r.i,'dn',r.dn);
     });
   });
   return out;
@@ -6761,39 +6943,42 @@ function anaRungPool(hi,lo,price){
    the same thing on gold as on a stock that swings three times as far. The
    band widens in two stages only if nothing is found at the first — and if
    nothing is found at all, the reason is returned instead of an empty box. */
-function anaCritRanges(hi,lo,price,sigma){
+function anaCritRanges(anchors,price,sigma){
   var out={list:[],tolSig:null,why:''};
-  if(!(hi>0)||!(lo>0)){
-    out.why='This needs both a major high and a major low. Only one of them is set.';
+  anchors=(anchors||[]).filter(function(a){return a&&a.v>0;});
+  if(anchors.length<2){
+    out.why='This needs at least two anchors to compare. '
+      +(anchors.length?'Only one was found.':'None were found.');
     return out;
   }
   if(!(price>0)||!(sigma>0)){
     out.why='This needs a live price and a measured daily move to size the ranges against.';
     return out;
   }
-  var R=anaRungPool(hi,lo,price);
-  var H=R.filter(function(r){return r.src==='high';});
-  var L=R.filter(function(r){return r.src==='low';});
-  if(!H.length||!L.length){
-    out.why='Every level measured from the '+(H.length?'low':'high')
-      +' lands a long way from the current price, so there is nothing here for the two to agree on.';
+  var R=anaRungPool(anchors,price);
+  var used={}; R.forEach(function(r){used[r.ax]=1;});
+  if(Object.keys(used).length<2){
+    out.why='Only one anchor produces levels anywhere near the current price, so there is '
+      +'nothing here for two measurements to agree on.';
     return out;
   }
   var best=null, tiers=[1.5,2.5,4];
   for(var t=0;t<tiers.length;t++){
     var tol=price*sigma*tiers[t], found=[];
-    H.forEach(function(a){ L.forEach(function(b){
+    for(var i=0;i<R.length;i++)for(var j=i+1;j<R.length;j++){
+      var a=R[i], b=R[j];
+      if(a.ax===b.ax)continue;              /* two rungs off one anchor is one measurement */
       var gap=Math.abs(a.p-b.p);
       if(!best||gap<best.gap)best={gap:gap,mid:(a.p+b.p)/2};
-      if(gap>tol)return;
+      if(gap>tol)continue;
       var l=Math.min(a.p,b.p), h=Math.max(a.p,b.p), mid=(l+h)/2;
       var distSig=Math.abs(mid-price)/(price*sigma);
-      if(distSig>CRIT_MAX_SIG)return;
+      if(distSig>CRIT_MAX_SIG)continue;
       found.push({lo:l,hi:h,mid:mid,gap:gap,legs:[a,b],
                   tightSig:gap/(price*sigma),distSig:distSig});
-    });});
-    /* tightest first, then drop any pairing that overlaps one already kept —
-       the same shelf found twice through a different pair of angles */
+    }
+    /* tightest first, then drop any pairing overlapping one already kept — the
+       same shelf found twice through a different pair of angles */
     found.sort(function(x,y){return x.tightSig-y.tightSig;});
     var keep=[];
     found.forEach(function(r){
@@ -6806,7 +6991,7 @@ function anaCritRanges(hi,lo,price,sigma){
       return out;
     }
   }
-  if(best)out.why='The two ladders step past each other around this price — the closest they come '
+  if(best)out.why='The ladders step past each other around this price — the closest any two come '
     +'is '+best.gap.toFixed(2)+' apart near '+best.mid.toFixed(2)+', which is wider than '
     +(best.gap/(price*sigma)).toFixed(1)+' normal days of movement. That is not a range, it is a gap.';
   return out;
@@ -6823,9 +7008,11 @@ function anaCritPick(list,price){
 }
 /* the plain-English case for one range */
 function anaCritLeg(l,dp){
-  if(l.dir==='at')return 'the '+(l.src==='high'?'major high':'major low')+' itself at '+l.anchor.toFixed(dp);
-  return l.deg+'° '+(l.dir==='up'?'up':'down')+' from the '
-    +(l.src==='high'?'major high':'major low')+' at '+l.anchor.toFixed(dp)
+  var who=(l.kind==='hi'?'peak':'trough')
+    +(l.tf&&l.tf!=='typed'?' on the '+l.tf+' chart':' you entered')
+    +' at '+l.anchor.toFixed(dp);
+  if(l.dir==='at')return 'the '+who+' itself';
+  return l.deg+'° '+(l.dir==='up'?'up':'down')+' from the '+who
     +', which lands on '+l.p.toFixed(dp);
 }
 function anaCritWords(r,price,sigma,dp){
@@ -6882,51 +7069,47 @@ function anaCritCard(tag,r,price,sigma,dp,tone){
    them are folded away underneath for anyone who wants to check the working. */
 function anaRungs(price,dp){
   var A=anaAnchors(price), sig=dailySigma();
-  var usingH=A.hi?A.hi.n+(A.hi.auto?' · found from the candles':' · entered by hand'):null;
-  var usingL=A.lo?A.lo.n+(A.lo.auto?' · found from the candles':' · entered by hand'):null;
-
-  var C=anaCritRanges(A.hi&&A.hi.v,A.lo&&A.lo.v,price,sig.v);
+  var C=anaCritRanges(A.list,price,sig.v);
   var P=anaCritPick(C.list,price);
   var cards='';
   if(P.inside)cards+=anaCritCard('Price is in this range now',P.inside,price,sig.v,dp,'here');
   if(P.above) cards+=anaCritCard('Next range above',P.above,price,sig.v,dp,'up');
   if(P.below) cards+=anaCritCard('Next range below',P.below,price,sig.v,dp,'dn');
 
-  var blocks='';
-  if(A.hi)blocks+=anaMjBlock('From the major high',A.hi.n+(A.hi.auto?' · auto':''),A.hi.v,price,dp,'hi');
-  if(A.lo)blocks+=anaMjBlock('From the major low', A.lo.n+(A.lo.auto?' · auto':''),A.lo.v,price,dp,'lo');
-  blocks+=anaMjBlock('From price now','the original ladder',price,price,dp,'now');
+  var blocks=(A.list||[]).map(function(a){
+    return anaMjBlock((a.kind==='hi'?'From the peak at ':'From the trough at ')+a.v.toFixed(dp),
+      anaAnchorName(a),a.v,price,dp,a.kind==='hi'?'hi':'lo');
+  }).join('')
+   +anaMjBlock('From price now','the original ladder, measured from where price is',price,price,dp,'now');
 
   return '<div class="mj">'
-   +'<div class="ab-cap">Critical ranges — where the high and the low agree</div>'
-   +'<div class="crit-lead">Two ladders run behind this panel. One measures out from the '
-     +'highest price this market has recently printed, the other from the lowest. Most of the '
-     +'time they land in different places and neither is worth much on its own. Where a level '
-     +'from the high and a level from the low finish close together, both measurements are '
-     +'pointing at the same price — and that agreement is what is shown below. '
-     +(usingH&&usingL
-       ? 'Right now the high is '+escHtml(A.hi.v.toFixed(dp))+' ('+escHtml(usingH)+') and the low is '
-         +escHtml(A.lo.v.toFixed(dp))+' ('+escHtml(usingL)+').'
-       : 'Set a major high and a major low below to start.')
-   +'</div>'
+   +'<div class="ab-cap">Critical ranges — where two measurements agree</div>'
+   +'<div class="crit-lead">A ladder of levels is measured out from each anchor below. On its own '
+     +'a ladder is just geometry from one price. Where a level off one anchor and a level off '
+     +'another finish close together, two independent measurements are pointing at the same place '
+     +'— and that is what is shown here. Individual levels are not listed; only the ranges the '
+     +'measurements agree on.</div>'
    +anaAnchorInputs(A,dp)
-   +(cards||'<div class="mj-none">'+escHtml(C.why||'No range found near the current price.')
+   +(cards||'<div class="mj-none">'
+       /* when there are no anchors at all, the anchor engine knows why — too
+          little history, or no confirmed pivot in reach. That reason is more
+          use than the range finder's "needs at least two anchors". */
+       +escHtml((A.list.length<2&&A.why)?A.why
+                :(C.why||A.why||'No range found near the current price.'))
        +'</div>')
    +(function(){
-      /* the span quoted here must cover only the ranges NOT already shown,
-         or it repeats the cards above back at the reader as if they were extra */
       var shown=[P.inside,P.above,P.below].filter(Boolean);
       var rest=C.list.filter(function(r){return shown.indexOf(r)<0;});
       if(!rest.length)return '';
       var lo=Math.min.apply(null,rest.map(function(r){return r.lo;}));
       var hi=Math.max.apply(null,rest.map(function(r){return r.hi;}));
       return '<div class="crit-more">'+rest.length+' further range'+(rest.length>1?'s':'')
-        +' where the two ladders also agree sit'+(rest.length>1?'':'s')+' outside this, between '
+        +' where the ladders also agree sit'+(rest.length>1?'':'s')+' outside this, between '
         +lo.toFixed(dp)+' and '+hi.toFixed(dp)+' — too far from the current price to trade '
         +'against today, but they are in the full ladders below.</div>';
     })()
-   +'<details class="crit-det"><summary>Show the two ladders this came from</summary>'
-     +'<div class="crit-note">Every step below is a turn of the square-root cycle: the price is '
+   +'<details class="crit-det"><summary>Show the ladders this came from</summary>'
+     +'<div class="crit-note">Every step below is a turn of the square-root cycle: the anchor is '
        +'divided by 100, its square root taken, the step added or subtracted, then squared and '
        +'multiplied back. 90° is a quarter turn, 360° a full one. Dividing by 100 first makes each '
        +'step ten times larger than it would be on the raw price, which is what puts the rungs a '
