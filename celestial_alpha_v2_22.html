@@ -3402,6 +3402,37 @@ body{background:var(--bg0)}
 .mj-cf{font-size:9.5px;color:var(--p3);line-height:1.6;padding:7px 9px;border-radius:6px;
   background:rgba(139,92,246,.1);margin-bottom:8px}
 .mj-none{font-size:10.5px;color:var(--t3);line-height:1.7;padding:10px 2px}
+/* ── CRITICAL RANGES — the surface of the major-levels panel. Three cards at
+      most: where price is, what is above, what is below. The angles are gone
+      from the headings on purpose; they belong in the sentence, where a reader
+      who has never met a square-root cycle can still follow the reasoning. ── */
+.crit-lead{font-size:10.5px;color:var(--t2);line-height:1.75;margin-bottom:11px}
+.crit-c{border:1px solid var(--b1);border-radius:12px;padding:13px 15px;margin-bottom:9px;
+  background:linear-gradient(155deg,rgba(139,92,246,.06),rgba(7,6,21,.6));position:relative}
+.crit-c.here{border-color:rgba(168,85,247,.45);box-shadow:0 0 0 1px rgba(168,85,247,.12)}
+.crit-c.up{border-color:rgba(34,197,94,.3)}
+.crit-c.dn{border-color:rgba(239,68,68,.3)}
+.crit-t{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.crit-t b{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t2)}
+.crit-c.here .crit-t b{color:var(--p3)}
+.crit-c.up .crit-t b{color:#86efac}
+.crit-c.dn .crit-t b{color:#fca5a5}
+.crit-t span{margin-left:auto;font-size:9px;color:var(--t3);letter-spacing:.05em}
+.crit-r{font-family:'Space Grotesk';font-size:26px;font-weight:700;color:var(--t1);
+  letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.15}
+.crit-r s{text-decoration:none;color:var(--t3);font-weight:400;margin:0 3px}
+.crit-w{font-size:11px;color:var(--t2);line-height:1.8;margin:8px 0 0}
+.crit-x{font-size:10px;color:var(--p3);line-height:1.7;margin:7px 0 0;padding-top:7px;
+  border-top:1px solid var(--b1)}
+.crit-more{font-size:10px;color:var(--t3);line-height:1.65;margin:2px 0 10px}
+.crit-det{margin-top:6px;border-top:1px solid var(--b1);padding-top:8px}
+.crit-det>summary{cursor:pointer;font-size:10.5px;font-weight:700;color:var(--p3);padding:6px 0;
+  list-style:none}
+.crit-det>summary::-webkit-details-marker{display:none}
+.crit-det>summary:before{content:'▸ '}
+.crit-det[open]>summary:before{content:'▾ '}
+.crit-note{font-size:9.5px;color:var(--t3);line-height:1.7;margin:4px 0 11px}
+@media (max-width:1200px){.crit-r{font-size:22px}}
 
 /* ── monthly trade budget ── */
 .qta{border:1px solid var(--b1);border-radius:8px;padding:9px 11px;margin:10px 0;
@@ -4066,7 +4097,7 @@ body{background:var(--bg0)}
         <div id="ana_legacy" style="display:none" aria-hidden="true">
         <div class="card">
           <div class="ch">
-            <div class="ct"><div class="dot" style="background:var(--accent)"></div>AI Analytics Engine</div>
+            <div class="ct"><div class="dot" style="background:var(--accent)"></div>AI Analytics Engine</div><div class="cs">Type an asset and a price, press Run, and the engine works through every method below.</div>
             <div class="flex g8">
               <button class="btn btn-g btn-sm" onclick="openShare()">⬆ Share</button>
               <span id="inline_bias" style="margin-right:10px"></span><button class="btn btn-a btn-sm" onclick="sndClick();smartAnalyze()">⚡ Analyze</button>
@@ -4191,46 +4222,46 @@ body{background:var(--bg0)}
             </div>
 
           
-            <details class="sec"><summary><b>Verdict detail</b><span>8-method vote table</span></summary>
+            <details class="sec"><summary><b>Verdict detail</b><span>the full vote — every method, what it said, and how much it counted</span></summary>
             <div class="card">
               <div class="ch">
                 <div class="ct"><div class="dot" style="background:var(--acc2)"></div>Merged Verdict — 8-method confluence</div>
-                <div class="cs">probability · cycle · phase · momentum · volatility</div>
+                <div class="cs">Eight separate methods vote on direction. This is what they agreed on, and how strongly.</div>
               </div>
               <div class="cb" id="ca_verdict"></div>
             </div>
             </details>
 
-            <details class="sec"><summary><b>Deep analysis</b><span>sigma bands · confluence · export</span></summary>
+            <details class="sec"><summary><b>Deep analysis</b><span>the longer working: daily range, the agreement table, and the chart export</span></summary>
               <div class="card">
                 <div class="ch">
                   <div class="ct"><div class="dot" style="background:var(--green)"></div>Sigma Dashboard</div>
-                  <div class="cs">historical candles only</div>
+                  <div class="cs">How far this market normally moves in one day, measured from real candles rather than assumed.</div>
                 </div>
                 <div class="cb"><div class="g4" id="ca_sig_dash"></div></div>
               </div>
               <div class="card">
-                <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Chart — sigma bands · major cycle levels</div></div>
+                <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Chart — sigma bands · major cycle levels</div><div class="cs">The price chart with the normal daily range drawn around it and the cycle levels marked on.</div></div>
                 <div class="cb"><canvas id="ca_cv" height="380"></canvas></div>
               </div>
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--amber,#fbbf24)"></div>Statistical Sigma Levels</div>
-                  <div class="cs">theoretical vs measured</div></div>
+                  <div class="cs">Where price would sit if the move were purely normal, next to where it actually sits.</div></div>
                 <div class="cb"><div id="ca_sig_tbl"></div>
                   <div class="f10 dim lh" id="ca_sig_warn" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--rim)"></div></div>
               </div>
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Level Reasoning</div>
-                  <div class="cs">measured from cached candles</div></div>
+                  <div class="cs">Why each level was picked, and which measurements it is built from.</div></div>
                 <div class="cb" id="ca_reason"></div>
               </div>
               <div class="card">
-                <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Confluence Sources</div></div>
+                <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Confluence Sources</div><div class="cs">Which methods agreed, which disagreed, and how much each one was allowed to count.</div></div>
                 <div class="cb" id="ca_conf_tbl"></div>
               </div>
               <div class="card">
                 <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>TradingView Export</div>
-                  <div class="cs">Pine Script v5</div></div>
+                  <div class="cs">Copy this into TradingView to draw the same levels on your own chart.</div></div>
                 <div class="cb"><textarea id="ca_pine" readonly></textarea>
                   <button class="btn btn-g btn-sm mt10" onclick="CA.copyPine()">Copy Pine Script</button></div>
               </div>
@@ -4243,7 +4274,7 @@ body{background:var(--bg0)}
                     <div class="trend-band" id="trend_band"></div>
 
           <!-- ══ THREE-BIAS STACK ══ -->
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Bias Engines — Time · Price · Combined</div><div class="cs">time · price · combined verdict</div></div><div class="cb" id="bias_stack"></div></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Bias Engines — Time · Price · Combined</div><div class="cs">Three readings side by side: what the timing says, what the price says, and the two together.</div></div><div class="cb" id="bias_stack"></div></div>
           <div id="mkt_chart"></div>
           <div id="wheel_plus"></div>
           <div id="pro_dash"></div>
@@ -4260,7 +4291,7 @@ body{background:var(--bg0)}
           <div class="card" style="position:relative;overflow:hidden">
             <div class="scan-anim"></div>
             <div class="ch">
-              <div class="ct"><div class="dot" style="background:var(--gold)"></div>Market Degree — Cycle Wheel Position</div>
+              <div class="ct"><div class="dot" style="background:var(--gold)"></div>Market Degree — Cycle Wheel Position</div><div class="cs">Where this price sits on the cycle wheel, and how far it still has to travel to the next turn.</div>
               <div id="deg_badge" class="tag td">—</div>
             </div>
             <div class="cb">
@@ -4301,7 +4332,7 @@ body{background:var(--bg0)}
           <div class="card">
             <div class="ch">
               <div class="ct"><div class="dot" style="background:var(--green)"></div>Major Levels — Square Root Cycle</div>
-              <div class="cs" id="major_sub">—</div>
+              <div class="cs" id="major_sub">Levels measured out from the current price by turning the square-root cycle. Prices where a turn tends to land.</div>
             </div>
             <div class="cb" id="major_body"></div>
           </div>
@@ -4413,7 +4444,7 @@ body{background:var(--bg0)}
       <div class="pane hidden" id="pane_sentiment">
         <div id="sen_legacy" style="display:none" aria-hidden="true">
         <div class="card">
-          <div class="ch"><div class="ct"><div class="dot" style="background:var(--amber)"></div>Next High-Impact Release</div><div class="cs">live countdown to the next market-moving event</div></div>
+          <div class="ch"><div class="ct"><div class="dot" style="background:var(--amber)"></div>Next High-Impact Release</div><div class="cs">The next release that usually moves the market, counting down to it.</div></div>
           <div class="cb">
             <div id="news_hero" style="border:1px solid var(--rim2);border-radius:14px;padding:18px 20px;background:linear-gradient(160deg,rgba(245,158,11,.06),transparent);position:relative;overflow:hidden">
               <div style="border-top:2px solid var(--amber);position:absolute;top:0;left:0;right:0"></div>
@@ -4428,11 +4459,11 @@ body{background:var(--bg0)}
           </div>
         </div>
         <div class="card">
-          <div class="ch"><div class="ct"><div class="dot" style="background:var(--violet)"></div>Economic Calendar</div><div class="cs">upcoming high-impact events (times shown in your local zone)</div></div>
+          <div class="ch"><div class="ct"><div class="dot" style="background:var(--violet)"></div>Economic Calendar</div><div class="cs">What is coming next, shown in your own time zone.</div></div>
           <div class="cb"><div id="econ_cal"></div></div>
         </div>
         <div class="card">
-          <div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Market Mood</div><div class="cs">derived from the current astro bias engine</div></div>
+          <div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Market Mood</div><div class="cs">The overall lean the timing engine is reading right now.</div></div>
           <div class="cb">
             <div class="g4">
               <div class="stat"><div class="l">Overall Mood</div><div class="v" id="sm_mood" style="color:var(--ts)">—</div></div>
@@ -4443,7 +4474,7 @@ body{background:var(--bg0)}
           </div>
         </div>
         <div class="card">
-          <div class="ch"><div class="ct"><div class="dot" style="background:var(--violet)"></div>Live Market News</div><div class="cs">latest headlines · gold, crypto, forex, Fed</div></div>
+          <div class="ch"><div class="ct"><div class="dot" style="background:var(--violet)"></div>Live Market News</div><div class="cs">Latest headlines on gold, crypto, forex and the Fed.</div></div>
           <div class="cb"><div id="news_feed"><div class="f10 dim italic tc" style="padding:14px">Loading latest headlines…</div></div></div>
         </div>
               </div>
@@ -4490,8 +4521,8 @@ body{background:var(--bg0)}
 
         <div id="today_strip"></div>
 
-        <details class="sec" open><summary><b>Session setup</b><span>day · sunrise · now</span></summary>
-        <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Session Setup</div><div class="cs">auto-synced to your clock · override anytime</div></div>
+        <details class="sec" open><summary><b>Session setup</b><span>your trading day, your sunrise and the time right now</span></summary>
+        <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Session Setup</div><div class="cs">Your trading day, set from your own clock. Change anything here if it does not match.</div></div>
           <div class="cb"><div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:flex-end">
             <div class="fg" style="margin-bottom:0"><label>Day</label>
               <select id="xday" onchange="onDay()">
@@ -4505,9 +4536,9 @@ body{background:var(--bg0)}
         </div>
         </details>
 
-        <details class="sec"><summary><b>Cycle toolkit</b><span>aspects · planets · 9-day cycle</span></summary>
+        <details class="sec"><summary><b>Cycle toolkit</b><span>planet angles, planet positions and the nine-day count</span></summary>
         <div class="card">
-          <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Cycle Toolkit</div><div class="cs">Aspects · Planets · 9-Day Cycle</div></div>
+          <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Cycle Toolkit</div><div class="cs">Planet angles, planet positions and the nine-day count for any date you pick.</div></div>
           <div class="cb0">
             <div style="display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--rim);flex-wrap:wrap">
               <button class="tf on" onclick="timTab(0,this)">🔭 Aspects</button>
@@ -4521,9 +4552,9 @@ body{background:var(--bg0)}
         </div>
         </details>
 
-        <details class="sec"><summary><b>This week's windows</b><span>scalp · intraday · swing</span></summary>
+        <details class="sec"><summary><b>This week's windows</b><span>the best hours this week, split by how long you hold</span></summary>
         <div class="card">
-          <div class="ch"><div class="ct">Best Trade Windows This Week</div><div class="cs">4 Scalp / 2 Intraday / 1 Swing</div></div>
+          <div class="ch"><div class="ct">Best Trade Windows This Week</div><div class="cs">The hours this week the timing engine rates highest, split by how long you plan to hold.</div></div>
           <div class="cb">
             <div class="fr" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-bottom:12px">
               <div class="fg"><label>Asset Res#</label><input type="number" id="tw_num" placeholder="6 for Gold" min="1" max="9"></div>
@@ -4536,7 +4567,7 @@ body{background:var(--bg0)}
           </div>
         </div>
           <div class="card">
-            <div class="ch"><div class="ct">Cycle Hour Table</div></div>
+            <div class="ch"><div class="ct">Cycle Hour Table</div><div class="cs">Every hour of the day scored, so you can see which part of the session is favoured.</div></div>
             <div class="cb">
               <div class="fr" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:12px">
                 <div class="fg"><label>Day</label><select id="ht_d" onchange="buildHT()"><option value="0">Sun</option><option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option><option value="6">Sat</option></select></div>
@@ -4548,9 +4579,9 @@ body{background:var(--bg0)}
           </div>
         </details>
 
-        <details class="sec"><summary><b>Calendar &amp; long cycles</b><span>solar windows · events · 2026-2028</span></summary>
+        <details class="sec"><summary><b>Calendar &amp; long cycles</b><span>yearly dates and the longer cycles running into 2028</span></summary>
           <div class="card">
-            <div class="ch"><div class="ct">☀ Seasonal Cycle Calendar</div><div class="cs">Solar Year Cycles</div></div>
+            <div class="ch"><div class="ct">☀ Seasonal Cycle Calendar</div><div class="cs">Dates in the solar year where turns have tended to cluster.</div></div>
             <div class="cb">
               <div class="nw-box">
                 <div class="f10 fw7 cb" style="letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">NEXT WINDOW</div>
@@ -4576,15 +4607,15 @@ body{background:var(--bg0)}
             </div>
           </div>
           <div class="card">
-            <div class="ch"><div class="ct">Annual Solar Windows</div><div class="cs">±2 day margin</div></div>
+            <div class="ch"><div class="ct">Annual Solar Windows</div><div class="cs">The yearly dates, with two days either side allowed for.</div></div>
             <div class="cb" id="solar_cal"></div>
           </div>
         <div class="card">
-          <div class="ch"><div class="ct">Cycle Events 2026–2028</div><div class="cs">Best swing entry days</div></div>
+          <div class="ch"><div class="ct">Cycle Events 2026–2028</div><div class="cs">Dates far enough ahead to plan a longer hold around.</div></div>
           <div class="cb" id="eph_ev"></div>
         </div>
           <div class="card">
-            <div class="ch"><div class="ct">Live Cycle Data 2026–2028</div></div>
+            <div class="ch"><div class="ct">Live Cycle Data 2026–2028</div><div class="cs">The same dates with the live calculation behind them, so you can check the working yourself.</div></div>
             <div class="cb0"><table><thead><tr><th>Period</th><th>Mid Cycle</th><th>Macro Cycle</th><th>Deep Cycle A</th><th>Deep Cycle B</th><th>Deep Cycle C</th></tr></thead><tbody id="eph_tbl"></tbody></table></div>
           </div>
         </details>
@@ -4780,9 +4811,9 @@ body{background:var(--bg0)}
 
         <!-- AI REVIEW + REPORTS -->
         <div class="g2">
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>\u2726 AI Trade Review</div><button class="btn btn-a btn-xs" onclick="aiReview()">Generate</button></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>\u2726 AI Trade Review</div><div class="cs">Reads the trades you have logged and looks for what keeps costing you money.</div><button class="btn btn-a btn-xs" onclick="aiReview()">Generate</button></div>
             <div class="cb" id="ai_review_body"><div class="f11 dim italic tc" style="padding:14px">Log a few trades, then generate your review \u2014 session performance, mistake patterns, and edge analysis.</div></div></div>
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Reports</div><div class="cs">weekly \u00b7 monthly \u00b7 sessions</div></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Reports</div><div class="cs">Your results grouped by week, by month and by session.</div></div>
             <div class="cb" id="reports_body"><div class="f11 dim italic tc" style="padding:14px">Reports build automatically as trades are logged.</div></div></div>
         </div>
 
@@ -4811,12 +4842,12 @@ body{background:var(--bg0)}
 
       <div class="pane hidden" id="pane_bot">
         <div class="g2">
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Execution Bot</div><div class="cs">paper · demo · live via bridge</div></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--green)"></div>Execution Bot</div><div class="cs">Runs your signals for you. Start on paper, then demo, then live through your own bridge.</div></div>
             <div class="cb" id="bot_panel"></div></div>
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Bot Activity</div><div class="cs">signals the bot evaluated</div></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Bot Activity</div><div class="cs">Every signal the bot looked at, and why it took or skipped each one.</div></div>
             <div class="cb" id="sig_log_body"><div class="f10 dim italic">No signals evaluated yet</div></div></div>
         </div>
-        <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Broker Connection</div><div class="cs">demo and live route through your local bridge</div></div>
+        <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Broker Connection</div><div class="cs">Demo and live orders travel through the bridge on your own machine, so your broker login never enters this page.</div></div>
           <div class="cb" id="broker_panel"></div></div>
       </div>
 
@@ -6555,14 +6586,19 @@ function anaAnchors(price){
   }
   return{hi:hi,lo:lo};
 }
-/* the square-root cycle rungs around one anchor, both directions */
+/* The square-root cycle rungs around one anchor, both directions.
+
+   A downward rung only exists while the root is larger than the step. Below
+   that the previous version clamped the root to 0.0001 and printed a level of
+   0.00 — on a forex pair every downward rung collapsed to zero and was drawn
+   as support. Zero is not a support level, it is an arithmetic artefact, so
+   those rungs are now absent rather than invented. */
 function anaLadderFrom(anchor){
-  var scaled=anchor/100, root=Math.sqrt(scaled);
-  var STEPS=[{i:0.25,d:90},{i:0.5,d:180},{i:0.75,d:270},{i:1,d:360}];
-  return STEPS.map(function(o){
+  var root=Math.sqrt(anchor/100);
+  return CRIT_STEPS.map(function(o){
     return{d:o.d,i:o.i,
            up:Math.pow(root+o.i,2)*100,
-           dn:Math.pow(Math.max(0.0001,root-o.i),2)*100};
+           dn:(root-o.i>0)?Math.pow(root-o.i,2)*100:null};
   });
 }
 /* ══ MAJOR LEVELS ══
@@ -6608,19 +6644,22 @@ function anaKeyHits(v,price){
 }
 function anaMjBlock(title,sub,origin,price,dp,tone){
   var rows=anaLadderFrom(origin), sig=dailySigma();
-  var maxW=rows[rows.length-1].up-rows[rows.length-1].dn||1;
+  var last=rows[rows.length-1];
+  var maxW=(last.dn!=null?last.up-last.dn:last.up)||1;
   return '<div class="mj-blk '+(tone||'')+'">'
    +'<div class="mj-bh"><b>'+escHtml(title)+'</b><span>'+escHtml(sub)+'</span></div>'
    +'<div class="mj-strip">'
      +'<div class="mj-s"><span>Anchor</span><b>'+origin.toFixed(dp)+'</b></div>'
      +'<div class="mj-s"><span>&radic;(A&divide;100)</span><b>'+Math.sqrt(origin/100).toFixed(5)+'</b></div>'
-     +'<div class="mj-s"><span>Next down</span><b class="cr">'+rows[0].dn.toFixed(dp)+'</b></div>'
+     +'<div class="mj-s"><span>Next down</span><b class="cr">'
+       +(rows[0].dn!=null?rows[0].dn.toFixed(dp):'—')+'</b></div>'
      +'<div class="mj-s"><span>Next up</span><b class="cg">'+rows[0].up.toFixed(dp)+'</b></div>'
    +'</div>'
    +rows.map(function(r,k){
-      var w=r.up-r.dn;
-      var dnPct=(r.dn-price)/price*100, upPct=(r.up-price)/price*100;
-      var hd=anaKeyHits(r.dn,price), hu=anaKeyHits(r.up,price);
+      var w=(r.dn!=null)?r.up-r.dn:null;
+      var dnPct=(r.dn!=null)?(r.dn-price)/price*100:null, upPct=(r.up-price)/price*100;
+      var hd=(r.dn!=null)?anaKeyHits(r.dn,price):{hits:[],near:null,tol:0};
+      var hu=anaKeyHits(r.up,price);
       var tag=function(h,dpx){
         if(h.hits.length)
           return '<em class="mj-hit on" style="color:'+h.hits[0].c+';border-color:'+h.hits[0].c+'">'
@@ -6631,16 +6670,18 @@ function anaMjBlock(title,sub,origin,price,dp,tone){
       };
       return '<div class="mj-row'+(hd.hits.length||hu.hits.length?' key':'')
         +'" style="animation-delay:'+(k*0.06).toFixed(2)+'s">'
-        +'<div class="mj-deg"><b>'+r.d+'°</b><i>+'+r.i.toFixed(2)+'</i></div>'
-        +'<div class="mj-dn'+(hd.hits.length?' hit':'')+'"><b>'+r.dn.toFixed(dp)+'</b>'
-          +'<i>'+dnPct.toFixed(2)+'% · '+(Math.abs(r.dn-price)/(price*sig.v)).toFixed(1)+'σ</i>'
+        +'<div class="mj-deg"><b>'+r.d+'&deg;</b><i>+'+r.i.toFixed(3).replace(/0$/,'')+'</i></div>'
+        +'<div class="mj-dn'+(hd.hits.length?' hit':'')+'"><b>'
+          +(r.dn!=null?r.dn.toFixed(dp):'—')+'</b>'
+          +'<i>'+(r.dn!=null?dnPct.toFixed(2)+'% · '+(Math.abs(r.dn-price)/(price*sig.v)).toFixed(1)+'σ'
+                  :'step is larger than the root — no level below')+'</i>'
           +tag(hd,dp)+'</div>'
         +'<div class="mj-track"><span class="mid"></span>'
-          +'<span class="fill" style="--w:'+(w/maxW*100).toFixed(0)+'%"></span></div>'
+          +'<span class="fill" style="--w:'+(w!=null?(w/maxW*100).toFixed(0):'0')+'%"></span></div>'
         +'<div class="mj-up'+(hu.hits.length?' hit':'')+'"><b>'+r.up.toFixed(dp)+'</b>'
           +'<i>+'+upPct.toFixed(2)+'% · '+(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i>'
           +tag(hu,dp)+'</div>'
-        +'<div class="mj-w">'+w.toFixed(dp)+'</div>'
+        +'<div class="mj-w">'+(w!=null?w.toFixed(dp):'—')+'</div>'
         +'</div>';
     }).join('')
    +'</div>';
@@ -6674,43 +6715,227 @@ function anaSetAnchor(id,val){
       if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(e){}}}
   },500);
 }
-function anaRungs(price,dp){
-  var A=anaAnchors(price), sig=dailySigma(), blocks=[];
-  if(A.hi)blocks.push(anaMjBlock('From the major high',A.hi.n+(A.hi.auto?' · auto':''),A.hi.v,price,dp,'hi'));
-  if(A.lo)blocks.push(anaMjBlock('From the major low', A.lo.n+(A.lo.auto?' · auto':''),A.lo.v,price,dp,'lo'));
-  blocks.push(anaMjBlock('From price now','the original ladder',price,price,dp,'now'));
+/* ══ CRITICAL RANGES ═══════════════════════════════════════════════════
+   Three ladders side by side asked the reader to do the comparing. This does
+   the comparing instead.
 
-  if(!A.hi&&!A.lo)
-    return '<div class="mj"><div class="ab-cap">Major levels — square root cycle</div>'
-      +'<div class="mj-none">No high or low to measure from yet. Type a strong high and a '
-      +'strong low below — a square-root cycle level means nothing unless it is rooted in a '
-      +'price the market actually printed.</div>'
-      +anaAnchorInputs(A,dp)+blocks.join('')+'</div>';
+   Both ladders still run underneath — one from the major high, one from the
+   major low — but the surface shows only the places where a rung from the
+   high and a rung from the low land close enough together to describe the
+   same shelf. That agreement is the whole point: one ladder alone is
+   geometry from a single price, two ladders meeting is two independent
+   measurements picking out the same level.
 
-  /* a price both anchor ladders reach is doing two jobs */
-  var all=[];
-  [A.hi,A.lo].forEach(function(S,ix){
-    if(!S)return;
-    anaLadderFrom(S.v).forEach(function(r){all.push({p:r.up,s:ix});all.push({p:r.dn,s:ix});});
+   The angles are not printed as headings any more. They appear inside the
+   sentence as the evidence for the range, which is what a reader who has
+   never heard of a square-root cycle actually needs.
+   ══════════════════════════════════════════════════════════════════════ */
+var CRIT_STEPS=[{i:0.25,d:90},{i:0.375,d:135},{i:0.5,d:180},{i:0.625,d:225},
+                {i:0.71,d:256},{i:0.75,d:270},{i:1,d:360}];
+var CRIT_NEAR=[0.5,2.0];        /* a rung outside a half-to-double band around price is not a level anyone trades */
+var CRIT_MAX_SIG=12;            /* past twelve normal days it is real arithmetic and useless to trade */
+
+/* every rung both anchors produce, each carrying where it came from so the
+   sentence can name it later. The anchors themselves count as rungs: a step
+   from the low landing on the high is the strongest agreement there is. */
+function anaRungPool(hi,lo,price){
+  var out=[];
+  function add(src,anchor,deg,inc,dir,p){
+    if(!(p>0))return;
+    if(price>0&&(p<price*CRIT_NEAR[0]||p>price*CRIT_NEAR[1]))return;
+    out.push({src:src,anchor:anchor,deg:deg,inc:inc,dir:dir,p:p});
+  }
+  [[hi,'high'],[lo,'low']].forEach(function(pair){
+    var a=pair[0], src=pair[1];
+    if(!(a>0))return;
+    add(src,a,0,0,'at',a);
+    anaLadderFrom(a).forEach(function(r){
+      add(src,a,r.d,r.i,'up',r.up);
+      add(src,a,r.d,r.i,'dn',r.dn);
+    });
   });
-  var conf=[];
-  all.forEach(function(x){all.forEach(function(y){
-    if(x.s===y.s)return;
-    if(Math.abs(x.p-y.p)/((x.p+y.p)/2)<0.004&&conf.indexOf(Math.round(x.p))<0)conf.push(Math.round(x.p));
-  });});
+  return out;
+}
+/* Pair every high rung with every low rung and keep the pairs that finish
+   close together. Tolerance is this asset's own daily move, so "close" means
+   the same thing on gold as on a stock that swings three times as far. The
+   band widens in two stages only if nothing is found at the first — and if
+   nothing is found at all, the reason is returned instead of an empty box. */
+function anaCritRanges(hi,lo,price,sigma){
+  var out={list:[],tolSig:null,why:''};
+  if(!(hi>0)||!(lo>0)){
+    out.why='This needs both a major high and a major low. Only one of them is set.';
+    return out;
+  }
+  if(!(price>0)||!(sigma>0)){
+    out.why='This needs a live price and a measured daily move to size the ranges against.';
+    return out;
+  }
+  var R=anaRungPool(hi,lo,price);
+  var H=R.filter(function(r){return r.src==='high';});
+  var L=R.filter(function(r){return r.src==='low';});
+  if(!H.length||!L.length){
+    out.why='Every level measured from the '+(H.length?'low':'high')
+      +' lands a long way from the current price, so there is nothing here for the two to agree on.';
+    return out;
+  }
+  var best=null, tiers=[1.5,2.5,4];
+  for(var t=0;t<tiers.length;t++){
+    var tol=price*sigma*tiers[t], found=[];
+    H.forEach(function(a){ L.forEach(function(b){
+      var gap=Math.abs(a.p-b.p);
+      if(!best||gap<best.gap)best={gap:gap,mid:(a.p+b.p)/2};
+      if(gap>tol)return;
+      var l=Math.min(a.p,b.p), h=Math.max(a.p,b.p), mid=(l+h)/2;
+      var distSig=Math.abs(mid-price)/(price*sigma);
+      if(distSig>CRIT_MAX_SIG)return;
+      found.push({lo:l,hi:h,mid:mid,gap:gap,legs:[a,b],
+                  tightSig:gap/(price*sigma),distSig:distSig});
+    });});
+    /* tightest first, then drop any pairing that overlaps one already kept —
+       the same shelf found twice through a different pair of angles */
+    found.sort(function(x,y){return x.tightSig-y.tightSig;});
+    var keep=[];
+    found.forEach(function(r){
+      for(var k=0;k<keep.length;k++) if(r.lo<=keep[k].hi&&r.hi>=keep[k].lo)return;
+      keep.push(r);
+    });
+    if(keep.length){
+      out.list=keep.sort(function(x,y){return x.lo-y.lo;});
+      out.tolSig=tiers[t];
+      return out;
+    }
+  }
+  if(best)out.why='The two ladders step past each other around this price — the closest they come '
+    +'is '+best.gap.toFixed(2)+' apart near '+best.mid.toFixed(2)+', which is wider than '
+    +(best.gap/(price*sigma)).toFixed(1)+' normal days of movement. That is not a range, it is a gap.';
+  return out;
+}
+/* what a reader actually wants first: where am I, what is above, what is below */
+function anaCritPick(list,price){
+  var inside=null,above=null,below=null;
+  list.forEach(function(r){
+    if(price>=r.lo&&price<=r.hi){ if(!inside)inside=r; return; }
+    if(r.lo>price){ if(!above||r.lo<above.lo)above=r; }
+    else if(r.hi<price){ if(!below||r.hi>below.hi)below=r; }
+  });
+  return{inside:inside,above:above,below:below};
+}
+/* the plain-English case for one range */
+function anaCritLeg(l,dp){
+  if(l.dir==='at')return 'the '+(l.src==='high'?'major high':'major low')+' itself at '+l.anchor.toFixed(dp);
+  return l.deg+'° '+(l.dir==='up'?'up':'down')+' from the '
+    +(l.src==='high'?'major high':'major low')+' at '+l.anchor.toFixed(dp)
+    +', which lands on '+l.p.toFixed(dp);
+}
+function anaCritWords(r,price,sigma,dp){
+  var s='Two separate measurements finish in the same place here: '
+    +anaCritLeg(r.legs[0],dp)+'; and '+anaCritLeg(r.legs[1],dp)+'. ';
+  s+='They end '+r.gap.toFixed(dp)+' apart — ';
+  s+= r.tightSig<0.35 ? 'far less than one normal day of movement, which is about as tight as this ever gets. '
+    : r.tightSig<0.8  ? 'well under one normal day of movement, so this is a narrow shelf rather than a broad area. '
+    : r.tightSig<1.6  ? 'roughly one normal day of movement, which is a workable band to trade against. '
+    : 'more than one normal day of movement, so treat it as a zone to watch, not a precise line. ';
+  if(price>=r.lo&&price<=r.hi)
+    s+='Price is sitting inside it right now. A market usually does one of two things at a level '
+      +'two measurements agree on: it turns, or it goes through and the level starts working the other way.';
+  else if(r.mid>price)
+    s+='It sits above the current price, '+(r.lo-price).toFixed(dp)+' away, or about '
+      +r.distSig.toFixed(1)+' normal days of movement. Coming up into it is where a rally would '
+      +'first meet resistance.';
+  else
+    s+='It sits below the current price, '+(price-r.hi).toFixed(dp)+' away, or about '
+      +r.distSig.toFixed(1)+' normal days of movement. Falling into it is where a decline would '
+      +'first find support.';
+  return s;
+}
+/* anything else the app already knows that lands inside the same band —
+   an aligned level, or the live trade's own entry, stop or target */
+function anaCritInside(r){
+  var found=[];
+  var S=window._lastSig;
+  if(S&&S.style){
+    [[S.entry,'the trade’s entry'],[S.sl,'the trade’s stop'],[S.tp,'the trade’s target']]
+      .forEach(function(x){ if(x[0]>0&&x[0]>=r.lo&&x[0]<=r.hi)found.push(x[1]+' at '+x[0]); });
+  }
+  (window._lastLevels||[]).forEach(function(l){
+    if(!(l.price>0)||l.score<6)return;
+    if(l.price>=r.lo&&l.price<=r.hi)found.push('a key level scoring '+l.score+' at '+l.price);
+  });
+  return found;
+}
+function anaCritCard(tag,r,price,sigma,dp,tone){
+  if(!r)return '';
+  var extra=anaCritInside(r);
+  return '<div class="crit-c '+tone+'">'
+   +'<div class="crit-t"><b>'+escHtml(tag)+'</b>'
+     +'<span>'+(r.tightSig<0.8?'tight':r.tightSig<1.6?'workable':'wide')+' · '
+     +r.gap.toFixed(dp)+' wide</span></div>'
+   +'<div class="crit-r">'+r.lo.toFixed(dp)+' <s>–</s> '+r.hi.toFixed(dp)+'</div>'
+   +'<p class="crit-w">'+escHtml(anaCritWords(r,price,sigma,dp))+'</p>'
+   +(extra.length?'<p class="crit-x">The rest of the engine points at the same band: '
+      +escHtml(extra.join(', '))+'.</p>':'')
+   +'</div>';
+}
 
-  return '<div class="mj"><div class="ab-cap">Major levels — square root cycle, '
-   +'from the high, the low, and price</div>'
+/* The panel. Critical ranges first and in words; the two ladders that produced
+   them are folded away underneath for anyone who wants to check the working. */
+function anaRungs(price,dp){
+  var A=anaAnchors(price), sig=dailySigma();
+  var usingH=A.hi?A.hi.n+(A.hi.auto?' · found from the candles':' · entered by hand'):null;
+  var usingL=A.lo?A.lo.n+(A.lo.auto?' · found from the candles':' · entered by hand'):null;
+
+  var C=anaCritRanges(A.hi&&A.hi.v,A.lo&&A.lo.v,price,sig.v);
+  var P=anaCritPick(C.list,price);
+  var cards='';
+  if(P.inside)cards+=anaCritCard('Price is in this range now',P.inside,price,sig.v,dp,'here');
+  if(P.above) cards+=anaCritCard('Next range above',P.above,price,sig.v,dp,'up');
+  if(P.below) cards+=anaCritCard('Next range below',P.below,price,sig.v,dp,'dn');
+
+  var blocks='';
+  if(A.hi)blocks+=anaMjBlock('From the major high',A.hi.n+(A.hi.auto?' · auto':''),A.hi.v,price,dp,'hi');
+  if(A.lo)blocks+=anaMjBlock('From the major low', A.lo.n+(A.lo.auto?' · auto':''),A.lo.v,price,dp,'lo');
+  blocks+=anaMjBlock('From price now','the original ladder',price,price,dp,'now');
+
+  return '<div class="mj">'
+   +'<div class="ab-cap">Critical ranges — where the high and the low agree</div>'
+   +'<div class="crit-lead">Two ladders run behind this panel. One measures out from the '
+     +'highest price this market has recently printed, the other from the lowest. Most of the '
+     +'time they land in different places and neither is worth much on its own. Where a level '
+     +'from the high and a level from the low finish close together, both measurements are '
+     +'pointing at the same price — and that agreement is what is shown below. '
+     +(usingH&&usingL
+       ? 'Right now the high is '+escHtml(A.hi.v.toFixed(dp))+' ('+escHtml(usingH)+') and the low is '
+         +escHtml(A.lo.v.toFixed(dp))+' ('+escHtml(usingL)+').'
+       : 'Set a major high and a major low below to start.')
+   +'</div>'
    +anaAnchorInputs(A,dp)
-   +blocks.join('')
-   +(conf.length?'<div class="mj-cf">The high and low ladders land within 0.4% of each other at '
-      +conf.sort(function(x,y){return x-y;}).map(function(v){return v.toFixed(0);}).join(', ')
-      +' — those prices are doing two jobs at once.</div>':'')
-   +'<div class="mj-note">Dividing by 100 before the root scales every increment 10×, so a 0.25 '
-   +'step is 2.5 root units on raw price. Percent and sigma are measured from price now ('
-   +price.toFixed(dp)+'), so you can see how far each rung is from where you are; 1σ is this '
-   +'asset’s own daily move, '+(sig.v*100).toFixed(2)+'%'+(sig.measured?' measured over the last 60 sessions':' (default)')
-   +'.</div></div>';
+   +(cards||'<div class="mj-none">'+escHtml(C.why||'No range found near the current price.')
+       +'</div>')
+   +(function(){
+      /* the span quoted here must cover only the ranges NOT already shown,
+         or it repeats the cards above back at the reader as if they were extra */
+      var shown=[P.inside,P.above,P.below].filter(Boolean);
+      var rest=C.list.filter(function(r){return shown.indexOf(r)<0;});
+      if(!rest.length)return '';
+      var lo=Math.min.apply(null,rest.map(function(r){return r.lo;}));
+      var hi=Math.max.apply(null,rest.map(function(r){return r.hi;}));
+      return '<div class="crit-more">'+rest.length+' further range'+(rest.length>1?'s':'')
+        +' where the two ladders also agree sit'+(rest.length>1?'':'s')+' outside this, between '
+        +lo.toFixed(dp)+' and '+hi.toFixed(dp)+' — too far from the current price to trade '
+        +'against today, but they are in the full ladders below.</div>';
+    })()
+   +'<details class="crit-det"><summary>Show the two ladders this came from</summary>'
+     +'<div class="crit-note">Every step below is a turn of the square-root cycle: the price is '
+       +'divided by 100, its square root taken, the step added or subtracted, then squared and '
+       +'multiplied back. 90° is a quarter turn, 360° a full one. Dividing by 100 first makes each '
+       +'step ten times larger than it would be on the raw price, which is what puts the rungs a '
+       +'few percent apart instead of a few hundredths. Percent and sigma are measured from the '
+       +'current price of '+price.toFixed(dp)+'; 1σ is this asset&rsquo;s own daily move of '
+       +(sig.v*100).toFixed(2)+'%'+(sig.measured?', measured over the last 60 sessions':' (a default, not measured)')
+       +'.</div>'
+     +blocks
+   +'</details></div>';
 }
 /* ══ MARKET CYCLE — where price sits on the wheel, in the range, and in the
    nine-day count, with the phase named in plain words ══ */
@@ -7792,7 +8017,7 @@ function renderTiming(){
    +timDayCard(st)
    +timBestPanel(st)
    +timExtras()
-   +'<details class="sec"><summary><b>Reference tools</b><span>full toolkit · calendars</span></summary>'
+   +'<details class="sec"><summary><b>Reference tools</b><span>the complete toolkit and every calendar in one place</span></summary>'
      +'<div class="tk-tools">'
        +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
      +'</div></details>';
@@ -8175,7 +8400,9 @@ function renderMajorLevels(price){
            width:dn!=null?up-dn:null};
   });
   var nearestUp=rows[0].up, nearestDn=rows[0].dn;
-  sub.textContent='root '+root.toFixed(5)+' · nearest '+nearestUp.toFixed(dp)+' / '+(nearestDn!=null?nearestDn.toFixed(dp):'—');
+  sub.textContent='Measured out from '+price.toFixed(dp)+' by turning the square-root cycle. '
+    +'The nearest step up is '+nearestUp.toFixed(dp)
+    +(nearestDn!=null?' and the nearest step down is '+nearestDn.toFixed(dp):'; there is no step down at this price')+'.';
   var html='<div class="ml-strip">'
     +'<div class="ml-now"><span class="l">Price</span><b>'+price.toFixed(dp)+'</b></div>'
     +'<div class="ml-now"><span class="l">√(P÷100)</span><b>'+root.toFixed(5)+'</b></div>'
@@ -10694,7 +10921,7 @@ model('sqrtcycle',function(ctx){
   return{scaled:scaled,root:root,steps:steps,levels:levels};
 });
 
-/* Sigma — historical candles only */
+/* Sigma — How far this market normally moves in one day, measured from real candles rather than assumed. */
 model('sigma',function(ctx){
   var x=ctx.series,n=x.length,s=0,i;
   for(i=0;i<n;i++)s+=x[i];
