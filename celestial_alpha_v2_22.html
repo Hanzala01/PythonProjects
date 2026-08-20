@@ -3159,8 +3159,10 @@ body{background:var(--bg0)}
 .dh-tim.flat{border-color:rgba(148,138,180,.3)}
 
 /* ── HERO MARK — drawn, not a bitmap, so it scales with the badge ── */
-svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
-  filter:drop-shadow(0 0 18px rgba(124,58,237,.4));pointer-events:none}
+svg.dh-art{width:190px;height:110px;flex:none;object-fit:unset;
+  filter:drop-shadow(0 0 20px rgba(124,58,237,.45));pointer-events:none}
+svg.dh-art .dh-rays{transform-origin:120px 52px;animation:dhSpin 90s linear infinite}
+@keyframes dhSpin{to{transform:rotate(360deg)}}
 .dh-badge{cursor:pointer}
 .dh-badge b{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
 .dh-badge:hover b{color:var(--p3)}
@@ -3680,9 +3682,13 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
 .qp-det>summary:hover{color:var(--t1)}
 
 /* the sidebar mark is drawn now — no bitmap, no mask, scales with the card */
-.sc-astro{position:absolute;right:-14px;bottom:4px;width:150px;height:190px;
-  pointer-events:none;opacity:.5;
-  filter:drop-shadow(0 0 18px rgba(124,58,237,.35))}
+.sc-astro{position:absolute;right:-10px;bottom:0;width:150px;height:200px;
+  pointer-events:none;opacity:.96;
+  filter:drop-shadow(0 6px 22px rgba(124,58,237,.45))}
+.sc-astro .sc-stars circle{animation:scTwinkle 4s ease-in-out infinite}
+.sc-astro .sc-stars circle:nth-child(3n){animation-duration:6.5s}
+.sc-astro .sc-stars circle:nth-child(5n){animation-duration:9s}
+@keyframes scTwinkle{0%,100%{opacity:inherit}50%{opacity:.15}}
 .sc-astro g[transform]{transform-box:fill-box}
 .side-card{overflow:hidden}
 </style>
@@ -3722,90 +3728,143 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
     <svg width="120" height="150" style="position:absolute;right:0;bottom:20px;pointer-events:none" viewBox="0 0 120 150">
       <g fill="#e9defc"><circle cx="14" cy="20" r="1.1"/><circle cx="100" cy="14" r="1.3"/><circle cx="8" cy="80" r="1"/><circle cx="106" cy="100" r="1.2"/></g>
     </svg>
-    <svg class="sc-astro" viewBox="0 0 150 190" aria-hidden="true">
+    <svg class="sc-astro" viewBox="0 0 150 200" aria-hidden="true">
       <defs>
-        <linearGradient id="scg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#C4B5FD" stop-opacity=".9"/>
-          <stop offset="1" stop-color="#7C3AED" stop-opacity=".25"/>
-        </linearGradient>
-        <radialGradient id="scr" cx="50%" cy="42%">
-          <stop offset="0" stop-color="#EDE9FE" stop-opacity=".85"/>
-          <stop offset="60%" stop-color="#8B5CF6" stop-opacity=".22"/>
-          <stop offset="100%" stop-color="#4C1D95" stop-opacity="0"/>
+        <radialGradient id="scNeb" cx="34%" cy="30%" r="72%">
+          <stop offset="0" stop-color="#A855F7" stop-opacity=".42"/>
+          <stop offset="45%" stop-color="#6D28D9" stop-opacity=".2"/>
+          <stop offset="100%" stop-color="#1E0B3C" stop-opacity="0"/>
         </radialGradient>
+        <radialGradient id="scNeb2" cx="76%" cy="66%" r="56%">
+          <stop offset="0" stop-color="#22D3EE" stop-opacity=".24"/>
+          <stop offset="100%" stop-color="#0E7490" stop-opacity="0"/>
+        </radialGradient>
+        <!-- the planet: lit from the upper left, terminator falling to the
+             lower right, with a rim light where the atmosphere catches it -->
+        <radialGradient id="scBody" cx="33%" cy="28%" r="78%">
+          <stop offset="0" stop-color="#F5F3FF"/>
+          <stop offset="18%" stop-color="#DDD6FE"/>
+          <stop offset="44%" stop-color="#A78BFA"/>
+          <stop offset="70%" stop-color="#6D28D9"/>
+          <stop offset="92%" stop-color="#2E1065"/>
+          <stop offset="100%" stop-color="#160A32"/>
+        </radialGradient>
+        <radialGradient id="scRim" cx="50%" cy="50%" r="50%">
+          <stop offset="82%" stop-color="#C4B5FD" stop-opacity="0"/>
+          <stop offset="95%" stop-color="#C4B5FD" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#C4B5FD" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="scRing" x1="0" y1="0" x2="1" y2="0.3">
+          <stop offset="0" stop-color="#C4B5FD" stop-opacity=".15"/>
+          <stop offset="30%" stop-color="#EDE9FE" stop-opacity=".8"/>
+          <stop offset="62%" stop-color="#A78BFA" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#22D3EE" stop-opacity=".18"/>
+        </linearGradient>
+        <linearGradient id="scGlow" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stop-color="#7C3AED" stop-opacity=".38"/>
+          <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+        </linearGradient>
+        <clipPath id="scFront"><rect x="0" y="0" width="150" height="102"/></clipPath>
+        <clipPath id="scBack"><rect x="0" y="102" width="150" height="120"/></clipPath>
+        <!-- the art has to dissolve into the card, not sit on it as a pasted
+             rectangle, and it must not compete with the text on the left -->
+        <!-- one diagonal fade. Two stacked gradients with mix-blend-mode do not
+             multiply inside an SVG mask, so the left edge stayed hard; a single
+             gradient angled down-right does the whole job. -->
+        <linearGradient id="scFadeX" x1="0.05" y1="0" x2="0.85" y2="0.75">
+          <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+          <stop offset="38%" stop-color="#fff" stop-opacity=".35"/>
+          <stop offset="70%" stop-color="#fff" stop-opacity=".9"/>
+          <stop offset="100%" stop-color="#fff" stop-opacity="1"/>
+        </linearGradient>
+        <mask id="scMask"><rect width="150" height="200" fill="url(#scFadeX)"/></mask>
       </defs>
-      <!-- an astrolabe: graduated limb, rete, alidade. Drawn rather than
-           photographed, so it scales, themes and weighs nothing. -->
-      <g transform="translate(75,86)">
-        <circle r="62" fill="url(#scr)"/>
-        <circle r="60" fill="none" stroke="url(#scg)" stroke-width="1.4"/>
-        <circle r="52" fill="none" stroke="#8B5CF6" stroke-width=".7" stroke-opacity=".55"/>
-        <circle r="34" fill="none" stroke="#8B5CF6" stroke-width=".6" stroke-opacity=".4"/>
-        <circle r="18" fill="none" stroke="#C4B5FD" stroke-width=".6" stroke-opacity=".5"/>
-        <g stroke="#C4B5FD" stroke-width=".8" stroke-opacity=".55">
-          <line x1="-60" y1="0" x2="60" y2="0"/><line x1="0" y1="-60" x2="0" y2="60"/>
+
+      <g mask="url(#scMask)">
+      <rect width="150" height="200" fill="url(#scNeb)"/>
+      <rect width="150" height="200" fill="url(#scNeb2)"/>
+      <g fill="#EDE9FE" class="sc-stars"><circle cx="49.3" cy="24.3" r="1.40" opacity="0.28"/>
+        <circle cx="121.9" cy="15.9" r="1.10" opacity="0.29"/>
+        <circle cx="76.1" cy="7.5" r="0.90" opacity="0.52"/>
+        <circle cx="37.1" cy="83.6" r="0.50" opacity="0.79"/>
+        <circle cx="20.1" cy="35.0" r="1.40" opacity="0.63"/>
+        <circle cx="11.0" cy="88.7" r="0.50" opacity="0.88"/>
+        <circle cx="8.8" cy="129.1" r="0.70" opacity="0.52"/>
+        <circle cx="80.9" cy="86.5" r="1.10" opacity="0.78"/>
+        <circle cx="28.4" cy="88.1" r="1.40" opacity="0.37"/>
+        <circle cx="16.2" cy="107.4" r="1.10" opacity="0.29"/>
+        <circle cx="32.1" cy="102.7" r="0.90" opacity="0.76"/>
+        <circle cx="70.0" cy="138.7" r="0.70" opacity="0.44"/>
+        <circle cx="118.0" cy="105.5" r="0.60" opacity="0.30"/>
+        <circle cx="45.8" cy="75.3" r="0.70" opacity="0.72"/>
+        <circle cx="44.0" cy="147.1" r="0.50" opacity="0.58"/>
+        <circle cx="26.1" cy="52.6" r="0.90" opacity="0.52"/>
+        <circle cx="142.5" cy="13.5" r="1.10" opacity="0.62"/>
+        <circle cx="129.8" cy="48.4" r="1.40" opacity="0.48"/>
+        <circle cx="74.5" cy="119.9" r="0.50" opacity="0.80"/>
+        <circle cx="139.9" cy="72.2" r="1.40" opacity="0.29"/>
+        <circle cx="108.7" cy="47.8" r="1.10" opacity="0.90"/>
+        <circle cx="122.0" cy="44.1" r="0.90" opacity="0.83"/>
+        <circle cx="52.7" cy="141.2" r="0.70" opacity="0.36"/>
+        <circle cx="19.1" cy="10.7" r="0.70" opacity="0.33"/>
+        <circle cx="38.2" cy="59.9" r="0.90" opacity="0.30"/>
+        <circle cx="67.6" cy="83.3" r="0.60" opacity="0.78"/>
+        <circle cx="128.1" cy="43.2" r="0.90" opacity="0.89"/>
+        <circle cx="101.7" cy="58.3" r="0.60" opacity="0.35"/>
+        <circle cx="27.7" cy="36.3" r="0.60" opacity="0.26"/>
+        <circle cx="123.3" cy="29.0" r="0.70" opacity="0.25"/>
+        <circle cx="63.2" cy="56.6" r="1.10" opacity="0.46"/>
+        <circle cx="20.3" cy="129.2" r="1.10" opacity="0.68"/>
+        <circle cx="110.0" cy="69.6" r="1.40" opacity="0.77"/>
+        <circle cx="59.3" cy="61.0" r="0.50" opacity="0.56"/>
+        <circle cx="60.5" cy="30.2" r="0.60" opacity="0.54"/>
+        <circle cx="18.0" cy="90.9" r="0.50" opacity="0.25"/>
+        <circle cx="24.1" cy="17.0" r="0.70" opacity="0.65"/>
+        <circle cx="12.3" cy="32.8" r="0.90" opacity="0.35"/>
+        <circle cx="38.8" cy="53.4" r="0.70" opacity="0.56"/>
+        <circle cx="18.8" cy="74.2" r="0.90" opacity="0.56"/>
+        <circle cx="47.5" cy="23.3" r="1.40" opacity="0.47"/>
+        <circle cx="40.7" cy="124.7" r="0.60" opacity="0.59"/>
+        <circle cx="32.0" cy="142.9" r="0.70" opacity="0.35"/>
+        <circle cx="81.3" cy="6.0" r="1.10" opacity="0.44"/>
+        <circle cx="95.9" cy="15.5" r="0.70" opacity="0.59"/>
+        <circle cx="134.6" cy="54.6" r="0.60" opacity="0.60"/></g>
+
+      <!-- ground haze so the planet sits in something rather than floating -->
+      <rect x="0" y="140" width="150" height="60" fill="url(#scGlow)"/>
+
+      <g transform="translate(88,108)">
+        <!-- back half of the ring passes behind the planet -->
+        <g clip-path="url(#scBack)" transform="translate(-88,-108)">
+          <ellipse cx="88" cy="108" rx="62" ry="16" fill="none" stroke="url(#scRing)"
+            stroke-width="6" transform="rotate(-17 88 108)"/>
         </g>
-        <g stroke="#A78BFA" stroke-opacity=".5">
-          <line x1="-42.4" y1="-42.4" x2="42.4" y2="42.4" stroke-width=".5"/>
-          <line x1="-42.4" y1="42.4" x2="42.4" y2="-42.4" stroke-width=".5"/>
+        <circle r="36" fill="url(#scBody)"/>
+        <circle r="36" fill="url(#scRim)"/>
+        <!-- banding, clipped to the sphere so it reads as surface -->
+        <g opacity=".22" fill="#1E0B3C">
+          <ellipse cx="-4" cy="-16" rx="34" ry="4"/>
+          <ellipse cx="2"  cy="-2"  rx="38" ry="3"/>
+          <ellipse cx="-2" cy="12"  rx="34" ry="5"/>
+          <ellipse cx="4"  cy="25"  rx="26" ry="3"/>
         </g>
-        <!-- graduated limb, one tick every 10 degrees -->
-        <g stroke="#C4B5FD" stroke-opacity=".65">
-          <line x1="0.0" y1="-60.0" x2="0.0" y2="-46.0" stroke-width="1"/>
-          <line x1="10.4" y1="-59.1" x2="9.0" y2="-51.2" stroke-width=".5"/>
-          <line x1="20.5" y1="-56.4" x2="17.8" y2="-48.9" stroke-width=".5"/>
-          <line x1="30.0" y1="-52.0" x2="23.0" y2="-39.8" stroke-width="1"/>
-          <line x1="38.6" y1="-46.0" x2="33.4" y2="-39.8" stroke-width=".5"/>
-          <line x1="46.0" y1="-38.6" x2="39.8" y2="-33.4" stroke-width=".5"/>
-          <line x1="52.0" y1="-30.0" x2="39.8" y2="-23.0" stroke-width="1"/>
-          <line x1="56.4" y1="-20.5" x2="48.9" y2="-17.8" stroke-width=".5"/>
-          <line x1="59.1" y1="-10.4" x2="51.2" y2="-9.0" stroke-width=".5"/>
-          <line x1="60.0" y1="0.0" x2="46.0" y2="0.0" stroke-width="1"/>
-          <line x1="59.1" y1="10.4" x2="51.2" y2="9.0" stroke-width=".5"/>
-          <line x1="56.4" y1="20.5" x2="48.9" y2="17.8" stroke-width=".5"/>
-          <line x1="52.0" y1="30.0" x2="39.8" y2="23.0" stroke-width="1"/>
-          <line x1="46.0" y1="38.6" x2="39.8" y2="33.4" stroke-width=".5"/>
-          <line x1="38.6" y1="46.0" x2="33.4" y2="39.8" stroke-width=".5"/>
-          <line x1="30.0" y1="52.0" x2="23.0" y2="39.8" stroke-width="1"/>
-          <line x1="20.5" y1="56.4" x2="17.8" y2="48.9" stroke-width=".5"/>
-          <line x1="10.4" y1="59.1" x2="9.0" y2="51.2" stroke-width=".5"/>
-          <line x1="0.0" y1="60.0" x2="0.0" y2="46.0" stroke-width="1"/>
-          <line x1="-10.4" y1="59.1" x2="-9.0" y2="51.2" stroke-width=".5"/>
-          <line x1="-20.5" y1="56.4" x2="-17.8" y2="48.9" stroke-width=".5"/>
-          <line x1="-30.0" y1="52.0" x2="-23.0" y2="39.8" stroke-width="1"/>
-          <line x1="-38.6" y1="46.0" x2="-33.4" y2="39.8" stroke-width=".5"/>
-          <line x1="-46.0" y1="38.6" x2="-39.8" y2="33.4" stroke-width=".5"/>
-          <line x1="-52.0" y1="30.0" x2="-39.8" y2="23.0" stroke-width="1"/>
-          <line x1="-56.4" y1="20.5" x2="-48.9" y2="17.8" stroke-width=".5"/>
-          <line x1="-59.1" y1="10.4" x2="-51.2" y2="9.0" stroke-width=".5"/>
-          <line x1="-60.0" y1="0.0" x2="-46.0" y2="0.0" stroke-width="1"/>
-          <line x1="-59.1" y1="-10.4" x2="-51.2" y2="-9.0" stroke-width=".5"/>
-          <line x1="-56.4" y1="-20.5" x2="-48.9" y2="-17.8" stroke-width=".5"/>
-          <line x1="-52.0" y1="-30.0" x2="-39.8" y2="-23.0" stroke-width="1"/>
-          <line x1="-46.0" y1="-38.6" x2="-39.8" y2="-33.4" stroke-width=".5"/>
-          <line x1="-38.6" y1="-46.0" x2="-33.4" y2="-39.8" stroke-width=".5"/>
-          <line x1="-30.0" y1="-52.0" x2="-23.0" y2="-39.8" stroke-width="1"/>
-          <line x1="-20.5" y1="-56.4" x2="-17.8" y2="-48.9" stroke-width=".5"/>
-          <line x1="-10.4" y1="-59.1" x2="-9.0" y2="-51.2" stroke-width=".5"/>
+        <!-- front half of the ring crosses over it -->
+        <g clip-path="url(#scFront)" transform="translate(-88,-108)">
+          <ellipse cx="88" cy="108" rx="62" ry="16" fill="none" stroke="url(#scRing)"
+            stroke-width="6" transform="rotate(-17 88 108)"/>
         </g>
-        <!-- the rete, off-centre as a real one is -->
-        <ellipse cx="6" cy="-6" rx="40" ry="26" fill="none" stroke="url(#scg)"
-          stroke-width="1.1" transform="rotate(-24 6 -6)"/>
-        <ellipse cx="-4" cy="4" rx="28" ry="40" fill="none" stroke="#22D3EE"
-          stroke-opacity=".35" stroke-width=".8" transform="rotate(16 -4 4)"/>
-        <!-- alidade -->
-        <g transform="rotate(-34)">
-          <rect x="-58" y="-2" width="116" height="4" rx="2" fill="#EDE9FE" fill-opacity=".22"/>
-          <circle cx="-46" cy="0" r="2.4" fill="#C4B5FD"/>
-          <circle cx="46" cy="0" r="2.4" fill="#C4B5FD"/>
-        </g>
-        <circle r="4" fill="#EDE9FE" fill-opacity=".9"/>
-        <circle r="9" fill="none" stroke="#EDE9FE" stroke-opacity=".35" stroke-width=".7"/>
-        <!-- star pointers -->
-        <g fill="#EDE9FE">
-          <circle cx="30" cy="-38" r="1.5"/><circle cx="-36" cy="-22" r="1.2"/>
-          <circle cx="-20" cy="40" r="1.3"/><circle cx="44" cy="20" r="1"/>
-        </g>
+        <!-- a moon, small and lit from the same side -->
+        <circle cx="-52" cy="-34" r="6.5" fill="#0F0824"/>
+        <circle cx="-53" cy="-35" r="6" fill="url(#scBody)" opacity=".95"/>
+      </g>
+
+      <!-- a lone observer at the foot of it, for scale -->
+      <g transform="translate(42,180)" fill="#0B0620" opacity=".92">
+        <ellipse cx="0" cy="2" rx="13" ry="2.6" fill="#7C3AED" opacity=".22"/>
+        <path d="M0,-22 c3.2,0 5.4,2.4 5.4,5.4 0,2.1-1.1,3.7-2.6,4.7
+                 C6.6,-10.4 9,-6.4 9,-1.4 L9,1 L-9,1 L-9,-1.4
+                 c0,-5 2.4,-9 6.2,-10.5 -1.5,-1-2.6,-2.6-2.6,-4.7 0,-3 2.2,-5.4 5.4,-5.4 Z"/>
+      </g>
       </g>
     </svg><i style="position:absolute;left:14px;bottom:70px;width:2px;height:2px;border-radius:50%;background:#c9b6ff;box-shadow:0 0 4px #c9b6ff"></i><i style="position:absolute;left:34px;bottom:100px;width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:0 0 4px #fff"></i><i style="position:absolute;left:22px;bottom:44px;width:1.5px;height:1.5px;border-radius:50%;background:#c9b6ff"></i>
   </div>
@@ -3834,46 +3893,78 @@ svg.dh-art{width:190px;height:96px;flex:none;object-fit:unset;
         <div><b id="dh_user">Celestial Alpha</b><i>Elite Member</i></div></div>
       <svg class="dh-art" viewBox="0 0 190 110" aria-hidden="true">
         <defs>
-          <radialGradient id="dhg" cx="50%" cy="50%">
-            <stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/>
-            <stop offset="38%" stop-color="#C4B5FD" stop-opacity=".7"/>
+          <!-- an eclipse: the corona is the light, the disc is the absence of
+               it. Different subject from the sidebar's ringed planet on
+               purpose — same sky, another event in it. -->
+          <radialGradient id="dhCor" cx="50%" cy="50%">
+            <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+            <stop offset="52%" stop-color="#FFFFFF" stop-opacity="0"/>
+            <stop offset="60%" stop-color="#F5F3FF" stop-opacity=".95"/>
+            <stop offset="66%" stop-color="#C4B5FD" stop-opacity=".7"/>
+            <stop offset="80%" stop-color="#8B5CF6" stop-opacity=".3"/>
             <stop offset="100%" stop-color="#4C1D95" stop-opacity="0"/>
           </radialGradient>
-          <linearGradient id="dho" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#B26CFF"/><stop offset="1" stop-color="#22D3EE" stop-opacity=".55"/>
+          <radialGradient id="dhHalo" cx="50%" cy="50%">
+            <stop offset="0" stop-color="#A855F7" stop-opacity=".38"/>
+            <stop offset="100%" stop-color="#2E1065" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="dhRay" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#EDE9FE" stop-opacity=".85"/>
+            <stop offset="100%" stop-color="#EDE9FE" stop-opacity="0"/>
           </linearGradient>
-          <!-- the orbit paths are declared once and shared by the ring and its planet,
-               so the dot can never drift off the line it is supposed to be riding -->
-          <path id="dhp1" d="M17,55a78,26 0 1,0 156,0a78,26 0 1,0 -156,0"/>
-          <path id="dhp2" d="M37,55a58,40 0 1,0 116,0a58,40 0 1,0 -116,0"/>
-          <path id="dhp3" d="M67,55a28,28 0 1,0 56,0a28,28 0 1,0 -56,0"/>
+          <linearGradient id="dhFade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+            <stop offset="34%" stop-color="#fff" stop-opacity=".8"/>
+            <stop offset="100%" stop-color="#fff" stop-opacity="1"/>
+          </linearGradient>
+          <mask id="dhMask"><rect width="190" height="110" fill="url(#dhFade)"/></mask>
         </defs>
-        <g transform="rotate(-18 95 55)">
-          <use href="#dhp1" fill="none" stroke="url(#dho)" stroke-width="1.05" opacity=".5"/>
-          <circle r="2.6" fill="#B26CFF">
-            <animateMotion dur="17s" repeatCount="indefinite"><mpath href="#dhp1"/></animateMotion>
-          </circle>
-        </g>
-        <g transform="rotate(24 95 55)">
-          <use href="#dhp2" fill="none" stroke="url(#dho)" stroke-width=".95" opacity=".38"/>
-          <circle r="1.9" fill="#22D3EE">
-            <animateMotion dur="26s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
-              <mpath href="#dhp2"/></animateMotion>
-          </circle>
-        </g>
-        <use href="#dhp3" fill="none" stroke="#8B5CF6" stroke-width=".85" opacity=".3"/>
-        <circle r="1.6" fill="#C4B5FD">
-          <animateMotion dur="9s" repeatCount="indefinite"><mpath href="#dhp3"/></animateMotion>
-        </circle>
-        <circle cx="95" cy="55" r="27" fill="url(#dhg)"/>
-        <circle cx="95" cy="55" r="7.5" fill="#F5F3FF">
-          <animate attributeName="r" values="7.5;8.6;7.5" dur="4.5s" repeatCount="indefinite"/>
-        </circle>
-        <g fill="#C4B5FD">
-          <circle cx="178" cy="16" r="1.5"><animate attributeName="opacity" values=".2;1;.2" dur="3.1s" repeatCount="indefinite"/></circle>
-          <circle cx="12" cy="94" r="1.3"><animate attributeName="opacity" values="1;.2;1" dur="4.2s" repeatCount="indefinite"/></circle>
-          <circle cx="160" cy="99" r="1"><animate attributeName="opacity" values=".3;.9;.3" dur="5.4s" repeatCount="indefinite"/></circle>
-          <circle cx="28" cy="12" r=".9"/><circle cx="186" cy="62" r=".8"/><circle cx="5" cy="40" r=".8"/>
+        <g mask="url(#dhMask)">
+          <rect width="190" height="110" fill="url(#dhHalo)"/>
+          <g fill="#EDE9FE" class="dh-stars"><circle cx="33.4" cy="74.7" r="0.90" opacity="0.61"/>
+            <circle cx="42.7" cy="85.4" r="0.70" opacity="0.63"/>
+            <circle cx="46.4" cy="3.3" r="0.90" opacity="0.91"/>
+            <circle cx="81.8" cy="18.1" r="0.70" opacity="0.90"/>
+            <circle cx="130.7" cy="48.4" r="1.20" opacity="0.70"/>
+            <circle cx="9.3" cy="37.2" r="1.20" opacity="0.75"/>
+            <circle cx="122.4" cy="100.5" r="0.50" opacity="0.40"/>
+            <circle cx="153.4" cy="16.0" r="0.50" opacity="0.59"/>
+            <circle cx="104.6" cy="38.7" r="1.20" opacity="0.40"/>
+            <circle cx="125.4" cy="51.9" r="0.70" opacity="0.35"/>
+            <circle cx="39.3" cy="73.1" r="0.50" opacity="0.38"/>
+            <circle cx="90.6" cy="89.0" r="0.70" opacity="0.52"/>
+            <circle cx="29.9" cy="58.7" r="0.90" opacity="0.54"/>
+            <circle cx="86.0" cy="43.1" r="1.20" opacity="0.55"/>
+            <circle cx="7.9" cy="12.7" r="1.20" opacity="0.30"/>
+            <circle cx="15.9" cy="65.3" r="0.70" opacity="0.67"/>
+            <circle cx="61.6" cy="104.9" r="0.50" opacity="0.42"/>
+            <circle cx="34.3" cy="39.2" r="0.90" opacity="0.53"/>
+            <circle cx="112.9" cy="34.9" r="0.50" opacity="0.41"/>
+            <circle cx="172.9" cy="21.1" r="1.20" opacity="0.54"/>
+            <circle cx="128.7" cy="73.3" r="0.70" opacity="0.56"/>
+            <circle cx="185.0" cy="103.0" r="0.50" opacity="0.87"/>
+            <circle cx="93.3" cy="42.1" r="0.70" opacity="0.91"/>
+            <circle cx="48.2" cy="61.4" r="1.20" opacity="0.82"/>
+            <circle cx="145.4" cy="53.2" r="0.90" opacity="0.33"/>
+            <circle cx="50.5" cy="33.1" r="1.20" opacity="0.46"/></g>
+          <g transform="translate(120,52)">
+            <circle r="46" fill="url(#dhCor)"/>
+            <!-- corona streamers -->
+            <g class="dh-rays" opacity=".55">
+              <rect x="24" y="-0.7" width="40" height="1.4" rx=".7" fill="url(#dhRay)"/>
+              <rect x="24" y="-0.7" width="34" height="1.4" rx=".7" fill="url(#dhRay)" transform="rotate(52)"/>
+              <rect x="24" y="-0.7" width="30" height="1.4" rx=".7" fill="url(#dhRay)" transform="rotate(118)"/>
+              <rect x="24" y="-0.7" width="36" height="1.4" rx=".7" fill="url(#dhRay)" transform="rotate(196)"/>
+              <rect x="24" y="-0.7" width="28" height="1.4" rx=".7" fill="url(#dhRay)" transform="rotate(268)"/>
+              <rect x="24" y="-0.7" width="33" height="1.4" rx=".7" fill="url(#dhRay)" transform="rotate(316)"/>
+            </g>
+            <circle r="23" fill="#0A0618"/>
+            <circle r="23" fill="none" stroke="#EDE9FE" stroke-opacity=".55" stroke-width="1.1"/>
+            <!-- the bead where the last light escapes the limb -->
+            <circle cx="-16.5" cy="-16" r="3.2" fill="#FFFFFF" opacity=".95">
+              <animate attributeName="opacity" values=".55;1;.55" dur="3.2s" repeatCount="indefinite"/>
+            </circle>
+          </g>
         </g>
       </svg>
       <div class="dh-q">We don&rsquo;t predict the future.<br>We calculate the <b>probability</b><br>of it happening.</div>
