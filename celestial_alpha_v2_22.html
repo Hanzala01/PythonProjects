@@ -3481,6 +3481,49 @@ body{background:var(--bg0)}
   font-variant-numeric:tabular-nums;margin-top:2px}
 .lvt-why{font-size:9.5px;color:var(--t3);line-height:1.7;margin-bottom:10px}
 .lvt-full{font-size:9.5px;color:var(--warn);font-weight:600}
+/* ── APPROVALS — a decision queue, not a feed. Pending items read loud; the
+      ones already decided sit back but stay, because what you passed on is
+      part of the record. ── */
+.apr-badge{display:inline-block;min-width:17px;height:17px;line-height:17px;padding:0 5px;margin-left:8px;
+  border-radius:99px;background:var(--p1);color:#fff;font-size:9.5px;font-weight:800;text-align:center}
+.apr-lead{font-size:10px;color:var(--t3);line-height:1.75;margin-bottom:10px}
+.apr-sum{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;font-size:10px;color:var(--t3);
+  padding-bottom:9px;margin-bottom:10px;border-bottom:1px solid var(--b1)}
+.apr-sum b{font-family:'Space Grotesk';font-size:15px;font-weight:700;color:var(--t1);margin-right:4px}
+.apr-sum u{margin-left:auto;text-decoration:none;cursor:pointer;color:var(--p3)}
+.apr-r{border:1px solid var(--b1);border-radius:11px;padding:12px 14px;margin-bottom:8px;
+  background:rgba(4,3,14,.72)}
+.apr-r.pending{border-color:rgba(168,85,247,.42);background:linear-gradient(155deg,rgba(139,92,246,.05),rgba(4,3,14,.85))}
+.apr-r.approved{opacity:.62}
+.apr-r.skipped{opacity:.5}
+.apr-r.failed{border-color:rgba(239,68,68,.45)}
+.apr-h{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:8px}
+.apr-h b{font-family:'Space Grotesk';font-size:13.5px;font-weight:700}
+.apr-k{font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--p3);
+  border:1px solid var(--b1);border-radius:99px;padding:2px 8px}
+.apr-src{font-size:9px;color:var(--t3);letter-spacing:.04em}
+.apr-t{margin-left:auto;font-size:9px;color:var(--t3)}
+.apr-n{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:8px}
+.apr-n i{display:block;font-style:normal;font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.apr-n b{display:block;font-family:'Space Grotesk';font-size:14.5px;font-weight:700;color:var(--t1);
+  font-variant-numeric:tabular-nums;margin-top:2px}
+.apr-w{font-size:9.5px;color:var(--t3);line-height:1.7;margin-bottom:9px}
+.apr-b{display:flex;gap:8px}
+.apr-s{font-size:9.5px;color:var(--t3);line-height:1.65}
+.apr-hh{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);
+  margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
+.apr-none{font-size:10.5px;color:var(--t3);line-height:1.7;padding:8px 2px}
+/* the bot's own gate */
+.bot-appr{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;margin-top:10px;
+  border:1px solid var(--b1);border-radius:10px;background:rgba(4,3,14,.6);cursor:pointer}
+.bot-appr.on{border-color:rgba(168,85,247,.4)}
+.bot-appr input{margin-top:2px;accent-color:var(--p1)}
+.bot-appr b{display:block;font-size:11.5px;color:var(--t1);font-weight:600}
+.bot-appr i{display:block;font-style:normal;font-size:9.5px;color:var(--t3);line-height:1.6;margin-top:3px}
+.bot-pend{font-size:10px;color:var(--warn);border:1px solid rgba(245,158,11,.32);border-radius:9px;
+  padding:8px 11px;margin-top:9px;background:rgba(245,158,11,.06)}
+.lvt-b{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:1200px){.apr-n{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:1200px){.lvt-n{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:1200px){
   .lv-r,.lv-now{grid-template-columns:20px 92px 1fr}
@@ -4732,6 +4775,11 @@ body{background:var(--bg0)}
       </div>
 
       <div class="pane hidden" id="pane_portfolio">
+        <div class="card" style="margin-bottom:10px">
+          <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Approvals<span class="apr-badge" data-appr-badge></span></div>
+            <div class="cs">Setups waiting on your decision — nothing here has been placed.</div></div>
+          <div class="cb" id="appr_body"></div>
+        </div>
         <!-- TOP STATS ROW -->
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px">
           <div style="background:var(--s1);border:1px solid var(--rim2);border-radius:var(--r2);padding:14px 16px;position:relative;overflow:hidden">
@@ -7184,10 +7232,24 @@ function lvTradeHtml(T,asset,price,dp,bias){
          +'. The stop sits '+LV_STOP_BUFFER+' of a daily move beyond the entry, so ordinary noise '
          +'around the level does not take you out.</div>'
        +(full?'<div class="lvt-full">No '+t.kind.toLowerCase()+' slots left this month.</div>'
-             :'<button class="btn btn-a btn-sm" onclick="lvTake('+i+')">Take this trade</button>')
+             :'<div class="lvt-b"><button class="btn btn-a btn-sm" onclick="lvTake('+i+')">Take this trade</button>'
+              +'<button class="btn btn-g btn-sm" onclick="lvQueue('+i+')">Send for approval</button></div>')
        +'</div>';
     }).join('')
    +'</div>';
+}
+/* park the plan for a decision instead of taking it now */
+function lvQueue(i){
+  var t=_lvTrades[i];
+  if(!t){notify('Run the analysis again first','info');return;}
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)||t.entry;
+  apprQueue({source:'levels',asset:asset,side:t.side==='long'?'buy':'sell',style:t.kind,
+    entry:+t.entry.toFixed(2),sl:+t.stop.toFixed(2),tp:+t.take.toFixed(2),
+    rr:+t.rr.toFixed(2),price:price,
+    why:'From the level map. '+(t.live?'Price is at the entry now.'
+        :'Price is '+Math.abs(t.awaySig).toFixed(1)+' days\u2019 move from the entry.')});
+  notify('Sent for approval — waiting in Portfolio','info');
 }
 /* hand the plan to the logging flow the app already has */
 var _lvTrades=[];
@@ -8595,8 +8657,147 @@ function renderHourRail(){
    here can guarantee a return; the panel reports progress honestly, including
    when it is behind, and stops trading once the daily loss cap is hit.
 ══════════════════════════════════════ */
+/* ══ APPROVALS ════════════════════════════════════════════════════════
+   A setup that has been generated is not a decision. This is the step in
+   between: a queue you look at, approve or pass on, with both outcomes kept.
+
+   It matters most for the bot. botConsider fires after every analysis and,
+   once armed, went straight to botSend — including in live mode, with a real
+   order and no human in the loop. Approval is required by default on demo and
+   live for exactly that reason; paper can fire freely because nothing leaves
+   the machine.
+
+   Skipped setups are kept, not deleted. What you passed on is as much a record
+   of how you trade as what you took.
+   ══════════════════════════════════════════════════════════════════════ */
+var APPR_KEY='ca_approvals';
+var APPR=[];
+function apprLoad(){
+  try{ var a=JSON.parse(localStorage.getItem(APPR_KEY)||'[]'); APPR=Array.isArray(a)?a:[]; }
+  catch(e){ APPR=[]; }
+  return APPR;
+}
+function apprSave(){
+  try{ localStorage.setItem(APPR_KEY,JSON.stringify(APPR.slice(0,200))); }catch(e){}
+  try{ renderApprovals(); }catch(e){}
+  try{ apprBadge(); }catch(e){}
+}
+function apprPending(){ return APPR.filter(function(x){return x.state==='pending';}); }
+/* one queue, whatever produced the setup */
+function apprQueue(item){
+  if(!item||!(item.entry>0))return null;
+  var key=[item.asset,item.side,item.style,(+item.entry).toFixed(4)].join('|');
+  var dup=APPR.filter(function(x){return x.key===key&&x.state==='pending';})[0];
+  if(dup)return dup.id;                       /* the same setup twice is one decision */
+  var id='a'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);
+  APPR.unshift(Object.assign({id:id,key:key,state:'pending',ts:Date.now()},item));
+  apprSave();
+  return id;
+}
+function apprFind(id){ return APPR.filter(function(x){return x.id===id;})[0]||null; }
+function apprApprove(id){
+  var a=apprFind(id);
+  if(!a||a.state!=='pending')return;
+  if(a.source==='bot'){
+    /* the order the bot wanted to place, sent only now that a person said so */
+    botSend(a.order,function(res){
+      if(!res.ok){ botStatus('Order rejected — '+res.err,'bad');
+                   a.state='failed'; a.note=res.err; apprSave(); return; }
+      JRNL.unshift({d:ymd(new Date()),a:a.asset,t:String(a.style).toLowerCase(),
+        dir:a.side==='buy'?'buy':'sell',en:a.entry,ex:a.entry,lots:a.order.lots,
+        move:'0.00%',pnl:0,r:'open',tp:a.tp,sl:a.sl,riskAmt:a.order.risk,rr:a.rr,
+        session:'Bot',bot:a.mode,approved:true});
+      jrnlSave();
+      try{renderJ();renderPnlCalendar();updatePortStats();renderBot();}catch(e){}
+      a.state='approved'; a.decidedAt=Date.now(); apprSave();
+      notify('Approved — '+a.asset+' '+a.side.toUpperCase()+' sent in '+a.mode.toUpperCase()+' mode',
+             a.side==='buy'?'bull':'bear');
+    });
+    return;
+  }
+  /* everything else goes through the same take-and-log panel as before, so the
+     risk sizing is entered once and in one place */
+  window._lastSig={isBull:a.side==='buy',style:a.style,entry:a.entry,tp:a.tp,sl:a.sl,
+    rr:a.rr,curPrice:a.price||a.entry,
+    risk:Math.abs(a.entry-a.sl).toFixed(2),profit:Math.abs(a.tp-a.entry).toFixed(2),
+    reasons:[a.why||'approved from the queue'],timeStr:'—',apprId:id};
+  if(typeof _lastAsset!=='undefined')_lastAsset=a.asset;
+  a.state='approved'; a.decidedAt=Date.now(); apprSave();
+  if(typeof openTakeSignal==='function')openTakeSignal();
+}
+function apprSkip(id){
+  var a=apprFind(id);
+  if(!a||a.state!=='pending')return;
+  var why=prompt('Passing on '+a.asset+' '+String(a.side).toUpperCase()+' at '+a.entry
+    +'.\nWhy? (optional — it is kept so you can look back at what you turned down)');
+  if(why===null)return;                        /* cancelled: leave it pending */
+  a.state='skipped'; a.reason=(why||'').trim(); a.decidedAt=Date.now();
+  apprSave();
+  notify('Passed on '+a.asset+' '+String(a.side).toUpperCase(),'info');
+}
+function apprClearDecided(){
+  if(!confirm('Clear every approved and skipped item? The trades themselves stay in the journal.'))return;
+  APPR=apprPending(); apprSave();
+}
+function apprBadge(){
+  var n=apprPending().length;
+  document.querySelectorAll('[data-appr-badge]').forEach(function(e){
+    e.textContent=n?String(n):''; e.style.display=n?'':'none';
+  });
+}
+function apprRow(a,dp){
+  var side=String(a.side).toUpperCase();
+  var col=a.side==='buy'?'var(--up)':'var(--dn)';
+  var when=new Date(a.ts).toLocaleString('en',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  var isPend=a.state==='pending';
+  return '<div class="apr-r '+a.state+'">'
+   +'<div class="apr-h"><b style="color:'+col+'">'+side+' '+escHtml(a.asset)+'</b>'
+     +'<span class="apr-k">'+escHtml(a.style||'—')+'</span>'
+     +'<span class="apr-src">'+escHtml(a.source==='bot'?('bot · '+String(a.mode||'').toUpperCase()):a.source||'')+'</span>'
+     +'<span class="apr-t">'+when+'</span></div>'
+   +'<div class="apr-n">'
+     +'<div><i>Entry</i><b>'+(+a.entry).toFixed(dp)+'</b></div>'
+     +'<div><i>Stop</i><b class="cr">'+(a.sl!=null?(+a.sl).toFixed(dp):'—')+'</b></div>'
+     +'<div><i>Target</i><b class="cg">'+(a.tp!=null?(+a.tp).toFixed(dp):'—')+'</b></div>'
+     +'<div><i>R:R</i><b class="ca">'+(a.rr!=null?(+a.rr).toFixed(1)+' : 1':'—')+'</b></div>'
+   +'</div>'
+   +(a.why?'<div class="apr-w">'+escHtml(a.why)+'</div>':'')
+   +(isPend
+      ? '<div class="apr-b"><button class="btn btn-a btn-sm" onclick="apprApprove(\''+a.id+'\')">Approve</button>'
+        +'<button class="btn btn-g btn-sm" onclick="apprSkip(\''+a.id+'\')">Pass</button></div>'
+      : '<div class="apr-s">'+(a.state==='approved'?'Approved':a.state==='failed'?'Failed to send':'Passed on')
+        +(a.decidedAt?' · '+new Date(a.decidedAt).toLocaleString('en',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'')
+        +(a.reason?' — '+escHtml(a.reason):'')
+        +(a.note?' — '+escHtml(a.note):'')+'</div>')
+   +'</div>';
+}
+function renderApprovals(){
+  var host=document.getElementById('appr_body');
+  if(!host)return;
+  var dp=2;
+  var pend=apprPending();
+  var done=APPR.filter(function(x){return x.state!=='pending';}).slice(0,8);
+  var nApp=APPR.filter(function(x){return x.state==='approved';}).length;
+  var nSkip=APPR.filter(function(x){return x.state==='skipped';}).length;
+  host.innerHTML=
+    '<div class="apr-lead">Nothing here has been placed. A setup waits until you approve it, and '
+    +'what you pass on is kept too — turning a setup down is a decision worth being able to look '
+    +'back at. The bot queues here instead of sending whenever approval is required for its mode.</div>'
+    +'<div class="apr-sum"><span><b>'+pend.length+'</b> waiting</span>'
+      +'<span><b>'+nApp+'</b> approved</span><span><b>'+nSkip+'</b> passed on</span>'
+      +(done.length?'<u onclick="apprClearDecided()">clear decided</u>':'')+'</div>'
+    +(pend.length?pend.map(function(a){return apprRow(a,dp);}).join('')
+       :'<div class="apr-none">Nothing waiting. Setups sent here from the level trades, or by the '
+        +'bot when its mode needs approval, will appear for a decision.</div>')
+    +(done.length?'<div class="apr-hh">Decided</div>'+done.map(function(a){return apprRow(a,dp);}).join(''):'');
+}
 var BOT={
   on:false, mode:'paper',
+  /* Approval gate. botConsider fires after every analysis and used to go
+     straight to botSend, so an armed bot in live mode placed real orders with
+     nobody looking. Paper can fire freely — nothing leaves the machine — but
+     demo and live queue for a decision unless this is deliberately turned off. */
+  approve:true,
   riskPct:0.5,          /* per trade, % of balance */
   dailyStopPct:2,       /* stop trading for the day after this loss */
   targetPct:10,         /* monthly aim — midpoint of the 8-12% band */
@@ -8605,7 +8806,7 @@ var BOT={
 };
 function botKey(){return 'ca_bot_cfg';}
 function botLoad(){try{var d=JSON.parse(localStorage.getItem(botKey())||'{}');Object.keys(d).forEach(function(k){if(k in BOT)BOT[k]=d[k];});}catch(e){}}
-function botSave(){try{localStorage.setItem(botKey(),JSON.stringify({on:BOT.on,mode:BOT.mode,riskPct:BOT.riskPct,dailyStopPct:BOT.dailyStopPct,targetPct:BOT.targetPct,minConf:BOT.minConf}));}catch(e){}}
+function botSave(){try{localStorage.setItem(botKey(),JSON.stringify({on:BOT.on,mode:BOT.mode,approve:BOT.approve,riskPct:BOT.riskPct,dailyStopPct:BOT.dailyStopPct,targetPct:BOT.targetPct,minConf:BOT.minConf}));}catch(e){}}
 function botBalance(){
   var cur=parseFloat((document.getElementById('port_cur')||{}).value);
   var st=parseFloat((document.getElementById('port_start')||{}).value)||0;
@@ -8647,6 +8848,17 @@ function botConsider(sig,assetName,trend){
   var lots=+(riskAmt/(slDist*100)).toFixed(4);
   var order={symbol:assetName,side:sig.isBull?'buy':'sell',entry:sig.entry,sl:sig.sl,tp:sig.tp,
              lots:lots,risk:riskAmt,style:sig.style,conf:sig.conf};
+  /* paper stays instant; anything that reaches a broker waits for a person */
+  if(BOT.approve&&BOT.mode!=='paper'){
+    apprQueue({source:'bot',mode:BOT.mode,asset:assetName,side:order.side,style:sig.style,
+      entry:sig.entry,sl:sig.sl,tp:sig.tp,rr:sig.rr,price:sig.curPrice,order:order,
+      why:'The bot wants this at '+sig.conf+'% confidence. It has not been sent — approve it and '
+         +'the order goes to the bridge in '+BOT.mode.toUpperCase()+' mode.'});
+    botStatus('Queued for your approval — '+assetName+' '+order.side.toUpperCase()
+      +'. Nothing has been sent.','warn');
+    notify('Bot needs approval — '+assetName+' '+order.side.toUpperCase(),'info');
+    return;
+  }
   botSend(order,function(res){
     if(!res.ok){botStatus('Order rejected — '+res.err,'bad');return;}
     JRNL.unshift({d:ymd(new Date()),a:assetName,t:sig.style.toLowerCase(),dir:sig.isBull?'buy':'sell',
@@ -8672,6 +8884,11 @@ function botToggle(){
   }
   BOT.on=!BOT.on;botSave();renderBot();
   botStatus(BOT.on?('Bot armed in '+BOT.mode.toUpperCase()+' mode — waiting for a qualifying signal'):'Bot stopped',BOT.on?'good':'');
+}
+function botSetApprove(v){
+  BOT.approve=!!v; botSave(); renderBot();
+  if(!v&&BOT.mode!=='paper')
+    botStatus('Approval off — '+BOT.mode.toUpperCase()+' orders will be sent without asking','warn');
 }
 function botSetMode(m){
   BOT.mode=m;
@@ -8699,6 +8916,18 @@ function renderBot(){
         ? 'Paper mode logs to your journal only — nothing leaves the browser.'
         : 'Orders post to your local bridge at '+escHtml(bridgeURL())+'. Start celestial_bridge.py first; a browser cannot hold broker credentials safely.')
       +'</div>'
+    +'<label class="bot-appr'+(BOT.approve?' on':'')+'">'
+      +'<input type="checkbox" '+(BOT.approve?'checked':'')+' onchange="botSetApprove(this.checked)">'
+      +'<span><b>Ask me before sending an order</b>'
+      +'<i>'+(BOT.mode==='paper'
+          ? 'Paper mode fires either way — nothing reaches a broker.'
+          : (BOT.approve
+             ? 'The bot will queue the order under Approvals in Portfolio and wait. Nothing is sent until you approve it.'
+             : 'OFF — the bot will send '+BOT.mode.toUpperCase()+' orders on its own, with nobody in the loop.'))
+      +'</i></span></label>'
+    +(apprPending().length
+       ? '<div class="bot-pend">'+apprPending().length+' order'+(apprPending().length===1?'':'s')
+         +' waiting for your approval in Portfolio.</div>' : '')
     +'<div class="bot-grid">'
       +'<label>Risk / trade %<input type="number" step="0.1" value="'+BOT.riskPct+'" onchange="botSetNum(\'riskPct\',this.value)"></label>'
       +'<label>Daily stop %<input type="number" step="0.5" value="'+BOT.dailyStopPct+'" onchange="botSetNum(\'dailyStopPct\',this.value)"></label>'
@@ -9644,6 +9873,7 @@ function jrnlSave(){
   try{ if(typeof dashCalendar==='function')dashCalendar(); }catch(e){}
 }
 var JRNL=jrnlLoad(),PORT=[],CNTS={sc:0,id:0,sw:0};
+try{apprLoad();}catch(e){}
 var EQ_DATA=[];
 
 function updatePortStats(){
@@ -10928,7 +11158,7 @@ function goTab(name,btn){
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
   }
   if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashMember();}catch(e){console.error('dash:',e);}}
-  if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();}
+  if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();renderApprovals();}
   if(name==='bot'){renderBot();renderBroker();}
 }
 /* ══ ECONOMIC CALENDAR — recurring high-impact events, live countdown ══ */
