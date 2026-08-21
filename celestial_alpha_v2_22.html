@@ -1254,8 +1254,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tk-seg{animation:segIn .6s var(--ease) backwards;transition:stroke-width .3s}
 @keyframes segIn{from{opacity:0}to{opacity:1}}
 .tk-seg.live{filter:drop-shadow(0 0 10px currentColor)}
-.tk-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.tk-word{font-family:'Space Grotesk';font-size:34px;font-weight:800;line-height:1.05}
+.tk-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:0 16%}
+/* the verdict can be one word ("Wait") or four ("Trade Gold now"), so the type
+   scales with the space rather than overflowing the ring on the long ones */
+.tk-word{font-family:'Space Grotesk';font-size:clamp(19px,2.1vw,32px);font-weight:800;line-height:1.08;
+  overflow-wrap:break-word;max-width:100%}
 .tk-mins{font-size:13px;color:var(--soft);margin-top:6px}
 .tk-hour{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
 .tk-side{min-width:0}
@@ -1440,6 +1444,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tp-b span{display:block;font-size:9.5px;color:var(--muted);margin-top:4px;line-height:1.45}
 .tp-do{font-size:13.5px;color:var(--tw);line-height:1.6;padding:10px 13px;border-radius:12px;
   background:rgba(255,255,255,.03);margin-bottom:9px}
+/* the window now says which kind of trade it is for, and whether it is live */
+.tp-kind b{color:var(--p3)}
+.tp-live{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--up);border:1px solid rgba(34,197,94,.45);
+  border-radius:99px;padding:2px 7px;margin-left:7px;vertical-align:middle}
+.tp-kw{font-size:10px;color:var(--t2);line-height:1.7;margin-top:8px}
+.tp-w.n{border-style:dashed;opacity:.85}
 .tp-why{font-size:10.5px;color:var(--muted);line-height:1.6;margin-bottom:11px}
 .tp-next{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:11px 18px;
   border-top:1px solid var(--rim);background:rgba(255,255,255,.02)}
@@ -7541,11 +7552,11 @@ function timState(){
   var vib=0;
   try{vib=(calcNN(timAsset())||{}).f||0;}catch(e){vib=_lastVib||0;}
   var hours=[];
-  for(var h=1;h<=12;h++){
+  for(var h=1;h<=PH_HOURS;h++){
     var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
     var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
     hours.push({h:h,name:hp.n,sym:hp.s,start:srMin+(h-1)*60,
-                rank:exact?2:inter?1:0, isPos:isPos});
+                rank:exact?2:inter?1:0, isPos:isPos, night:h>12});
   }
   var planning=!timIsToday();
   if(planning){cur=null;}
@@ -7848,7 +7859,7 @@ function timDayScore(date,asset,vib){
   var key=PL[DS[di]], aCyc=plByNum(vib);
   var own=!!(aCyc&&key&&aCyc.n===key.n);
   var strong=0,support=0;
-  for(var h=1;h<=12;h++){
+  for(var h=1;h<=PH_HOURS;h++){
     var hp=PL[hiIdx(di,h)], isPos=(h<=7), an=getAN(hp,isPos);
     if(hp.nums.indexOf(vib)>=0)strong++;
     else if(an.indexOf(vib)>=0)support++;
@@ -7856,10 +7867,17 @@ function timDayScore(date,asset,vib){
   var noon=new Date(date.getFullYear(),date.getMonth(),date.getDate(),12,0,0,0);
   var astro=calcAstroBias(asset,getEphemeris(noon),noon);
   var conviction=Math.abs(astro.bull-50)/42;             /* 0..1 */
-  /* windows say WHEN you may trade, conviction says whether there is anything
-     worth trading. A day needs both, so they multiply rather than add. */
-  var timeScore=Math.min(1,(strong*1.0+support*0.35)/3.5);
-  var raw=timeScore*0.55+conviction*0.30+(own?0.15:0);
+  /* Weighting. The Chaldean order gives every planet roughly the same number
+     of hours whatever the weekday, so the hour count barely separates one day
+     from another — measured across 28 days for gold it moved between 0.29 and
+     0.67 while conviction moved between 0.19 and 0.60. Leaning on the hour
+     count therefore let a flat "it is this asset's own day" bonus decide
+     everything, and gold's own day is Friday, so the answer was Friday every
+     week for ever. Conviction now carries the weight, because whether the sky
+     actually leans that day is the part that varies. Owning the day is a
+     genuine but small nudge, not a fifteen-point head start. */
+  var timeScore=Math.min(1,(strong*1.0+support*0.35)/6.5);
+  var raw=timeScore*0.30+conviction*0.62+(own?0.05:0);
   var weekend=(di===0||di===6);
   return{date:new Date(noon),di:di,key:key,own:own,strong:strong,support:support,
          astro:astro,weekend:weekend,
@@ -7881,13 +7899,23 @@ function timBestDays(asset,vib,n){
    day. Combining them answers the only question that matters — be at the
    screen on this date, between these times, looking this way, and expect the
    push to last about this long. */
+/* PLANETARY HOURS RUN ALL DAY, NOT JUST DAYLIGHT.
+   This loop used to stop at twelve, so every window ended twelve hours after
+   sunrise — around 18:20 on a 06:20 sunrise — and the engine had nothing to say
+   about the evening. For gold that silently deleted the London close and the
+   whole New York afternoon, which is where a good part of the day's range gets
+   made. The Chaldean order continues past hour twelve on its own, so the fix is
+   to keep counting; hiIdx already wraps and fmtT already handles times past
+   midnight. Hours after the twelfth are marked as night so the surface can say
+   which side of sunset a window falls on. */
+var PH_HOURS=24;
 function timHoursFor(di,srMin,vib){
   var hours=[];
-  for(var h=1;h<=12;h++){
+  for(var h=1;h<=PH_HOURS;h++){
     var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
     var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
     hours.push({h:h,name:hp.n,sym:hp.s,start:srMin+(h-1)*60,end:srMin+h*60,
-                rank:exact?2:inter?1:0,isPos:isPos});
+                rank:exact?2:inter?1:0,isPos:isPos,night:h>12});
   }
   return hours;
 }
@@ -7933,27 +7961,88 @@ function timHorizon(date,asset){
          exitDays:exitDays==null?null:Math.round(exitDays),exitDate:exitDate,
          driver:PLANET_NAME[p1]||p1,driverSign:dz(si.sign)};
 }
+/* WHICH KIND OF TRADE THIS WINDOW IS FOR.
+   The panel was showing a time and a direction and leaving the reader to work
+   out whether that meant a scalp, an intraday or a swing. It is decidable from
+   two numbers the engine already has: how long the window itself runs, and how
+   long the push behind it is expected to hold. */
+/* "a intraday" reads wrong in two places, so the article is decided once */
+function timKindArticle(k){return /^[aeiou]/i.test(k||'')?'an ':'a ';}
+function timTradeKind(mins,hzDays,strength){
+  var cap=function(k){return (typeof TRADE_QUOTA!=='undefined')?TRADE_QUOTA[k]:null;};
+  var len=mins>=120?(mins/60).toFixed(0)+'-hour':mins+'-minute';
+  /* The window and the horizon answer two different questions, and an earlier
+     version confused them. The window is when you may ENTER — for most assets
+     that is a single planetary hour, so keying the trade type off its length
+     labelled everything a scalp. The horizon is how long the push behind it is
+     dated to HOLD, and that is what decides whether you carry the trade across
+     sessions. So: enter in the window, hold for the horizon, and the horizon
+     names the trade.
+
+     Strength is the second axis. A window built only from support hours is
+     weaker evidence than one carrying the asset's own number, so it steps down
+     one size — you can still take it, with less committed to it. */
+  var kind = hzDays>=3 ? 'Swing' : hzDays>=1 ? 'Intraday' : 'Scalp';
+  var stepped=false;
+  if(strength===1&&kind!=='Scalp'){
+    kind = kind==='Swing' ? 'Intraday' : 'Scalp';
+    stepped=true;
+  }
+  var why;
+  if(kind==='Swing')
+    why='enter inside the '+len+' window, then hold — the push is dated to run '+hzDays
+       +' days, which is longer than one session';
+  else if(kind==='Intraday')
+    why='enter inside the '+len+' window and close it before the day is out — the push is dated '
+       +'to fade in '+(hzDays<2?'about a day':hzDays+' days');
+  else
+    why='enter inside the '+len+' window and take the move — there is less than a day of push '
+       +'behind it, so there is nothing here to hold overnight';
+  if(stepped)why+='. Stepped down one size because this window is built from support hours '
+       +'rather than hours carrying the asset\u2019s own number';
+  return{k:kind,cap:cap(kind),why:why,stepped:stepped};
+}
 function timTradePlan(st){
   var asset=timAsset(), vib=st.vib;
   var days=timBestDays(asset,vib,14).filter(function(d){return !d.weekend;});
   if(!days.length)return '';
-  var ranked=days.slice().sort(function(a,b){return b.score-a.score;});
 
-  /* build the concrete windows for each candidate day, keep the ones that have any */
+  /* Build every window on every open day, in date order. */
   var plans=[];
-  ranked.forEach(function(d){
+  days.forEach(function(d){
     var blocks=timBlocks(timHoursFor(d.di,st.srMin,vib));
     if(!blocks.length)return;
-    /* rank first, then the longest run, then the later start — the first
-       hour after sunrise is thin on most markets and ties otherwise pick it */
-    blocks.sort(function(a,b){return (b.best-a.best)||((b.end-b.start)-(a.end-a.start))||(a.start-b.start);});
-    plans.push({day:d,block:blocks[0],all:blocks,hz:timHorizon(d.date,asset)});
+    blocks.sort(function(a,b){return a.start-b.start;});
+    plans.push({day:d,all:blocks,hz:timHorizon(d.date,asset)});
   });
   if(!plans.length)return '';
-  var P=plans[0], A=P.day.astro;
+
+  /* THE NEXT WINDOW IS THE NEXT ONE IN TIME.
+     This used to sort fourteen days by score and headline the winner, so a
+     window starting in two hours was hidden behind one a week away, and the
+     panel could sit on the same distant date for days. "Next" now means next:
+     the soonest window that has not already finished today, then tomorrow's,
+     and so on. Which day is strongest is a separate and still-useful question,
+     answered on its own line underneath. */
+  var now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+  var todayY=ymd(now);
+  var chosen=null;
+  for(var i=0;i<plans.length&&!chosen;i++){
+    var pl=plans[i], isToday=ymd(pl.day.date)===todayY;
+    for(var j=0;j<pl.all.length;j++){
+      var bk=pl.all[j];
+      if(isToday&&(bk.end%1440)<=nowMin&&bk.end<1440)continue;   /* already gone */
+      chosen={day:pl.day,block:bk,all:pl.all,hz:pl.hz,live:isToday&&bk.start<=nowMin&&bk.end>nowMin};
+      break;
+    }
+  }
+  if(!chosen)chosen={day:plans[0].day,block:plans[0].all[0],all:plans[0].all,hz:plans[0].hz,live:false};
+  var best=plans.slice().sort(function(a,b){return b.day.score-a.day.score;})[0];
+  var P=chosen, A=P.day.astro;
   var dir=A.dir==='bull'?'BULL':A.dir==='bear'?'BEAR':'FLAT';
   var col=A.dir==='bull'?'var(--green)':A.dir==='bear'?'var(--red)':'var(--amber)';
   var mins=P.block.end-P.block.start;
+  var KIND=timTradeKind(mins,P.hz.days,P.block.best);
   var side=A.dir==='bull'?'Look for longs only — buy pullbacks into support.'
           :A.dir==='bear'?'Look for shorts only — sell rallies into resistance.'
           :'No directional edge. Take the level in whichever way it breaks, smaller size.';
@@ -7966,9 +8055,11 @@ function timTradePlan(st){
      +'<div class="tp-l">'
        +'<div class="ab-cap">Your next trade window · '+escHtml(asset)+'</div>'
        +'<div class="tp-row">'
-         +'<div class="tp-b"><i>Day</i><b>'+P.day.date.toLocaleDateString('en',{weekday:'long'})+'</b>'
+         +'<div class="tp-b"><i>Day</i><b>'+P.day.date.toLocaleDateString('en',{weekday:'long'})
+           +(P.live?' <em class="tp-live">open now</em>':'')+'</b>'
            +'<span>'+P.day.date.toLocaleDateString('en',{day:'numeric',month:'long'})
-           +(isToday?' · today':dayGap===1?' · tomorrow':' · in '+dayGap+' days')+'</span></div>'
+           +(isToday?' · today':dayGap===1?' · tomorrow':' · in '+dayGap+' days')
+           +(P.block.hours[0]&&P.block.hours[0].night?' · after sunset':'')+'</span></div>'
          +'<div class="tp-b"><i>Time</i><b>'+fmtT(P.block.start)+' → '+fmtT(P.block.end)+'</b>'
            +'<span>'+(mins>=120?(mins/60).toFixed(0)+' hours':mins+' minutes')+' · '
            +escHtml(P.block.hours.map(function(x){return x.name;}).join(', '))+'</span></div>'
@@ -7976,32 +8067,54 @@ function timTradePlan(st){
            +'<span>sky '+A.bull+'% bull / '+(100-A.bull)+'% bear that day</span></div>'
          +'<div class="tp-b"><i>Momentum holds</i><b>'+escHtml(P.hz.label)+'</b>'
            +'<span>until '+escHtml(P.hz.why)+'</span></div>'
+         +'<div class="tp-b tp-kind"><i>Trade this as a</i><b>'+escHtml(KIND.k)+'</b>'
+           +'<span>'+(KIND.cap?KIND.cap+' allowed a month':'')+'</span></div>'
        +'</div>'
+       +'<div class="tp-kw">Why this is '+timKindArticle(KIND.k)
+         +escHtml(KIND.k.toLowerCase())+': '+escHtml(KIND.why)+'.</div>'
        +(P.all.length>1
-          ?'<div class="tp-more"><i>All '+P.all.length+' windows that day</i>'
+          ?'<div class="tp-more"><i>All '+P.all.length+' windows that day — day and night</i>'
             +P.all.map(function(bk){
-               return '<span class="tp-w'+(bk.best===2?' s':'')+'">'+fmtT(bk.start)+'–'+fmtT(bk.end)
-                 +'<em>'+(bk.best===2?'strong':'support')+'</em></span>';
+               var m=bk.end-bk.start, kd=timTradeKind(m,P.hz.days,bk.best);
+               var isNight=bk.hours[0]&&bk.hours[0].night;
+               return '<span class="tp-w'+(bk.best===2?' s':'')+(isNight?' n':'')
+                 +'" title="'+escHtml(kd.k)+' · '+escHtml(bk.hours.map(function(x){return x.name;}).join(', '))+'">'
+                 +fmtT(bk.start)+'–'+fmtT(bk.end)
+                 +'<em>'+(bk.best===2?'strong':'support')+' · '+escHtml(kd.k.toLowerCase())+'</em></span>';
              }).join('')
           +'</div>':'')
        +'<div class="tp-do">'+escHtml(side)+'</div>'
-       +'<div class="tp-why">Chosen because: '+P.day.strong+' hour'+(P.day.strong===1?'':'s')+' carry '
-         +escHtml(asset)+'’s number'+(P.day.support?', '+P.day.support+' more support it':'')
-         +(P.day.own?' · it is '+escHtml(asset)+'’s own '+escHtml(P.day.key.n)+' day':'')
-         +' · day score '+P.day.score+' of the next 14.</div>'
+       +'<div class="tp-why">This is simply the next window on the clock — '
+         +P.day.strong+' hour'+(P.day.strong===1?'':'s')+' that day carry '+escHtml(asset)
+         +'’s number'+(P.day.support?' and '+P.day.support+' more support it':'')
+         +(P.day.own?', and it is '+escHtml(asset)+'’s own '+escHtml(P.day.key.n)+' day':'')
+         +'. It scores '+P.day.score+' out of the next fourteen days'
+         +(best&&ymd(best.day.date)!==ymd(P.day.date)
+            ? '; the strongest day ahead is '+best.day.date.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'short'})
+              +' at '+best.day.score+', if you would rather wait'
+            : ', which is also the strongest day ahead')
+         +'.</div>'
        +'<button class="btn btn-a btn-sm" onclick="setTimDate(\''+ymd(P.day.date)+'\')">Open that day</button>'
      +'</div>'
    +'</div>'
-   +(plans.length>1?'<div class="tp-next"><i>After that</i>'
-      +plans.slice(1,4).map(function(q){
-         var c=q.day.astro.dir==='bull'?'var(--green)':q.day.astro.dir==='bear'?'var(--red)':'var(--amber)';
-         return '<div class="tp-n" onclick="setTimDate(\''+ymd(q.day.date)+'\')">'
-           +'<b>'+q.day.date.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'})+'</b>'
-           +'<span>'+fmtT(q.block.start)+'–'+fmtT(q.block.end)+'</span>'
-           +'<em style="color:'+c+'">'+(q.day.astro.dir==='bull'?'BULL':q.day.astro.dir==='bear'?'BEAR':'FLAT')+'</em>'
-           +'<u>'+q.hz.days+'d</u></div>';
-       }).join('')
-      +'</div>':'')
+   +(function(){
+      /* the days that come after the one now headlined, in date order — plans
+         is no longer score-sorted, and each entry carries its windows in `all`
+         rather than a single pre-picked `block` */
+      var after=plans.filter(function(q){return q.day.date>P.day.date;}).slice(0,3);
+      if(!after.length)return '';
+      return '<div class="tp-next"><i>After that</i>'
+        +after.map(function(q){
+          var bk=q.all[0]; if(!bk)return '';
+          var c=q.day.astro.dir==='bull'?'var(--green)':q.day.astro.dir==='bear'?'var(--red)':'var(--amber)';
+          return '<div class="tp-n" onclick="setTimDate(\''+ymd(q.day.date)+'\')">'
+            +'<b>'+q.day.date.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'})+'</b>'
+            +'<span>'+fmtT(bk.start)+'–'+fmtT(bk.end)+'</span>'
+            +'<em style="color:'+c+'">'+(q.day.astro.dir==='bull'?'BULL':q.day.astro.dir==='bear'?'BEAR':'FLAT')+'</em>'
+            +'<u>'+q.hz.days+'d</u></div>';
+        }).join('')
+      +'</div>';
+    })()
    +shareBar('timing')
    +'<div class="tp-f">The window comes from the planetary hours that carry '+escHtml(asset)+'’s cycle number '
      +'on that date. The direction is that date’s own sky, not today’s. The horizon is the nearer of the 9-day '
@@ -8145,13 +8258,17 @@ function renderTiming(){
   var col=v.level==='go'?'var(--green)':v.level==='ok'?'var(--amber)':v.level==='wait'?'var(--red)':'var(--mid)';
 
   /* ring: 12 segments, current one lit */
-  var R=118,C=2*Math.PI*R, seg=C/12-6;
+  /* one segment per planetary hour. The ring was drawn in twelfths while the
+     hours themselves now run to twenty-four, which stacked the second half of
+     the day on top of the first. */
+  var N=st.hours.length||PH_HOURS;
+  var R=118,C=2*Math.PI*R, seg=C/N-(N>12?3:6);
   var ring='<svg viewBox="0 0 280 280" class="tk-ring">';
   st.hours.forEach(function(x,i){
-    var off=C*(1-i/12)-seg/2;
+    var off=C*(1-i/N)-seg/2;
     var c=x.rank===2?'#22C55E':x.rank===1?'#8b5cf6':'rgba(255,255,255,.10)';
     ring+='<circle cx="140" cy="140" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="'
-      +(x.h===st.live?16:11)+'" stroke-linecap="round" stroke-dasharray="'+seg.toFixed(1)+' '+(C-seg).toFixed(1)
+      +(x.h===st.live?(N>12?13:16):(N>12?8:11))+'" stroke-linecap="round" stroke-dasharray="'+seg.toFixed(1)+' '+(C-seg).toFixed(1)
       +'" stroke-dashoffset="'+off.toFixed(1)+'" class="tk-seg'+(x.h===st.live?' live':'')+'"'
       +' style="animation-delay:'+(i*0.045).toFixed(2)+'s"><title>H'+x.h+' · '+x.name+' · '+fmtT(x.start)+'</title></circle>';
   });
@@ -8159,6 +8276,13 @@ function renderTiming(){
 
   /* the next two windows that still lie ahead */
   var ahead=st.hours.filter(function(x){return x.rank>0&&(st.live==null||x.h>st.live);}).slice(0,3);
+  /* name the trade each upcoming hour is for, so the reader is not left to
+     work out from a clock time whether this is a scalp or something to hold */
+  var aheadHz=null;
+  try{ aheadHz=timHorizon(timDate(),timAsset()); }catch(e){}
+  ahead.forEach(function(x){
+    x.kind=aheadHz?timTradeKind(60,aheadHz.days,x.rank).k:null;
+  });
 
   var aNow=timAsset(), aCyc=plByNum(st.vib);
   var chips='<div class="tk-asset"><span class="lb">Asset</span>'
@@ -8174,7 +8298,8 @@ function renderTiming(){
       +'<div class="tk-core">'
         +'<div class="tk-word" style="color:'+col+'">'+v.word+'</div>'
         +(st.minsLeft!=null?'<div class="tk-mins">'+st.minsLeft+' min left</div>':'')
-        +(st.live?'<div class="tk-hour">Hour '+st.live+' of 12</div>':'')
+        +(st.live?'<div class="tk-hour">Hour '+st.live+' of 24'
+            +(st.live>12?' · night':' · day')+'</div>':'')
       +'</div>'
     +'</div>'
     +'<div class="tk-side">'
@@ -8184,10 +8309,11 @@ function renderTiming(){
           var inMin=st.cur!=null?(x.start-st.srMin)-st.cur:null;
           return '<div class="tk-nrow '+(x.rank===2?'strong':'soft')+'">'
             +'<span class="s">'+x.sym+'</span>'
-            +'<span class="n">'+escHtml(x.name)+'<i>H'+x.h+' · '+fmtT(x.start)+'</i></span>'
+            +'<span class="n">'+escHtml(x.name)+'<i>H'+x.h+' · '+fmtT(x.start)
+              +(x.night?' · night':'')+(x.kind?' · trade it as '+timKindArticle(x.kind)+escHtml(x.kind.toLowerCase()):'')+'</i></span>'
             +'<span class="t">'+(inMin!=null?'in '+fmtIn(inMin):'')+'</span>'
             +'<span class="b">'+(x.rank===2?'STRONG':'SUPPORT')+'</span></div>';
-        }).join(''):'<div class="tk-none">No further windows today — next session starts at sunrise</div>')+'</div>'
+        }).join(''):'<div class="tk-none">No further windows in this 24-hour cycle — the next one opens after tomorrow&rsquo;s sunrise</div>')+'</div>'
     +'</div>'
    +'</div>'
    +'<div class="tk-bar">'
