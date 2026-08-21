@@ -3456,6 +3456,32 @@ body{background:var(--bg0)}
 .lv-now .lv-p{font-size:27px;color:var(--t1)}
 .lv-now .lv-d{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--p3)}
 .lv-note{font-size:10px;color:var(--t3);line-height:1.75;margin-bottom:4px}
+/* ── TRADES FROM THE LEVELS — the plan you would actually place, one card per
+      level, with the numbers that go in the ticket and nothing that pretends
+      to know the outcome. ── */
+.lvt{margin-top:14px}
+.lvt-lead{font-size:10px;color:var(--t3);line-height:1.75;margin-bottom:10px}
+.lvt-r{border:1px solid var(--b1);border-radius:12px;padding:13px 15px;margin-bottom:9px;
+  background:linear-gradient(155deg,rgba(139,92,246,.035),rgba(4,3,14,.85))}
+.lvt-r.long{border-left:2px solid rgba(34,197,94,.55)}
+.lvt-r.short{border-left:2px solid rgba(239,68,68,.55)}
+.lvt-r.live{box-shadow:0 0 0 1px rgba(168,85,247,.22)}
+.lvt-r.full{opacity:.55}
+.lvt-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.lvt-h b{font-family:'Space Grotesk';font-size:14px;font-weight:700;letter-spacing:.02em;color:var(--t1)}
+.lvt-r.long .lvt-h b{color:var(--up)}
+.lvt-r.short .lvt-h b{color:var(--dn)}
+.lvt-k{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--p3);
+  border:1px solid var(--b1);border-radius:99px;padding:3px 9px}
+.lvt-w{margin-left:auto;font-size:9.5px;color:var(--t3)}
+.lvt-r.live .lvt-w{color:var(--p3);font-weight:700}
+.lvt-n{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:9px}
+.lvt-n i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.lvt-n b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t1);
+  font-variant-numeric:tabular-nums;margin-top:2px}
+.lvt-why{font-size:9.5px;color:var(--t3);line-height:1.7;margin-bottom:10px}
+.lvt-full{font-size:9.5px;color:var(--warn);font-weight:600}
+@media (max-width:1200px){.lvt-n{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:1200px){
   .lv-r,.lv-now{grid-template-columns:20px 92px 1fr}
   .lv-r.lead .lv-s{display:none}
@@ -7053,6 +7079,134 @@ function anaLevelRow(r,dir,dp,lead){
     +'<span class="lv-w">'+escHtml(anaLevelFrom(r,dp))+'</span>'
     +'</div>';
 }
+/* ══ TRADES FROM THE LEVELS ═══════════════════════════════════════════
+   The level map says where the structure is. This turns each level into the
+   plan you would actually place: enter AT the level, stop just beyond it,
+   target the next level in front of you.
+
+   Every one of these is conditional. Price has to reach the entry first —
+   nothing here is a prediction that it will. The reward-to-risk is arithmetic
+   off two levels and a buffer, not a claim about how often it works; no win
+   rate is quoted anywhere because none has been measured.
+   ══════════════════════════════════════════════════════════════════════ */
+var LV_STOP_BUFFER=0.5;    /* how far beyond the level the stop sits, in daily moves */
+var LV_MIN_RR=1.5;         /* below this the plan is not worth placing */
+
+function lvKindFor(targetSig){
+  return targetSig<1.5 ? 'Scalp' : targetSig<4 ? 'Intraday' : 'Swing';
+}
+/* one plan per level, in both directions, then filtered */
+function lvTrades(levels,price,sigma,bias){
+  var out=[];
+  if(!levels||!(price>0)||!(sigma>0))return out;
+  var s=price*sigma;
+  var all=(levels.up||[]).concat(levels.dn||[])
+    .slice().sort(function(a,b){return a.p-b.p;});
+  if(all.length<2)return out;
+
+  all.forEach(function(L,i){
+    /* LONG off a level below price: it has to fall into it first */
+    if(L.p<price){
+      var tgt=all.filter(function(x){return x.p>L.p+s*0.4;})[0];
+      if(tgt){
+        var entry=L.p, stop=L.p-s*LV_STOP_BUFFER, take=tgt.p;
+        var risk=entry-stop, reward=take-entry;
+        if(risk>0&&reward>0)out.push({side:'long',level:L,target:tgt,
+          entry:entry,stop:stop,take:take,rr:reward/risk,
+          awaySig:(price-entry)/s, tgtSig:(take-entry)/s});
+      }
+    }
+    /* SHORT off a level above price: it has to rise into it first */
+    if(L.p>price){
+      var tgt2=all.filter(function(x){return x.p<L.p-s*0.4;}).slice(-1)[0];
+      if(tgt2){
+        var e2=L.p, st2=L.p+s*LV_STOP_BUFFER, tk2=tgt2.p;
+        var r2=st2-e2, w2=e2-tk2;
+        if(r2>0&&w2>0)out.push({side:'short',level:L,target:tgt2,
+          entry:e2,stop:st2,take:tk2,rr:w2/r2,
+          awaySig:(e2-price)/s, tgtSig:(e2-tk2)/s});
+      }
+    }
+  });
+
+  out=out.filter(function(t){return t.rr>=LV_MIN_RR;});
+  /* The daily bias decides which way you are allowed to look. Taking both
+     sides of every level is not a strategy, it is a coin toss with extra
+     steps, and the rest of this app already tells the reader to trade one
+     way on a given day. */
+  if(bias==='bull')      out=out.filter(function(t){return t.side==='long';});
+  else if(bias==='bear') out=out.filter(function(t){return t.side==='short';});
+
+  out.forEach(function(t){
+    t.kind=lvKindFor(t.tgtSig);
+    t.live=t.awaySig<0.25;
+  });
+  /* nearest first — the one price can reach soonest is the one that matters */
+  out.sort(function(a,b){return a.awaySig-b.awaySig;});
+  return out.slice(0,4);
+}
+function lvTradeHtml(T,asset,price,dp,bias){
+  if(!T.length)return '';
+  var Q=(typeof quotaState==='function')?quotaState():null;
+  var left=function(k){
+    if(!Q)return null;
+    var r=Q.rows.filter(function(x){return x.style===k;})[0];
+    return r?r.left:null;
+  };
+  return '<div class="lvt">'
+   +'<div class="ab-cap">Trades these levels give you</div>'
+   +'<div class="lvt-lead">Each of these is a plan, not a call: it only exists if price actually '
+     +'reaches the entry. Enter at the level, stop just beyond it, take profit at the next level in '
+     +'front. The reward-to-risk is arithmetic from those three prices — it says how much you stand '
+     +'to make against what you put at risk, and nothing about how often it comes off.'
+     +(bias==='bull'?' Only longs are listed because today’s bias reads up.'
+      :bias==='bear'?' Only shorts are listed because today’s bias reads down.'
+      :' Both directions are listed because today’s bias is flat.')
+   +'</div>'
+   +T.map(function(t,i){
+      var sl=left(t.kind);
+      var full=(sl===0);
+      return '<div class="lvt-r '+t.side+(t.live?' live':'')+(full?' full':'')+'">'
+       +'<div class="lvt-h">'
+         +'<b>'+(t.side==='long'?'BUY':'SELL')+' '+escHtml(asset)+'</b>'
+         +'<span class="lvt-k">'+t.kind+(sl!=null?' · '+sl+' of '+TRADE_QUOTA[t.kind]+' left':'')+'</span>'
+         +'<span class="lvt-w">'+(t.live?'price is there now'
+             :'waiting — price is '+Math.abs(t.awaySig).toFixed(1)+' days’ move away')+'</span>'
+       +'</div>'
+       +'<div class="lvt-n">'
+         +'<div><i>Entry</i><b>'+t.entry.toFixed(dp)+'</b></div>'
+         +'<div><i>Stop</i><b class="cr">'+t.stop.toFixed(dp)+'</b></div>'
+         +'<div><i>Target</i><b class="cg">'+t.take.toFixed(dp)+'</b></div>'
+         +'<div><i>Reward : risk</i><b class="ca">'+t.rr.toFixed(1)+' : 1</b></div>'
+       +'</div>'
+       +'<div class="lvt-why">Entry is '+escHtml(anaLevelFrom(t.level,dp).toLowerCase())
+         +'. Target is the next level in front, '+escHtml(anaLevelFrom(t.target,dp).toLowerCase())
+         +'. The stop sits '+LV_STOP_BUFFER+' of a daily move beyond the entry, so ordinary noise '
+         +'around the level does not take you out.</div>'
+       +(full?'<div class="lvt-full">No '+t.kind.toLowerCase()+' slots left this month.</div>'
+             :'<button class="btn btn-a btn-sm" onclick="lvTake('+i+')">Take this trade</button>')
+       +'</div>';
+    }).join('')
+   +'</div>';
+}
+/* hand the plan to the logging flow the app already has */
+var _lvTrades=[];
+function lvTake(i){
+  var t=_lvTrades[i];
+  if(!t){notify('Run the analysis again first','info');return;}
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)||t.entry;
+  window._lastSig={
+    isBull:t.side==='long', style:t.kind,
+    entry:+t.entry.toFixed(2), tp:+t.take.toFixed(2), sl:+t.stop.toFixed(2),
+    rr:+t.rr.toFixed(2), curPrice:price,
+    risk:Math.abs(t.entry-t.stop).toFixed(2), profit:Math.abs(t.take-t.entry).toFixed(2),
+    reasons:['from the level map'], timeStr:'—', fromLevels:true
+  };
+  if(typeof _lastAsset!=='undefined')_lastAsset=asset;
+  if(typeof openTakeSignal==='function')openTakeSignal();
+  else notify('Signal ready — open the take-trade panel','info');
+}
 /* The panel. The answer first — what is above, where you are, what is below —
    then what it is made of, folded away. */
 function anaRungs(price,dp){
@@ -7085,10 +7239,18 @@ function anaRungs(price,dp){
     return (a.kind==='hi'?'the peak at ':'the trough at ')+a.v.toFixed(dp);
   }).join(' and ');
 
+  /* the bias already drives the rest of the board; the level trades follow it
+     rather than offering both sides of every level */
+  var B=window._lastBias||{}, bias=(B.dir==='bull'||B.dir==='bear')?B.dir
+        :(window._lastSig&&window._lastSig.style?(window._lastSig.isBull?'bull':'bear'):'flat');
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'this asset';
+  _lvTrades=lvTrades(L,price,sig.v,bias);
+
   return '<div class="mj">'
    +'<div class="ab-cap">Major levels · nearest above and below</div>'
    +(map||'<div class="mj-none">'+escHtml((A.list.length<1&&A.why)?A.why
         :(L.why||'No level sits near the current price.'))+'</div>')
+   +lvTradeHtml(_lvTrades,asset,price,dp,bias)
    +'<div class="lv-note">'
      +(anchorLine?'These are measured out from '+escHtml(anchorLine)+' by turning the square-root '
         +'cycle — a quarter turn, a half, a full one — so each is a price the method projects, '
@@ -8491,6 +8653,7 @@ function botConsider(sig,assetName,trend){
       en:sig.entry,ex:sig.entry,lots:lots,move:'0.00%',pnl:0,r:'open',tp:sig.tp,sl:sig.sl,
       riskAmt:riskAmt,rr:sig.rr,session:'Bot',bot:BOT.mode});
     BOT.takenToday++;
+    jrnlSave();
     renderJ();renderPnlCalendar();updatePortStats();renderBot();
     botStatus((BOT.mode==='paper'?'Paper':BOT.mode==='demo'?'Demo':'LIVE')+' order placed — '
       +assetName+' '+(sig.isBull?'BUY':'SELL')+' '+lots+' lots, risk $'+riskAmt,'good');
@@ -9282,6 +9445,7 @@ function confirmTakeSignal(){
     en:sig.entry,ex:sig.entry,lots:0,move:'0.00%',pnl:0,r:'open',
     tp:sig.tp,sl:sig.sl,riskAmt:amt,rr:sig.rr
   });
+  jrnlSave();
   renderJ();renderPnlCalendar();updatePortStats();
   document.getElementById('take_signal_pop').classList.add('hidden');
   notify('Signal logged — OPEN position added to journal','bull');
@@ -9304,6 +9468,7 @@ function closeJournalTrade(i){
   j.move=(((ex-j.en)/j.en)*100).toFixed(2)+'%';
   j.pnl=pnl;
   j.r=pnl>0?'win':pnl<0?'loss':'be';
+  jrnlSave();
   renderJ();renderPnlCalendar();updatePortStats();
   notify('Trade closed — '+(pnl>0?'+':'')+pnl,(pnl>0?'bull':'bear'));
 }
@@ -9458,7 +9623,27 @@ function onDay(){
 /* ══════════════════════════════════════
    PORTFOLIO
 ══════════════════════════════════════ */
-var JRNL=[],PORT=[],CNTS={sc:0,id:0,sw:0};
+/* THE JOURNAL HAS TO SURVIVE A RELOAD.
+   It never did. JRNL lived in memory only — nothing ever wrote it — so every
+   trade logged was gone the next time the file was opened, and the dashboard
+   counters that read from it were back to zero. That is why the trade count
+   stayed at nought no matter how many signals were taken. It is stored now, and
+   every path that changes it saves. */
+var JRNL_KEY='ca_journal';
+function jrnlLoad(){
+  try{ var raw=localStorage.getItem(JRNL_KEY);
+       var a=raw?JSON.parse(raw):[];
+       return Array.isArray(a)?a:[]; }
+  catch(e){ return []; }
+}
+function jrnlSave(){
+  try{ localStorage.setItem(JRNL_KEY,JSON.stringify(JRNL)); }catch(e){}
+  /* the dashboard reads these counters straight off the journal, so refresh
+     them here rather than waiting for the next visit to that tab */
+  try{ if(typeof dashStats==='function')dashStats(); }catch(e){}
+  try{ if(typeof dashCalendar==='function')dashCalendar(); }catch(e){}
+}
+var JRNL=jrnlLoad(),PORT=[],CNTS={sc:0,id:0,sw:0};
 var EQ_DATA=[];
 
 function updatePortStats(){
@@ -9615,6 +9800,7 @@ function addJ(){
   var pnl=calcPnL(en,ex,dir,lots);
   var r=pnl>0?'win':pnl<0?'loss':'be';
   JRNL.unshift({d:d,a:a,t:t,dir:dir,en:en,ex:ex,lots:lots,move:movePct+'%',pnl:pnl,r:r});
+  jrnlSave();
   renderJ();renderPnlCalendar();updatePortStats();
   notify('Trade logged — '+(pnl>0?'+':'')+pnl,(pnl>0?'bull':'bear'));
 }
@@ -9643,7 +9829,7 @@ function renderJ(){
       '<td style="padding:9px 10px;font-weight:700;'+ pc+'">'+(isOpen?'Pending':(j.pnl>0?'+':'')+j.pnl)+'</td>'+
       '<td style="padding:9px 10px;color:var(--muted);font-size:11px">'+ (isOpen?(j.rr||'—')+'\u00d7 target':j.move)+'</td>'+
       '<td style="padding:9px 10px"><span class="tag '+ rc+'">'+ (isOpen?'OPEN':j.r)+'</span></td>'+
-      '<td style="padding:9px 10px;display:flex;gap:4px">'+actionBtn+'<button class="btn btn-g btn-xs" onclick="JRNL.splice('+ i+',1);renderJ();renderPnlCalendar();updatePortStats()">×</button></td>'+
+      '<td style="padding:9px 10px;display:flex;gap:4px">'+actionBtn+'<button class="btn btn-g btn-xs" onclick="JRNL.splice('+ i+',1);jrnlSave();renderJ();renderPnlCalendar();updatePortStats()">×</button></td>'+
       '</tr>';
   }).join('');
 }
