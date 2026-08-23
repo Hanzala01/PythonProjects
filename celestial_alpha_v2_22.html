@@ -1451,6 +1451,64 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tp-do{font-size:13.5px;color:var(--tw);line-height:1.6;padding:10px 13px;border-radius:12px;
   background:rgba(255,255,255,.03);margin-bottom:9px}
 /* the window now says which kind of trade it is for, and whether it is live */
+/* ── THE DAY'S LEAN — directly under the ring, with the meter showing today
+      against this asset's ordinary day rather than against a bare 50. ── */
+.tdir{display:grid;grid-template-columns:minmax(180px,1fr) minmax(220px,1.4fr) minmax(140px,.8fr);
+  gap:16px;align-items:center;padding:14px 16px;margin:12px 0;border-radius:14px;
+  border:1px solid var(--b1);background:linear-gradient(150deg,rgba(83,51,153,.18),rgba(11,6,40,.9))}
+.tdir.bull{border-color:rgba(34,197,94,.34)}
+.tdir.bear{border-color:rgba(239,68,68,.34)}
+.tdir i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3)}
+.tdir b{display:block;font-family:'Space Grotesk';font-size:24px;font-weight:800;letter-spacing:.03em;
+  line-height:1.1;margin-top:3px}
+.tdir-r b{font-size:16px;color:var(--t1)}
+.tdir span{display:block;font-size:10.5px;color:var(--t2);line-height:1.6;margin-top:4px}
+.tdir-r span{color:var(--t3);font-size:9.5px}
+.tdir-bar{position:relative;height:8px;border-radius:99px;
+  background:linear-gradient(90deg,rgba(239,68,68,.5),rgba(255,255,255,.12),rgba(34,197,94,.5))}
+.tdir-bar span{position:absolute;top:-4px;width:4px;height:16px;border-radius:2px;transform:translateX(-2px);
+  box-shadow:0 0 10px currentColor}
+.tdir-bar u{position:absolute;top:-3px;width:1px;height:14px;background:rgba(255,255,255,.55);
+  text-decoration:none;transform:translateX(-.5px)}
+.tdir-k{display:flex;justify-content:space-between;align-items:baseline;margin-top:7px}
+.tdir-k s{text-decoration:none;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.tdir-k em{font-style:normal;font-size:10px;color:var(--t2);font-variant-numeric:tabular-nums}
+
+/* ── EVERY WINDOW TODAY, and what the sky has dated ── */
+.tdy{margin-top:14px}   /* not .td — that name is already a table cell up top */
+.td-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:16px 0 9px}
+.td-h b{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t2)}
+.td-h span{font-size:9.5px;color:var(--t3)}
+.td-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:9px}
+.td-w{border:1px solid var(--b1);border-radius:11px;padding:11px 13px;background:rgba(11,6,40,.7)}
+.td-w.strong{border-color:rgba(34,197,94,.34)}
+.td-w.live{border-color:var(--p3);box-shadow:0 0 0 1px rgba(168,85,247,.24)}
+.td-w.gone{opacity:.42}
+.td-t{font-family:'Space Grotesk';font-size:17px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.td-t s{text-decoration:none;color:var(--t3);font-weight:400;margin:0 2px}
+.td-m{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.td-m em{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.1em;color:var(--t3)}
+.td-w.strong .td-m em{color:var(--up)}
+.td-m span{font-size:9px;color:var(--p3);border:1px solid var(--b1);border-radius:99px;padding:1px 7px}
+.td-m u{text-decoration:none;font-size:8.5px;color:var(--t3);letter-spacing:.08em}
+.td-c{font-size:10px;color:var(--t2);margin-top:6px}
+.td-w.live .td-c{color:var(--p3);font-weight:700}
+.td-x{font-size:9.5px;color:var(--t2);margin-top:7px;padding-top:7px;border-top:1px solid var(--b1)}
+.td-x s{display:block;text-decoration:none;color:var(--t3);font-size:9px;margin-top:2px;line-height:1.5}
+.td-evs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.td-e{display:grid;grid-template-columns:50px 1fr;gap:9px;align-items:baseline;
+  border:1px solid var(--b1);border-radius:10px;padding:10px 12px;background:rgba(11,6,40,.6)}
+.td-e i{font-style:normal;font-family:'Space Grotesk';font-size:13px;font-weight:700;color:var(--p3);
+  font-variant-numeric:tabular-nums}
+.td-e b{font-size:11.5px;color:var(--t1);font-weight:600}
+.td-e s{grid-column:2;text-decoration:none;display:block;font-size:9.5px;color:var(--t3);
+  line-height:1.55;margin-top:3px}
+.td-e.sign{border-left:2px solid rgba(168,85,247,.6)}
+.td-e.aspect{border-left:2px solid rgba(34,211,238,.5)}
+.td-e.moon{border-left:2px solid rgba(255,255,255,.4)}
+.td-e.station{border-left:2px solid rgba(245,158,11,.6)}
+@media (max-width:1200px){.tdir{grid-template-columns:1fr;gap:11px}}
 .tp-run{display:block;font-style:normal;font-size:10px;color:var(--t3);line-height:1.65;margin-top:6px}
 .tp-kind b{color:var(--p3)}
 .tp-live{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.09em;
@@ -2341,6 +2399,15 @@ body{background:
 @keyframes secIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .sec .card{border:none;background:transparent;margin:0}
 .sec .card+.card{border-top:1px solid var(--rim)}
+/* PINNED SECTIONS — no open/close on the timing page.
+   Every section down there was a <details> you had to click open, so the day's
+   working was hidden behind four separate clicks and read as empty. They are
+   open and stay open: the summary keeps its heading and its one-line
+   description, and loses only the arrow and the click. */
+.sec.pin>summary{cursor:default;pointer-events:none;border-bottom:1px solid var(--rim)}
+.sec.pin>summary::before{display:none}
+.sec.pin>summary{padding-left:16px}
+.sec.pin>summary:hover{background:transparent}
 
 /* ══ TODAY'S WINDOWS — one strip that answers "when today?" ══ */
 .tws{border:1px solid var(--bd);border-radius:16px;padding:14px 16px;margin-bottom:12px;
@@ -4636,7 +4703,7 @@ body{background:var(--bg0)}
 
         <div id="today_strip"></div>
 
-        <details class="sec" open><summary><b>Session setup</b><span>your trading day, your sunrise and the time right now</span></summary>
+        <details class="sec pin" open><summary><b>Session setup</b><span>your trading day, your sunrise and the time right now</span></summary>
         <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Session Setup</div><div class="cs">Your trading day, set from your own clock. Change anything here if it does not match.</div></div>
           <div class="cb"><div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:flex-end">
             <div class="fg" style="margin-bottom:0"><label>Day</label>
@@ -4651,7 +4718,7 @@ body{background:var(--bg0)}
         </div>
         </details>
 
-        <details class="sec"><summary><b>Cycle toolkit</b><span>planet angles, planet positions and the nine-day count</span></summary>
+        <details class="sec pin" open><summary><b>Cycle toolkit</b><span>planet angles, planet positions and the nine-day count</span></summary>
         <div class="card">
           <div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Cycle Toolkit</div><div class="cs">Planet angles, planet positions and the nine-day count for any date you pick.</div></div>
           <div class="cb0">
@@ -4667,7 +4734,7 @@ body{background:var(--bg0)}
         </div>
         </details>
 
-        <details class="sec"><summary><b>This week's windows</b><span>the best hours this week, split by how long you hold</span></summary>
+        <details class="sec pin" open><summary><b>This week's windows</b><span>the best hours this week, split by how long you hold</span></summary>
         <div class="card">
           <div class="ch"><div class="ct">Best Trade Windows This Week</div><div class="cs">The hours this week the timing engine rates highest, split by how long you plan to hold.</div></div>
           <div class="cb">
@@ -4694,7 +4761,7 @@ body{background:var(--bg0)}
           </div>
         </details>
 
-        <details class="sec"><summary><b>Calendar &amp; long cycles</b><span>yearly dates and the longer cycles running into 2028</span></summary>
+        <details class="sec pin" open><summary><b>Calendar &amp; long cycles</b><span>yearly dates and the longer cycles running into 2028</span></summary>
           <div class="card">
             <div class="ch"><div class="ct">☀ Seasonal Cycle Calendar</div><div class="cs">Dates in the solar year where turns have tended to cluster.</div></div>
             <div class="cb">
@@ -7684,7 +7751,11 @@ function timState(){
   for(var h=1;h<=PH_HOURS;h++){
     var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
     var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
-    hours.push({h:h,name:hp.n,sym:hp.s,start:srMin+(h-1)*60,
+    /* `end` was missing here while timHoursFor had it, so every block built
+       from these hours came out with end === undefined. Nothing read it until
+       the window list did, and then every window printed "NaN:NaN" for its
+       close and every open/closed test silently failed on the NaN compare. */
+    hours.push({h:h,name:hp.n,sym:hp.s,start:srMin+(h-1)*60,end:srMin+h*60,
                 rank:exact?2:inter?1:0, isPos:isPos, night:h>12});
   }
   var planning=!timIsToday();
@@ -7709,18 +7780,27 @@ function timVerdict(st){
              +(n?n+' hour'+(n===1?'':'s')+' that carry '+a+'’s number — they are lit on the ring.'
                 :'no hour that carries '+a+'’s number. Nothing to plan here.')+' '+who+'.'};
   }
-  if(st.live==null||st.live<1||st.live>12)
-    return{level:'off',word:'Outside session',
-           line:'The trading day runs 12 hours from sunrise. '+who+'.'};
+  /* THE RING STOPPED AT HOUR TWELVE.
+     When the hours were extended to cover the whole day, this guard was left
+     on the old twelve-hour rule, so from hour 13 onwards the ring announced
+     "Outside session" while the list beside it was showing three windows still
+     to come that night. The ring said nothing was happening and the panel next
+     to it disagreed. It now runs the same twenty-four hours everything else
+     does, and says which side of sunset it is on instead of pretending the day
+     has ended. */
+  if(st.live==null||st.live<1||st.live>PH_HOURS)
+    return{level:'off',word:'No hour set',
+           line:'Set the current time above and the ring will follow it. '+who+'.'};
   var cur=st.hours[st.live-1];
+  var when=cur.night?' (after sunset)':'';
   if(cur.rank===2)
     return{level:'go',word:'Trade '+a+' now',
-           line:cur.name+' carries '+a+'’s number — this is a prime window. '+who+'.'};
+           line:cur.name+' carries '+a+'’s number'+when+' — this is a prime window. '+who+'.'};
   if(cur.rank===1)
     return{level:'ok',word:'Tradeable',
-           line:cur.name+' supports '+a+'’s number — take only clean setups. '+who+'.'};
+           line:cur.name+' supports '+a+'’s number'+when+' — take only clean setups. '+who+'.'};
   return{level:'wait',word:'Wait',
-         line:cur.name+' does not carry '+a+'’s number — sit this hour out for '+a+'. '+who+'.'};
+         line:cur.name+' does not carry '+a+'’s number'+when+' — sit this hour out for '+a+'. '+who+'.'};
 }
 function fmtIn(mins){
   if(mins<=0)return'now';
@@ -8141,6 +8221,135 @@ function timTradeKind(mins,hzDays,strength){
        +'rather than hours carrying the asset\u2019s own number';
   return{k:kind,cap:cap(kind),why:why,stepped:stepped};
 }
+/* The day's lean, right under the ring where it is looked for. It was only
+   printed further down inside the trade plan, so the ring could read "Wait"
+   with nothing beside it saying which way the day leaned at all. */
+function timDirHtml(st){
+  var a=timAsset(), d=timDate();
+  var A=null; try{ A=calcAstroBias(a,getEphemeris(new Date(d.getFullYear(),d.getMonth(),d.getDate(),12)),d); }catch(e){}
+  if(!A)return '';
+  var run=0; try{ run=astroRun(a,A.dir,d); }catch(e){}
+  var lab=A.dir==='bull'?'BULL':A.dir==='bear'?'BEAR':'NEUTRAL';
+  var col=A.dir==='bull'?'var(--up)':A.dir==='bear'?'var(--dn)':'var(--warn)';
+  var say=A.dir==='bull'?'Favour longs. Buy dips into support.'
+        :A.dir==='bear'?'Favour shorts. Sell rallies into resistance.'
+        :'No side. Trade the level whichever way it breaks, smaller.';
+  var pos=Math.max(2,Math.min(98,A.bull));
+  var mid=A.calib?A.calib.mid:50;
+  return '<div class="tdir '+A.dir+'">'
+   +'<div class="tdir-l"><i>The day leans</i><b style="color:'+col+'">'+lab+'</b>'
+     +'<span>'+escHtml(say)+'</span></div>'
+   +'<div class="tdir-m">'
+     +'<div class="tdir-bar"><u style="left:'+mid.toFixed(0)+'%"></u>'
+       +'<span style="left:'+pos.toFixed(0)+'%;background:'+col+'"></span></div>'
+     +'<div class="tdir-k"><s>bear</s><em>'+A.bull+'% bull &middot; ordinary day '+mid+'%</em><s>bull</s></div>'
+   +'</div>'
+   +'<div class="tdir-r"><i>Run</i><b>'+(run>1?'day '+run:'first day')+'</b>'
+     +'<span>'+(run>=6?'one read holding, not '+run+' separate ones':'of this direction')+'</span></div>'
+   +'</div>';
+}
+/* ══ TODAY, IN FULL ═══════════════════════════════════════════════════
+   The panel showed the next window and left the other five for a tooltip, so
+   a day with three good hours in it read as a day with one. This lists every
+   window the day actually has, in order, with the clock time you enter, the
+   clock time you are out, how long until it opens, and what to trade it as.
+
+   Underneath it, the sky events that are dated rather than inferred: the exact
+   minute a planet changes sign, and the exact minute an aspect perfects. Those
+   come from the ephemeris with a timestamp, so they can be put on a clock.
+   Nothing here is a forecast of price — it is a list of when things happen. */
+function timHoldUntil(startMin,mins,hzDays,kind){
+  var out=startMin+mins;
+  if(kind==='Scalp')  return{label:'out by '+fmtT(out%1440),note:'inside the window'};
+  if(kind==='Intraday')return{label:'out before the day ends',
+    note:'the push is dated to fade within '+(hzDays<2?'about a day':hzDays+' days')};
+  return{label:'hold up to '+hzDays+' day'+(hzDays===1?'':'s'),
+    note:'until the 9-day cycle turns'};
+}
+function timTodayWindows(st){
+  var blocks=timBlocks(st.hours);
+  if(!blocks.length)return [];
+  var hz=null; try{hz=timHorizon(timDate(),timAsset());}catch(e){}
+  var days=hz?hz.days:1;
+  return blocks.map(function(b){
+    var mins=b.end-b.start;
+    var kind=timTradeKind(mins,days,b.best);
+    var inMin=(st.cur!=null)?(b.start-st.srMin)-st.cur:null;
+    return{start:b.start,end:b.end,mins:mins,best:b.best,kind:kind.k,
+      night:!!(b.hours[0]&&b.hours[0].night),
+      names:b.hours.map(function(x){return x.name;}),
+      inMin:inMin, live:(inMin!=null&&inMin<=0&&inMin>-mins),
+      gone:(inMin!=null&&inMin<=-mins),
+      hold:timHoldUntil(b.start,mins,days,kind.k)};
+  });
+}
+/* dated sky events for the day on screen */
+function timSkyEvents(){
+  var out=[];
+  try{
+    var P=(window.VIBP&&VIBP.profile)?VIBP.profile(timDate()):null;
+    if(!P)return out;
+    (P.signChanges||[]).forEach(function(c){
+      if(!c||!c.at)return;
+      out.push({t:new Date(c.at),kind:'sign',
+        text:(c.name||c.body)+' enters '+c.toSign,
+        why:'a body changing sign is the one astronomical event with an exact minute and no interpretation attached'});
+    });
+    (P.aspects||[]).forEach(function(a){
+      if(!a||!a.perfectsToday||!a.exact)return;
+      out.push({t:new Date(a.exact),kind:'aspect',
+        text:a.aName+' '+(typeof aspGlyph==='function'?aspGlyph(a.type):a.type)+' '+a.bName,
+        why:a.type+', orb '+(a.orb!=null?a.orb.toFixed(2)+'°':'—')
+           +(a.applying?', closing':', separating')});
+    });
+    (P.stations||[]).forEach(function(s){
+      out.push({t:timDate(),kind:'station',text:s.name+' turns '+s.kind,
+        why:'a planet standing still before reversing direction'});
+    });
+    (P.lunations||[]).forEach(function(l){
+      if(!l||!l.at)return;
+      out.push({t:new Date(l.at),kind:'moon',text:l.type,
+        why:'the exact instant of the phase'});
+    });
+  }catch(e){}
+  return out.sort(function(x,y){return x.t-y.t;});
+}
+function timTodayHtml(st){
+  var W=timTodayWindows(st);
+  var E=timSkyEvents();
+  var strong=W.filter(function(w){return w.best===2;}).length;
+  var ahead=W.filter(function(w){return !w.gone;});
+  if(!W.length&&!E.length)return '';
+
+  var wins=W.length
+    ? '<div class="td-h"><b>Every window today</b><span>'+W.length+' in all · '+strong+' strong · '
+       +(ahead.length?ahead.length+' still ahead':'all gone for today')+'</span></div>'
+      +'<div class="td-grid">'+W.map(function(w){
+         var cls=w.live?'live':w.gone?'gone':w.best===2?'strong':'soft';
+         return '<div class="td-w '+cls+'">'
+          +'<div class="td-t">'+fmtT(w.start)+' <s>→</s> '+fmtT(w.end%1440)+'</div>'
+          +'<div class="td-m"><em>'+(w.best===2?'STRONG':'SUPPORT')+'</em>'
+            +'<span>'+escHtml(w.kind)+'</span>'+(w.night?'<u>night</u>':'')+'</div>'
+          +'<div class="td-c">'+(w.live?'open now'
+              :w.gone?'closed'
+              :w.inMin!=null?'opens in '+fmtIn(w.inMin):'')+'</div>'
+          +'<div class="td-x">'+escHtml(w.hold.label)+'<s>'+escHtml(w.hold.note)+'</s></div>'
+          +'</div>';
+       }).join('')+'</div>'
+    : '';
+
+  var evs=E.length
+    ? '<div class="td-h"><b>Dated in the sky today</b>'
+       +'<span>exact times from the ephemeris — when they happen, not what they will do</span></div>'
+      +'<div class="td-evs">'+E.map(function(e){
+         return '<div class="td-e '+e.kind+'"><i>'+fmtT(e.t.getHours()*60+e.t.getMinutes())+'</i>'
+           +'<b>'+escHtml(e.text)+'</b><s>'+escHtml(e.why)+'</s></div>';
+       }).join('')+'</div>'
+    : '<div class="td-h"><b>Dated in the sky today</b><span>nothing with an exact time — no sign change, '
+      +'no aspect perfecting, no station</span></div>';
+
+  return '<div class="tdy">'+wins+evs+'</div>';
+}
 function timTradePlan(st){
   var asset=timAsset(), vib=st.vib;
   var days=timBestDays(asset,vib,14).filter(function(d){return !d.weekend;});
@@ -8471,17 +8680,19 @@ function renderTiming(){
           +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
       }).join('')
    +'</div>'
+   +timDirHtml(st)
    +timTradePlan(st)
+   +timTodayHtml(st)
    /* Everything below the plan is background. It was all open at once, which is
       why the tab read as a wall — the answer and the reasoning had the same
       weight on the page. The reasoning is one click away now. */
-   +'<details class="sec"><summary><b>Why this day and this hour</b>'
+   +'<details class="sec pin" open><summary><b>Why this day and this hour</b>'
      +'<span>the weekday&rsquo;s ruling cycle, the sky on it, and how the next two weeks rank</span></summary>'
      +timDayCard(st)+timBestPanel(st)+'</details>'
-   +'<details class="sec"><summary><b>Planet positions and aspects</b>'
+   +'<details class="sec pin" open><summary><b>Planet positions and aspects</b>'
      +'<span>where everything is right now, for anyone who wants to check it</span></summary>'
      +timExtras()+'</details>'
-   +'<details class="sec"><summary><b>Reference tools</b><span>the complete toolkit and every calendar in one place</span></summary>'
+   +'<details class="sec pin" open><summary><b>Reference tools</b><span>the complete toolkit and every calendar in one place</span></summary>'
      +'<div class="tk-tools">'
        +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
      +'</div></details>';
