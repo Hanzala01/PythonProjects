@@ -1311,6 +1311,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tk-slot.r1 b{color:var(--acc2)}
 .tk-slot.live{transform:translateY(-4px);box-shadow:0 8px 22px rgba(0,0,0,.45),0 0 0 1px var(--acc2)}
 .tk-slot:hover{transform:translateY(-3px)}
+/* ── in at, out by, and the reminder ── */
+.tp-ex{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;
+  margin:14px 0 0;padding:14px;border-radius:14px;border:1px solid var(--b1);
+  background:rgba(11,6,40,.55)}
+.tp-e i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--t3)}
+.tp-e b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t1);
+  margin-top:4px;font-variant-numeric:tabular-nums}
+.tp-e.out b{color:var(--warn)}
+.tp-e span{display:block;font-size:9.5px;color:var(--t3);margin-top:4px;line-height:1.5}
+.tp-al{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding-top:12px;border-top:1px solid var(--b1)}
+.tp-al em{font-style:normal;font-size:9.5px;color:var(--t3);line-height:1.5;flex:1;min-width:200px}
+.tp-armed{font-size:11px;font-weight:700;color:var(--p3)}
 .tk-set{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;
   padding:14px 16px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02);margin-bottom:12px}
 .tk-set label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -8366,6 +8380,96 @@ function timTodayHtml(st){
 
   return '<div class="tdy">'+wins+evs+'</div>';
 }
+/* ══ WHEN YOU ARE IN, AND WHEN YOU ARE OUT ════════════════════════════
+   The panel named the window and how long the momentum was dated to hold,
+   and then left the reader to turn that into two clock times themselves.
+   These are the two times: the minute the window opens, and the minute the
+   hold is done. Both are computed, not typed — the exit follows from what
+   kind of trade the window is:
+
+     · a scalp ends when the window ends;
+     · an intraday ends at the next sunrise, which is where this app's
+       trading day ends;
+     · a swing ends on the horizon date — the nearer of the 9-day cycle turn
+       and the day the asset's driver leaves its sign.
+
+   None of this says price will do anything. It says when you stop giving the
+   idea time to work, which is a decision you are better off making now than
+   at the moment it is going against you.
+   ══════════════════════════════════════════════════════════════════════ */
+function timExitPlan(date,block,srMin,hzDays,kind){
+  var d0=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  var enter=new Date(d0.getTime()+block.start*60000);
+  var exit, note;
+  if(kind==='Scalp'){
+    exit=new Date(d0.getTime()+block.end*60000);
+    note='a scalp is done when the window is done — there is no reason to hold '
+        +'past the hour that put you in';
+  }else if(kind==='Intraday'){
+    exit=new Date(d0.getTime()+(srMin+1440)*60000);
+    note='out by the next sunrise, where this app’s trading day ends';
+  }else{
+    exit=new Date(d0.getTime()+hzDays*86400000+block.end*60000);
+    note='the horizon is '+hzDays+' day'+(hzDays===1?'':'s')+' out — that is the '
+        +'dated turn, not a target';
+  }
+  var held=Math.max(1,Math.round((exit-enter)/60000));
+  return{enter:enter,exit:exit,note:note,
+         held:held<1440?fmtIn(held):Math.round(held/1440)+' day'+(Math.round(held/1440)===1?'':'s')};
+}
+function fmtDT(d){
+  return d.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'})
+    +' · '+fmtT(d.getHours()*60+d.getMinutes());
+}
+/* ── the alert ───────────────────────────────────────────────────────
+   This is a browser alarm, and the honest limit is worth saying out loud on
+   the page rather than in a comment: it only fires while this page is still
+   open in a tab. There is no server behind it and nothing is installed, so a
+   closed browser means no alert. It is a reminder, not a pager. */
+var TIM_ALERTS=[], TIM_ALERT_KEY='ca_tim_alerts';
+function timAlertLoad(){
+  try{ var a=JSON.parse(localStorage.getItem(TIM_ALERT_KEY)||'[]'); TIM_ALERTS=Array.isArray(a)?a:[]; }
+  catch(e){ TIM_ALERTS=[]; }
+  TIM_ALERTS=TIM_ALERTS.filter(function(x){return x&&x.exit>Date.now();});
+  return TIM_ALERTS;
+}
+function timAlertSave(){
+  try{ localStorage.setItem(TIM_ALERT_KEY,JSON.stringify(TIM_ALERTS.slice(0,20))); }catch(e){}
+}
+function timAlertFire(msg,kind){
+  try{ notify(msg,kind||'info'); }catch(e){}
+  try{
+    if(window.Notification&&Notification.permission==='granted')
+      new Notification('Celestial Alpha',{body:msg});
+  }catch(e){}
+}
+function timAlertSchedule(a){
+  var now=Date.now();
+  if(a.enter>now)setTimeout(function(){
+    timAlertFire(a.asset+' window open — '+a.kind.toLowerCase()+', out by '+a.exitLabel,'info');
+  },Math.min(a.enter-now,2147483000));
+  if(a.exit>now)setTimeout(function(){
+    timAlertFire(a.asset+' hold is up — the '+a.kind.toLowerCase()+' horizon ends now','info');
+  },Math.min(a.exit-now,2147483000));
+}
+function timAlertArm(asset,kind,enterMs,exitMs,exitLabel){
+  var key=asset+'|'+enterMs;
+  if(TIM_ALERTS.some(function(x){return x.key===key;})){
+    notify('Already set for this window','info'); return;
+  }
+  var a={key:key,asset:asset,kind:kind,enter:enterMs,exit:exitMs,exitLabel:exitLabel};
+  TIM_ALERTS.push(a); timAlertSave(); timAlertSchedule(a);
+  try{
+    if(window.Notification&&Notification.permission==='default')Notification.requestPermission();
+  }catch(e){}
+  notify('Reminder set — opens '+fmtDT(new Date(enterMs))+', out by '+exitLabel,'info');
+  try{ renderTiming(); }catch(e){}
+}
+function timAlertClear(){
+  TIM_ALERTS=[]; timAlertSave();
+  notify('Reminders cleared','info');
+  try{ renderTiming(); }catch(e){}
+}
 function timTradePlan(st){
   var asset=timAsset(), vib=st.vib;
   var days=timBestDays(asset,vib,14).filter(function(d){return !d.weekend;});
@@ -8442,6 +8546,28 @@ function timTradePlan(st){
        +'</div>'
        +'<div class="tp-kw">Why this is '+timKindArticle(KIND.k)
          +escHtml(KIND.k.toLowerCase())+': '+escHtml(KIND.why)+'.</div>'
+       /* the two clock times the reader had been left to work out themselves */
+       +(function(){
+          var X=timExitPlan(P.day.date,P.block,st.srMin,P.hz.days,KIND.k);
+          var armed=timAlertLoad().some(function(q){return q.enter===+X.enter;});
+          return '<div class="tp-ex">'
+            +'<div class="tp-e"><i>You are in at</i><b>'+fmtDT(X.enter)+'</b>'
+              +'<span>when the window opens — not before</span></div>'
+            +'<div class="tp-e out"><i>You are out by</i><b>'+fmtDT(X.exit)+'</b>'
+              +'<span>'+escHtml(X.note)+'</span></div>'
+            +'<div class="tp-e"><i>Which is a hold of</i><b>'+escHtml(X.held)+'</b>'
+              +'<span>decide this now, not while it is moving against you</span></div>'
+            +'<div class="tp-al">'
+              +(armed?'<span class="tp-armed">Reminder set for this window</span>'
+                     +'<button class="btn btn-g btn-sm" onclick="timAlertClear()">Clear reminders</button>'
+                 :'<button class="btn btn-a btn-sm" onclick="timAlertArm(\''+escHtml(asset)+'\',\''
+                   +KIND.k+'\','+(+X.enter)+','+(+X.exit)+',\''+fmtDT(X.exit)+'\')">'
+                   +'Remind me at both times</button>')
+              +'<em>The reminder is this browser tab, nothing more — it fires while the page is '
+              +'still open and cannot reach you once it is closed.</em>'
+            +'</div>'
+          +'</div>';
+        })()
        +(P.all.length>1
           ?'<div class="tp-more"><i>All '+P.all.length+' windows that day — day and night</i>'
             +P.all.map(function(bk){
@@ -10156,6 +10282,9 @@ function jrnlSave(){
 }
 var JRNL=jrnlLoad(),PORT=[],CNTS={sc:0,id:0,sw:0};
 try{apprLoad();}catch(e){}
+/* a reminder set before a reload has to be re-armed — the timers died with
+   the old page, the record of them did not */
+try{timAlertLoad().forEach(timAlertSchedule);}catch(e){}
 var EQ_DATA=[];
 
 function updatePortStats(){
