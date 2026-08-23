@@ -1331,6 +1331,48 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-size:11.5px;color:var(--t2);line-height:1.55}
 .dstale b{color:var(--warn);font-weight:800;letter-spacing:.06em;font-size:9.5px;
   text-transform:uppercase;white-space:nowrap;padding-top:2px}
+/* ── Crypto Fear & Greed ── */
+.dh-fng{grid-column:1/-1;margin-top:7px}
+.fng-g{display:block;width:auto}
+.fng-dial{position:relative;display:flex;flex-direction:column;align-items:center}
+.fng-dial b{position:absolute;left:0;right:0;bottom:2px;text-align:center;
+  font-family:'Space Grotesk';font-size:17px;font-weight:800;line-height:1}
+.fng-dial.big b{bottom:20px;font-size:34px}
+.fng-dial.big u{position:absolute;left:0;right:0;bottom:0;text-align:center;text-decoration:none;
+  font-size:12px;font-weight:700;letter-spacing:.04em}
+.fng-mini{display:flex;align-items:center;gap:14px;padding:8px 14px;border-radius:12px;
+  border:1px solid var(--b1);background:rgba(11,6,40,.55)}
+.fng-mini .fng-dial{width:86px;flex:none}
+.fng-l{min-width:0;flex:1}
+.fng-l i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--t3)}
+.fng-l b{display:block;font-size:15px;font-weight:800;margin-top:2px}
+.fng-l s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:2px}
+.fng-h{display:flex;gap:16px;flex:none}
+.fng-h span{text-align:right}
+.fng-h i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);letter-spacing:.06em}
+.fng-h b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t2)}
+.fng-mini.off{display:block;font-size:10px;color:var(--t3);padding:10px 14px}
+.fng-full{margin:14px 0 0;padding:15px 16px;border-radius:16px;border:1px solid var(--b1);
+  background:rgba(11,6,40,.55)}
+.fng-body{display:flex;gap:22px;align-items:flex-start;margin-top:10px;flex-wrap:wrap}
+.fng-full .fng-dial{width:200px;flex:none}
+.fng-side{flex:1;min-width:230px}
+.fng-rows{display:flex;gap:26px;flex-wrap:wrap}
+.fng-rows>div{display:flex;flex-direction:column}
+.fng-rows i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3)}
+.fng-rows em{font-style:normal;font-size:10.5px;color:var(--t2);margin-top:2px}
+.fng-rows b{font-family:'Space Grotesk';font-size:24px;font-weight:700;color:var(--t1);line-height:1.1}
+.fng-spw{margin:11px 0 4px}
+.fng-sp{display:block;width:250px;max-width:100%;height:42px;opacity:.8}
+.fng-spw s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:2px}
+.fng-why{font-size:10.5px;color:var(--t2);line-height:1.6;margin-top:6px}
+.fng-warn{font-size:10px;color:var(--t3);line-height:1.6;margin-top:9px;padding-top:9px;
+  border-top:1px solid var(--b1)}
+.fng-warn b{color:var(--warn);font-weight:800}
+.fng-off{font-size:10.5px;color:var(--t3);margin-top:8px;line-height:1.6}
+@media(max-width:900px){.fng-mini{flex-wrap:wrap}.fng-h{width:100%;justify-content:flex-start}}
 .tk-set{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;
   padding:14px 16px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02);margin-bottom:12px}
 .tk-set label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -4110,6 +4152,8 @@ body{background:var(--bg0)}
         <div class="tick"><div class="tick-l"><div class="s">BTC/USD</div><div class="p" id="tk_btc">0.00</div><div class="c" id="tkc_btc">—</div></div><div class="spark" id="sp_btc"></div></div>
         <div class="tick"><div class="tick-l"><div class="s">EUR/USD</div><div class="p" id="tk_eur">0.00</div><div class="c" id="tkc_eur">—</div></div><div class="spark" id="sp_eur"></div></div>
         <div class="tick"><div class="tick-l"><div class="s">USOIL</div><div class="p" id="tk_oil">0.00</div><div class="c" id="tkc_oil">—</div></div><div class="spark" id="sp_oil"></div></div>
+        <!-- the empty band under the tiles -->
+        <div class="dh-fng" id="dh_fng"></div>
     </div>
     <div class="dh-r">
       <div class="dh-badge" onclick="dashSetMember()" title="Click to set the member name"><span class="dh-av" id="dh_ini">CA</span>
@@ -7735,6 +7779,10 @@ function renderAnalytics(){
          +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
      }).join('')+'</div>'
 
+   /* filled by renderFng once the index arrives — it is one network call and
+      should not hold up the board that does not depend on it */
+   +'<div id="ana_fng"></div>'
+
    +anaLadder(pts,price,lo,hi,dp,S,dir)
 
    +'<details class="sec" id="qv_sec" open><summary><b>How is it moving right now?</b>'
@@ -7753,6 +7801,9 @@ function renderAnalytics(){
      the quantitative block blank. */
   try{var _qh=document.getElementById('qv_ana');
       if(_qh)_qh.innerHTML=qvAnalyticsHtml();}catch(e){}
+  /* same reason: this host is recreated empty by the innerHTML above, and the
+     index is cached, so refilling it costs nothing after the first call */
+  try{renderFng();}catch(e){}
 
   host.querySelectorAll('.mj-track .fill').forEach(function(f){
     f.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -10800,6 +10851,7 @@ try {
     /* the board says what it is waiting for while the quote is in flight,
        rather than showing five rings reading zero */
     try{ dashMatrixIdle('waiting for a price'); }catch(e){}
+    try{ renderFng(); }catch(e){}
     fetchLivePrice(function(ok){
       if(ok){ runAI(); return; }
       /* THE DASHBOARD USED TO GIVE UP HERE.
@@ -13870,6 +13922,163 @@ function dashStale(msg){
   if(!msg){e.style.display='none';e.innerHTML='';return;}
   e.innerHTML='<b>Not live</b><span>'+escHtml(msg)+'</span>';
   e.style.display='';
+}
+/* ══ CRYPTO FEAR & GREED ══════════════════════════════════════════════
+   alternative.me's index, straight from their public endpoint — no key, and
+   it returns the last few days so "yesterday" and "last week" are read off
+   real history rather than guessed.
+
+   One thing has to be said plainly wherever this appears, because the number
+   is often passed around as though it measured "the market": it measures the
+   CRYPTO market. alternative.me build it from Bitcoin's volatility, momentum,
+   social volume, BTC dominance and search trends. It is a fine read of how
+   much risk crypto holders are taking. It is not a gold indicator, not an FX
+   indicator, and on a board pointed at Gold it is background — a risk-on /
+   risk-off reading of the wider tape, not a signal for the asset in front of
+   you. The panel says so rather than leaving the reader to assume otherwise.
+
+   The index is recomputed once a day, so it is cached until their own
+   time_until_update says a new one is due.
+   ══════════════════════════════════════════════════════════════════════ */
+var FNG_KEY='ca_fng', FNG_URL='https://api.alternative.me/fng/?limit=8';
+function fngCacheRead(){
+  try{
+    var d=JSON.parse(localStorage.getItem(FNG_KEY)||'null');
+    if(d&&d.until&&Date.now()<d.until&&d.rows&&d.rows.length)return d.rows;
+  }catch(e){}
+  return null;
+}
+function fngCacheWrite(rows,secs){
+  try{
+    localStorage.setItem(FNG_KEY,JSON.stringify({
+      rows:rows, until:Date.now()+Math.max(5,Math.min(secs||1800,86400))*1000}));
+  }catch(e){}
+}
+function fngFetch(cb){
+  var c=fngCacheRead();
+  if(c){cb(c);return;}
+  var done=false, t=setTimeout(function(){ if(!done){done=true;cb(null);} },9000);
+  fetch(FNG_URL).then(function(r){return r.json();}).then(function(d){
+    if(done)return;
+    if(!d||!Array.isArray(d.data)||!d.data.length){done=true;clearTimeout(t);cb(null);return;}
+    var rows=d.data.map(function(x){
+      return{v:parseInt(x.value,10), k:x.value_classification||'', ts:parseInt(x.timestamp,10)*1000};
+    }).filter(function(x){return isFinite(x.v);});
+    done=true; clearTimeout(t);
+    if(!rows.length){cb(null);return;}
+    fngCacheWrite(rows,parseInt(d.data[0].time_until_update,10));
+    cb(rows);
+  }).catch(function(){ if(!done){done=true;clearTimeout(t);cb(null);} });
+}
+/* alternative.me's own bands, so the word always matches the number they publish */
+function fngBand(v){
+  return v<25?{w:'Extreme Fear',c:'#EF4444'}
+        :v<45?{w:'Fear',c:'#F97316'}
+        :v<56?{w:'Neutral',c:'#FBBF24'}
+        :v<76?{w:'Greed',c:'#84CC16'}
+             :{w:'Extreme Greed',c:'#22C55E'};
+}
+/* a half-dial: 0 on the left, 100 on the right, the reading marked on the arc */
+function fngGauge(v,uid,h){
+  var cx=100, cy=100, r=76;
+  var a=(180+(Math.max(0,Math.min(100,v))/100)*180)*Math.PI/180;
+  var mx=cx+r*Math.cos(a), my=cy+r*Math.sin(a);
+  return '<svg viewBox="0 0 200 118" class="fng-g" style="height:'+h+'px" aria-hidden="true">'
+   +'<defs><linearGradient id="fngG'+uid+'" x1="0" y1="0" x2="1" y2="0">'
+     +'<stop offset="0%" stop-color="#EF4444"/><stop offset="30%" stop-color="#F97316"/>'
+     +'<stop offset="52%" stop-color="#FBBF24"/><stop offset="78%" stop-color="#84CC16"/>'
+     +'<stop offset="100%" stop-color="#22C55E"/></linearGradient></defs>'
+   +'<path d="M'+(cx-r)+' '+cy+'A'+r+' '+r+' 0 0 1 '+(cx+r)+' '+cy+'" fill="none"'
+     +' stroke="url(#fngG'+uid+')" stroke-width="15" stroke-linecap="round"/>'
+   +'<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="7.5" fill="#0B0628"/>'
+   +'<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="4.6" fill="#F5F3FF"/>'
+   +'</svg>';
+}
+function fngAgo(daysBack){
+  return daysBack===1?'yesterday':daysBack===7?'last week':daysBack+' days ago';
+}
+/* the compact strip that sits under the price tiles on the dashboard */
+function fngMiniHtml(rows){
+  if(!rows||!rows.length)
+    return '<div class="fng fng-mini off">Crypto Fear &amp; Greed unavailable — '
+      +'alternative.me did not answer.</div>';
+  var now=rows[0], b=fngBand(now.v);
+  var y=rows[1]||null, w=rows[7]||rows[rows.length-1]||null;
+  return '<div class="fng fng-mini">'
+   +'<div class="fng-dial">'+fngGauge(now.v,'m',48)
+     +'<b style="color:'+b.c+'">'+now.v+'</b></div>'
+   +'<div class="fng-l"><i>Crypto Fear &amp; Greed</i>'
+     +'<b style="color:'+b.c+'">'+escHtml(now.k||b.w)+'</b>'
+     +'<s>crypto sentiment — context, not a '
+     +escHtml(((document.getElementById('ai_asset_txt')||{}).value||'Gold'))+' signal</s></div>'
+   +'<div class="fng-h">'
+     +(y?'<span><i>Yesterday</i><b>'+y.v+'</b></span>':'')
+     +(w?'<span><i>Last week</i><b>'+w.v+'</b></span>':'')
+   +'</div>'
+  +'</div>';
+}
+/* the full card for the analytics board */
+function fngFullHtml(rows){
+  if(!rows||!rows.length)
+    return '<div class="fng fng-full off"><div class="ab-cap">Crypto Fear &amp; Greed</div>'
+      +'<div class="fng-off">alternative.me did not answer, so there is no reading to show. '
+      +'Nothing is being estimated in its place.</div></div>';
+  var now=rows[0], b=fngBand(now.v);
+  var y=rows[1]||null;
+  var wIx=Math.min(7,rows.length-1), w=wIx>1?rows[wIx]:null;
+  var move=y?(now.v-y.v):null;
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'this asset';
+  /* the spark is the eight days the endpoint returns, nothing longer */
+  var spark=(function(){
+    var pts=rows.slice().reverse();
+    if(pts.length<2)return '';
+    var W=250,H=42;
+    var vs=pts.map(function(p){return p.v;});
+    var lo=Math.min.apply(null,vs), hi=Math.max.apply(null,vs);
+    var span=Math.max(6,hi-lo);                 /* a flat week stays visibly flat */
+    var d=pts.map(function(p,i){
+      var yy=H-3-((p.v-lo)/span)*(H-6);
+      return (i?'L':'M')+(i/(pts.length-1)*W).toFixed(1)+' '+yy.toFixed(1);
+    }).join('');
+    return '<div class="fng-spw"><svg viewBox="0 0 '+W+' '+H+'" class="fng-sp" aria-hidden="true">'
+      +'<path d="'+d+'" fill="none" stroke="'+b.c+'" stroke-width="2" stroke-linejoin="round"'
+      +' stroke-linecap="round"/></svg><s>'+lo+' &rarr; '+hi+' over '+pts.length+' days</s></div>';
+  })();
+  return '<div class="fng fng-full">'
+   +'<div class="ab-cap">Crypto Fear &amp; Greed</div>'
+   +'<div class="fng-body">'
+     +'<div class="fng-dial big">'+fngGauge(now.v,'f',104)
+       +'<b style="color:'+b.c+'">'+now.v+'</b><u style="color:'+b.c+'">'+escHtml(now.k||b.w)+'</u></div>'
+     +'<div class="fng-side">'
+       +'<div class="fng-rows">'
+         +(y?'<div><i>Yesterday</i><em>'+escHtml(y.k||fngBand(y.v).w)+'</em><b>'+y.v+'</b></div>':'')
+         +(w?'<div><i>'+escHtml(fngAgo(wIx))+'</i><em>'+escHtml(w.k||fngBand(w.v).w)+'</em><b>'+w.v+'</b></div>':'')
+       +'</div>'
+       +spark
+       +'<div class="fng-why">'
+         +(move!=null?'It is '+(move>0?'up '+move:move<0?'down '+Math.abs(move):'flat')
+             +' point'+(Math.abs(move)===1?'':'s')+' on yesterday. ':'')
+         +'The scale runs 0 (extreme fear) to 100 (extreme greed), and it is built from '
+         +'Bitcoin&rsquo;s volatility, momentum, social volume, BTC dominance and search trends.'
+       +'</div>'
+       +'<div class="fng-warn">This measures the <b>crypto</b> market. It is not a reading of '
+         +escHtml(asset)+'. Treat it as risk appetite across the wider tape — useful background, '
+         +'not an entry signal here.</div>'
+     +'</div>'
+   +'</div>'
+  +'</div>';
+}
+/* one fetch, both hosts — whichever of them is on the page */
+function renderFng(){
+  var hosts=[['dh_fng',fngMiniHtml],['ana_fng',fngFullHtml]]
+    .filter(function(h){return document.getElementById(h[0]);});
+  if(!hosts.length)return;
+  fngFetch(function(rows){
+    hosts.forEach(function(h){
+      var e=document.getElementById(h[0]);
+      if(e)e.innerHTML=h[1](rows);
+    });
+  });
 }
 function dashMatrixIdle(reason){
   var parts=[['Level Quality',40],['Level Distance',25],['Cycle Bias',25],['Hour Match',10]];
