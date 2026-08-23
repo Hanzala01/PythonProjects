@@ -3790,6 +3790,11 @@ body{background:var(--bg0)}
   background:rgba(2,2,12,.8);border:1px solid var(--b1);color:var(--t1);font-weight:600}
 .fr-picks{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
 
+/* the filings sit under the ratios now, so they need a rule between them */
+.fr-sep{margin:22px 0 12px;padding-top:14px;border-top:1px solid var(--b1)}
+.fr-sep b{display:block;font-size:11px;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--t2)}
+.fr-sep span{display:block;font-size:10px;color:var(--t3);margin-top:4px;line-height:1.6}
 .fr-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .fr-head b{font-size:17px;font-weight:600;color:var(--t1)}
 .fr-head span{font-size:9.5px;color:var(--t3)}
@@ -3961,7 +3966,7 @@ body{background:var(--bg0)}
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Market Intelligence</div>
     <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
-    <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>Fundamentals</div>
+    <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>The Books</div>
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7M10 20a2.2 2.2 0 004 0"/></svg>Alerts</div>
     <div class="nav-item" onclick='goTab("bot",this)'><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M8 4h8"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/></svg>Bot</div>
@@ -4512,30 +4517,13 @@ body{background:var(--bg0)}
       <div class="pane hidden" id="pane_fundamentals">
         <div class="card">
           <div class="ch">
-            <div class="ct"><div class="dot" style="background:var(--green)"></div>Fundamentals</div>
-            <div class="cs">the business behind the ticker, and the market it sits in</div>
+            <div class="ct"><div class="dot" style="background:var(--green)"></div>The Books</div>
+            <div class="cs">what the company actually earns, owes and keeps &mdash; and the market it trades in</div>
           </div>
           <div class="cb">
             <div class="fx-tabs">
-              <span id="fx_t_stock" class="on" onclick="fxTab('stock')">Stock analysis</span>
-              <span id="fx_t_report" onclick="fxTab('report')">Financial report</span>
-              <span id="fx_t_index" onclick="fxTab('index')">Index analysis</span>
-            </div>
-            <div id="fx_report" class="hidden">
-              <div class="fr-bar">
-                <label>Ticker<input type="text" id="fr_sym" value="AAPL" placeholder="AAPL" onkeydown="if(event.key==='Enter')renderFinReport()"></label>
-                <button class="btn btn-a btn-sm" onclick="renderFinReport()">Read the filings</button>
-                <button class="btn btn-g btn-sm" onclick="finLoadFromStock()">Use ticker from Stock analysis</button>
-                <div class="fr-picks">
-                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='AAPL';renderFinReport()">AAPL</span>
-                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='MSFT';renderFinReport()">MSFT</span>
-                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='TSLA';renderFinReport()">TSLA</span>
-                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='WMT';renderFinReport()">WMT</span>
-                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='KO';renderFinReport()">KO</span>
-                  <span class="ab-pick" onclick="document.getElementById('fr_sym').value='JPM';renderFinReport()">JPM</span>
-                </div>
-              </div>
-              <div id="fr_body"><div class="qv-empty">Pick a ticker and press Read the filings.</div></div>
+              <span id="fx_t_stock" class="on" onclick="fxTab('stock')">Company</span>
+              <span id="fx_t_index" onclick="fxTab('index')">Index</span>
             </div>
             <div id="fx_index" class="hidden">
               <div class="fx-mk">
@@ -4559,6 +4547,9 @@ body{background:var(--bg0)}
               </div>
             </div>
             <div id="fund_body"><div class="qv-empty">Pick a ticker and press Load.</div></div>
+            <div class="fr-sep"><b>From the filings</b>
+              <span>the thirty accounting formulas, run on this company&rsquo;s own statements</span></div>
+            <div id="fr_body"><div class="qv-empty">Load a ticker above and the filings are read too.</div></div>
             </div>
           </div>
         </div>
@@ -13059,13 +13050,15 @@ function renderSentimentV3(){
    +'<div class="sn-week">'+week+'</div>'
    +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
    +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
-   +'<div class="sn-sech"><b>The backdrop</b><span>what the next print is landing into</span></div>'
+   +'<div class="sn-sech"><b>The Tide</b><span>the slow money underneath — rates, inflation, jobs and energy, '
+     +'which move on their own clock and set what every release lands into</span></div>'
    +'<div id="sn_macro"></div>'
    +shareBar('sentiment')
    +'<details class="sn-det"><summary>Data sources &amp; API keys'
      +'<span>where every figure above comes from, and how old it is</span></summary>'
      +'<div class="sn-src" id="sn_src"></div></details>'
-   +'<div class="sn-sech"><b>The wire</b><span>headlines scored by keyword — a tone check, not a signal</span></div>'
+   +'<div class="sn-sech"><b>The Wire</b><span>headlines with the provider&rsquo;s own sentiment score where there '
+     +'is one, read from the wording where there is not — a tone check, not a signal</span></div>'
    +'<div id="sn_news"></div>';
 
   /* the macro loader writes live numbers into the hidden legacy hero — mirror
@@ -15331,18 +15324,12 @@ var _fxMarket='psx', _fxTab='stock', _fxCache={};
 
 function fxTab(which){
   _fxTab=which;
-  ['stock','index','report'].forEach(function(k){
+  ['stock','index'].forEach(function(k){
     var pane=document.getElementById('fx_'+k), tab=document.getElementById('fx_t_'+k);
     if(pane)pane.classList.toggle('hidden',k!==which);
     if(tab)tab.classList.toggle('on',k===which);
   });
   if(which==='index')renderIndex();
-  /* the report costs three API calls, so it is not fetched until asked for,
-     and the cache means coming back to the tab is free */
-  if(which==='report'){
-    var host=document.getElementById('fr_body');
-    if(host&&!host.querySelector('.fr-head'))renderFinReport();
-  }
 }
 function fxMarket(m){
   _fxMarket=m;
@@ -15470,6 +15457,8 @@ function renderFundamentals(){
   sym=sym.trim().toUpperCase();
   if(!sym){host.innerHTML=qvEmpty('Type a US stock ticker above — AAPL, TSLA, MSFT, NVDA — and press Load.');return;}
   host.innerHTML='<div class="qv-empty">Loading '+escHtml(sym)+'…</div>';
+  /* the filings are part of the same answer, so they load with it */
+  try{ renderFinReport(); }catch(e){}
   fundFetch(sym,function(F){
     if(!F.metric&&!F.profile){
       host.innerHTML=qvEmpty('Nothing came back for "'+escHtml(sym)+'". '+F.errs.join(' · ')
@@ -15940,7 +15929,9 @@ function finSpark(vals,col){
 function renderFinReport(){
   var host=document.getElementById('fr_body');
   if(!host)return;
-  var sym=((document.getElementById('fr_sym')||{}).value||'').trim().toUpperCase();
+  /* one ticker box now: the filings follow whatever the company view is showing */
+  var box=document.getElementById('fr_sym')||document.getElementById('fund_sym');
+  var sym=((box||{}).value||'').trim().toUpperCase();
   if(!sym){host.innerHTML=qvEmpty('Type a ticker above — AAPL, MSFT, TSLA — and press Load.');return;}
   host.innerHTML='<div class="qv-empty">Reading '+escHtml(sym)+'’s filings…</div>';
   finFetch(sym,function(F){
@@ -16084,11 +16075,7 @@ function finRoi(){
   if(!out)return;
   out.textContent=(isFinite(c)&&c!==0&&isFinite(p))?('ROI '+(p/c*100).toFixed(1)+'%'):'ROI —';
 }
-function finLoadFromStock(){
-  var a=((document.getElementById('fund_sym')||{}).value||'').trim().toUpperCase();
-  var el=document.getElementById('fr_sym');
-  if(el&&a){el.value=a;renderFinReport();}
-}
+
 function fundLoadFromAnalysis(){
   var a=(document.getElementById('ai_asset_txt')||{}).value||'';
   var sym=(finnhubSymbol(a.toUpperCase().replace(/[^A-Z0-9]/g,''))||a).toUpperCase();
