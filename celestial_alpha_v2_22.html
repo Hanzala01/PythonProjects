@@ -3456,34 +3456,12 @@ body{background:var(--bg0)}
 .lv-now .lv-p{font-size:27px;color:var(--t1)}
 .lv-now .lv-d{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--p3)}
 .lv-note{font-size:10px;color:var(--t3);line-height:1.75;margin-bottom:4px}
-/* ── TRADES FROM THE LEVELS — the plan you would actually place, one card per
-      level, with the numbers that go in the ticket and nothing that pretends
-      to know the outcome. ── */
-.lvt{margin-top:14px}
-.lvt-lead{font-size:10px;color:var(--t3);line-height:1.75;margin-bottom:10px}
-.lvt-r{border:1px solid var(--b1);border-radius:12px;padding:13px 15px;margin-bottom:9px;
-  background:linear-gradient(155deg,rgba(139,92,246,.035),rgba(4,3,14,.85))}
-.lvt-r.long{border-left:2px solid rgba(34,197,94,.55)}
-.lvt-r.short{border-left:2px solid rgba(239,68,68,.55)}
-.lvt-r.live{box-shadow:0 0 0 1px rgba(168,85,247,.22)}
-.lvt-r.full{opacity:.55}
-.lvt-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px}
-.lvt-h b{font-family:'Space Grotesk';font-size:14px;font-weight:700;letter-spacing:.02em;color:var(--t1)}
-.lvt-r.long .lvt-h b{color:var(--up)}
-.lvt-r.short .lvt-h b{color:var(--dn)}
-.lvt-k{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--p3);
-  border:1px solid var(--b1);border-radius:99px;padding:3px 9px}
-.lvt-w{margin-left:auto;font-size:9.5px;color:var(--t3)}
-.lvt-r.live .lvt-w{color:var(--p3);font-weight:700}
-.lvt-n{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:9px}
-.lvt-n i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
-.lvt-n b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t1);
-  font-variant-numeric:tabular-nums;margin-top:2px}
-.lvt-why{font-size:9.5px;color:var(--t3);line-height:1.7;margin-bottom:10px}
-.lvt-full{font-size:9.5px;color:var(--warn);font-weight:600}
 /* ── APPROVALS — a decision queue, not a feed. Pending items read loud; the
       ones already decided sit back but stay, because what you passed on is
       part of the record. ── */
+.sgc-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:11px;
+  padding-top:11px;border-top:1px solid var(--b1)}
+.sgc-q{margin-left:auto;font-size:9.5px;color:var(--t3)}
 .apr-badge{display:inline-block;min-width:17px;height:17px;line-height:17px;padding:0 5px;margin-left:8px;
   border-radius:99px;background:var(--p1);color:#fff;font-size:9.5px;font-weight:800;text-align:center}
 .apr-lead{font-size:10px;color:var(--t3);line-height:1.75;margin-bottom:10px}
@@ -3522,9 +3500,8 @@ body{background:var(--bg0)}
 .bot-appr i{display:block;font-style:normal;font-size:9.5px;color:var(--t3);line-height:1.6;margin-top:3px}
 .bot-pend{font-size:10px;color:var(--warn);border:1px solid rgba(245,158,11,.32);border-radius:9px;
   padding:8px 11px;margin-top:9px;background:rgba(245,158,11,.06)}
-.lvt-b{display:flex;gap:8px;flex-wrap:wrap}
 @media (max-width:1200px){.apr-n{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:1200px){.lvt-n{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1200px){.apr-n{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:1200px){
   .lv-r,.lv-now{grid-template-columns:20px 92px 1fr}
   .lv-r.lead .lv-s{display:none}
@@ -5953,6 +5930,17 @@ function quotaKey(asset,style,entry){
 }
 /* returns {ok, used, cap, fresh} — ok=false means the cap is spent and this
    setup is not one of the ones already counted */
+/* Does a slot exist for this style? Asks without spending one.
+   quotaTake used to run while the engine was forming the setup, which meant
+   looking at four assets emptied the month's swing budget even though nothing
+   had been traded. Forming a setup is a calculation; spending the budget is a
+   decision, and only the decision should cost anything. */
+function quotaPeek(style){
+  var cap=TRADE_QUOTA[style];
+  if(!cap)return{ok:true,used:0,cap:0,fresh:false};
+  var L=quotaLoad(), arr=L.used[style];
+  return{ok:arr.length<cap,used:arr.length,cap:cap,fresh:true};
+}
 function quotaTake(style,key){
   var cap=TRADE_QUOTA[style];
   if(!cap)return{ok:true,used:0,cap:0,fresh:false};
@@ -5992,11 +5980,12 @@ function quotaHtml(){
          +'<i>'+r.style+'</i>'
          +'<b>'+r.used+'<em>/'+r.cap+'</em></b>'
          +'<div class="qta-bar"><span style="width:'+pc.toFixed(0)+'%"></span></div>'
-         +'<u onclick="quotaRelease(\''+r.style+'\')" title="Give a slot back if you did not take that trade">'
+         +'<u onclick="quotaRelease(\''+r.style+'\')" title="Give a slot back if you closed or cancelled that trade">'
          +(r.used?'release':'')+'</u></div>';
      }).join('')
-    +'<div class="qta-n">A slot is spent by a distinct setup (asset + style + entry), not by looking at one. '
-    +'First come, not best — the engine cannot rank a month it has not seen yet.</div></div>';
+    +'<div class="qta-n">A slot is spent when you take a trade, not when the engine works one out. '
+    +'Looking at ten setups costs nothing; taking one costs a slot. Release gives it back if you '
+    +'closed or cancelled.</div></div>';
 }
 function calcSignalConf(gannScore,astroBull,timingMatch,levels,price){
   return confParts(gannScore,astroBull,timingMatch,levels,price).conf;
@@ -6093,21 +6082,20 @@ function buildSignal(price,vibNum,astro,levels,risk,eph,trend){
   /* the monthly budget decides whether this style may be formed at all */
   var _qk=quotaKey(typeof _lastAsset!=='undefined'?_lastAsset:'',style,
                    (levels&&levels[0]?levels[0].price:price));
-  var _q=quotaTake(style,_qk), _downgraded=null, _qBoth=null;
+  var _q=quotaPeek(style), _downgraded=null, _qBoth=null;
   if(!_q.ok&&style==='Swing'&&conf>=INTRA_MIN){
     /* the swing budget being spent does not make the setup invalid — it still
        clears the intraday bar on the engine's own thresholds, so it is offered
        as one rather than thrown away, and the swap is stated */
-    var _q2=quotaTake('Intraday',quotaKey(typeof _lastAsset!=='undefined'?_lastAsset:'','Intraday',
-                       (levels&&levels[0]?levels[0].price:price)));
+    var _q2=quotaPeek('Intraday');
     if(_q2.ok){_downgraded='Swing budget spent ('+_q.used+'/'+_q.cap
-      +') — taken as an Intraday instead, which it also qualifies for at '+conf+'%.';
+      +') — offered as an Intraday instead, which it also qualifies for at '+conf+'%.';
       style='Intraday'; _q=_q2;}
     else _qBoth=_q2;                 /* the fallback was spent too */
   }
   if(!_q.ok){
     /* name the budget that actually blocked it, not just the first one tried */
-    var _why='Monthly '+style+' budget is spent — '+_q.used+' of '+_q.cap+' already formed this month';
+    var _why='Monthly '+style+' budget is spent — '+_q.used+' of '+_q.cap+' already taken this month';
     if(_qBoth)_why+=', and the Intraday budget it would fall back to is spent as well ('
       +_qBoth.used+' of '+_qBoth.cap+')';
     return{conf:conf,confParts:_cp,style:null,quota:_q,quotaAlt:_qBoth,
@@ -6759,9 +6747,14 @@ function anaPickSide(daily,weekly,kind,price,reach,minGap,sigma){
   };
   var W=anaAnchorRank(anaPeaks(weekly,3,kind).filter(inWindow),price,sigma);
   var D=anaAnchorRank(anaPeaks(daily ,5,kind).filter(inWindow),price,sigma);
+  /* The second anchor on a side has to be a DIFFERENT measurement, not the same
+     one twice. A 0.2% dedupe let gold pick troughs at 4097.51 and 4023.10 — 1.8%
+     apart — and the two ladders then produced levels on top of each other while
+     the peak contributed almost nothing. Separation is now three daily moves. */
+  var sep=Math.max(0.03,3*(sigma||0.01));
   var out=[], alts=[];
   var dup=function(v){
-    for(var j=0;j<out.length;j++) if(Math.abs(out[j].v-v)/v<0.002)return true;
+    for(var j=0;j<out.length;j++) if(Math.abs(out[j].v-v)/v<sep)return true;
     return false;
   };
   if(W[0])out.push({v:W[0].p,tf:'weekly',date:W[0].d,prom:W[0].prom,kind:kind});
@@ -6791,7 +6784,10 @@ function anaAutoAnchors(price){
   if(!(price>0)){out.why='Needs a live price to measure from.';return out;}
   var sig=dailySigma().v||0.01;
   var reach=Math.min(0.5,Math.max(0.22,16*sig));   /* far enough to matter, near enough to reach */
-  var minGap=4*sig;                                /* closer than this and the rungs land on price */
+  /* 4σ ruled out pivots the market was actually working around — on gold that
+     meant skipping a trough 4.7% under price in favour of one 12.7% under it,
+     and every level came back miles from where price was trading. */
+  var minGap=2.5*sig;
   out.reach=reach; out.minGap=minGap;
   var weekly=anaWeekly(rows);
   var T=(typeof calcMajorTrend==='function')?calcMajorTrend(rows,price):null;
@@ -7127,148 +7123,6 @@ function anaLevelRow(r,dir,dp,lead){
     +'<span class="lv-w">'+escHtml(anaLevelFrom(r,dp))+'</span>'
     +'</div>';
 }
-/* ══ TRADES FROM THE LEVELS ═══════════════════════════════════════════
-   The level map says where the structure is. This turns each level into the
-   plan you would actually place: enter AT the level, stop just beyond it,
-   target the next level in front of you.
-
-   Every one of these is conditional. Price has to reach the entry first —
-   nothing here is a prediction that it will. The reward-to-risk is arithmetic
-   off two levels and a buffer, not a claim about how often it works; no win
-   rate is quoted anywhere because none has been measured.
-   ══════════════════════════════════════════════════════════════════════ */
-var LV_STOP_BUFFER=0.5;    /* how far beyond the level the stop sits, in daily moves */
-var LV_MIN_RR=1.5;         /* below this the plan is not worth placing */
-
-function lvKindFor(targetSig){
-  return targetSig<1.5 ? 'Scalp' : targetSig<4 ? 'Intraday' : 'Swing';
-}
-/* one plan per level, in both directions, then filtered */
-function lvTrades(levels,price,sigma,bias){
-  var out=[];
-  if(!levels||!(price>0)||!(sigma>0))return out;
-  var s=price*sigma;
-  var all=(levels.up||[]).concat(levels.dn||[])
-    .slice().sort(function(a,b){return a.p-b.p;});
-  if(all.length<2)return out;
-
-  all.forEach(function(L,i){
-    /* LONG off a level below price: it has to fall into it first */
-    if(L.p<price){
-      var tgt=all.filter(function(x){return x.p>L.p+s*0.4;})[0];
-      if(tgt){
-        var entry=L.p, stop=L.p-s*LV_STOP_BUFFER, take=tgt.p;
-        var risk=entry-stop, reward=take-entry;
-        if(risk>0&&reward>0)out.push({side:'long',level:L,target:tgt,
-          entry:entry,stop:stop,take:take,rr:reward/risk,
-          awaySig:(price-entry)/s, tgtSig:(take-entry)/s});
-      }
-    }
-    /* SHORT off a level above price: it has to rise into it first */
-    if(L.p>price){
-      var tgt2=all.filter(function(x){return x.p<L.p-s*0.4;}).slice(-1)[0];
-      if(tgt2){
-        var e2=L.p, st2=L.p+s*LV_STOP_BUFFER, tk2=tgt2.p;
-        var r2=st2-e2, w2=e2-tk2;
-        if(r2>0&&w2>0)out.push({side:'short',level:L,target:tgt2,
-          entry:e2,stop:st2,take:tk2,rr:w2/r2,
-          awaySig:(e2-price)/s, tgtSig:(e2-tk2)/s});
-      }
-    }
-  });
-
-  out=out.filter(function(t){return t.rr>=LV_MIN_RR;});
-  /* The daily bias decides which way you are allowed to look. Taking both
-     sides of every level is not a strategy, it is a coin toss with extra
-     steps, and the rest of this app already tells the reader to trade one
-     way on a given day. */
-  if(bias==='bull')      out=out.filter(function(t){return t.side==='long';});
-  else if(bias==='bear') out=out.filter(function(t){return t.side==='short';});
-
-  out.forEach(function(t){
-    t.kind=lvKindFor(t.tgtSig);
-    t.live=t.awaySig<0.25;
-  });
-  /* nearest first — the one price can reach soonest is the one that matters */
-  out.sort(function(a,b){return a.awaySig-b.awaySig;});
-  return out.slice(0,4);
-}
-function lvTradeHtml(T,asset,price,dp,bias){
-  if(!T.length)return '';
-  var Q=(typeof quotaState==='function')?quotaState():null;
-  var left=function(k){
-    if(!Q)return null;
-    var r=Q.rows.filter(function(x){return x.style===k;})[0];
-    return r?r.left:null;
-  };
-  return '<div class="lvt">'
-   +'<div class="ab-cap">Trades these levels give you</div>'
-   +'<div class="lvt-lead">Each of these is a plan, not a call: it only exists if price actually '
-     +'reaches the entry. Enter at the level, stop just beyond it, take profit at the next level in '
-     +'front. The reward-to-risk is arithmetic from those three prices — it says how much you stand '
-     +'to make against what you put at risk, and nothing about how often it comes off.'
-     +(bias==='bull'?' Only longs are listed because today’s bias reads up.'
-      :bias==='bear'?' Only shorts are listed because today’s bias reads down.'
-      :' Both directions are listed because today’s bias is flat.')
-   +'</div>'
-   +T.map(function(t,i){
-      var sl=left(t.kind);
-      var full=(sl===0);
-      return '<div class="lvt-r '+t.side+(t.live?' live':'')+(full?' full':'')+'">'
-       +'<div class="lvt-h">'
-         +'<b>'+(t.side==='long'?'BUY':'SELL')+' '+escHtml(asset)+'</b>'
-         +'<span class="lvt-k">'+t.kind+(sl!=null?' · '+sl+' of '+TRADE_QUOTA[t.kind]+' left':'')+'</span>'
-         +'<span class="lvt-w">'+(t.live?'price is there now'
-             :'waiting — price is '+Math.abs(t.awaySig).toFixed(1)+' days’ move away')+'</span>'
-       +'</div>'
-       +'<div class="lvt-n">'
-         +'<div><i>Entry</i><b>'+t.entry.toFixed(dp)+'</b></div>'
-         +'<div><i>Stop</i><b class="cr">'+t.stop.toFixed(dp)+'</b></div>'
-         +'<div><i>Target</i><b class="cg">'+t.take.toFixed(dp)+'</b></div>'
-         +'<div><i>Reward : risk</i><b class="ca">'+t.rr.toFixed(1)+' : 1</b></div>'
-       +'</div>'
-       +'<div class="lvt-why">Entry is '+escHtml(anaLevelFrom(t.level,dp).toLowerCase())
-         +'. Target is the next level in front, '+escHtml(anaLevelFrom(t.target,dp).toLowerCase())
-         +'. The stop sits '+LV_STOP_BUFFER+' of a daily move beyond the entry, so ordinary noise '
-         +'around the level does not take you out.</div>'
-       +(full?'<div class="lvt-full">No '+t.kind.toLowerCase()+' slots left this month.</div>'
-             :'<div class="lvt-b"><button class="btn btn-a btn-sm" onclick="lvTake('+i+')">Take this trade</button>'
-              +'<button class="btn btn-g btn-sm" onclick="lvQueue('+i+')">Send for approval</button></div>')
-       +'</div>';
-    }).join('')
-   +'</div>';
-}
-/* park the plan for a decision instead of taking it now */
-function lvQueue(i){
-  var t=_lvTrades[i];
-  if(!t){notify('Run the analysis again first','info');return;}
-  var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
-  var price=parseFloat((document.getElementById('ai_price')||{}).value)||t.entry;
-  apprQueue({source:'levels',asset:asset,side:t.side==='long'?'buy':'sell',style:t.kind,
-    entry:+t.entry.toFixed(2),sl:+t.stop.toFixed(2),tp:+t.take.toFixed(2),
-    rr:+t.rr.toFixed(2),price:price,
-    why:'From the level map. '+(t.live?'Price is at the entry now.'
-        :'Price is '+Math.abs(t.awaySig).toFixed(1)+' days\u2019 move from the entry.')});
-  notify('Sent for approval — waiting in Portfolio','info');
-}
-/* hand the plan to the logging flow the app already has */
-var _lvTrades=[];
-function lvTake(i){
-  var t=_lvTrades[i];
-  if(!t){notify('Run the analysis again first','info');return;}
-  var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
-  var price=parseFloat((document.getElementById('ai_price')||{}).value)||t.entry;
-  window._lastSig={
-    isBull:t.side==='long', style:t.kind,
-    entry:+t.entry.toFixed(2), tp:+t.take.toFixed(2), sl:+t.stop.toFixed(2),
-    rr:+t.rr.toFixed(2), curPrice:price,
-    risk:Math.abs(t.entry-t.stop).toFixed(2), profit:Math.abs(t.take-t.entry).toFixed(2),
-    reasons:['from the level map'], timeStr:'—', fromLevels:true
-  };
-  if(typeof _lastAsset!=='undefined')_lastAsset=asset;
-  if(typeof openTakeSignal==='function')openTakeSignal();
-  else notify('Signal ready — open the take-trade panel','info');
-}
 /* The panel. The answer first — what is above, where you are, what is below —
    then what it is made of, folded away. */
 function anaRungs(price,dp){
@@ -7301,18 +7155,10 @@ function anaRungs(price,dp){
     return (a.kind==='hi'?'the peak at ':'the trough at ')+a.v.toFixed(dp);
   }).join(' and ');
 
-  /* the bias already drives the rest of the board; the level trades follow it
-     rather than offering both sides of every level */
-  var B=window._lastBias||{}, bias=(B.dir==='bull'||B.dir==='bear')?B.dir
-        :(window._lastSig&&window._lastSig.style?(window._lastSig.isBull?'bull':'bear'):'flat');
-  var asset=(document.getElementById('ai_asset_txt')||{}).value||'this asset';
-  _lvTrades=lvTrades(L,price,sig.v,bias);
-
   return '<div class="mj">'
    +'<div class="ab-cap">Major levels · nearest above and below</div>'
    +(map||'<div class="mj-none">'+escHtml((A.list.length<1&&A.why)?A.why
         :(L.why||'No level sits near the current price.'))+'</div>')
-   +lvTradeHtml(_lvTrades,asset,price,dp,bias)
    +'<div class="lv-note">'
      +(anchorLine?'These are measured out from '+escHtml(anchorLine)+' by turning the square-root '
         +'cycle — a quarter turn, a half, a full one — so each is a price the method projects, '
@@ -7460,7 +7306,30 @@ function tradeCardHtml(){
    +'</div>'
    +'<div class="sgc-foot">1 : '+S.rr+' · confidence '+S.conf+'%'
      +(S.counter?' · counter-trend, size down':'')+'</div>'
+   /* the decision belongs on the setup itself, where it is read */
+   +'<div class="sgc-act">'
+     +'<button class="btn btn-a btn-sm" onclick="openTakeSignal()">Take it</button>'
+     +'<button class="btn btn-g btn-sm" onclick="sgcQueue()">Send for approval</button>'
+     +'<span class="sgc-q">'+escHtml(sgcSlots(S.style))+'</span>'
+   +'</div>'
    +'</div>';
+}
+function sgcSlots(style){
+  if(typeof quotaPeek!=='function'||!style)return '';
+  var q=quotaPeek(style);
+  return q.cap?(q.cap-q.used)+' of '+q.cap+' '+String(style).toLowerCase()+' slots left this month':'';
+}
+/* park this setup for a decision rather than taking it now */
+function sgcQueue(){
+  var S=window._lastSig;
+  if(!S||!S.style){notify('Run an analysis first','info');return;}
+  var asset=(document.getElementById('ai_asset_txt')||{}).value
+            ||(typeof _lastAsset!=='undefined'?_lastAsset:'—');
+  apprQueue({source:'signal',asset:asset,side:S.isBull?'buy':'sell',style:S.style,
+    entry:+S.entry,sl:+S.sl,tp:+S.tp,rr:+S.rr,price:+S.curPrice,
+    why:'The call from the analytics board at '+S.conf+'% confidence'
+       +(S.counter?', counter-trend':'')+'. Nothing has been placed.'});
+  notify('Sent for approval — waiting in Portfolio','info');
 }
 
 /* ══ OPEN TRADE ══
@@ -7771,7 +7640,12 @@ function timState(){
 }
 function timVerdict(st){
   var a=timAsset(), cyc=plByNum(st.vib);
-  var who=a+' runs on cycle #'+st.vib+(cyc?' ('+cyc.n+', its day is '+cyc.day+')':'');
+  /* "its day is Friday" read as a recommendation and left people thinking
+     Friday was always the answer. It is only the weekday this cycle happens to
+     rule; the hours that matter fall on every day of the week. */
+  var who=a+' runs on cycle #'+st.vib
+    +(cyc?' ('+cyc.n+'). That cycle rules '+cyc.day+'s, but its hours come round every day —'
+         +' which day is actually best is worked out below, not fixed to '+cyc.day+'.':'');
   if(st.planning){
     var n=st.hours.filter(function(x){return x.rank>0;}).length;
     var d=timDate();
@@ -7969,8 +7843,13 @@ function timDayCard(st){
          +'<span>'+escHtml(key?key.qual:'')+'</span></div>'
      +'</div>'
      +'<div class="dk-match '+(own?'ok':'no')+'">'
-       +(own?'<b>'+escHtml(asset)+'’s own day</b><span>'+escHtml(asset)+' runs on #'+st.vib+' '+escHtml(aCyc?aCyc.n:'')+' — the strongest day of its week.</span>'
-            :'<b>Not '+escHtml(asset)+'’s day</b><span>'+escHtml(asset)+' runs on #'+st.vib+(aCyc?' '+escHtml(aCyc.n)+', its day is '+aCyc.day:'')+'. Today belongs to '+escHtml(key?key.n:'—')+'.</span>')
+       +(own?'<b>'+escHtml(asset)+'’s own day</b><span>'+escHtml(asset)+' runs on #'+st.vib+' '
+             +escHtml(aCyc?aCyc.n:'')+', the cycle that rules this weekday. A small point in its '
+             +'favour, not a reason on its own — the hours and the sky matter more.</span>'
+            :'<b>Not '+escHtml(asset)+'’s weekday</b><span>'+escHtml(asset)+' runs on #'+st.vib
+             +(aCyc?' '+escHtml(aCyc.n)+', which rules '+aCyc.day+'s':'')
+             +'. Today belongs to '+escHtml(key?key.n:'—')+' — which changes little: the hours that '
+             +'carry '+escHtml(asset)+'’s number come round today as well.</span>')
      +'</div>'
      +'<div class="dk-sky">'
        +'<i>Sky on this day</i>'
@@ -8494,7 +8373,8 @@ function renderTiming(){
     +TIM_PICKS.map(function(n){
         return '<span class="ab-pick'+(n===aNow?' on':'')+'" onclick="setTimAsset(\''+n+'\')">'+n+'</span>';
       }).join('')
-    +'<span class="tk-anum">#'+st.vib+(aCyc?' · '+aCyc.n+' · '+aCyc.day:'')+'</span></div>';
+    +'<span class="tk-anum" title="'+(aCyc?'This cycle rules '+aCyc.day+'s, but its hours come round every day':'')
+      +'">#'+st.vib+(aCyc?' · '+aCyc.n:'')+'</span></div>';
 
   host.className='tk';
   host.innerHTML=chips
@@ -8528,9 +8408,15 @@ function renderTiming(){
       }).join('')
    +'</div>'
    +timTradePlan(st)
-   +timDayCard(st)
-   +timBestPanel(st)
-   +timExtras()
+   /* Everything below the plan is background. It was all open at once, which is
+      why the tab read as a wall — the answer and the reasoning had the same
+      weight on the page. The reasoning is one click away now. */
+   +'<details class="sec"><summary><b>Why this day and this hour</b>'
+     +'<span>the weekday&rsquo;s ruling cycle, the sky on it, and how the next two weeks rank</span></summary>'
+     +timDayCard(st)+timBestPanel(st)+'</details>'
+   +'<details class="sec"><summary><b>Planet positions and aspects</b>'
+     +'<span>where everything is right now, for anyone who wants to check it</span></summary>'
+     +timExtras()+'</details>'
    +'<details class="sec"><summary><b>Reference tools</b><span>the complete toolkit and every calendar in one place</span></summary>'
      +'<div class="tk-tools">'
        +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
@@ -8780,15 +8666,16 @@ function renderApprovals(){
   var nApp=APPR.filter(function(x){return x.state==='approved';}).length;
   var nSkip=APPR.filter(function(x){return x.state==='skipped';}).length;
   host.innerHTML=
-    '<div class="apr-lead">Nothing here has been placed. A setup waits until you approve it, and '
-    +'what you pass on is kept too — turning a setup down is a decision worth being able to look '
-    +'back at. The bot queues here instead of sending whenever approval is required for its mode.</div>'
+    '<div class="apr-lead">Nothing here has been placed, and nothing here has cost you a slot in '
+    +'the monthly budget — that is only spent when a trade is actually taken. What you pass on is '
+    +'kept too: turning a setup down is a decision worth being able to look back at. The bot queues '
+    +'here instead of sending whenever approval is required for its mode.</div>'
     +'<div class="apr-sum"><span><b>'+pend.length+'</b> waiting</span>'
       +'<span><b>'+nApp+'</b> approved</span><span><b>'+nSkip+'</b> passed on</span>'
       +(done.length?'<u onclick="apprClearDecided()">clear decided</u>':'')+'</div>'
     +(pend.length?pend.map(function(a){return apprRow(a,dp);}).join('')
-       :'<div class="apr-none">Nothing waiting. Setups sent here from the level trades, or by the '
-        +'bot when its mode needs approval, will appear for a decision.</div>')
+       :'<div class="apr-none">Nothing waiting. Send a call here from the analytics board, or let '
+        +'the bot queue one when its mode needs approval, and it will appear for a decision.</div>')
     +(done.length?'<div class="apr-hh">Decided</div>'+done.map(function(a){return apprRow(a,dp);}).join(''):'');
 }
 var BOT={
@@ -9562,7 +9449,7 @@ function checkAutoScalp(){
   var isMatch=ti.pp.nums.indexOf(vibNum)>=0;
   if(isMatch&&!_sActive){
     /* scalps form on their own path, so they take their slot here */
-    var _sq=quotaTake('Scalp',quotaKey(_lastAsset,'Scalp',price));
+    var _sq=quotaPeek('Scalp');
     if(!_sq.ok){
       console.info('scalp suppressed — monthly budget spent ('+_sq.used+'/'+_sq.cap+')');
       return;
@@ -9668,6 +9555,12 @@ function confirmTakeSignal(){
   if(!sig)return;
   var amt=parseFloat(document.getElementById('ts_riskamt').value)||0;
   if(amt<=0){notify('Enter a valid risk amount','info');return;}
+  /* the slot is spent here, on the trade actually being taken */
+  var _tq=quotaTake(sig.style,quotaKey(_lastAsset,sig.style,sig.entry));
+  if(!_tq.ok){
+    notify('Monthly '+sig.style+' budget is spent — '+_tq.used+' of '+_tq.cap+' taken','info');
+    return;
+  }
   var dateStr=ymd(new Date());
   JRNL.unshift({
     d:dateStr,a:_lastAsset,t:sig.style.toLowerCase(),dir:sig.isBull?'buy':'sell',
