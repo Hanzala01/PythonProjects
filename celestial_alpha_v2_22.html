@@ -1451,6 +1451,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tp-do{font-size:13.5px;color:var(--tw);line-height:1.6;padding:10px 13px;border-radius:12px;
   background:rgba(255,255,255,.03);margin-bottom:9px}
 /* the window now says which kind of trade it is for, and whether it is live */
+.tp-run{display:block;font-style:normal;font-size:10px;color:var(--t3);line-height:1.65;margin-top:6px}
 .tp-kind b{color:var(--p3)}
 .tp-live{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.09em;
   text-transform:uppercase;color:var(--up);border:1px solid rgba(34,197,94,.45);
@@ -5616,9 +5617,71 @@ function calcAstroBias(assetName,eph,refDate){
   /* The label is read off the same number the meter shows, so the two can
      never disagree — it used to be possible to print 58% bull and call it
      neutral, because the word came from a separate threshold on the raw score. */
-  var dir=bullPct>=56?'bull':bullPct<=44?'bear':'neutral';
+  /* THE LABEL IS CALIBRATED TO THE ASSET, NOT TO 50.
+     A fixed 56/44 cut assumed every asset's sky is centred on neutral. It is
+     not. Measured over 365 days: gold came back bull on 162 and bear on 79,
+     bitcoin 175 against 79 — the median gold day reads 55% bull, which sits
+     right on the old bull boundary, so half of all days were called bullish
+     and the longest one-sided run was sixteen days. Someone opening the app
+     each morning saw "BULL" for a fortnight and reasonably concluded it never
+     said anything else.
+
+     The number on the meter is unchanged and still means what it did. What
+     changed is when it earns a direction: today has to be in this asset's own
+     top or bottom third to be called, so a reading of 65 on an asset whose
+     ordinary day is 61 is what it actually is — normal. */
+  var cal=(typeof _biasRaw!=='undefined'&&_biasRaw)?null:(function(){
+    try{return astroCalib(assetName);}catch(e){return null;}
+  })();
+  var dir, band;
+  if(cal){
+    dir = bullPct>=cal.hi ? 'bull' : bullPct<=cal.lo ? 'bear' : 'neutral';
+    band = cal;
+  }else{
+    dir = bullPct>=56?'bull':bullPct<=44?'bear':'neutral';
+  }
   return{score:score,bull:bullPct,bear:100-bullPct,factors:factors,
-         maxScore:maxScore,dir:dir};
+         maxScore:maxScore,dir:dir,calib:band||null};
+}
+/* Each asset's own distribution of bull readings across a year around today.
+   Six milliseconds for 365 days, so it is computed on demand and kept. */
+var _biasRaw=false, _calibCache={};
+function astroCalib(assetName){
+  /* calcAstroBias can run before this file's var initialisers do, so the cache
+     is created on first use rather than assumed to exist */
+  if(typeof _calibCache==='undefined'||!_calibCache)_calibCache={};
+  var key=String(assetName||'')+'|'+new Date().toISOString().slice(0,10);
+  if(_calibCache[key])return _calibCache[key];
+  var v=[],i,d;
+  _biasRaw=true;                       /* the sweep must not calibrate off itself */
+  try{
+    for(i=-182;i<183;i++){
+      d=new Date(Date.now()+i*86400000); d.setHours(12,0,0,0);
+      v.push(calcAstroBias(assetName,getEphemeris(d),d).bull);
+    }
+  }catch(e){ _biasRaw=false; return null; }
+  _biasRaw=false;
+  if(v.length<60)return null;
+  v.sort(function(a,b){return a-b;});
+  var q=function(p){return v[Math.floor(p*(v.length-1))];};
+  var out={lo:q(0.30),mid:q(0.50),hi:q(0.70),n:v.length};
+  /* a flat asset can put the two cuts on the same number; keep them apart so
+     the middle band cannot vanish */
+  if(out.hi<=out.lo){out.hi=out.lo+1;}
+  _calibCache[key]=out;
+  return out;
+}
+/* how many days in a row this asset has read the same way, today included */
+function astroRun(assetName,dir,refDate){
+  if(!dir||dir==='neutral')return 0;
+  var n=0, base=refDate?new Date(refDate):new Date();
+  for(var i=0;i<40;i++){
+    var d=new Date(base.getTime()-i*86400000); d.setHours(12,0,0,0);
+    var a=calcAstroBias(assetName,getEphemeris(d),d);
+    if(a.dir!==dir)break;
+    n++;
+  }
+  return n;
 }
 
 
@@ -8119,6 +8182,10 @@ function timTradePlan(st){
   var col=A.dir==='bull'?'var(--green)':A.dir==='bear'?'var(--red)':'var(--amber)';
   var mins=P.block.end-P.block.start;
   var KIND=timTradeKind(mins,P.hz.days,P.block.best);
+  /* The sky is driven by slow bodies, so a direction can hold for a fortnight.
+     Fifteen bullish days in a row is one signal persisting, not fifteen
+     confirmations, and the panel now says which day of the run this is. */
+  var RUN=0; try{ RUN=astroRun(asset,A.dir,P.day.date); }catch(e){}
   var side=A.dir==='bull'?'Look for longs only — buy pullbacks into support.'
           :A.dir==='bear'?'Look for shorts only — sell rallies into resistance.'
           :'No directional edge. Take the level in whichever way it breaks, smaller size.';
@@ -8140,7 +8207,9 @@ function timTradePlan(st){
            +'<span>'+(mins>=120?(mins/60).toFixed(0)+' hours':mins+' minutes')+' · '
            +escHtml(P.block.hours.map(function(x){return x.name;}).join(', '))+'</span></div>'
          +'<div class="tp-b"><i>Direction</i><b style="color:'+col+'">'+dir+'</b>'
-           +'<span>sky '+A.bull+'% bull / '+(100-A.bull)+'% bear that day</span></div>'
+           +'<span>reads '+A.bull+'% bull'
+           +(A.calib?', and '+escHtml(asset)+'&rsquo;s ordinary day is '+A.calib.mid+'%':'')
+           +(RUN>1?' &middot; day '+RUN+' of this run':'')+'</span></div>'
          +'<div class="tp-b"><i>Momentum holds</i><b>'+escHtml(P.hz.label)+'</b>'
            +'<span>until '+escHtml(P.hz.why)+'</span></div>'
          +'<div class="tp-b tp-kind"><i>Trade this as a</i><b>'+escHtml(KIND.k)+'</b>'
@@ -8159,7 +8228,10 @@ function timTradePlan(st){
                  +'<em>'+(bk.best===2?'strong':'support')+' · '+escHtml(kd.k.toLowerCase())+'</em></span>';
              }).join('')
           +'</div>':'')
-       +'<div class="tp-do">'+escHtml(side)+'</div>'
+       +'<div class="tp-do">'+escHtml(side)
+         +(RUN>=6?'<em class="tp-run"> This is day '+RUN+' of the same read. The bodies behind it move '
+            +'slowly, so a stretch this long is one signal holding, not '+RUN+' separate ones.</em>':'')
+         +'</div>'
        +'<div class="tp-why">This is simply the next window on the clock — '
          +P.day.strong+' hour'+(P.day.strong===1?'':'s')+' that day carry '+escHtml(asset)
          +'’s number'+(P.day.support?' and '+P.day.support+' more support it':'')
