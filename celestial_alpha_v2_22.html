@@ -1255,16 +1255,32 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tk-hero.go{border-color:rgba(34,197,94,.42)}
 .tk-hero.ok{border-color:rgba(245,158,11,.38)}
 .tk-hero.wait{border-color:rgba(239,68,68,.35)}
-.tk-dial{position:relative;width:280px;height:280px;flex-shrink:0}
-.tk-ring{width:280px;height:280px;transform:rotate(-90deg)}
-.tk-seg{animation:segIn .6s var(--ease) backwards;transition:stroke-width .3s}
+.tk-dial{position:relative;width:306px;height:306px;flex-shrink:0}
+.tk-wheel{width:306px;height:306px;display:block}
+.tk-w{animation:segIn .55s var(--ease) backwards}
 @keyframes segIn{from{opacity:0}to{opacity:1}}
-.tk-seg.live{filter:drop-shadow(0 0 10px currentColor)}
-.tk-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  padding:0 16%}
+.tk-w.live{filter:drop-shadow(0 0 9px currentColor)}
+.tk-lab{font-size:9.2px;fill:var(--t2);letter-spacing:.05em;text-anchor:middle;
+  dominant-baseline:middle;font-variant-numeric:tabular-nums}
+.tk-lab.key{fill:var(--p3);font-weight:700}
+.tk-hand{filter:drop-shadow(0 0 6px rgba(213,195,242,.8))}
+@keyframes handIn{from{opacity:0}to{opacity:1}}
+.tk-hand{animation:handIn .7s var(--ease) .35s backwards}
+.tk-cap{font-size:7.8px;fill:var(--p3);letter-spacing:.18em;text-anchor:middle;
+  dominant-baseline:middle;font-weight:700;opacity:.85}
+/* the middle of the wheel is where the answer lives, so it is sized to be read
+   before anything on the rim is. Only what fits inside a circle goes in here —
+   the longer line sits under the wheel where it has the full width. */
+.tk-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.tk-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:0 20%;pointer-events:none}
+.tk-now{font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--p3);margin-bottom:5px}
+.tk-nxt{font-size:10.5px;color:var(--t2);text-align:center;max-width:306px;line-height:1.5;
+  border:1px solid var(--b1);border-radius:99px;padding:7px 15px;background:rgba(11,6,40,.6)}
 /* the verdict can be one word ("Wait") or four ("Trade Gold now"), so the type
    scales with the space rather than overflowing the ring on the long ones */
-.tk-word{font-family:'Space Grotesk';font-size:clamp(19px,2.1vw,32px);font-weight:800;line-height:1.08;
+.tk-word{font-family:'Space Grotesk';font-size:clamp(19px,2.1vw,27px);font-weight:800;line-height:1.08;
   overflow-wrap:break-word;max-width:100%}
 .tk-mins{font-size:13px;color:var(--soft);margin-top:6px}
 .tk-hour{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
@@ -1367,7 +1383,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:900px){.ab-reads{grid-template-columns:1fr}.ab-call{grid-template-columns:1fr}
   .ab-c-r{text-align:left}.ab-e-in{margin-left:0;width:100%}}
 @media(prefers-reduced-motion:reduce){
-  .tk-seg,.tk-nrow,.tk-slot,.ab-read,.ab-lv,.ab-dir .w,.ab-dir .a,.ab-dir .arw{animation:none!important}
+  .tk-w,.tk-hand,.tk-nrow,.tk-slot,.ab-read,.ab-lv,.ab-dir .w,.ab-dir .a,.ab-dir .arw{animation:none!important}
   .ab-call::after{display:none}
   .tk-slot:hover,.tk-slot.live{transform:none}
 }
@@ -7794,7 +7810,7 @@ function timVerdict(st){
   var cur=st.hours[st.live-1];
   var when=cur.night?' (after sunset)':'';
   if(cur.rank===2)
-    return{level:'go',word:'Trade '+a+' now',
+    return{level:'go',word:'Trade now',
            line:cur.name+' carries '+a+'’s number'+when+' — this is a prime window. '+who+'.'};
   if(cur.rank===1)
     return{level:'ok',word:'Tradeable',
@@ -8608,28 +8624,120 @@ function timExtras(){
    +'<div class="tx-pl"><div class="ab-cap">Planet positions '+escHtml(dlabel)+' — '+escHtml(asset)+'</div>'
    +timPlanets(eph,dref,asset)+'</div>';
 }
+/* ══ THE DAY WHEEL ════════════════════════════════════════════════════
+   The old dial was twenty-four anonymous arcs. Nothing on it named an arc,
+   no clock time appeared anywhere on the rim, and there was no mark for the
+   minute you were actually in — so it carried one bit of information (how
+   many arcs were green) and everything else had to be read off the strip
+   underneath. Sitting under a heading that says TIMING, that is a circle
+   with nothing in it.
+
+   This one is a clock. Sunrise sits at the top and the wheel turns once
+   through the whole twenty-four hours to the next sunrise. Each hour is a
+   wedge, lit when it carries the asset's number. The rim carries real clock
+   times, sunrise and sunset are marked with the hour they fall on, a hand
+   points at the minute you are in, and the part of the day already spent is
+   drawn behind it. It is read the way a watch is read.
+
+   Nothing here is new information — it is the same hours the strip below
+   shows. The point is that they are now placed on a day instead of listed.
+   ══════════════════════════════════════════════════════════════════════ */
+var DIAL={cx:180,cy:180,R:120,SW:15};
+/* 0° is the top of the wheel and angles run clockwise, like a clock face */
+function dialXY(r,deg){
+  var a=(deg-90)*Math.PI/180;
+  return[DIAL.cx+r*Math.cos(a), DIAL.cy+r*Math.sin(a)];
+}
+function dialArc(r,a0,a1){
+  var p0=dialXY(r,a0), p1=dialXY(r,a1), big=(a1-a0)>180?1:0;
+  return 'M'+p0[0].toFixed(2)+' '+p0[1].toFixed(2)
+       +'A'+r+' '+r+' 0 '+big+' 1 '+p1[0].toFixed(2)+' '+p1[1].toFixed(2);
+}
+function dialLine(r0,r1,deg){
+  var a=dialXY(r0,deg), b=dialXY(r1,deg);
+  return 'M'+a[0].toFixed(2)+' '+a[1].toFixed(2)+'L'+b[0].toFixed(2)+' '+b[1].toFixed(2);
+}
+function timDial(st){
+  var N=st.hours.length||PH_HOURS, step=360/N, gap=2.4;
+  var nowDeg=(st.cur!=null)?(st.cur/1440)*360:null;
+  var sunset=st.hours.filter(function(x){return x.night;})[0];   /* first hour after dark */
+  var setDeg=sunset?(sunset.h-1)*step:180;
+
+  var s='<svg viewBox="0 0 360 360" class="tk-wheel" role="img"'
+    +' aria-label="the trading day drawn as a 24-hour clock, sunrise at the top">';
+
+  /* the night side of the wheel, so dark and light read apart at a glance */
+  s+='<path d="'+dialArc(DIAL.R,setDeg,360)+'" fill="none" stroke="rgba(9,4,24,.88)"'
+    +' stroke-width="'+(DIAL.SW+11)+'"/>'
+    +'<path d="'+dialArc(DIAL.R,0,setDeg)+'" fill="none" stroke="rgba(58,33,112,.30)"'
+    +' stroke-width="'+(DIAL.SW+11)+'"/>';
+  /* the track every hour sits on */
+  s+='<circle cx="180" cy="180" r="'+DIAL.R+'" fill="none" stroke="rgba(180,155,230,.09)"'
+    +' stroke-width="'+DIAL.SW+'"/>';
+
+  /* the hours themselves */
+  st.hours.forEach(function(x,i){
+    if(!x.rank&&x.h!==st.live)return;                 /* a dead hour is just track */
+    var live=(x.h===st.live);
+    var c=x.rank===2?'#22C55E':x.rank===1?'#B49BE6':'rgba(180,155,230,.30)';
+    s+='<path d="'+dialArc(DIAL.R,i*step+gap/2,(i+1)*step-gap/2)+'" fill="none"'
+      +' stroke="'+c+'" stroke-width="'+(live?DIAL.SW+6:DIAL.SW)+'" stroke-linecap="butt"'
+      +' class="tk-w'+(live?' live':'')+'" style="animation-delay:'+(i*0.03).toFixed(2)+'s">'
+      +'<title>H'+x.h+' · '+x.name+' · '+fmtT(x.start)+'–'+fmtT(x.end%1440)
+      +(x.rank===2?' · prime window':x.rank===1?' · supporting window':'')+'</title></path>';
+  });
+
+  /* hour ticks, longer every third hour where a clock time is written */
+  for(var i=0;i<N;i++){
+    var lab=(i%3===0);
+    s+='<path d="'+dialLine(DIAL.R+DIAL.SW/2+3,DIAL.R+DIAL.SW/2+(lab?12:6),i*step)+'"'
+      +' stroke="rgba(180,155,230,'+(lab?'.42':'.20')+')" stroke-width="1"/>';
+  }
+  /* clock times on the rim — sunrise and sunset carry their glyph */
+  for(var i=0;i<N;i+=3){
+    var h=st.hours[i], pt=dialXY(158,i*step), key=(i===0)||(sunset&&h&&h.h===sunset.h);
+    s+='<text x="'+pt[0].toFixed(1)+'" y="'+pt[1].toFixed(1)+'" class="tk-lab'
+      +(key?' key':'')+'">'+fmtT(h?h.start:0)+'</text>';
+  }
+  /* the two that anchor the whole wheel are named, not left to a glyph a font
+     may not carry — top is sunrise, bottom is dark */
+  var top=dialXY(173,0), bot=dialXY(173,setDeg);
+  s+='<text x="'+top[0].toFixed(1)+'" y="'+top[1].toFixed(1)+'" class="tk-cap">SUNRISE</text>'
+    +'<text x="'+bot[0].toFixed(1)+'" y="'+bot[1].toFixed(1)+'" class="tk-cap">SUNSET</text>';
+
+  /* how much of the day is behind you, and the minute you are standing in */
+  if(nowDeg!=null){
+    if(nowDeg>0.6)
+      s+='<path d="'+dialArc(DIAL.R-DIAL.SW/2-5,0,Math.min(nowDeg,359.9))+'" fill="none"'
+        +' stroke="rgba(180,155,230,.30)" stroke-width="2" stroke-linecap="round"/>';
+    /* the marker sits outside the band, like the pointer on a watch bezel. A
+       hand drawn in towards the centre crossed straight through the verdict —
+       at hour 16 it ran through the middle of "HOUR 16 OF 24". */
+    var tip=dialXY(DIAL.R,nowDeg);
+    s+='<path d="'+dialLine(DIAL.R+DIAL.SW/2+2,DIAL.R+DIAL.SW/2+11,nowDeg)+'" stroke="#D5C3F2"'
+      +' stroke-width="2.6" stroke-linecap="round" class="tk-hand"/>'
+      +'<circle cx="'+tip[0].toFixed(1)+'" cy="'+tip[1].toFixed(1)+'" r="3.4" fill="#D5C3F2" class="tk-hand"/>';
+  }
+  return s+'</svg>';
+}
+/* the one line the middle of the wheel owes the reader: when the next lit
+   hour opens, said in minutes rather than left to be worked out from a clock */
+function timNextLine(st){
+  var ahead=st.hours.filter(function(x){return x.rank>0&&(st.live==null||x.h>st.live);});
+  if(st.cur==null)
+    return ahead.length?ahead.length+' window'+(ahead.length===1?'':'s')+' · first at '+fmtT(ahead[0].start)
+                       :'no window on this day';
+  if(!ahead.length)return 'no more windows before sunrise';
+  var inMin=(ahead[0].start-st.srMin)-st.cur;
+  return 'next window in '+fmtIn(inMin)+' at '+fmtT(ahead[0].start);
+}
 function renderTiming(){
   var host=document.getElementById('tim_new');
   if(!host)return;
   var st=timState(), v=timVerdict(st);
   var col=v.level==='go'?'var(--green)':v.level==='ok'?'var(--amber)':v.level==='wait'?'var(--red)':'var(--mid)';
 
-  /* ring: 12 segments, current one lit */
-  /* one segment per planetary hour. The ring was drawn in twelfths while the
-     hours themselves now run to twenty-four, which stacked the second half of
-     the day on top of the first. */
-  var N=st.hours.length||PH_HOURS;
-  var R=118,C=2*Math.PI*R, seg=C/N-(N>12?3:6);
-  var ring='<svg viewBox="0 0 280 280" class="tk-ring">';
-  st.hours.forEach(function(x,i){
-    var off=C*(1-i/N)-seg/2;
-    var c=x.rank===2?'#22C55E':x.rank===1?'#8b5cf6':'rgba(255,255,255,.10)';
-    ring+='<circle cx="140" cy="140" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="'
-      +(x.h===st.live?(N>12?13:16):(N>12?8:11))+'" stroke-linecap="round" stroke-dasharray="'+seg.toFixed(1)+' '+(C-seg).toFixed(1)
-      +'" stroke-dashoffset="'+off.toFixed(1)+'" class="tk-seg'+(x.h===st.live?' live':'')+'"'
-      +' style="animation-delay:'+(i*0.045).toFixed(2)+'s"><title>H'+x.h+' · '+x.name+' · '+fmtT(x.start)+'</title></circle>';
-  });
-  ring+='</svg>';
+  var ring=timDial(st);
 
   /* the next two windows that still lie ahead */
   var ahead=st.hours.filter(function(x){return x.rank>0&&(st.live==null||x.h>st.live);}).slice(0,3);
@@ -8652,13 +8760,19 @@ function renderTiming(){
   host.className='tk';
   host.innerHTML=chips
    +'<div class="tk-hero '+v.level+'">'
-    +'<div class="tk-dial">'+ring
-      +'<div class="tk-core">'
-        +'<div class="tk-word" style="color:'+col+'">'+v.word+'</div>'
-        +(st.minsLeft!=null?'<div class="tk-mins">'+st.minsLeft+' min left</div>':'')
-        +(st.live?'<div class="tk-hour">Hour '+st.live+' of 24'
-            +(st.live>12?' · night':' · day')+'</div>':'')
+    +'<div class="tk-col">'
+      +'<div class="tk-dial">'+ring
+        +'<div class="tk-core">'
+          +(st.live?'<div class="tk-now">'+escHtml(st.hours[st.live-1].name)+'</div>':'')
+          +'<div class="tk-word" style="color:'+col+'">'+v.word+'</div>'
+          +(st.minsLeft!=null?'<div class="tk-mins">'+st.minsLeft+' min left</div>':'')
+          +(st.live?'<div class="tk-hour">Hour '+st.live+' of 24'
+              +(st.live>12?' · night':' · day')+'</div>':'')
+        +'</div>'
       +'</div>'
+      /* directly under the wheel, because that is where the eye goes next and
+         it was empty before */
+      +'<div class="tk-nxt">'+escHtml(timNextLine(st))+'</div>'
     +'</div>'
     +'<div class="tk-side">'
       +'<div class="tk-line">'+escHtml(v.line)+'</div>'
