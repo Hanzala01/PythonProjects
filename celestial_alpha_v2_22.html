@@ -14,7 +14,7 @@
   --bg:#050508; --s1:#0a0a14; --s2:#0f0f1e; --s3:#141428; --s4:#1a1a33;
   --navy:#0c0c1c; --navy2:#101026;
   --rim:rgba(167,139,250,.10); --rim2:rgba(167,139,250,.17); --rim3:rgba(167,139,250,.30);
-  --muted:#3d3d5c; --mid:#5a5a7d; --soft:#9494b8; --text:#dcdcf2; --white:#f4f2ff;
+  --muted:#7d76a0; --mid:#9a92bb; --soft:#c0b8d8; --text:#e4dff5; --white:#f6f3ff;
   --green:#34d399; --red:#f87171; --amber:#fbbf24; --gold:#d4af7a;
   --accent:#8b5cf6; --acc2:#a78bfa; --acc3:#c4b5fd;
   --purple-glow:rgba(139,92,246,.16);
@@ -2725,10 +2725,10 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
    and type scale are the spec's, not invented.
 ══════════════════════════════════════════════════════════════════════ */
 :root{
-  --bg0:#02020F; --bg1:#03031A; --card:#04041A; --card2:#05051F; --chartbg:#010109;
-  --b1:#21154A; --b2:#34206B; --bAct:#6D35FF; --bFaint:rgba(139,92,246,.18);
-  --p1:#7C3AED; --p2:#8B5CF6; --p3:#A855F7; --pGlow:#B26CFF; --pDeep:#4C1D95;
-  --t1:#F5F3FF; --t2:#A9A3C2; --t3:#6F6888;
+  --bg0:#01020E; --bg1:#0A0620; --card:#0B0628; --card2:#0F082E; --chartbg:#01020B;
+  --b1:#2B155B; --b2:#3F2280; --bAct:#7F60BF; --bFaint:rgba(83,51,153,.26);
+  --p1:#533399; --p2:#7F60BF; --p3:#B49BE6; --pGlow:#D5C3F2; --pDeep:#2B155B;
+  --t1:#F5F3FF; --t2:#BDB4D8; --t3:#9086AE;
   --up:#22C55E; --dn:#EF4444; --warn:#F59E0B; --cy:#22D3EE;
 }
 body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-serif;font-size:13px}
@@ -3057,18 +3057,18 @@ body{background:var(--bg0)}
       the reference it was copied from sits at about 6. The hues are the same;
       there is simply less of them, so the light reads as light again. ── */
 .shell{background:
-  radial-gradient(1150px 660px at 10% -8%, rgba(74,32,214,.26), transparent 54%),
-  radial-gradient(900px 560px at 90% 0%, rgba(96,44,226,.16), transparent 50%),
-  radial-gradient(1500px 980px at 48% 52%, rgba(60,24,190,.08), transparent 62%),
-  radial-gradient(700px 500px at 25% 100%, rgba(74,32,214,.06), transparent 56%),
+  radial-gradient(1150px 660px at 10% -8%, rgba(83,51,153,.42), transparent 54%),
+  radial-gradient(900px 560px at 90% 0%, rgba(107,69,184,.26), transparent 50%),
+  radial-gradient(1500px 980px at 48% 52%, rgba(43,21,91,.30), transparent 62%),
+  radial-gradient(700px 500px at 25% 100%, rgba(83,51,153,.12), transparent 56%),
   var(--bg0)}
-.card{background:linear-gradient(158deg,rgba(96,44,226,.10),rgba(4,4,26,.96) 60%);
-  box-shadow:0 0 22px rgba(74,32,214,.10)}
-.chart-card{background:linear-gradient(158deg,rgba(74,32,214,.08),rgba(1,1,12,.97) 56%)}
-.stat{background:linear-gradient(150deg,rgba(110,52,240,.26),rgba(6,6,32,.94) 66%)}
-.tick{background:linear-gradient(150deg,rgba(110,52,240,.27),rgba(6,6,32,.93) 66%)}
-.side-card{background:linear-gradient(165deg,rgba(96,44,226,.14),rgba(4,4,24,.96) 56%)}
-.sidebar,aside.sidebar{background:linear-gradient(180deg,#0A0630,#03032099 55%,#02020F)}
+.card{background:linear-gradient(158deg,rgba(83,51,153,.30),rgba(18,10,50,.94) 62%);
+  box-shadow:0 0 22px rgba(43,21,91,.38)}
+.chart-card{background:linear-gradient(158deg,rgba(83,51,153,.20),rgba(6,4,22,.96) 56%)}
+.stat{background:linear-gradient(150deg,rgba(107,69,184,.34),rgba(14,8,44,.93) 66%)}
+.tick{background:linear-gradient(150deg,rgba(107,69,184,.34),rgba(14,8,44,.93) 66%)}
+.side-card{background:linear-gradient(165deg,rgba(83,51,153,.26),rgba(11,6,40,.95) 56%)}
+.sidebar,aside.sidebar{background:linear-gradient(180deg,#160A36,#0A062099 55%,#01020E)}
 
 /* ── final pass: everything inside its spec height, measured not guessed ── */
 .drow-a>.card:nth-child(2)>.cbd{padding:10px 12px}
