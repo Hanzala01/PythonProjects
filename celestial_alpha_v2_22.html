@@ -1358,12 +1358,31 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .fng-body{display:flex;gap:22px;align-items:flex-start;margin-top:10px;flex-wrap:wrap}
 .fng-full .fng-dial{width:200px;flex:none}
 .fng-side{flex:1;min-width:230px}
-.fng-rows{display:flex;gap:26px;flex-wrap:wrap}
-.fng-rows>div{display:flex;flex-direction:column}
-.fng-rows i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+.fng-na{color:var(--t3)!important;font-size:13px!important}
+/* the four parts, each with its weight and what it is saying */
+.fng-parts{display:grid;gap:9px}
+.fng-p{display:grid;grid-template-columns:132px 1fr 30px;gap:10px;align-items:center}
+.fng-p i{font-style:normal;font-size:9.5px;color:var(--t2);letter-spacing:.02em}
+.fng-p i em{font-style:normal;font-size:8px;color:var(--t3);margin-left:5px}
+.fng-bar{height:6px;border-radius:99px;background:rgba(83,51,153,.28);overflow:hidden}
+.fng-bar span{display:block;height:100%;border-radius:99px;transition:width .7s var(--ease)}
+.fng-p b{font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--t1);
+  text-align:right;font-variant-numeric:tabular-nums}
+.fng-p s{grid-column:1/-1;text-decoration:none;font-size:9px;color:var(--t3);margin-top:-4px}
+/* the crypto index, kept visibly separate from the asset's own reading */
+.fng-tp{margin-top:13px;padding-top:12px;border-top:1px solid var(--b1)}
+.fng-tp>i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
   text-transform:uppercase;color:var(--t3)}
-.fng-rows em{font-style:normal;font-size:10.5px;color:var(--t2);margin-top:2px}
-.fng-rows b{font-family:'Space Grotesk';font-size:24px;font-weight:700;color:var(--t1);line-height:1.1}
+.fng-tpv{display:flex;align-items:baseline;gap:10px;margin:4px 0 3px;flex-wrap:wrap}
+.fng-tpv b{font-family:'Space Grotesk';font-size:22px;font-weight:700;line-height:1}
+.fng-tpv em{font-style:normal;font-size:11.5px;font-weight:700}
+.fng-tpv u{text-decoration:none;font-size:9.5px;color:var(--t3)}
+.fng-tp s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.6}
+.fng-tape{flex:none;text-align:right;padding-left:14px;border-left:1px solid var(--b1)}
+.fng-tape i{display:block;font-style:normal;font-size:8px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.fng-tape b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:700;line-height:1.15}
+.fng-tape s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3)}
 .fng-spw{margin:11px 0 4px}
 .fng-sp{display:block;width:250px;max-width:100%;height:42px;opacity:.8}
 .fng-spw s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:2px}
@@ -12033,6 +12052,9 @@ function loadHistory(assetName,cb){
   if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history\u2026</div>';
   function done(rows,src){
     HIST_ROWS=rows;
+    /* the fear-and-greed strip is computed off these bars and drew before they
+       existed, so it reported "0 daily bars loaded" on every fresh page */
+    try{renderFng();}catch(e){}
     drawCandles(rows,assetName+' \u00b7 '+src);
     var rng=applyMonthlyRange(rows);
     if(cb)cb(rng);
@@ -13997,75 +14019,221 @@ function fngGauge(v,uid,h){
 function fngAgo(daysBack){
   return daysBack===1?'yesterday':daysBack===7?'last week':daysBack+' days ago';
 }
-/* the compact strip that sits under the price tiles on the dashboard */
+/* ══ FEAR & GREED FOR THE ASSET IN FRONT OF YOU ═══════════════════════
+   alternative.me publish a crypto index and nothing else. CNN publish one for
+   US stocks with no usable public endpoint. For Gold, for FX, for a PSX name,
+   there is no third party to ask — so the reading for the selected asset is
+   computed here, from that asset's own daily bars, and it is labelled as
+   computed rather than dressed up as somebody's published index.
+
+   Four parts, each scored 0-100 where 100 is greed:
+
+     · Momentum  — how far the close sits above its 50-day average, ranked
+                   against that same measure over the asset's own recent
+                   history. A percentile, not a fixed threshold, because 2%
+                   above the average means something different for Gold than
+                   it does for Bitcoin.
+     · Position  — where the close sits between the low and the high of the
+                   window. At the high is greed, at the low is fear.
+     · Calm      — the inverse of where current 14-day range sits in its own
+                   distribution. Violent markets are frightened ones.
+     · Up days   — the share of higher closes over the last twenty sessions.
+
+   Every one is measured against the asset's own history, so the scale means
+   the same thing on any instrument. What it is NOT: a sentiment survey, a
+   positioning report, or a measure of what anyone is saying. It is price
+   behaviour, and price behaviour is only a proxy for mood.
+   ══════════════════════════════════════════════════════════════════════ */
+var FNG_WEIGHTS=[['Momentum',30],['Position in range',25],['Calm',25],['Up days',20]];
+function fngPctile(arr,v){
+  if(!arr||!arr.length)return 50;
+  /* midpoint rank. Counting `<= v` includes v itself, so today's bar being the
+     highest in its own window scored exactly 100 every time — a number the
+     scale cannot actually reach and which read as false precision. */
+  var below=0, equal=0;
+  for(var i=0;i<arr.length;i++){
+    if(arr[i]<v)below++;
+    else if(arr[i]===v)equal++;
+  }
+  return (below+equal/2)/arr.length*100;
+}
+function assetFng(rows,asset){
+  if(!rows||rows.length<90)
+    return{ok:false,why:(rows?rows.length:0)+' daily bars loaded — at least 90 are needed before '
+      +'a percentile against the asset’s own history means anything'};
+  var R=rows.slice(-260);
+  var n=R.length;
+  var c=R.map(function(x){return +x.close;}),
+      hi=R.map(function(x){return +x.high;}),
+      lo=R.map(function(x){return +x.low;});
+  if(c.some(function(x){return !isFinite(x)||x<=0;}))
+    return{ok:false,why:'the daily history has gaps in it, so no ranking was attempted'};
+
+  var win=Math.min(120,n-55);          /* the window each part is ranked against */
+  var mean=function(a){return a.reduce(function(s,x){return s+x;},0)/a.length;};
+
+  /* true range per bar, and the 14-bar average of it. Both parts below lean on
+     this: it is the asset's own unit of "a normal day's movement". */
+  var tr=[null];
+  for(var i=1;i<n;i++)
+    tr.push(Math.max(hi[i]-lo[i],Math.abs(hi[i]-c[i-1]),Math.abs(lo[i]-c[i-1])));
+  var atr=[];
+  for(var i=0;i<n;i++)
+    atr.push(i<14?null:mean(tr.slice(i-13,i+1)));
+
+  /* 1 — MOMENTUM, measured in daily moves rather than in percent.
+     This was (close/MA50 - 1) ranked against itself, and on a strongly trending
+     market that inverts: a series climbing by a fixed amount every day has a
+     constant gap to its average but a shrinking *percentage* gap as the price
+     grows, so a market at the top of a clean uptrend scored 1 out of 100 for
+     momentum. Dividing by the asset's own average daily range instead keeps the
+     measure honest whatever the price level has done. */
+  var ma50=[];
+  for(var i=0;i<n;i++)ma50.push(i<50?null:mean(c.slice(i-50,i)));
+  var relSeries=[];
+  for(var i=50;i<n;i++){
+    if(!atr[i]||atr[i]<=0||!ma50[i])continue;
+    relSeries.push((c[i]-ma50[i])/atr[i]);
+  }
+  if(relSeries.length<20)
+    return{ok:false,why:'not enough clean bars to rank momentum against — the history is too '
+      +'short or too flat once gaps are dropped'};
+  var relNow=relSeries[relSeries.length-1];
+  var momentum=fngPctile(relSeries.slice(-win),relNow);
+
+  /* 2 — where the close sits between the window's low and its high */
+  var wHi=Math.max.apply(null,hi.slice(-win)), wLo=Math.min.apply(null,lo.slice(-win));
+  var position=(wHi>wLo)?((c[n-1]-wLo)/(wHi-wLo))*100:50;
+
+  /* 3 — calm: the inverse of where the current 14-day range sits in its own
+     distribution, as a share of price so the comparison holds across levels.
+     A violent market is a frightened one whichever way it is running. */
+  /* normalised by the 50-day average, NOT by today's close. Dividing by the
+     close ties this part to the one above it: on anything that oscillates, the
+     denominator is largest exactly when price is high in its range, so Calm
+     was inflated whenever Position was. A choppy sideways market scored 96 for
+     calmness and came out reading Greed overall. The slow average does not
+     wobble with the swing, so the two parts measure different things again. */
+  var atrRel=[];
+  for(var i=50;i<n;i++)if(atr[i]&&ma50[i]>0)atrRel.push(atr[i]/ma50[i]);
+  var calm=atrRel.length>10?100-fngPctile(atrRel.slice(-win),atrRel[atrRel.length-1]):50;
+
+  /* 4 — the share of higher closes over the last twenty sessions */
+  var up=0;
+  for(var i=Math.max(1,n-20);i<n;i++)if(c[i]>c[i-1])up++;
+  var upDays=(up/Math.min(20,n-1))*100;
+
+  /* the parts are rounded before they are weighted, so the four numbers printed
+     on screen actually add up to the number on the dial */
+  var shown=[momentum,position,calm,upDays].map(function(x){return Math.round(x);});
+  var v=Math.round(shown.reduce(function(s,x,ix){return s+x*FNG_WEIGHTS[ix][1]/100;},0));
+  v=Math.max(0,Math.min(100,v));
+  return{ok:true,v:v,asset:asset,bars:n,win:win,
+         parts:FNG_WEIGHTS.map(function(w,ix){
+           return{k:w[0],w:w[1],v:shown[ix]};
+         })};
+}
+/* one line per part, in words, so the number is never the whole story */
+function fngPartWords(k,v){
+  /* the same cut points the dial's own bands use, so a part called greedy on
+     the bar is never described as middling in the sentence beside it */
+  if(k==='Momentum')
+    return v>=56?'trading well above its own 50-day average by its own standards'
+         : v>=45?'around its usual distance from the 50-day average'
+         :'below the 50-day average more than it usually is';
+  if(k==='Position in range')
+    return v>=56?'near the top of its recent range':v>=45?'mid-range'
+         :'near the bottom of its recent range';
+  if(k==='Calm')
+    return v>=56?'moving less than it usually does':v>=45?'moving about as much as usual'
+         :'moving more violently than usual';
+  return v>=56?'most of the last twenty sessions closed up'
+       : v>=45?'up and down days roughly even':'most of the last twenty sessions closed down';
+}
+/* the compact strip that sits under the price tiles on the dashboard.
+   The asset you are actually looking at leads; the crypto index rides along on
+   the end as wider-tape context, which is all it ever was on a gold board. */
 function fngMiniHtml(rows){
-  if(!rows||!rows.length)
-    return '<div class="fng fng-mini off">Crypto Fear &amp; Greed unavailable — '
-      +'alternative.me did not answer.</div>';
-  var now=rows[0], b=fngBand(now.v);
-  var y=rows[1]||null, w=rows[7]||rows[rows.length-1]||null;
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
+  var A=assetFng(window.HIST_ROWS,asset);
+  var tape=(rows&&rows.length)?rows[0]:null;
+
+  var tapeChip=tape
+    ? '<div class="fng-tape"><i>Crypto tape</i><b style="color:'+fngBand(tape.v).c+'">'+tape.v+'</b>'
+      +'<s>'+escHtml(tape.k||fngBand(tape.v).w)+'</s></div>'
+    : '<div class="fng-tape off"><i>Crypto tape</i><s>unavailable</s></div>';
+
+  if(!A||!A.ok)
+    return '<div class="fng fng-mini">'
+      +'<div class="fng-l"><i>'+escHtml(asset)+' Fear &amp; Greed</i>'
+        +'<b class="fng-na">no reading</b>'
+        +'<s>'+escHtml(A?A.why:'no daily history loaded yet')+'</s></div>'
+      +tapeChip+'</div>';
+
+  var b=fngBand(A.v);
   return '<div class="fng fng-mini">'
-   +'<div class="fng-dial">'+fngGauge(now.v,'m',48)
-     +'<b style="color:'+b.c+'">'+now.v+'</b></div>'
-   +'<div class="fng-l"><i>Crypto Fear &amp; Greed</i>'
-     +'<b style="color:'+b.c+'">'+escHtml(now.k||b.w)+'</b>'
-     +'<s>crypto sentiment — context, not a '
-     +escHtml(((document.getElementById('ai_asset_txt')||{}).value||'Gold'))+' signal</s></div>'
-   +'<div class="fng-h">'
-     +(y?'<span><i>Yesterday</i><b>'+y.v+'</b></span>':'')
-     +(w?'<span><i>Last week</i><b>'+w.v+'</b></span>':'')
-   +'</div>'
+   +'<div class="fng-dial">'+fngGauge(A.v,'m',48)+'<b style="color:'+b.c+'">'+A.v+'</b></div>'
+   +'<div class="fng-l"><i>'+escHtml(asset)+' Fear &amp; Greed</i>'
+     +'<b style="color:'+b.c+'">'+b.w+'</b>'
+     +'<s>computed from '+escHtml(asset)+'&rsquo;s own daily bars — not a published index</s></div>'
+   +'<div class="fng-h">'+A.parts.slice(0,3).map(function(pt){
+       return '<span><i>'+escHtml(pt.k==='Position in range'?'In range':pt.k)+'</i><b>'+pt.v+'</b></span>';
+     }).join('')+'</div>'
+   +tapeChip
   +'</div>';
 }
 /* the full card for the analytics board */
 function fngFullHtml(rows){
-  if(!rows||!rows.length)
-    return '<div class="fng fng-full off"><div class="ab-cap">Crypto Fear &amp; Greed</div>'
-      +'<div class="fng-off">alternative.me did not answer, so there is no reading to show. '
-      +'Nothing is being estimated in its place.</div></div>';
-  var now=rows[0], b=fngBand(now.v);
-  var y=rows[1]||null;
-  var wIx=Math.min(7,rows.length-1), w=wIx>1?rows[wIx]:null;
-  var move=y?(now.v-y.v):null;
   var asset=(document.getElementById('ai_asset_txt')||{}).value||'this asset';
-  /* the spark is the eight days the endpoint returns, nothing longer */
-  var spark=(function(){
-    var pts=rows.slice().reverse();
-    if(pts.length<2)return '';
-    var W=250,H=42;
-    var vs=pts.map(function(p){return p.v;});
-    var lo=Math.min.apply(null,vs), hi=Math.max.apply(null,vs);
-    var span=Math.max(6,hi-lo);                 /* a flat week stays visibly flat */
-    var d=pts.map(function(p,i){
-      var yy=H-3-((p.v-lo)/span)*(H-6);
-      return (i?'L':'M')+(i/(pts.length-1)*W).toFixed(1)+' '+yy.toFixed(1);
-    }).join('');
-    return '<div class="fng-spw"><svg viewBox="0 0 '+W+' '+H+'" class="fng-sp" aria-hidden="true">'
-      +'<path d="'+d+'" fill="none" stroke="'+b.c+'" stroke-width="2" stroke-linejoin="round"'
-      +' stroke-linecap="round"/></svg><s>'+lo+' &rarr; '+hi+' over '+pts.length+' days</s></div>';
+  var A=assetFng(window.HIST_ROWS,asset);
+
+  /* the crypto index, kept as its own clearly separate reading */
+  var tape=(function(){
+    if(!rows||!rows.length)
+      return '<div class="fng-tp off"><i>Crypto Fear &amp; Greed</i>'
+        +'<s>alternative.me did not answer — nothing is being estimated in its place</s></div>';
+    var t=rows[0], tb=fngBand(t.v), y=rows[1]||null;
+    var wIx=Math.min(7,rows.length-1), w=wIx>1?rows[wIx]:null;
+    return '<div class="fng-tp"><i>Crypto Fear &amp; Greed</i>'
+      +'<div class="fng-tpv"><b style="color:'+tb.c+'">'+t.v+'</b>'
+        +'<em style="color:'+tb.c+'">'+escHtml(t.k||tb.w)+'</em>'
+        +(y?'<u>yesterday '+y.v+'</u>':'')+(w?'<u>'+escHtml(fngAgo(wIx))+' '+w.v+'</u>':'')+'</div>'
+      +'<s>alternative.me&rsquo;s index, built from Bitcoin&rsquo;s volatility, momentum, social volume, '
+      +'BTC dominance and search trends. It is the crypto tape'
+      +(/BITCOIN|BTC|ETH|SOL|CRYPTO|XRP|DOGE|ADA|LTC|BNB/i.test(asset)
+         ?', which is the market '+escHtml(asset)+' trades in.'
+         :' — background for '+escHtml(asset)+', not a reading of it.')+'</s></div>';
   })();
+
+  if(!A||!A.ok)
+    return '<div class="fng fng-full">'
+     +'<div class="ab-cap">'+escHtml(asset)+' Fear &amp; Greed</div>'
+     +'<div class="fng-off">No reading — '+escHtml(A?A.why:'no daily history is loaded')+'.</div>'
+     +tape+'</div>';
+
+  var b=fngBand(A.v);
   return '<div class="fng fng-full">'
-   +'<div class="ab-cap">Crypto Fear &amp; Greed</div>'
+   +'<div class="ab-cap">'+escHtml(asset)+' Fear &amp; Greed</div>'
    +'<div class="fng-body">'
-     +'<div class="fng-dial big">'+fngGauge(now.v,'f',104)
-       +'<b style="color:'+b.c+'">'+now.v+'</b><u style="color:'+b.c+'">'+escHtml(now.k||b.w)+'</u></div>'
+     +'<div class="fng-dial big">'+fngGauge(A.v,'f',104)
+       +'<b style="color:'+b.c+'">'+A.v+'</b><u style="color:'+b.c+'">'+b.w+'</u></div>'
      +'<div class="fng-side">'
-       +'<div class="fng-rows">'
-         +(y?'<div><i>Yesterday</i><em>'+escHtml(y.k||fngBand(y.v).w)+'</em><b>'+y.v+'</b></div>':'')
-         +(w?'<div><i>'+escHtml(fngAgo(wIx))+'</i><em>'+escHtml(w.k||fngBand(w.v).w)+'</em><b>'+w.v+'</b></div>':'')
-       +'</div>'
-       +spark
-       +'<div class="fng-why">'
-         +(move!=null?'It is '+(move>0?'up '+move:move<0?'down '+Math.abs(move):'flat')
-             +' point'+(Math.abs(move)===1?'':'s')+' on yesterday. ':'')
-         +'The scale runs 0 (extreme fear) to 100 (extreme greed), and it is built from '
-         +'Bitcoin&rsquo;s volatility, momentum, social volume, BTC dominance and search trends.'
-       +'</div>'
-       +'<div class="fng-warn">This measures the <b>crypto</b> market. It is not a reading of '
-         +escHtml(asset)+'. Treat it as risk appetite across the wider tape — useful background, '
-         +'not an entry signal here.</div>'
+       +'<div class="fng-parts">'+A.parts.map(function(pt){
+           var pb=fngBand(pt.v);
+           return '<div class="fng-p"><i>'+escHtml(pt.k)+'<em>'+pt.w+'%</em></i>'
+             +'<div class="fng-bar"><span style="width:'+pt.v+'%;background:'+pb.c+'"></span></div>'
+             +'<b>'+pt.v+'</b>'
+             +'<s>'+escHtml(fngPartWords(pt.k,pt.v))+'</s></div>';
+         }).join('')+'</div>'
+       +'<div class="fng-why">Each part is ranked against '+escHtml(asset)+'&rsquo;s own last '
+         +A.win+' sessions, out of '+A.bars+' bars loaded, then weighted into the number on the '
+         +'dial. That is why the scale reads the same on Gold as it does on Bitcoin.</div>'
+       +'<div class="fng-warn">This is <b>computed here</b> from price behaviour — it is not CNN&rsquo;s '
+         +'index, not alternative.me&rsquo;s, and not a survey of what anyone is saying. Price behaviour '
+         +'is a proxy for mood, not a measurement of it.</div>'
      +'</div>'
    +'</div>'
+   +tape
   +'</div>';
 }
 /* one fetch, both hosts — whichever of them is on the page */
