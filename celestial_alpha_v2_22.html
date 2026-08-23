@@ -1325,6 +1325,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   padding-top:12px;border-top:1px solid var(--b1)}
 .tp-al em{font-style:normal;font-size:9.5px;color:var(--t3);line-height:1.5;flex:1;min-width:200px}
 .tp-armed{font-size:11px;font-weight:700;color:var(--p3)}
+/* the standing notice about where the board's numbers came from */
+.dstale{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;padding:11px 14px;
+  border-radius:12px;border:1px solid rgba(245,158,11,.34);background:rgba(245,158,11,.07);
+  font-size:11.5px;color:var(--t2);line-height:1.55}
+.dstale b{color:var(--warn);font-weight:800;letter-spacing:.06em;font-size:9.5px;
+  text-transform:uppercase;white-space:nowrap;padding-top:2px}
 .tk-set{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;
   padding:14px 16px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02);margin-bottom:12px}
 .tk-set label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -4088,6 +4094,9 @@ body{background:var(--bg0)}
 <main class="main">
         <div class="pane" id="pane_dashboard">
   <div class="q-band" id="quote_band" style="display:none"></div>
+  <!-- says why the board is empty or stale, and stays on screen; the toast that
+       used to carry this was gone in three seconds -->
+  <div class="dstale" id="dash_stale" style="display:none"></div>
 
   <!-- ══ HERO ══ -->
   <section class="dh rise">
@@ -10788,17 +10797,39 @@ try {
        and 30 when it cannot be evaluated, so leaving it unset was a flat penalty
        on every signal. tick() has already filled the day/sunrise/now fields. */
     try{ runAnalyze(); }catch(e){ console.error('timing init:',e); }
+    /* the board says what it is waiting for while the quote is in flight,
+       rather than showing five rings reading zero */
+    try{ dashMatrixIdle('waiting for a price'); }catch(e){}
     fetchLivePrice(function(ok){
-      if(!ok){
-        var pe=document.getElementById('ai_price');
-        if(pe&&!pe.value){
-          pe.value='';
-          pe.placeholder='enter a price — live feed unreachable';
-        }
-        notify('Live price unavailable — type a price to analyse','info');
+      if(ok){ runAI(); return; }
+      /* THE DASHBOARD USED TO GIVE UP HERE.
+         The feed being down left every ring at 0%, every line at an em dash,
+         and a toast that was gone in three seconds. The last price that did
+         arrive is remembered now, so the board can be drawn from it. It is
+         labelled as not live wherever it appears — an old price presented as
+         a current one would be worse than a blank panel, not better. */
+      /* THIS CALLBACK CAN ARRIVE LATE.
+         The quote watchdog fires nine seconds in, by which time the reader may
+         already have typed a price and run the analysis themselves. Writing the
+         empty state here would then wipe a board that has real numbers on it,
+         which is worse than the problem being fixed. A run that has happened
+         wins over a fetch that failed. */
+      if(window._dashHasRun)return;
+      var pe=document.getElementById('ai_price');
+      var sym=(document.getElementById('ai_asset_txt').value||'Gold')
+                .toUpperCase().replace(/[^A-Z0-9]/g,'');
+      var cached=pxCacheRead(sym);
+      if(cached&&pe&&!pe.value){
+        pe.value=(cached.p<10?cached.p.toFixed(4):cached.p.toFixed(2));
+        dashStale('Live feed unreachable — this board is drawn from the last price that arrived, '
+          +pxAgeWords(cached.ts)+'. It is not live. Refresh once the feed is back.');
+        runAI();
         return;
       }
-      runAI();
+      if(pe&&!pe.value){ pe.value=''; pe.placeholder='enter a price — live feed unreachable'; }
+      dashMatrixIdle('no price yet');
+      dashStale('Live feed unreachable and no earlier price stored. Type a price on the '
+        +'Analytics tab and run the analysis — everything on this board is measured off it.');
     });
   }catch(e){console.error('analytics init:',e);}
 } catch(e) { console.error('INIT error:', e); }
@@ -11353,8 +11384,31 @@ function twelveQuote(symbol,cb){
 /* Ordered provider chain per asset — first one that answers wins.
    Every provider here was verified to work on its free tier AND to send
    cross-origin headers, so this works even from a file:// page. */
+/* A PROVIDER THAT NEVER ANSWERS USED TO FREEZE THE WHOLE BOARD.
+   Every provider below catches its own errors, so a refusal walks down the
+   chain and the last link calls back with null. A fetch that simply hangs —
+   a connection that is accepted and then never answered, which is what a
+   blocked or wedged endpoint looks like from the browser — does neither. It
+   never rejects, so nothing catches it, `next` is never called, and the
+   callback that would have drawn the dashboard is lost for the life of the
+   page. That is how a dashboard ends up sitting at zero forever with no
+   error anywhere.
+
+   Two guards: the callback can fire once and once only, and if nothing has
+   answered inside the timeout the chain is abandoned and null is returned so
+   the caller can fall back. A late answer after that point is dropped. */
+var QUOTE_TIMEOUT=9000;
 function getQuote(sym,cb){
   sym=(sym||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  var done=false, timer=null;
+  var raw=cb;
+  cb=function(p,pc){
+    if(done)return;
+    done=true;
+    if(timer)clearTimeout(timer);
+    try{raw(p,pc);}catch(e){console.error('quote callback:',e);}
+  };
+  timer=setTimeout(function(){ cb(null,'timeout'); },QUOTE_TIMEOUT);
   var chain=[];
   var mk=metalKey(sym),td=twelveSymbol(sym),fm=fmpSymbol(sym),fh=finnhubSymbol(sym);
   /* Gold first from Twelve Data: it is the only free source here that returns a
@@ -11448,6 +11502,7 @@ function fetchLivePrice(cb){
   getQuote(sym,function(p){
     if(p&&!isNaN(p)){
       document.getElementById('ai_price').value=(p<10?p.toFixed(4):p.toFixed(2));
+      pxCacheWrite(sym,p); window._pxIsLive=true;
       if(cb){notify(sym+' \u2192 '+p.toLocaleString()+' (live)','bull');cb(true);}
       else{notify(sym+' \u2192 '+p.toLocaleString()+' (live) \u2014 re-running','bull');if(!document.getElementById('ai_out').classList.contains('hidden'))runAI();}
     }else{
@@ -13795,6 +13850,74 @@ function dashAiLine(){
    had been analysed. They now read from the same objects the Analytics
    board uses, and the Trade Setup names the asset it belongs to.
 ══════════════════════════════════════════════════════════════════════ */
+/* ══ WHAT THE MATRIX SAYS BEFORE ANYTHING HAS BEEN MEASURED ═══════════
+   Every ring on this panel sat at 0% with an em dash underneath from the
+   moment the page opened. Nothing had been measured, but 0% is not "nothing
+   measured" — it is a measurement, and a damning one. A reader landing on the
+   dashboard saw five circles reading zero and a row of dashes below them and
+   had no way to tell whether the app was broken, whether the market was
+   terrible, or whether it simply had not run yet.
+
+   It had simply not run yet. The panel now says that, in the circle and under
+   it, and says what it is waiting for. The four labels are also set here, so
+   they are the four terms the blend actually uses rather than the placeholder
+   names left in the static HTML. */
+/* a notice that stays put. It is cleared the moment a live run replaces it, so
+   it can never outlive the condition it describes. */
+function dashStale(msg){
+  var e=document.getElementById('dash_stale');
+  if(!e)return;
+  if(!msg){e.style.display='none';e.innerHTML='';return;}
+  e.innerHTML='<b>Not live</b><span>'+escHtml(msg)+'</span>';
+  e.style.display='';
+}
+function dashMatrixIdle(reason){
+  var parts=[['Level Quality',40],['Level Distance',25],['Cycle Bias',25],['Hour Match',10]];
+  parts.forEach(function(k,ix){
+    var n=ix+1;
+    var kE=document.getElementById('mx_k'+n), sE=document.getElementById('mx_s'+n),
+        tE=document.getElementById('mx_t'+n), rE=document.getElementById('mx_r'+n);
+    if(kE)kE.textContent=k[0];
+    if(sE)sE.innerHTML='<span class="wt">'+k[1]+'</span>waiting';
+    if(tE){tE.textContent='—';tE.style.color='var(--t3)';}
+    if(rE){rE.setAttribute('stroke-dashoffset',rE.getAttribute('stroke-dasharray')||'163');rE.dataset.p=0;}
+  });
+  var t0=document.getElementById('mx_t0'), r0=document.getElementById('mx_r0'),
+      s0=document.getElementById('mx_s0');
+  if(t0){t0.textContent='—';t0.style.color='var(--t3)';}
+  if(r0){r0.setAttribute('stroke-dashoffset',r0.getAttribute('stroke-dasharray')||'264');r0.dataset.p=0;}
+  if(s0){s0.textContent=reason||'not analysed yet';
+         s0.title='Nothing has been measured. This is not a score of zero.';}
+}
+/* ── the last price that actually arrived ──────────────────────────────
+   There was no memory of it, so a page opened while the feed was down had
+   nothing at all to work from and every panel downstream stayed blank. A
+   price from an hour ago is not live and must never be presented as live,
+   but it is enough to draw the levels and the blend off, and it is far more
+   use than five zeroes. */
+var PX_KEY='ca_last_px';
+function pxCacheWrite(sym,p){
+  try{
+    var d=JSON.parse(localStorage.getItem(PX_KEY)||'{}');
+    d[sym]={p:p,ts:Date.now()};
+    localStorage.setItem(PX_KEY,JSON.stringify(d));
+  }catch(e){}
+}
+function pxCacheRead(sym){
+  try{
+    var d=JSON.parse(localStorage.getItem(PX_KEY)||'{}'), r=d[sym];
+    if(r&&r.p>0)return r;
+  }catch(e){}
+  return null;
+}
+function pxAgeWords(ts){
+  var m=Math.round((Date.now()-ts)/60000);
+  if(m<60)return m+' minute'+(m===1?'':'s')+' ago';
+  var h=Math.round(m/60);
+  if(h<24)return h+' hour'+(h===1?'':'s')+' ago';
+  var d=Math.round(h/24);
+  return d+' day'+(d===1?'':'s')+' ago';
+}
 function dashRing(ringId,txtId,pct,col){
   pct=Math.max(0,Math.min(100,pct||0));
   var r=document.getElementById(ringId);
@@ -13838,6 +13961,10 @@ function dashVol(rows){
   return{label:'Low',col:'var(--green)',ratio:ratio};
 }
 function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
+  /* a run that got here has real numbers behind it; if the notice was raised
+     by a failed fetch and the price has since arrived, it no longer applies */
+  window._dashHasRun=true;
+  try{ if(window._pxIsLive)dashStale(''); }catch(e){}
   try{
     var dp=price>=1000?2:price>=10?2:4;
     var f=function(v){return v==null||isNaN(v)?'—':'$'+(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp});};
