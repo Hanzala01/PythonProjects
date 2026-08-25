@@ -1408,6 +1408,29 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ── volume profile ── */
 /* ── index traded through its ETF ── */
 /* ── the level that would prove the trend wrong ── */
+/* ══ THE FIVE ACTS ═══════════════════════════════════════════════════
+   The board had eighteen cards of identical weight. These headers give it a
+   spine: a number, what the act is, and the question it answers — so the page
+   can be skimmed by question instead of read end to end. ══════════════════ */
+.act-h{display:flex;align-items:center;gap:13px;margin:30px 0 13px;padding-top:17px;
+  border-top:1px solid var(--b1);scroll-margin-top:14px}
+.act-h:first-of-type{margin-top:20px}
+.act-n{display:grid;place-items:center;width:27px;height:27px;flex:none;border-radius:9px;
+  font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--p3);
+  background:rgba(83,51,153,.3);border:1px solid var(--b2)}
+.act-t{display:block;font-family:'Space Grotesk';font-size:15.5px;font-weight:800;
+  letter-spacing:.01em;color:var(--t1)}
+.act-q{display:block;font-style:normal;font-size:10.5px;color:var(--t3);margin-top:2px}
+/* skip straight to the act you want */
+.ana-jump{position:sticky;top:0;z-index:6;display:flex;gap:6px;flex-wrap:wrap;padding:9px 0;
+  margin-bottom:2px;background:linear-gradient(180deg,var(--bg0) 72%,rgba(1,2,14,.62) 90%,transparent)}
+.ana-jump a{font-size:10px;padding:5px 13px;border-radius:99px;cursor:pointer;color:var(--t3);
+  border:1px solid var(--b1);background:rgba(11,6,40,.85);transition:.2s var(--ease);
+  -webkit-user-select:none;user-select:none}
+.ana-jump a:hover{color:var(--t1);border-color:var(--p2)}
+.ana-jump a.on{color:var(--t1);border-color:var(--p2);background:rgba(127,96,191,.26);font-weight:700}
+/* the call is the answer, so it is the one thing on the page that is loud */
+.ab-call{box-shadow:0 10px 34px rgba(0,0,0,.36)}
 .tinv{display:grid;grid-template-columns:auto auto 1fr;gap:6px 14px;align-items:baseline;
   margin:12px 0 0;padding:13px 15px;border-radius:14px;border:1px solid var(--b1);
   background:rgba(11,6,40,.55)}
@@ -1418,9 +1441,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tinv u{text-decoration:none;font-size:9.5px;color:var(--t3)}
 .tinv span{grid-column:1/-1;font-size:10.5px;color:var(--t2);line-height:1.65;margin-top:3px}
 .tinv span b{font-family:inherit;font-size:inherit;font-weight:800;color:var(--t1)}
-.tinv.bear{border-color:rgba(239,68,68,.34)} .tinv.bear b{color:var(--dn)}
-.tinv.bull{border-color:rgba(34,197,94,.34)} .tinv.bull b{color:var(--up)}
-.tinv.broken{border-color:rgba(245,158,11,.4)} .tinv.broken b{color:var(--warn)}
+/* the number is amber whichever way the trend runs, because it is a line in
+   the sand rather than a direction — and because the trade ladder already
+   draws this same price in amber, and one level in two colours on one page is
+   how a reader stops trusting either. The border still carries the trend. */
+.tinv b{color:var(--warn)}
+.tinv{border-left-width:3px}
+.tinv.bear{border-color:rgba(239,68,68,.34);border-left-color:var(--dn)}
+.tinv.bull{border-color:rgba(34,197,94,.34);border-left-color:var(--up)}
+.tinv.broken{border-color:rgba(245,158,11,.45);border-left-color:var(--warn)}
 .tinv.range{grid-template-columns:1fr} .tinv.range b{display:none}
 .idxp{display:flex;gap:12px;align-items:flex-start;margin:12px 0;padding:11px 14px;
   border-radius:12px;border:1px solid rgba(245,158,11,.34);background:rgba(245,158,11,.07)}
@@ -8157,17 +8186,48 @@ function trendInvalidHtml(T,price,dp,asset){
   pts.sort(function(a,b){return b.p-a.p;});
   var dp=price<10?4:2;
 
+  /* ══ HOW THIS BOARD IS ORDERED ═══════════════════════════════════════
+     It used to be eighteen cards in one flat stack, in roughly the order the
+     features had been written. Four things were wrong with that.
+
+     The invalidation sat six blocks below the call. The single most important
+     qualifier on "buy Gold" — the price at which buying Gold is wrong — was
+     separated from it by a trade form, an open-trades table, a risk box, a
+     quota bar and a share button.
+
+     Those five are things you do AFTER you have decided, and they were wedged
+     between the answer and the reasoning, so anyone reading top to bottom hit
+     a wall of forms before learning why.
+
+     The price-structure panels — ladder, cycle, zones, rungs, profile — were
+     scattered with the quantitative block sitting in the middle of them, and
+     Fear & Greed had been dropped between the evidence and the structure.
+
+     And everything carried the same visual weight, so nothing on the page said
+     "this is the answer" as against "this is background".
+
+     It is grouped by the question being asked now, in the order the questions
+     actually come up: what do I do · why · where · how much · show me. Each
+     act states its own question, and the jump bar skips between them.
+     ══════════════════════════════════════════════════════════════════════ */
+  var act=function(n,title,question){
+    return '<div class="act-h" id="act'+n+'"><span class="act-n">'+n+'</span>'
+      +'<div><b class="act-t">'+title+'</b><i class="act-q">'+question+'</i></div></div>';
+  };
+  var jump='<div class="ana-jump">'
+    +[[1,'Call'],[2,'Case'],[3,'Map'],[4,'Size'],[5,'Working']].map(function(x){
+        return '<a onclick="anaJump('+x[0]+')">'+x[1]+'</a>';
+      }).join('')
+    +'</div>';
+
   host.className='ab';
   host.innerHTML=
    anaBar(asset,price,dp)
    +idxProxyHtml(asset)
+   +jump
 
-   /* Daily Bias belongs between the asset row and the call — you pick the
-      asset, you read which way the day leans, then you read the call. The
-      section lives outside this innerHTML so its date input keeps its value
-      across redraws; it is moved into the slot below once the board exists. */
-   +'<div id="vb_slot"></div>'
-
+   /* ─── 1 · what do I do ─────────────────────────────────────────── */
+   +act(1,'The call','What am I supposed to do with '+escHtml(asset)+' right now?')
    +'<div class="ab-call '+(dir==='BUY'?'buy':dir==='SELL'?'sell':'none')+'">'
      +'<div class="ab-c-l">'
        +'<div class="ab-cap">The call</div>'
@@ -8196,35 +8256,46 @@ function trendInvalidHtml(T,price,dp,asset){
        +(S&&S.style?'<div class="ab-style">'+escHtml(S.style)+' setup</div>':'<div class="ab-style">no setup</div>')
      +'</div>'
    +'</div>'
-
-   +tradeCardHtml()
-   +openTradesHtml()
-   +qvRiskHtml(S,window._lastQV,price)
+   /* the qualifier belongs against the call, not six blocks under it */
+   +trendInvalidHtml(T,price,dp,asset)
    +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
-   +quotaHtml()
-   +shareBar('setup')
+
+   /* ─── 2 · why ──────────────────────────────────────────────────── */
+   +act(2,'The case','Why does it say that, and what is the evidence made of?')
    +'<div class="ab-reads">'+reads.map(function(r){
        return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
          +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
          +anaMeter(r.p,r.c)
          +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
      }).join('')+'</div>'
-   +trendInvalidHtml(T,price,dp,asset)
-
-   /* filled by renderFng once the index arrives — it is one network call and
-      should not hold up the board that does not depend on it */
    +'<div id="ana_fng"></div>'
+   /* the day's lean is a reason for the call, so it sits with the reasons.
+      It lives outside this innerHTML so its date input survives a redraw. */
+   +'<div id="vb_slot"></div>'
 
+   /* ─── 3 · where ────────────────────────────────────────────────── */
+   +act(3,'The map','Where are the prices that matter, and where is this one?')
    +anaLadder(pts,price,lo,hi,dp,S,dir)
-
-   +'<details class="sec" id="qv_sec" open><summary><b>How is it moving right now?</b>'
-     +'<span>volatility, volume and number patterns — in plain words first</span></summary>'
-     +'<div class="qv-wrap" id="qv_ana"></div></details>'
    +anaCycle(price,dp)
    +anaZones(price,dp)
    +anaRungs(price,dp)
    +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
-   +'<details class="sec"><summary><b>Full working</b><span>every method, step by step</span></summary>'
+
+   /* ─── 4 · how much, and act ────────────────────────────────────── */
+   +act(4,'Size it','How much, against what is already open, and what is left this month?')
+   +tradeCardHtml()
+   +openTradesHtml()
+   +qvRiskHtml(S,window._lastQV,price)
+   +quotaHtml()
+   +shareBar('setup')
+
+   /* ─── 5 · show me ──────────────────────────────────────────────── */
+   +act(5,'The working','Show me the numbers behind all of it.')
+   +'<details class="sec" id="qv_sec" open><summary><b>How is it moving right now?</b>'
+     +'<span>volatility, volume and number patterns — in plain words first</span></summary>'
+     +'<div class="qv-wrap" id="qv_ana"></div></details>'
+   +'<details class="sec"><summary><b>Every method, step by step</b>'
+     +'<span>the complete working on the Reference tab</span></summary>'
      +'<div class="tk-tools"><button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open on the Reference tab</button></div>'
    +'</details>';
 
@@ -8244,6 +8315,16 @@ function trendInvalidHtml(T,price,dp,asset){
   });
   host.querySelectorAll('.ab-meter i').forEach(function(i){
     i.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){i.style.width=i.style.getPropertyValue('--w');});});
+  });
+}
+/* the jump bar. Scrolling the pane rather than the window, because the board
+   lives inside a scrolling main column and window.scrollTo would move nothing. */
+function anaJump(n){
+  var el=document.getElementById('act'+n);
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.ana-jump a').forEach(function(a,ix){
+    a.classList.toggle('on',ix===n-1);
   });
 }
 function anaRun(){
