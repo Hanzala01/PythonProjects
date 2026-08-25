@@ -1408,6 +1408,105 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ── volume profile ── */
 /* ── index traded through its ETF ── */
 /* ── the level that would prove the trend wrong ── */
+/* ── risk calculator ── */
+.rc{margin:0 0 14px;padding:16px 17px;border-radius:16px;border:1px solid var(--b1);
+  background:rgba(11,6,40,.6)}
+.rc-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rc-mode{display:flex;gap:4px;padding:3px;border-radius:99px;border:1px solid var(--b1);
+  background:rgba(6,3,20,.7)}
+.rc-m{font-size:9.5px;padding:4px 13px;border-radius:99px;cursor:pointer;color:var(--t3);
+  transition:.2s var(--ease);-webkit-user-select:none;user-select:none}
+.rc-m.on{background:rgba(127,96,191,.3);color:var(--t1);font-weight:700}
+.rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:13px}
+.rc-f{display:block;padding:11px 13px;border-radius:12px;border:1px solid var(--b1);
+  background:rgba(6,3,20,.6)}
+.rc-f i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3)}
+.rc-f input{width:100%;margin-top:5px;padding:6px 9px;font-family:'Space Grotesk';font-size:18px;
+  font-weight:700;background:transparent;border:none;border-bottom:1px solid var(--b1);
+  color:var(--t1);border-radius:0}
+.rc-f input:disabled{color:var(--t2);opacity:.75}
+.rc-f input:focus{outline:none;border-bottom-color:var(--p2)}
+.rc-f b{display:block;font-family:'Space Grotesk';font-size:21px;font-weight:800;color:var(--t1);
+  margin-top:6px;font-variant-numeric:tabular-nums}
+.rc-f.out{background:rgba(83,51,153,.16);border-color:var(--b2)}
+.rc-f.out b{color:var(--p3)}
+.rc-f s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:4px;line-height:1.45}
+/* the ladder, with the rung this confidence sits on lit */
+.rc-lad{display:grid;gap:1px;margin-top:12px;border-radius:11px;overflow:hidden;background:var(--b1)}
+.rc-r{display:flex;align-items:baseline;gap:12px;padding:8px 13px;background:rgba(6,3,20,.72)}
+.rc-r b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t3);width:42px;
+  flex:none;font-variant-numeric:tabular-nums}
+.rc-r i{font-style:normal;font-size:9.5px;color:var(--t3)}
+.rc-r.on{background:rgba(127,96,191,.24)}
+.rc-r.on b{color:var(--p3)} .rc-r.on i{color:var(--t1)}
+.rc-note{font-size:10.5px;color:var(--t2);line-height:1.65;margin-top:12px}
+.rc-note b{color:var(--t1);font-weight:700}
+.rc-warn{font-style:normal;color:var(--warn);font-weight:700}
+.rc-warn2{font-size:9.5px;color:var(--t3);line-height:1.65;margin-top:9px;padding-top:9px;
+  border-top:1px solid var(--b1)}
+.rc-foot{font-size:9.5px;color:var(--t3);line-height:1.6;margin-top:7px}
+
+/* ══ THE VERDICT BLOCK ═══════════════════════════════════════════════
+   One band carrying the decision, its prices, its invalidation and its
+   confidence — the four things that make up a single call, laid out as one
+   thing instead of four cards. ══════════════════════════════════════════ */
+.vd{border-radius:20px;padding:20px 22px;border:1px solid var(--b1);
+  background:linear-gradient(155deg,rgba(20,12,52,.95),rgba(9,5,26,.97));
+  box-shadow:0 14px 40px rgba(0,0,0,.4)}
+.vd.buy{border-color:rgba(34,197,94,.42);
+  background:linear-gradient(155deg,rgba(12,42,26,.9),rgba(7,6,24,.97))}
+.vd.sell{border-color:rgba(239,68,68,.42);
+  background:linear-gradient(155deg,rgba(48,14,18,.9),rgba(7,6,24,.97))}
+.vd.flat{border-color:rgba(245,158,11,.3)}
+.vd-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.vd-word{display:flex;align-items:baseline;gap:11px;min-width:0}
+.vd-do{font-family:'Space Grotesk';font-size:clamp(30px,3.4vw,46px);font-weight:800;
+  line-height:1;letter-spacing:-.02em;color:var(--t1)}
+.vd.buy .vd-do{color:var(--up)} .vd.sell .vd-do{color:var(--dn)} .vd.flat .vd-do{color:var(--warn)}
+.vd-as{font-family:'Space Grotesk';font-size:20px;font-weight:600;color:var(--t2)}
+.vd-tag{margin-left:auto;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--t3);border:1px solid var(--b1);border-radius:99px;padding:4px 12px;white-space:nowrap}
+/* the four prices, on one rail */
+.vd-nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;
+  margin-top:18px;border-radius:13px;overflow:hidden;background:var(--b1)}
+.vd-n{padding:11px 14px;background:rgba(6,3,20,.72)}
+.vd-n i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--t3)}
+.vd-n b{display:block;font-family:'Space Grotesk';font-size:19px;font-weight:700;color:var(--t1);
+  margin-top:4px;font-variant-numeric:tabular-nums}
+.vd-n b.vd-up{color:var(--up)} .vd-n b.vd-dn{color:var(--dn)} .vd-n b.vd-ac{color:var(--p3)}
+/* the line that ends the argument */
+.vd-inv{display:grid;grid-template-columns:auto auto 1fr;gap:5px 13px;align-items:baseline;
+  margin-top:14px;padding:12px 15px;border-radius:13px;
+  border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.06)}
+.vd-inv i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--warn);white-space:nowrap}
+.vd-inv b{font-family:'Space Grotesk';font-size:20px;font-weight:800;color:var(--warn);
+  line-height:1;font-variant-numeric:tabular-nums}
+.vd-inv s{grid-column:1/-1;text-decoration:none;font-size:10.5px;color:var(--t2);line-height:1.6}
+/* confidence as a threshold test, with the thresholds drawn on the bar */
+.vd-conf{display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:center;margin-top:16px}
+.vd-bar{position:relative;height:9px;border-radius:99px;background:rgba(43,21,91,.7);overflow:visible}
+.vd-fill{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--p2);
+  transition:width .8s var(--ease)}
+.vd.buy .vd-fill{background:var(--up)} .vd.sell .vd-fill{background:var(--dn)}
+.vd-thr{position:absolute;top:-4px;bottom:-4px;width:1.5px;background:var(--t3);opacity:.65}
+.vd-thr::after{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:7.5px;
+  color:var(--t3);white-space:nowrap}
+.vd-thr.t68{left:68%} .vd-thr.t68::after{content:'68 intraday'}
+.vd-thr.t80{left:80%} .vd-thr.t80::after{content:'80 swing'}
+.vd-cn{text-align:right;white-space:nowrap}
+.vd-cn b{font-family:'Space Grotesk';font-size:22px;font-weight:800;color:var(--t1)}
+.vd-cn i{font-style:normal;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--t3);margin-left:6px}
+.vd-cw{grid-column:1/-1;font-size:10.5px;color:var(--t2);line-height:1.6}
+.vd-flags{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.vd-fl{font-size:9.5px;padding:4px 11px;border-radius:99px;border:1px solid var(--b1);color:var(--t2)}
+.vd-fl.warn{border-color:rgba(245,158,11,.45);color:var(--warn)}
+.ab-mtl input{border-color:rgba(245,158,11,.35)!important}
+@media(max-width:820px){.vd-tag{margin-left:0}.vd-inv{grid-template-columns:1fr}}
+
 /* ══ THE FIVE ACTS ═══════════════════════════════════════════════════
    The board had eighteen cards of identical weight. These headers give it a
    spine: a number, what the act is, and the question it answers — so the page
@@ -6035,10 +6134,24 @@ function calcMajorTrend(rows,price){
   }
 
   var dir=score>=2?'bull':score<=-2?'bear':'range';
+  /* A LEVEL SET BY HAND DECIDES THE TREND.
+     The window loaded here is 150 daily bars; a major level usually comes off
+     a chart far longer than that. When one is set for this asset it wins
+     outright — the score above becomes supporting detail rather than the
+     verdict, and the direction is the one the level implies. */
+  var mtl=null;
+  try{ mtl=mtlTrend((typeof _lastAsset!=='undefined'&&_lastAsset)
+        ||((document.getElementById('ai_asset_txt')||{}).value||''),price); }catch(e){}
+  if(mtl){
+    dir=mtl.dir;
+    f.unshift({k:'Major level (yours)',
+      v:mtl.level.toFixed(2)+' · last close '+(mtl.lastClose!=null?mtl.lastClose.toFixed(2):'—'),
+      dir:mtl.dir});
+  }
   /* The major level that would invalidate the trend: in a downtrend it is the
      last swing high, in an uptrend the last swing low. Nothing counts as a
      change of trend until price CLOSES beyond it. */
-  var keyLevel=null,broken=false,keyDate=null,keyTyped=false;
+  var keyLevel=null,broken=false,keyDate=null,keyTyped=false,keyTesting=false;
   /* THE LAST SWING HIGH IS NOT THE MAJOR ONE.
      This took sp.hi[last] — whichever pivot happened most recently — so a small
      three-bar wiggle two weeks old could stand as the level that defines a
@@ -6071,7 +6184,8 @@ function calcMajorTrend(rows,price){
      ignored two panels away. If you have set the side that matters, that is
      the level, and it is marked as yours. */
   var typed=null;
-  try{
+  if(mtl)typed=mtl.level;                    /* the level that set the direction */
+  else try{
     var tEl=document.getElementById(dir==='bear'?'sh_price':'sl2_price');
     var tv=tEl?parseFloat(tEl.value):NaN;
     if(isFinite(tv)&&tv>0)typed=tv;
@@ -6079,7 +6193,11 @@ function calcMajorTrend(rows,price){
   var kp=null;
   if(typed!=null){
     keyLevel=typed; keyDate=null; keyTyped=true;
-    broken=(dir==='bear')?price>typed:price<typed;
+    /* when the level IS the trend, price crossing it does not break the read —
+       it turns it, and the direction above has already turned. What matters is
+       whether the live price is testing it ahead of a close. */
+    broken=mtl?false:((dir==='bear')?price>typed:price<typed);
+    if(mtl&&mtl.testing)keyTesting=true;
   }
   else if(dir==='bear')kp=pick(sp.hi,true);
   else if(dir==='bull')kp=pick(sp.lo,false);
@@ -6098,7 +6216,8 @@ function calcMajorTrend(rows,price){
     if(dir==='bull'&&roc5<-0.005){relief=true;reliefNote='Pullback inside a bullish trend';}
   }
   var label=dir==='bull'?'BULLISH':dir==='bear'?'BEARISH':'RANGE';
-  return{dir:dir,label:label,score:score,factors:f,keyLevel:keyLevel,keyDate:keyDate,keyTyped:keyTyped,broken:broken,
+  return{dir:dir,label:label,score:score,factors:f,keyLevel:keyLevel,keyDate:keyDate,keyTyped:keyTyped,keyTesting:keyTesting,
+         mtl:!!mtl,broken:broken,
          relief:relief,reliefNote:reliefNote,
          reason:broken?('Major level '+(keyLevel!=null?keyLevel.toFixed(2):'')+' broken — trend under review')
                :relief?reliefNote
@@ -6946,6 +7065,196 @@ function anaMeter(pct,col){
   return '<div class="ab-meter"><i style="--w:'+Math.max(0,Math.min(100,pct))+'%;background:'+col+'"></i></div>';
 }
 var ANA_PICKS=['Gold','Silver','Bitcoin','Ethereum','EURUSD','GBPUSD','Oil','Nasdaq','SPX500','Apple','Tesla','Nvidia'];
+/* ══ THE MAJOR TREND LEVEL ════════════════════════════════════════════
+   You read a longer chart than the 150 daily bars this page can load, and on
+   that chart XAU is bearish under 5240. The app was working the trend out from
+   its own window and coming to the opposite conclusion, and the level you had
+   typed only annotated the disagreement — it changed the invalidation number
+   printed on screen while the direction beside it still said BULLISH.
+
+   A level that defines a trend has to decide the trend. Set one here and the
+   rule is the one you stated: below it the asset is bearish, and it takes a
+   daily CLOSE above it to turn bullish — not a wick, a close. Everything
+   downstream reads that direction, so the call, the bias filter and which side
+   the anchors come from all follow the level rather than arguing with it.
+
+   Kept per asset, so Gold's level is not applied to Bitcoin, and remembered
+   across reloads.
+   ══════════════════════════════════════════════════════════════════════ */
+var MTL_KEY='ca_major_levels';
+function mtlAll(){
+  try{ var d=JSON.parse(localStorage.getItem(MTL_KEY)||'{}'); return (d&&typeof d==='object')?d:{}; }
+  catch(e){ return {}; }
+}
+function mtlKeyFor(asset){ return String(asset||'').trim().toUpperCase(); }
+function mtlGet(asset){
+  var v=mtlAll()[mtlKeyFor(asset)];
+  return (typeof v==='number'&&isFinite(v)&&v>0)?v:null;
+}
+function mtlSet(asset,v){
+  var d=mtlAll(), k=mtlKeyFor(asset);
+  if(v==null||!(v>0))delete d[k]; else d[k]=v;
+  try{ localStorage.setItem(MTL_KEY,JSON.stringify(d)); }catch(e){}
+}
+function mtlApply(el){
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'';
+  var v=parseFloat(el.value);
+  mtlSet(asset,isFinite(v)&&v>0?v:null);
+  try{ runAI(); }catch(e){ try{renderAnalytics();}catch(e2){} }
+}
+/* the trend, once a level has been set for this asset. The close used is the
+   last daily close in the loaded history, not the live tick — a level is
+   broken by a close and nothing else. */
+function mtlTrend(asset,price){
+  var lvl=mtlGet(asset);
+  if(lvl==null)return null;
+  var lastClose=null;
+  try{
+    var H=window.HIST_ROWS;
+    if(H&&H.length)lastClose=+H[H.length-1].close;
+  }catch(e){}
+  var closedAbove=(lastClose!=null)?lastClose>lvl:(price>lvl);
+  return{level:lvl, dir:closedAbove?'bull':'bear',
+         label:closedAbove?'BULLISH':'BEARISH',
+         lastClose:lastClose, live:price,
+         /* a live price the wrong side of the level while the last close is not
+            is exactly the case the "close, not a wick" rule exists for */
+         testing:(lastClose!=null)&&((lastClose>lvl)!==(price>lvl))};
+}
+/* ══ RISK CALCULATOR ══════════════════════════════════════════════════
+   So nobody has to leave the page to work out how much to put on. It runs on
+   its own by default and takes a hand-set number whenever you want one.
+
+   The ladder is the one you set: nothing under 60, half a percent to two
+   percent across the ordinary range, and five percent unlocked only at 90 and
+   above. Two things are worth saying about it out loud on the panel rather
+   than only here.
+
+   The step from two percent to five is a jump, not a slope: at 89 the ladder
+   allows 2% and at 90 it allows two and a half times that, on one point of
+   confidence. Five is a ceiling that becomes available, not a recommendation
+   that arrives — the panel says so and the manual box is right there.
+
+   And confidence is this app's own blended number, not a measured hit rate.
+   Nothing here has been backtested into a win rate, so a high reading means
+   the methods agree, not that the trade is likely to work. Sizing off
+   agreement is a reasonable thing to do. Sizing off it as though it were a
+   probability is not, and the difference matters most at the top of the
+   ladder, which is exactly where the largest number sits.
+   ══════════════════════════════════════════════════════════════════════ */
+var RISK_LADDER=[
+  {min:90, pct:5.0, why:'90+ · every method agrees — this is the ceiling, not a target'},
+  {min:80, pct:2.0, why:'80-89 · strong agreement'},
+  {min:70, pct:1.0, why:'70-79 · a normal setup'},
+  {min:60, pct:0.5, why:'60-69 · thin — the smallest size that is worth placing'},
+  {min:0,  pct:0,   why:'below 60 · no setup clears the threshold, so nothing is risked'}
+];
+var RISK_MAX=5, RISK_KEY='ca_risk_prefs';
+function riskPrefs(){
+  try{ var d=JSON.parse(localStorage.getItem(RISK_KEY)||'{}');
+       return{auto:d.auto!==false, pct:(typeof d.pct==='number')?d.pct:null,
+              bal:(typeof d.bal==='number'&&d.bal>0)?d.bal:null}; }
+  catch(e){ return{auto:true,pct:null,bal:null}; }
+}
+function riskSave(p){ try{ localStorage.setItem(RISK_KEY,JSON.stringify(p)); }catch(e){} }
+function riskSuggest(conf){
+  for(var i=0;i<RISK_LADDER.length;i++)
+    if(conf>=RISK_LADDER[i].min)return RISK_LADDER[i];
+  return RISK_LADDER[RISK_LADDER.length-1];
+}
+/* the account the percentage is a percentage OF. The portfolio tab already
+   holds a balance; the calculator borrows it rather than asking twice. */
+function riskBalance(){
+  var P=riskPrefs();
+  if(P.bal)return{v:P.bal,src:'set here'};
+  var cur=parseFloat((document.getElementById('port_cur')||{}).value);
+  if(isFinite(cur)&&cur>0)return{v:cur,src:'current balance, Portfolio tab'};
+  var st=parseFloat((document.getElementById('port_start')||{}).value);
+  if(isFinite(st)&&st>0)return{v:st,src:'starting balance, Portfolio tab'};
+  return null;
+}
+function riskSetAuto(on){ var P=riskPrefs(); P.auto=!!on; riskSave(P); try{renderAnalytics();}catch(e){} }
+function riskSetPct(el){
+  var P=riskPrefs(), v=parseFloat(el.value);
+  P.pct=(isFinite(v)&&v>=0)?Math.min(RISK_MAX,v):null;
+  P.auto=false;
+  riskSave(P);
+  try{renderAnalytics();}catch(e){}
+}
+function riskSetBal(el){
+  var P=riskPrefs(), v=parseFloat(el.value);
+  P.bal=(isFinite(v)&&v>0)?v:null;
+  riskSave(P);
+  try{renderAnalytics();}catch(e){}
+}
+function riskCompute(S,conf,price){
+  var P=riskPrefs(), sug=riskSuggest(conf||0);
+  var pct=P.auto?sug.pct:(P.pct!=null?P.pct:sug.pct);
+  pct=Math.max(0,Math.min(RISK_MAX,pct));
+  var B=riskBalance();
+  var stopDist=(S&&S.style&&S.sl!=null&&S.entry!=null)?Math.abs(S.entry-S.sl):null;
+  var amount=B?B.v*pct/100:null;
+  var units=(amount!=null&&stopDist>0)?amount/stopDist:null;
+  return{pct:pct, auto:P.auto, sug:sug, bal:B, amount:amount,
+         stopDist:stopDist, units:units,
+         capped:(!P.auto&&P.pct!=null&&P.pct>=RISK_MAX),
+         overLadder:(!P.auto&&P.pct!=null&&P.pct>sug.pct)};
+}
+function riskCalcHtml(S,conf,price,dp,asset){
+  var R=riskCompute(S,conf,price);
+  var money=function(v){ return v==null?'—':'$'+v.toLocaleString('en',{maximumFractionDigits:2}); };
+  return '<div class="rc">'
+   +'<div class="rc-h"><div class="ab-cap">Risk calculator</div>'
+     +'<div class="rc-mode">'
+       +'<span class="rc-m'+(R.auto?' on':'')+'" onclick="riskSetAuto(true)">Auto</span>'
+       +'<span class="rc-m'+(!R.auto?' on':'')+'" onclick="riskSetAuto(false)">Manual</span>'
+     +'</div></div>'
+
+   +'<div class="rc-grid">'
+     +'<label class="rc-f"><i>Account</i>'
+       +'<input type="number" step="1" value="'+(R.bal?R.bal.v:'')+'" placeholder="10000" '
+       +'onchange="riskSetBal(this)"><s>'+(R.bal?escHtml(R.bal.src):'set it to size anything')+'</s></label>'
+     +'<label class="rc-f"><i>Risk %</i>'
+       +'<input type="number" step="0.1" min="0" max="'+RISK_MAX+'" value="'+R.pct+'" '
+       +(R.auto?'disabled ':'')+'onchange="riskSetPct(this)">'
+       +'<s>'+(R.auto?'set by confidence':'yours · '+RISK_MAX+'% is the hard cap')+'</s></label>'
+     +'<div class="rc-f out"><i>Risk on this trade</i><b>'+money(R.amount)+'</b>'
+       +'<s>'+(R.bal?R.pct+'% of '+money(R.bal.v):'no account set')+'</s></div>'
+     +'<div class="rc-f out"><i>Position size</i>'
+       +'<b>'+(R.units!=null?R.units.toLocaleString('en',{maximumFractionDigits:2}):'—')+'</b>'
+       +'<s>'+(R.units!=null
+           ? 'units, at a '+R.stopDist.toFixed(dp)+' stop'
+           : (S&&S.style?'no stop yet':'needs a live setup'))+'</s></div>'
+   +'</div>'
+
+   /* the ladder, with the rung you are on lit */
+   +'<div class="rc-lad">'+RISK_LADDER.slice().reverse().map(function(L){
+       var on=(L.min===R.sug.min);
+       return '<div class="rc-r'+(on?' on':'')+'"><b>'+L.pct+'%</b><i>'+escHtml(L.why)+'</i></div>';
+     }).join('')+'</div>'
+
+   +'<div class="rc-note">'
+     +(R.auto
+        ? 'Confidence is '+(conf||0)+'%, so the ladder allows <b>'+R.sug.pct+'%</b>. '
+        : 'You have set <b>'+R.pct+'%</b>; the ladder would allow '+R.sug.pct+'% at '+(conf||0)+'% confidence. ')
+     +(R.overLadder?'<em class="rc-warn">That is above the rung this confidence sits on.</em> ':'')
+     +(R.capped?'<em class="rc-warn">Five percent is the hard cap and the ladder only opens it at 90+.</em> ':'')
+     +'The step from 2% to 5% is a jump rather than a slope — at 89 the ladder allows 2% and at 90 '
+     +'it allows two and a half times that, on one point. Five is a ceiling that becomes available, '
+     +'not a size that arrives.'
+   +'</div>'
+   +'<div class="rc-warn2">Confidence here is this app&rsquo;s own blended number, not a measured hit '
+     +'rate — nothing in it has been backtested into a win rate. A high reading means the methods '
+     +'agree, not that the trade is likely to work. Sizing off agreement is reasonable; sizing off it '
+     +'as if it were a probability is not, and that gap matters most at the top of the ladder, which '
+     +'is where the biggest number sits.</div>'
+   +(R.units!=null
+      ? '<div class="rc-foot">Position size is in units of '+escHtml(asset)+' — risk divided by the '
+        +'stop distance. What a broker calls a lot varies by instrument and by broker, so convert '
+        +'against your own contract size before placing it.</div>'
+      : '')
+  +'</div>';
+}
 function anaBar(asset,price,dp){
   var risk=(document.getElementById('ai_risk')||{}).value||'100';
   return '<div class="ab-bar">'
@@ -6954,6 +7263,10 @@ function anaBar(asset,price,dp){
    +'<label>Price<input id="ab_price" type="number" step="0.01" value="'+(price?price.toFixed(dp):'')+'" '
      +'onkeydown="if(event.key===\'Enter\')anaRun()" placeholder="live"></label>'
    +'<label>Risk $<input id="ab_risk" type="number" step="1" value="'+escHtml(risk)+'"></label>'
+   +'<label class="ab-mtl">Major level<input id="ab_mtl" type="number" step="0.01" '
+     +'placeholder="e.g. 5240" title="Below it this asset is bearish; it takes a daily close '
+     +'above to turn bullish" value="'+(mtlGet(asset)!=null?mtlGet(asset):'')+'" '
+     +'onchange="mtlApply(this)"></label>'
    +'<button class="btn btn-g btn-sm" onclick="anaLive()">⟲ Live</button>'
    +'<button class="btn btn-a btn-sm" onclick="anaRun()">Analyse</button></div>'
    +'<div class="ab-picks">'+ANA_PICKS.map(function(a){
@@ -8228,36 +8541,88 @@ function trendInvalidHtml(T,price,dp,asset){
 
    /* ─── 1 · what do I do ─────────────────────────────────────────── */
    +act(1,'The call','What am I supposed to do with '+escHtml(asset)+' right now?')
-   +'<div class="ab-call '+(dir==='BUY'?'buy':dir==='SELL'?'sell':'none')+'">'
-     +'<div class="ab-c-l">'
-       +'<div class="ab-cap">The call</div>'
-       +'<div class="ab-dir">'
-         +(dir?'<span class="w" style="color:'+col+'">'+(dir==='BUY'?'Buy':'Sell')+'</span>'
-              +'<span class="arw" style="color:'+col+'">'+(dir==='BUY'?'↗':'↘')+'</span>'
-              +'<span class="sep"></span><span class="a">'+escHtml(asset)+'</span>'
-           :'<span class="w none">No trade</span>')
+
+   /* ══ THE VERDICT BLOCK — rebuilt, not re-ordered ═════════════════════
+      The last pass moved this card around the page and left the card itself
+      alone, which is not a redesign. It was a two-column panel: a word on the
+      left, a percentage on the right, and the level that would prove it wrong
+      in a separate box underneath, so the three things that make up one
+      decision were laid out as three unrelated facts.
+
+      They are one thing now. A single band carries the decision, what it would
+      cost, and where it dies, reading straight across: what to do · at what
+      price · with what behind it · and the line that ends the argument. The
+      confidence is a bar under the whole width rather than a number in a
+      corner, because a number in a corner invites you to read it as a score
+      out of a hundred, and it is a threshold test — it either clears the bar
+      for a setup or it does not, and the bar is drawn where the threshold is.
+      ══════════════════════════════════════════════════════════════════════ */
+   +(function(){
+      var live=!!(S&&S.style);
+      var lvl=(T&&T.keyLevel!=null)?T.keyLevel:null;
+      var side=live?(S.isBull?'long':'short'):null;
+
+      var strip=[
+        {k:'Entry',  v:live?S.entry.toFixed(dp):'—', c:''},
+        {k:'Stop',   v:live?S.sl.toFixed(dp):'—',    c:'vd-dn'},
+        {k:'Target', v:live?S.tp.toFixed(dp):'—',    c:'vd-up'},
+        {k:'Reward : risk', v:live?(S.rr+' : 1'):'—', c:'vd-ac'}
+      ];
+
+      return '<div class="vd '+(dir==='BUY'?'buy':dir==='SELL'?'sell':'flat')+'">'
+       +'<div class="vd-top">'
+         +'<div class="vd-word">'
+           +'<span class="vd-do">'+(dir?(dir==='BUY'?'Buy':'Sell'):'Stand aside')+'</span>'
+           +(dir?'<span class="vd-as">'+escHtml(asset)+'</span>':'')
+         +'</div>'
+         +'<div class="vd-tag">'+(live
+             ? escHtml(S.style)+' &middot; '+(S.isPending?'resting order':'at market')
+             : 'no setup on the board')+'</div>'
        +'</div>'
-       +(S&&S.style
-          ?'<div class="ab-order">'+escHtml(anaOrderLine(S,price,dp))+'</div>'
-           +'<div class="ab-why">'+escHtml(anaPlanLine(S,asset,dp))+'</div>'
-           +'<div class="ab-chips">'
-             +'<span class="ab-ch">'+escHtml(S.style)+'</span>'
-             +'<span class="ab-ch">'+S.rr+'R</span>'
-             +'<span class="ab-ch">'+(S.isPending?'Pending fill':'At market')+'</span>'
-             +(S.counter?'<span class="ab-ch warn">Counter-trend — size down</span>':'')
-             +(S.rallyNote?'<span class="ab-ch">'+escHtml(S.rallyNote)+'</span>':'')
-           +'</div>'
-          :'<div class="ab-why">'+escHtml(S?(S.reason||'Confidence is below the entry threshold — nothing to take here.')
-                                            :'Run an analysis to get a call.')+'</div>')
-     +'</div>'
-     +'<div class="ab-c-r">'
-       +'<div class="ab-conf" style="color:'+col+'">'+conf+'<i>%</i></div>'
-       +'<div class="ab-cap">confidence</div>'
-       +(S&&S.style?'<div class="ab-style">'+escHtml(S.style)+' setup</div>':'<div class="ab-style">no setup</div>')
-     +'</div>'
-   +'</div>'
-   /* the qualifier belongs against the call, not six blocks under it */
-   +trendInvalidHtml(T,price,dp,asset)
+
+       +'<div class="vd-nums">'+strip.map(function(x){
+           return '<div class="vd-n"><i>'+x.k+'</i><b class="'+x.c+'">'+x.v+'</b></div>';
+         }).join('')+'</div>'
+
+       /* the line that ends the argument, inside the same block as the call */
+       +(lvl!=null
+          ? '<div class="vd-inv"><i>'+(T.mtl?'Your major level':'This is wrong past')+'</i>'
+            +'<b>'+lvl.toFixed(dp)+'</b>'
+            +'<s>'+escHtml(
+                T.mtl
+                 ? asset+' is '+T.label.toLowerCase()+' while it closes '
+                   +(T.dir==='bear'?'below ':'above ')+lvl.toFixed(dp)+'. '
+                   +(T.keyTesting
+                      ? 'Price is the other side of it right now but the last daily close was not — '
+                        +'this is exactly the case the close rule is for. Wait for the close.'
+                      : 'A daily close the other side turns it, and everything on this board turns with it.')
+                 : asset+' stays '+String(T&&T.label||'').toLowerCase()+' while it holds '
+                   +(T&&T.dir==='bear'?'below ':'above ')+lvl.toFixed(dp)
+                   +'. It takes a daily close beyond that, not a wick.')
+            +'</s></div>'
+          : '')
+
+       /* confidence as a threshold test, drawn where the threshold is */
+       +'<div class="vd-conf">'
+         +'<div class="vd-bar">'
+           +'<span class="vd-fill" style="width:'+Math.max(0,Math.min(100,conf))+'%"></span>'
+           +'<u class="vd-thr t68" title="Intraday setups need 68%"></u>'
+           +'<u class="vd-thr t80" title="Swing setups need 80%"></u>'
+         +'</div>'
+         +'<div class="vd-cn"><b>'+conf+'%</b><i>confidence</i></div>'
+         +'<div class="vd-cw">'+escHtml(live
+             ? 'Clears the '+S.style.toLowerCase()+' threshold, so the plan above is placeable.'
+             : (S&&S.reason)||'Below every setup threshold — there is nothing here to place.')
+         +'</div>'
+       +'</div>'
+
+       +(live&&(S.counter||S.rallyNote)
+          ?'<div class="vd-flags">'
+            +(S.counter?'<span class="vd-fl warn">Counter-trend — size down</span>':'')
+            +(S.rallyNote?'<span class="vd-fl">'+escHtml(S.rallyNote)+'</span>':'')
+           +'</div>':'')
+      +'</div>';
+    })()
    +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
 
    /* ─── 2 · why ──────────────────────────────────────────────────── */
@@ -8283,6 +8648,7 @@ function trendInvalidHtml(T,price,dp,asset){
 
    /* ─── 4 · how much, and act ────────────────────────────────────── */
    +act(4,'Size it','How much, against what is already open, and what is left this month?')
+   +riskCalcHtml(S,conf,price,dp,asset)
    +tradeCardHtml()
    +openTradesHtml()
    +qvRiskHtml(S,window._lastQV,price)
