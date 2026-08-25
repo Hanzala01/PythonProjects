@@ -1408,44 +1408,64 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ── volume profile ── */
 /* ── index traded through its ETF ── */
 /* ── the level that would prove the trend wrong ── */
-/* ── risk calculator ── */
-.rc{margin:0 0 14px;padding:16px 17px;border-radius:16px;border:1px solid var(--b1);
-  background:rgba(11,6,40,.6)}
-.rc-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.rc-mode{display:flex;gap:4px;padding:3px;border-radius:99px;border:1px solid var(--b1);
-  background:rgba(6,3,20,.7)}
-.rc-m{font-size:9.5px;padding:4px 13px;border-radius:99px;cursor:pointer;color:var(--t3);
-  transition:.2s var(--ease);-webkit-user-select:none;user-select:none}
-.rc-m.on{background:rgba(127,96,191,.3);color:var(--t1);font-weight:700}
-.rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:13px}
-.rc-f{display:block;padding:11px 13px;border-radius:12px;border:1px solid var(--b1);
-  background:rgba(6,3,20,.6)}
-.rc-f i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+/* ── risk: a one-line chip on the board, the rest docked to the side ── */
+.rk-chip{display:flex;align-items:center;gap:16px;flex-wrap:wrap;cursor:pointer;
+  margin:0 0 12px;padding:10px 15px;border-radius:13px;border:1px solid var(--b1);
+  background:rgba(11,6,40,.6);transition:.2s var(--ease)}
+.rk-chip:hover{border-color:var(--p2);background:rgba(83,51,153,.18)}
+.rk-c-i{display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:8px;
+  font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--p3);
+  background:rgba(83,51,153,.3);border:1px solid var(--b2)}
+.rk-c-m{display:flex;align-items:baseline;gap:6px}
+.rk-c-m b{font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t1);
+  font-variant-numeric:tabular-nums}
+.rk-c-m i{font-style:normal;font-size:9px;color:var(--t3)}
+.rk-c-go{margin-left:auto;font-size:9.5px;color:var(--p3);border:1px solid var(--b1);
+  border-radius:99px;padding:3px 11px;white-space:nowrap}
+/* the dock */
+.rkd{position:fixed;right:16px;bottom:16px;width:296px;max-height:min(78vh,640px);z-index:60;
+  overflow:auto;border-radius:16px;border:1px solid var(--b2);padding:14px 15px 15px;
+  background:rgba(9,5,26,.97);box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transform:translateY(14px);opacity:0;pointer-events:none;transition:.22s var(--ease)}
+.rkd.open{transform:none;opacity:1;pointer-events:auto}
+.rkd-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rkd-h b{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--t1)}
+.rkd-x{cursor:pointer;font-size:19px;line-height:1;color:var(--t3);padding:0 3px}
+.rkd-x:hover{color:var(--t1)}
+.rkd-mode{display:flex;gap:3px;padding:3px;border-radius:99px;border:1px solid var(--b1);
+  background:rgba(6,3,20,.7);margin-top:11px}
+.rkd-m{flex:1;text-align:center;font-size:9.5px;padding:5px 0;border-radius:99px;cursor:pointer;
+  color:var(--t3);transition:.2s var(--ease);-webkit-user-select:none;user-select:none}
+.rkd-m.on{background:rgba(127,96,191,.32);color:var(--t1);font-weight:700}
+.rkd-f{display:block;margin-top:12px}
+.rkd-f i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
   text-transform:uppercase;color:var(--t3)}
-.rc-f input{width:100%;margin-top:5px;padding:6px 9px;font-family:'Space Grotesk';font-size:18px;
+.rkd-f input{width:100%;margin-top:3px;padding:5px 2px;font-family:'Space Grotesk';font-size:19px;
   font-weight:700;background:transparent;border:none;border-bottom:1px solid var(--b1);
   color:var(--t1);border-radius:0}
-.rc-f input:disabled{color:var(--t2);opacity:.75}
-.rc-f input:focus{outline:none;border-bottom-color:var(--p2)}
-.rc-f b{display:block;font-family:'Space Grotesk';font-size:21px;font-weight:800;color:var(--t1);
-  margin-top:6px;font-variant-numeric:tabular-nums}
-.rc-f.out{background:rgba(83,51,153,.16);border-color:var(--b2)}
-.rc-f.out b{color:var(--p3)}
-.rc-f s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:4px;line-height:1.45}
-/* the ladder, with the rung this confidence sits on lit */
-.rc-lad{display:grid;gap:1px;margin-top:12px;border-radius:11px;overflow:hidden;background:var(--b1)}
-.rc-r{display:flex;align-items:baseline;gap:12px;padding:8px 13px;background:rgba(6,3,20,.72)}
-.rc-r b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t3);width:42px;
-  flex:none;font-variant-numeric:tabular-nums}
-.rc-r i{font-style:normal;font-size:9.5px;color:var(--t3)}
-.rc-r.on{background:rgba(127,96,191,.24)}
-.rc-r.on b{color:var(--p3)} .rc-r.on i{color:var(--t1)}
-.rc-note{font-size:10.5px;color:var(--t2);line-height:1.65;margin-top:12px}
-.rc-note b{color:var(--t1);font-weight:700}
-.rc-warn{font-style:normal;color:var(--warn);font-weight:700}
-.rc-warn2{font-size:9.5px;color:var(--t3);line-height:1.65;margin-top:9px;padding-top:9px;
-  border-top:1px solid var(--b1)}
-.rc-foot{font-size:9.5px;color:var(--t3);line-height:1.6;margin-top:7px}
+.rkd-f input:disabled{color:var(--t2);opacity:.7}
+.rkd-f input:focus{outline:none;border-bottom-color:var(--p2)}
+.rkd-src{font-size:8.5px;color:var(--t3);margin-top:3px;line-height:1.45}
+.rkd-out{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:14px;border-radius:11px;
+  overflow:hidden;background:var(--b1)}
+.rkd-out>div{padding:9px 11px;background:rgba(83,51,153,.18)}
+.rkd-out i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.rkd-out b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:800;color:var(--p3);
+  margin-top:3px;font-variant-numeric:tabular-nums}
+.rkd-w{font-size:9.5px;color:var(--warn);line-height:1.5;margin-top:9px}
+.rkd-d{margin-top:13px;border-top:1px solid var(--b1);padding-top:10px}
+.rkd-d>summary{list-style:none;cursor:pointer;font-size:9.5px;color:var(--p3)}
+.rkd-d>summary::-webkit-details-marker{display:none}
+.rkd-d p{font-size:9px;color:var(--t3);line-height:1.6;margin:8px 0 0}
+.rkd-lad{display:grid;gap:1px;margin-top:9px;border-radius:9px;overflow:hidden;background:var(--b1)}
+.rkd-r{display:flex;align-items:baseline;gap:9px;padding:6px 10px;background:rgba(6,3,20,.8)}
+.rkd-r b{font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--t3);width:34px;
+  flex:none}
+.rkd-r i{font-style:normal;font-size:8.5px;color:var(--t3);line-height:1.35}
+.rkd-r.on{background:rgba(127,96,191,.26)}
+.rkd-r.on b{color:var(--p3)} .rkd-r.on i{color:var(--t1)}
+@media(max-width:760px){.rkd{left:12px;right:12px;width:auto}}
 
 /* ══ THE VERDICT BLOCK ═══════════════════════════════════════════════
    One band carrying the decision, its prices, its invalidation and its
@@ -7173,19 +7193,34 @@ function riskBalance(){
   if(isFinite(st)&&st>0)return{v:st,src:'starting balance, Portfolio tab'};
   return null;
 }
-function riskSetAuto(on){ var P=riskPrefs(); P.auto=!!on; riskSave(P); try{renderAnalytics();}catch(e){} }
+function riskSetAuto(on){ var P=riskPrefs(); P.auto=!!on; riskSave(P); riskRefresh(); }
 function riskSetPct(el){
   var P=riskPrefs(), v=parseFloat(el.value);
   P.pct=(isFinite(v)&&v>=0)?Math.min(RISK_MAX,v):null;
   P.auto=false;
   riskSave(P);
-  try{renderAnalytics();}catch(e){}
+  riskRefresh();
 }
 function riskSetBal(el){
   var P=riskPrefs(), v=parseFloat(el.value);
   P.bal=(isFinite(v)&&v>0)?v:null;
   riskSave(P);
-  try{renderAnalytics();}catch(e){}
+  riskRefresh();
+}
+/* redraw the panel and its one-line chip without rebuilding the whole board —
+   a full re-render on every change stole focus from the box being typed in */
+function riskRefresh(){
+  try{ riskDockSync(); }catch(e){}
+  try{
+    var chip=document.querySelector('.rk-chip');
+    if(!chip)return;
+    var S=window._lastSig, conf=S?S.conf:0;
+    var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+    var asset=(document.getElementById('ai_asset_txt')||{}).value||'this asset';
+    var tmp=document.createElement('div');
+    tmp.innerHTML=riskChipHtml(S,conf,price,price<10?4:2,asset);
+    chip.replaceWith(tmp.firstChild);
+  }catch(e){}
 }
 function riskCompute(S,conf,price){
   var P=riskPrefs(), sug=riskSuggest(conf||0);
@@ -7200,60 +7235,83 @@ function riskCompute(S,conf,price){
          capped:(!P.auto&&P.pct!=null&&P.pct>=RISK_MAX),
          overLadder:(!P.auto&&P.pct!=null&&P.pct>sug.pct)};
 }
-function riskCalcHtml(S,conf,price,dp,asset){
+/* ── where the calculator lives ──────────────────────────────────────
+   It was a full-width block roughly seven hundred pixels tall sitting in the
+   middle of the board, so a thing you glance at while sizing one trade was the
+   largest object on the page. It is a docked panel now, off to the side like a
+   message box, opened from a one-line chip that already carries the answer —
+   percent, money, size — so most of the time it never needs opening at all.
+   The long notes fold away inside it instead of being shouted at someone who
+   only wanted a number. */
+var RISK_OPEN=false;
+function riskToggle(on){
+  RISK_OPEN=(on==null)?!RISK_OPEN:!!on;
+  riskDockSync();
+}
+/* the one line that stays on the board */
+function riskChipHtml(S,conf,price,dp,asset){
+  var R=riskCompute(S,conf,price);
+  var money=function(v){ return v==null?'—':'$'+v.toLocaleString('en',{maximumFractionDigits:0}); };
+  return '<div class="rk-chip" onclick="riskToggle(true)" title="Open the risk calculator">'
+   +'<span class="rk-c-i">%</span>'
+   +'<div class="rk-c-m"><b>'+R.pct+'%</b><i>'+(R.auto?'auto':'yours')+'</i></div>'
+   +'<div class="rk-c-m"><b>'+money(R.amount)+'</b><i>at risk</i></div>'
+   +'<div class="rk-c-m"><b>'+(R.units!=null?R.units.toLocaleString('en',{maximumFractionDigits:2}):'—')
+     +'</b><i>units</i></div>'
+   +'<span class="rk-c-go">Open</span>'
+  +'</div>';
+}
+/* the panel itself, kept on <body> so a board redraw cannot wipe it */
+function riskDockSync(){
+  var el=document.getElementById('risk_dock');
+  if(!el){ el=document.createElement('div'); el.id='risk_dock'; document.body.appendChild(el); }
+  el.className='rkd'+(RISK_OPEN?' open':'');
+  if(!RISK_OPEN){ el.innerHTML=''; return; }
+
+  var S=window._lastSig, conf=S?S.conf:0;
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'this asset';
+  var dp=price<10?4:2;
   var R=riskCompute(S,conf,price);
   var money=function(v){ return v==null?'—':'$'+v.toLocaleString('en',{maximumFractionDigits:2}); };
-  return '<div class="rc">'
-   +'<div class="rc-h"><div class="ab-cap">Risk calculator</div>'
-     +'<div class="rc-mode">'
-       +'<span class="rc-m'+(R.auto?' on':'')+'" onclick="riskSetAuto(true)">Auto</span>'
-       +'<span class="rc-m'+(!R.auto?' on':'')+'" onclick="riskSetAuto(false)">Manual</span>'
-     +'</div></div>'
 
-   +'<div class="rc-grid">'
-     +'<label class="rc-f"><i>Account</i>'
-       +'<input type="number" step="1" value="'+(R.bal?R.bal.v:'')+'" placeholder="10000" '
-       +'onchange="riskSetBal(this)"><s>'+(R.bal?escHtml(R.bal.src):'set it to size anything')+'</s></label>'
-     +'<label class="rc-f"><i>Risk %</i>'
-       +'<input type="number" step="0.1" min="0" max="'+RISK_MAX+'" value="'+R.pct+'" '
-       +(R.auto?'disabled ':'')+'onchange="riskSetPct(this)">'
-       +'<s>'+(R.auto?'set by confidence':'yours · '+RISK_MAX+'% is the hard cap')+'</s></label>'
-     +'<div class="rc-f out"><i>Risk on this trade</i><b>'+money(R.amount)+'</b>'
-       +'<s>'+(R.bal?R.pct+'% of '+money(R.bal.v):'no account set')+'</s></div>'
-     +'<div class="rc-f out"><i>Position size</i>'
-       +'<b>'+(R.units!=null?R.units.toLocaleString('en',{maximumFractionDigits:2}):'—')+'</b>'
-       +'<s>'+(R.units!=null
-           ? 'units, at a '+R.stopDist.toFixed(dp)+' stop'
-           : (S&&S.style?'no stop yet':'needs a live setup'))+'</s></div>'
-   +'</div>'
-
-   /* the ladder, with the rung you are on lit */
-   +'<div class="rc-lad">'+RISK_LADDER.slice().reverse().map(function(L){
-       var on=(L.min===R.sug.min);
-       return '<div class="rc-r'+(on?' on':'')+'"><b>'+L.pct+'%</b><i>'+escHtml(L.why)+'</i></div>';
-     }).join('')+'</div>'
-
-   +'<div class="rc-note">'
-     +(R.auto
-        ? 'Confidence is '+(conf||0)+'%, so the ladder allows <b>'+R.sug.pct+'%</b>. '
-        : 'You have set <b>'+R.pct+'%</b>; the ladder would allow '+R.sug.pct+'% at '+(conf||0)+'% confidence. ')
-     +(R.overLadder?'<em class="rc-warn">That is above the rung this confidence sits on.</em> ':'')
-     +(R.capped?'<em class="rc-warn">Five percent is the hard cap and the ladder only opens it at 90+.</em> ':'')
-     +'The step from 2% to 5% is a jump rather than a slope — at 89 the ladder allows 2% and at 90 '
-     +'it allows two and a half times that, on one point. Five is a ceiling that becomes available, '
-     +'not a size that arrives.'
-   +'</div>'
-   +'<div class="rc-warn2">Confidence here is this app&rsquo;s own blended number, not a measured hit '
-     +'rate — nothing in it has been backtested into a win rate. A high reading means the methods '
-     +'agree, not that the trade is likely to work. Sizing off agreement is reasonable; sizing off it '
-     +'as if it were a probability is not, and that gap matters most at the top of the ladder, which '
-     +'is where the biggest number sits.</div>'
-   +(R.units!=null
-      ? '<div class="rc-foot">Position size is in units of '+escHtml(asset)+' — risk divided by the '
-        +'stop distance. What a broker calls a lot varies by instrument and by broker, so convert '
-        +'against your own contract size before placing it.</div>'
-      : '')
-  +'</div>';
+  el.innerHTML=
+    '<div class="rkd-h"><b>Risk calculator</b>'
+      +'<span class="rkd-x" onclick="riskToggle(false)" title="Close">&times;</span></div>'
+    +'<div class="rkd-mode">'
+      +'<span class="rkd-m'+(R.auto?' on':'')+'" onclick="riskSetAuto(true)">Auto</span>'
+      +'<span class="rkd-m'+(!R.auto?' on':'')+'" onclick="riskSetAuto(false)">Manual</span>'
+    +'</div>'
+    +'<label class="rkd-f"><i>Account</i>'
+      +'<input type="number" step="1" value="'+(R.bal?R.bal.v:'')+'" placeholder="10000" '
+      +'onchange="riskSetBal(this)"></label>'
+    +'<div class="rkd-src">'+(R.bal?escHtml(R.bal.src):'set it to size anything')+'</div>'
+    +'<label class="rkd-f"><i>Risk %</i>'
+      +'<input type="number" step="0.1" min="0" max="'+RISK_MAX+'" value="'+R.pct+'" '
+      +(R.auto?'disabled ':'')+'onchange="riskSetPct(this)"></label>'
+    +'<div class="rkd-src">'+(R.auto?'set by confidence ('+(conf||0)+'%)':'yours · '+RISK_MAX+'% hard cap')+'</div>'
+    +'<div class="rkd-out">'
+      +'<div><i>At risk</i><b>'+money(R.amount)+'</b></div>'
+      +'<div><i>Position</i><b>'+(R.units!=null?R.units.toLocaleString('en',{maximumFractionDigits:2}):'—')+'</b></div>'
+    +'</div>'
+    +'<div class="rkd-src">'+(R.units!=null
+        ? 'units of '+escHtml(asset)+', at a '+R.stopDist.toFixed(dp)+' stop'
+        : (S&&S.style?'no stop on the setup':'no live setup to size'))+'</div>'
+    +(R.overLadder?'<div class="rkd-w">Above the rung this confidence sits on ('+R.sug.pct+'%).</div>':'')
+    +(R.capped?'<div class="rkd-w">'+RISK_MAX+'% is the hard cap; the ladder only opens it at 90+.</div>':'')
+    +'<details class="rkd-d"><summary>The ladder, and what it does not know</summary>'
+      +'<div class="rkd-lad">'+RISK_LADDER.slice().reverse().map(function(L){
+          return '<div class="rkd-r'+(L.min===R.sug.min?' on':'')+'">'
+            +'<b>'+L.pct+'%</b><i>'+escHtml(L.why)+'</i></div>';
+        }).join('')+'</div>'
+      +'<p>The step from 2% to 5% is a jump, not a slope: at 89 the ladder allows 2% and at 90 two '
+      +'and a half times that, on one point. Five is a ceiling that opens, not a size that arrives.</p>'
+      +'<p>Confidence here is this app&rsquo;s own blended number, not a measured hit rate — nothing '
+      +'in it has been backtested into a win rate. A high reading means the methods agree, not that '
+      +'the trade is likely to work.</p>'
+      +'<p>Position size is risk divided by stop distance, in units. What a broker calls a lot varies '
+      +'by instrument, so convert against your own contract size.</p>'
+    +'</details>';
 }
 function anaBar(asset,price,dp){
   var risk=(document.getElementById('ai_risk')||{}).value||'100';
@@ -8648,7 +8706,7 @@ function trendInvalidHtml(T,price,dp,asset){
 
    /* ─── 4 · how much, and act ────────────────────────────────────── */
    +act(4,'Size it','How much, against what is already open, and what is left this month?')
-   +riskCalcHtml(S,conf,price,dp,asset)
+   +riskChipHtml(S,conf,price,dp,asset)
    +tradeCardHtml()
    +openTradesHtml()
    +qvRiskHtml(S,window._lastQV,price)
@@ -8674,6 +8732,9 @@ function trendInvalidHtml(T,price,dp,asset){
   /* same reason: this host is recreated empty by the innerHTML above, and the
      index is cached, so refilling it costs nothing after the first call */
   try{renderFng();}catch(e){}
+  /* the dock lives on <body> so it survives this redraw, but its numbers came
+     from the previous analysis and have to be refreshed */
+  try{ if(RISK_OPEN)riskDockSync(); }catch(e){}
 
   host.querySelectorAll('.mj-track .fill').forEach(function(f){
     f.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){
