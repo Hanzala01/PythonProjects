@@ -1392,6 +1392,58 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .fng-warn b{color:var(--warn);font-weight:800}
 .fng-off{font-size:10.5px;color:var(--t3);margin-top:8px;line-height:1.6}
 @media(max-width:900px){.fng-mini{flex-wrap:wrap}.fng-h{width:100%;justify-content:flex-start}}
+/* ── volume profile ── */
+.vp{margin:14px 0 0;padding:15px 16px;border-radius:16px;border:1px solid var(--b1);
+  background:rgba(11,6,40,.55)}
+.vp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.vp-wins{display:flex;gap:5px}
+.vp-w{font-size:9.5px;padding:3px 10px;border-radius:99px;border:1px solid var(--b1);
+  color:var(--t3);cursor:pointer;transition:.2s var(--ease)}
+.vp-w:hover{border-color:var(--p2);color:var(--t2)}
+.vp-w.on{background:rgba(127,96,191,.24);border-color:var(--p2);color:var(--t1);font-weight:700}
+.vp-body{display:grid;grid-template-columns:minmax(180px,300px) 1fr;gap:20px;margin-top:12px;
+  align-items:start}
+.vp-hist{display:flex;flex-direction:column;gap:1px}
+.vp-row{height:10px;display:flex;align-items:center;position:relative}
+/* out-of-value bars sit well back, so the edge of the value area is visible
+   without having to read the numbers beside it */
+.vp-b{display:block;height:100%;border-radius:0 2px 2px 0;background:rgba(127,96,191,.22)}
+.vp-row.va .vp-b{background:rgba(127,96,191,.8)}
+.vp-row.vah::before,.vp-row.val::after{content:'';position:absolute;left:0;right:0;
+  border-top:1px dashed rgba(180,155,230,.5)}
+.vp-row.vah::before{top:-1px}
+.vp-row.val::after{bottom:-1px}
+.vp-row.poc .vp-b{background:var(--warn)}
+.vp-row.hvn .vp-b{background:#22D3EE}
+.vp-row.lvn .vp-b{background:rgba(239,68,68,.55)}
+.vp-row.now::after{content:'';position:absolute;left:0;right:0;height:1.5px;background:var(--t1);
+  opacity:.85}
+.vp-levels{display:grid;gap:8px;align-content:start}
+.vp-l{display:grid;grid-template-columns:104px 84px 1fr;gap:10px;align-items:baseline;
+  padding-bottom:7px;border-bottom:1px solid rgba(43,21,91,.55)}
+.vp-l i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.vp-l b{font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--t1);
+  font-variant-numeric:tabular-nums}
+.vp-l u{text-decoration:none;font-size:9.5px;color:var(--t3)}
+.vp-l s{grid-column:1/-1;text-decoration:none;font-size:9.5px;color:var(--t2);line-height:1.55;
+  margin-top:2px}
+.vp-l.poc b{color:var(--warn)}
+.vp-l.hvn b{color:var(--cy)}
+.vp-l.lvn b{color:var(--dn)}
+.vp-key{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:9px;color:var(--t3)}
+.vp-key span{display:flex;align-items:center;gap:5px}
+.vp-key span::before{content:'';width:11px;height:5px;border-radius:2px;background:currentColor}
+.vp-key .k-poc{color:var(--warn)}.vp-key .k-va{color:var(--p2)}
+.vp-key .k-hvn{color:var(--cy)}.vp-key .k-lvn{color:var(--dn)}
+.vp-key .k-now{color:var(--t1)}
+.vp-note{font-size:10px;color:var(--t2);line-height:1.6;margin-top:10px}
+.vp-note b{color:var(--t1);font-weight:700}
+.vp-warn{font-size:9.5px;color:var(--t3);line-height:1.6;margin-top:8px;padding-top:8px;
+  border-top:1px solid var(--b1)}
+.vp-warn b{color:var(--warn);font-weight:800}
+.vp-none{font-size:10.5px;color:var(--t3);margin-top:9px}
+@media(max-width:900px){.vp-body{grid-template-columns:1fr}}
 .tk-set{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;
   padding:14px 16px;border-radius:16px;border:1px solid var(--bd);background:rgba(255,255,255,.02);margin-bottom:12px}
 .tk-set label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -7687,6 +7739,213 @@ function vbMount(){
   if(slot&&sec&&sec.parentNode!==slot)slot.appendChild(sec);
   try{renderVibration();}catch(e){console.error('daily bias:',e);}
 }
+/* ══ VOLUME PROFILE ═══════════════════════════════════════════════════
+   Where the trading actually happened, stacked by price instead of by date.
+   Four things come out of it, and the panel names all four:
+
+     · POC — the price with the most business done at it. Price keeps coming
+       back to it, which is why it is drawn as a line rather than a zone.
+     · Value Area — the band holding roughly 70% of the window's activity.
+       Inside it the market has agreed on a fair price; outside it, it has not.
+     · HVN — the other heavy shelves. They slow price down and tend to hold.
+     · LVN — the thin gaps. Price crosses them quickly because almost nobody
+       traded there, so there is nothing to lean on.
+
+   TWO HONEST LIMITS, both stated on the panel rather than buried here.
+
+   First: this is built from DAILY bars, so each day's activity is spread
+   evenly across that day's high-low range. A real volume profile is built
+   from intraday prints and knows exactly where inside the day the business
+   was done. This does not, and cannot. It gets the shelves and the gaps
+   roughly right and should not be read to the tick.
+
+   Second, and more important: spot gold and spot FX have no volume. There is
+   no exchange and no central tape to count. What Polygon returns in the
+   volume field for XAU is a count of quotes — in the 150-bar sample checked
+   here, `v` equalled `n` on every single bar. That count is still a fair
+   measure of where the activity was, which is what a profile is for, but it
+   is not contracts and the panel does not call it that.
+   ══════════════════════════════════════════════════════════════════════ */
+var VP_WIN=90, VP_BINS=46, VP_VA=0.70;
+/* what the numbers in the volume field actually are, for this instrument */
+function vpKind(asset){
+  var sym=(asset||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(typeof metalKey==='function'&&metalKey(sym))
+    return{k:'activity',word:'Activity profile',
+      note:'Spot '+(metalKey(sym)==='XAU'?'gold':'silver')+' has no exchange volume — there is no '
+        +'central tape to count. These are quote counts, which say where the business was '
+        +'happening, but they are not contracts traded.'};
+  if(/^[A-Z]{6}$/.test(sym)&&!/USDT|BUSD/.test(sym))
+    return{k:'activity',word:'Activity profile',
+      note:'Spot FX has no exchange volume. These are quote counts — a fair measure of where '
+        +'the activity was, but not contracts traded.'};
+  return{k:'volume',word:'Volume profile',
+    note:'Volume as reported by the data provider for each session.'};
+}
+function vpBuild(rows,asset,winBars,nBins){
+  if(!rows||rows.length<20)
+    return{ok:false,why:(rows?rows.length:0)+' daily bars loaded — a profile needs at least 20'};
+  var R=rows.slice(-Math.max(20,winBars||VP_WIN));
+  var hi=-Infinity, lo=Infinity;
+  R.forEach(function(b){
+    var h=+b.high, l=+b.low;
+    if(isFinite(h)&&h>hi)hi=h;
+    if(isFinite(l)&&l<lo)lo=l;
+  });
+  if(!(hi>lo))return{ok:false,why:'the window has no price range in it'};
+
+  /* if nothing carries a usable volume figure, count time instead of activity
+     and say so — a profile of how long price sat at each level is a real
+     thing, and it is better than inventing numbers */
+  var haveVol=R.some(function(b){return isFinite(+b.volume)&&+b.volume>0;});
+  var kind=haveVol?vpKind(asset):{k:'time',word:'Time at price',
+    note:'This provider sent no volume for these bars, so this counts sessions instead: how '
+      +'long price spent at each level, not how much changed hands there.'};
+
+  var n=Math.max(12,nBins||VP_BINS), step=(hi-lo)/n;
+  var bins=[];
+  for(var i=0;i<n;i++)bins.push({lo:lo+i*step,hi:lo+(i+1)*step,mid:lo+(i+0.5)*step,v:0});
+
+  /* each session's activity spread evenly over the range it covered, in
+     proportion to how much of each bin that range overlapped */
+  R.forEach(function(b){
+    var bl=+b.low, bh=+b.high;
+    if(!isFinite(bl)||!isFinite(bh)||bh<bl)return;
+    var w=haveVol?(isFinite(+b.volume)&&+b.volume>0?+b.volume:0):1;
+    if(!w)return;
+    var span=bh-bl;
+    if(span<=0){                              /* a session with no range at all */
+      var ix=Math.min(n-1,Math.max(0,Math.floor((bl-lo)/step)));
+      bins[ix].v+=w; return;
+    }
+    for(var i=0;i<n;i++){
+      var ov=Math.min(bh,bins[i].hi)-Math.max(bl,bins[i].lo);
+      if(ov>0)bins[i].v+=w*(ov/span);
+    }
+  });
+
+  var total=bins.reduce(function(s,b){return s+b.v;},0);
+  if(!(total>0))return{ok:false,why:'nothing to stack — every session in the window came back empty'};
+
+  /* POC: the busiest shelf in the window */
+  var pocIx=0;
+  bins.forEach(function(b,i){if(b.v>bins[pocIx].v)pocIx=i;});
+
+  /* value area: grow out from the POC, always taking the busier side, until
+     it holds the target share of the window */
+  var a=pocIx, z=pocIx, acc=bins[pocIx].v, guard=0;
+  while(acc<VP_VA*total&&guard++<n*2){
+    var up=(z+1<n)?bins[z+1].v:-1, dn=(a-1>=0)?bins[a-1].v:-1;
+    if(up<0&&dn<0)break;
+    if(up>=dn){z++;acc+=bins[z].v;} else {a--;acc+=bins[a].v;}
+  }
+
+  /* shelves and gaps, off a lightly smoothed curve so single-bin noise does
+     not get promoted to a level */
+  var sm=bins.map(function(b,i){
+    var w=[bins[i-1],bins[i],bins[i+1]].filter(Boolean);
+    return w.reduce(function(s,x){return s+x.v;},0)/w.length;
+  });
+  var avg=sm.reduce(function(s,x){return s+x;},0)/sm.length;
+  var hvn=[], lvn=[];
+  for(var i=1;i<n-1;i++){
+    if(sm[i]>=sm[i-1]&&sm[i]>=sm[i+1]&&sm[i]>avg*1.15&&Math.abs(i-pocIx)>2)
+      hvn.push({ix:i,p:bins[i].mid,v:sm[i]});
+    if(sm[i]<=sm[i-1]&&sm[i]<=sm[i+1]&&sm[i]<avg*0.55)
+      lvn.push({ix:i,p:bins[i].mid,v:sm[i]});
+  }
+  hvn.sort(function(x,y){return y.v-x.v;}); hvn=hvn.slice(0,3);
+  lvn.sort(function(x,y){return x.v-y.v;}); lvn=lvn.slice(0,3);
+
+  return{ok:true,kind:kind,bins:bins,total:total,bars:R.length,
+    poc:bins[pocIx].mid, pocIx:pocIx,
+    val:bins[a].lo, vah:bins[z].hi, vaIx:[a,z],
+    vaShare:acc/total, hvn:hvn, lvn:lvn,
+    lo:lo, hi:hi, step:step, max:Math.max.apply(null,bins.map(function(b){return b.v;}))};
+}
+/* where a level sits relative to price, in words the rest of the app uses */
+function vpAway(p,price,dp,sig){
+  if(!(price>0))return '';
+  var d=p-price, pct=(d/price)*100;
+  var far=(sig>0)?Math.abs(d)/(price*sig):null;
+  return (Math.abs(pct)<0.05?'at price'
+         : (d>0?'above':'below')+' by '+Math.abs(pct).toFixed(2)+'%')
+    +(far!=null&&far>=0.15?' · '+far.toFixed(1)+' days’ move away':'');
+}
+function vpSetWin(n){
+  VP_WIN=n;
+  try{renderAnalytics();}catch(e){}
+}
+function vpHtml(price,dp,sig){
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'this asset';
+  var P=vpBuild(window.HIST_ROWS,asset,VP_WIN,VP_BINS);
+  var chips=[30,90,180].map(function(w){
+    return '<span class="vp-w'+(w===VP_WIN?' on':'')+'" onclick="vpSetWin('+w+')">'+w+'d</span>';
+  }).join('');
+
+  if(!P||!P.ok)
+    return '<div class="vp"><div class="vp-head"><div class="ab-cap">Volume profile</div>'
+      +'<div class="vp-wins">'+chips+'</div></div>'
+      +'<div class="vp-none">No profile — '+escHtml(P?P.why:'no daily history is loaded')+'.</div></div>';
+
+  var K=P.kind;
+  /* drawn high price at the top, the way a profile is always read */
+  var rows=P.bins.slice().reverse();
+  var inVA=function(ix){return ix>=P.vaIx[0]&&ix<=P.vaIx[1];};
+  var hvnIx={}, lvnIx={};
+  P.hvn.forEach(function(x){hvnIx[x.ix]=1;});
+  P.lvn.forEach(function(x){lvnIx[x.ix]=1;});
+  var priceIx=(price>0&&price>=P.lo&&price<=P.hi)
+    ? Math.min(P.bins.length-1,Math.floor((price-P.lo)/P.step)) : -1;
+
+  var hist='<div class="vp-hist">'+rows.map(function(b){
+     var ix=P.bins.indexOf(b);
+     var cls=ix===P.pocIx?'poc':hvnIx[ix]?'hvn':lvnIx[ix]?'lvn':inVA(ix)?'va':'out';
+     if(inVA(ix))cls+=' va';
+     if(ix===P.vaIx[1])cls+=' vah';
+     if(ix===P.vaIx[0])cls+=' val';
+     return '<div class="vp-row '+cls+(ix===priceIx?' now':'')+'"'
+       +' title="'+b.lo.toFixed(dp)+'–'+b.hi.toFixed(dp)+' · '
+       +(b.v/P.total*100).toFixed(1)+'% of the window">'
+       +'<span class="vp-b" style="width:'+Math.max(1.5,(b.v/P.max)*100).toFixed(1)+'%"></span>'
+       +'</div>';
+   }).join('')+'</div>';
+
+  var lvl=function(k,p,what,cls){
+    return '<div class="vp-l '+cls+'"><i>'+k+'</i><b>'+p.toFixed(dp)+'</b>'
+      +'<u>'+escHtml(vpAway(p,price,dp,sig))+'</u><s>'+what+'</s></div>';
+  };
+  var levels='<div class="vp-levels">'
+    +lvl('POC',P.poc,'the busiest price in the window — price keeps returning to it','poc')
+    +lvl('Value area high',P.vah,'the top of the band holding '+Math.round(P.vaShare*100)
+        +'% of the window. Above it the market is no longer agreeing on price','vah')
+    +lvl('Value area low',P.val,'the bottom of that same band. Below it, the same in reverse','val')
+    +P.hvn.map(function(x){
+        return lvl('Heavy shelf',x.p,'a second heavy area — price slows here and it tends to hold','hvn');
+      }).join('')
+    +P.lvn.map(function(x){
+        return lvl('Thin gap',x.p,'almost nothing traded here, so price crosses it quickly '
+          +'with little to lean on','lvn');
+      }).join('')
+    +'</div>';
+
+  return '<div class="vp">'
+   +'<div class="vp-head"><div class="ab-cap">'+escHtml(K.word)+' &middot; '+escHtml(asset)+'</div>'
+     +'<div class="vp-wins">'+chips+'</div></div>'
+   +'<div class="vp-body">'+hist+levels+'</div>'
+   +'<div class="vp-key">'
+     +'<span class="k-poc">POC</span><span class="k-va">value area</span>'
+     +'<span class="k-hvn">heavy shelf</span><span class="k-lvn">thin gap</span>'
+     +(priceIx>=0?'<span class="k-now">price now</span>':'')
+   +'</div>'
+   +'<div class="vp-note"><b>'+escHtml(K.word)+'</b> over the last '+P.bars+' sessions. '
+     +escHtml(K.note)+'</div>'
+   +'<div class="vp-warn">Built from <b>daily</b> bars, so each session is spread evenly across '
+     +'its own high-to-low range. A real profile is built from intraday prints and knows where '
+     +'inside the day the business happened; this does not. It places the shelves and the gaps '
+     +'roughly — do not read it to the tick.</div>'
+  +'</div>';
+}
 function renderAnalytics(){
   /* Daily Bias is a section of this board, so it redraws whenever the board
      does — and it sits ABOVE the no-price early return below, because the
@@ -7810,6 +8069,7 @@ function renderAnalytics(){
    +anaCycle(price,dp)
    +anaZones(price,dp)
    +anaRungs(price,dp)
+   +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
    +'<details class="sec"><summary><b>Full working</b><span>every method, step by step</span></summary>'
      +'<div class="tk-tools"><button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open on the Reference tab</button></div>'
    +'</details>';
