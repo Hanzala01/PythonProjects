@@ -853,8 +853,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   display:flex;flex-direction:column;overflow-y:auto}
 .side-brand{display:flex;align-items:center;gap:11px;padding:2px 8px 18px;border-bottom:1px solid var(--bd);margin-bottom:14px}
 .sb-orb{width:36px;height:36px;flex-shrink:0}
-.side-brand .t{font-family:'Space Grotesk';font-weight:700;font-size:13.5px;letter-spacing:.22em;line-height:1.55}
-.side-brand .t span{display:block;font-weight:700;font-size:13.5px;letter-spacing:.22em;color:var(--tw)}
+/* both words were the same size, the same weight and tracked out to .22em, so
+   the stack read as one word broken across two lines by accident. The name is
+   Celestial Alpha; ALPHA is the half that matters, so it carries the weight. */
+.side-brand .t{font-family:'Space Grotesk';font-weight:500;font-size:11px;letter-spacing:.3em;
+  line-height:1.15;color:var(--t3)}
+.side-brand .t span{display:block;font-weight:800;font-size:16px;letter-spacing:.16em;
+  color:var(--t1);margin-top:2px}
 .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--ts);
   font-size:12.5px;font-weight:500;cursor:pointer;transition:.18s;margin-bottom:2px;border:1px solid transparent;position:relative}
 .nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;flex-shrink:0;opacity:.85}
@@ -1504,6 +1509,38 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rkd-r.on b{color:var(--p3)} .rkd-r.on i{color:var(--t1)}
 @media(max-width:760px){.rkd{left:12px;right:12px;width:auto}
   .rfab{right:14px;bottom:66px}}   /* clear of the mobile bottom nav */
+
+/* ── the scan across every instrument ── */
+.scn{margin:0 0 6px}
+.scn-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:11px}
+.scn-h b{font-size:13px;font-weight:800;color:var(--t1)}
+.scn-h span{font-size:10px;color:var(--t3)}
+.scn-h button{margin-left:auto}
+.scn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px}
+.scn-c{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px 10px;padding:12px 13px;cursor:pointer;
+  border-radius:13px;border:1px solid var(--b1);background:rgba(11,6,40,.62);
+  transition:.2s var(--ease)}
+.scn-c:hover{transform:translateY(-2px);border-color:var(--p2)}
+.scn-c.buy{border-color:rgba(34,197,94,.4)} .scn-c.sell{border-color:rgba(239,68,68,.4)}
+.scn-t{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.scn-t b{font-family:'Space Grotesk';font-size:15px;font-weight:800}
+.scn-c.buy .scn-t b{color:var(--up)} .scn-c.sell .scn-t b{color:var(--dn)}
+.scn-t span{font-size:13px;font-weight:600;color:var(--t1)}
+.scn-t u{margin-left:auto;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);border:1px solid var(--b1);border-radius:99px;padding:2px 8px}
+.scn-n{font-family:'Space Grotesk';font-size:12.5px;font-weight:700;color:var(--t1);
+  font-variant-numeric:tabular-nums}
+.scn-n i{display:block;font-style:normal;font-family:'Inter',sans-serif;font-size:8px;
+  font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.scn-f{grid-column:1/-1;font-size:9px;color:var(--t3);padding-top:6px;border-top:1px solid var(--b1)}
+.scn-none{font-size:11px;color:var(--t2);line-height:1.65;padding:13px 15px;border-radius:12px;
+  border:1px solid var(--b1);background:rgba(11,6,40,.5)}
+.scn-near{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px}
+.scn-near i{font-style:normal;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--t3);font-size:8.5px}
+.scn-near span{color:var(--t3);border:1px solid var(--b1);border-radius:99px;padding:3px 10px}
+.scn-near b{color:var(--t2)}
+.scn-bad{font-size:9.5px;color:var(--warn);line-height:1.55;margin-top:9px}
 
 /* ══ THE VERDICT BLOCK ═══════════════════════════════════════════════
    One band carrying the decision, its prices, its invalidation and its
@@ -4388,14 +4425,23 @@ body{background:var(--bg0)}
 <aside class="side">
   <nav class="side-nav rise">
     <div class="side-brand">
-      <svg class="sb-orb" viewBox="0 0 40 40">
-        <circle cx="20" cy="20" r="15.5" fill="none" stroke="url(#logring)" stroke-width="1.4"/>
-        <path d="M20 6.5A13.5 13.5 0 0020 33.5 11 11 0 0120 6.5z" fill="rgba(157,77,255,.14)"/>
-        <g fill="#e9defc">
-          <path d="M13 10l1.1 2.5L16.5 13.6 14.1 14.7 13 17.2 11.9 14.7 9.5 13.6 11.9 12.5z"/>
-        </g>
+      <!-- THE MARK.
+           What was here was an empty ring with a crescent inside it at 14%
+           opacity — invisible on this background — and a four-point star
+           pushed off to one side, so at 36px it read as a bare circle with a
+           speck stuck to it. This says both halves of the name in one shape:
+           an orbit, a rising line through it, and the star at the top of the
+           rise. Everything is drawn at a weight that survives 36px. -->
+      <svg class="sb-orb" viewBox="0 0 40 40" role="img" aria-label="Celestial Alpha">
+        <circle cx="20" cy="20" r="15.2" fill="none" stroke="url(#logring)" stroke-width="1.6"/>
+        <circle cx="20" cy="20" r="15.2" fill="rgba(127,96,191,.13)"/>
+        <path d="M10.5 26.5 16 21 20.5 24.5 29 14.5" fill="none" stroke="#E9DEFC"
+              stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M29 8.4l1.05 2.85L32.9 12.3l-2.85 1.05L29 16.2l-1.05-2.85L25.1 12.3l2.85-1.05z"
+              fill="#C4B5FD"/>
+        <circle cx="10.5" cy="26.5" r="1.9" fill="#C4B5FD"/>
         <defs><linearGradient id="logring" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#c9b6ff"/><stop offset="1" stop-color="#5b3fa8"/></linearGradient></defs>
+          <stop offset="0" stop-color="#D5C3F2"/><stop offset="1" stop-color="#533399"/></linearGradient></defs>
       </svg>
       <div class="t">CELESTIAL<span>ALPHA</span></div>
     </div>
@@ -4417,7 +4463,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b13</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b14</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7549,6 +7595,140 @@ function riskDockSync(){
       +'requirement, so the figure is the size the risk allows, not necessarily one you can place.</p>'
     +'</details>';
 }
+/* ══ THE SCAN ═════════════════════════════════════════════════════════
+   Why a month can go by with nothing to take.
+
+   Measured on Gold across eighteen August sessions: the engine produced two
+   Intraday setups and no Swing at all. That is not a fault — the thresholds
+   were calibrated to fire at roughly the top 5% and the next 12% of readings,
+   and two in eighteen is about 11%, which is what 12% looks like. The engine
+   is doing exactly what it was set to do.
+
+   The gap is that it only ever looks at ONE instrument. Watch one asset at a
+   12% hit rate and you get two chances a month; the monthly budget of four
+   swing and twelve intraday is then impossible to fill, and it looks as though
+   the app has stopped working. There are fifteen instruments in the picker.
+
+   So this runs the same engine, at the same thresholds, across all of them and
+   lists what clears. Nothing here lowers a bar to manufacture a signal — the
+   bar is identical, there are simply more places to look.
+
+   It is deliberately sequential and slow. Every asset needs its own daily
+   history, the free tiers cap at a few calls a minute, and firing fifteen at
+   once gets them all rate-limited and returns nothing. Anything already cached
+   is used without a call.
+   ══════════════════════════════════════════════════════════════════════ */
+var SCAN=[], SCAN_BUSY=false, SCAN_AT='';
+function scanAssets(){
+  return ANA_PICKS.slice();
+}
+function scanOne(name,cb){
+  var sym=name.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  /* ONE SLOW PROVIDER MUST NOT STALL THE WHOLE PASS.
+     loadHistory walks Polygon, then Twelve Data, then EODHD through two CORS
+     relays. When a relay is blocked rather than refusing, each attempt sits
+     there until the browser's own network timeout — measured at roughly
+     fifteen seconds an instrument, which is nearly four minutes for a pass and
+     looks like the scan has hung. Each asset gets its own clock now: whatever
+     has not answered in eight seconds is recorded as slow and the scan moves
+     on, so the pass always finishes and says what it could not reach. */
+  var settled=false;
+  var giveUp=setTimeout(function(){
+    if(settled)return;
+    settled=true;
+    cb({a:name,err:'no answer in time'});
+  },8000);
+  loadHistory(name,function(){
+    if(settled)return;
+    settled=true; clearTimeout(giveUp);
+    var rows=window.HIST_ROWS;
+    if(!rows||rows.length<60){ cb({a:name,err:'no daily history'}); return; }
+    var px=+rows[rows.length-1].close;
+    try{
+      var eph=getEph();
+      var vib=(calcNN(name)||{}).f||0;
+      var astro=calcAstroBias(name,eph);
+      var lv=findAlignedLevels(px,vib,eph,[0,0,0,0]);
+      var tr=calcMajorTrend(rows,px);
+      var sig=buildSignal(px,vib,astro,lv,100,eph,tr);
+      cb({a:name,px:px,conf:sig?sig.conf:0,style:sig?sig.style:null,
+          bull:sig?sig.isBull:null,entry:sig?sig.entry:null,sl:sig?sig.sl:null,
+          tp:sig?sig.tp:null,rr:sig?sig.rr:null,trend:tr?tr.label:'—',
+          dp:px<10?4:2});
+    }catch(e){ cb({a:name,err:e.message}); }
+  });
+}
+function scanRun(){
+  if(SCAN_BUSY)return;
+  SCAN_BUSY=true; SCAN=[]; window.SCAN_QUIET=true;
+  var list=scanAssets(), i=0;
+  var keep=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
+  var keepRows=window.HIST_ROWS;
+  (function next(){
+    if(i>=list.length){
+      SCAN_BUSY=false; window.SCAN_QUIET=false; SCAN_AT=new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+      /* put the board back on the asset the reader had chosen */
+      window.HIST_ROWS=keepRows;
+      try{document.getElementById('ai_asset_txt').value=keep;}catch(e){}
+      try{scanRender();}catch(e){}
+      return;
+    }
+    var nm=list[i++];
+    SCAN_AT='checking '+nm+' ('+i+' of '+list.length+')';
+    try{scanRender();}catch(e){}
+    scanOne(nm,function(r){ SCAN.push(r); setTimeout(next,120); });
+  })();
+}
+function scanRender(){
+  var host=document.getElementById('scan_body');
+  if(!host)return;
+  var live=SCAN.filter(function(x){return x.style;})
+               .sort(function(a,b){return b.conf-a.conf;});
+  var near=SCAN.filter(function(x){return !x.style&&!x.err;})
+               .sort(function(a,b){return b.conf-a.conf;}).slice(0,4);
+  var bad=SCAN.filter(function(x){return x.err;});
+
+  host.innerHTML=
+    '<div class="scn-h">'
+      +'<b>'+(SCAN_BUSY?'Scanning…':(SCAN.length?live.length+' setup'+(live.length===1?'':'s')+' across '
+          +SCAN.length+' instruments':'Nothing scanned yet'))+'</b>'
+      +'<span>'+escHtml(SCAN_BUSY?SCAN_AT:(SCAN.length?'as of '+SCAN_AT:'same thresholds as the board — more places to look'))+'</span>'
+      +'<button class="btn btn-a btn-sm" '+(SCAN_BUSY?'disabled':'')+' onclick="scanRun()">'
+        +(SCAN.length?'Scan again':'Scan every instrument')+'</button>'
+    +'</div>'
+    +(live.length
+      ? '<div class="scn-grid">'+live.map(function(x){
+          return '<div class="scn-c '+(x.bull?'buy':'sell')+'" onclick="scanPick(\''+escHtml(x.a)+'\')">'
+            +'<div class="scn-t"><b>'+(x.bull?'BUY':'SELL')+'</b><span>'+escHtml(x.a)+'</span>'
+              +'<u>'+escHtml(x.style)+'</u></div>'
+            +'<div class="scn-n"><i>Entry</i>'+(x.entry!=null?x.entry.toFixed(x.dp):'—')+'</div>'
+            +'<div class="scn-n"><i>Stop</i>'+(x.sl!=null?x.sl.toFixed(x.dp):'—')+'</div>'
+            +'<div class="scn-n"><i>Target</i>'+(x.tp!=null?x.tp.toFixed(x.dp):'—')+'</div>'
+            +'<div class="scn-f">'+x.conf+'% confidence · trend '+escHtml(x.trend)+'</div>'
+          +'</div>';
+        }).join('')+'</div>'
+      : (SCAN.length&&!SCAN_BUSY
+          ? '<div class="scn-none">Nothing clears the bar on any of them today. That is a real answer '
+            +'— the thresholds fire on about one reading in eight, so quiet days are the normal case '
+            +'and sitting out is what the engine is telling you to do.</div>'
+          : ''))
+    +(near.length
+      ? '<div class="scn-near"><i>Closest to clearing</i>'+near.map(function(x){
+          return '<span>'+escHtml(x.a)+' <b>'+x.conf+'%</b></span>';
+        }).join('')+'</div>'
+      : '')
+    +(bad.length
+      ? '<div class="scn-bad">No data for '+bad.map(function(x){return escHtml(x.a);}).join(', ')
+        +' — the free tiers cap how many instruments can be pulled in a minute, so try again shortly.</div>'
+      : '');
+}
+function scanPick(name){
+  try{
+    document.getElementById('ai_asset_txt').value=name;
+    var ab=document.getElementById('ab_asset'); if(ab)ab.value=name;
+    fetchLivePrice(function(ok){ if(ok)runAI(); else renderAnalytics(); });
+  }catch(e){}
+}
 function anaBar(asset,price,dp){
   var risk=(document.getElementById('ai_risk')||{}).value||'100';
   return '<div class="ab-bar">'
@@ -8822,7 +9002,7 @@ function trendInvalidHtml(T,price,dp,asset){
       +'<div><b class="act-t">'+title+'</b><i class="act-q">'+question+'</i></div></div>';
   };
   var jump='<div class="ana-jump">'
-    +[[1,'Call'],[2,'Case'],[3,'Map'],[4,'Size'],[5,'Working']].map(function(x){
+    +[[1,'Setups'],[2,'Call'],[3,'Case'],[4,'Map'],[5,'Size'],[6,'Working']].map(function(x){
         return '<a onclick="anaJump('+x[0]+')">'+x[1]+'</a>';
       }).join('')
     +'</div>';
@@ -8834,7 +9014,10 @@ function trendInvalidHtml(T,price,dp,asset){
    +jump
 
    /* ─── 1 · what do I do ─────────────────────────────────────────── */
-   +act(1,'The call','What am I supposed to do with '+escHtml(asset)+' right now?')
+   +act(1,'Where are the setups','Is there anything to take today, on anything?')
+   +'<div class="scn" id="scan_body"></div>'
+
+   +act(2,'The call','What am I supposed to do with '+escHtml(asset)+' right now?')
 
    /* ══ THE VERDICT BLOCK — rebuilt, not re-ordered ═════════════════════
       The last pass moved this card around the page and left the card itself
@@ -8920,7 +9103,7 @@ function trendInvalidHtml(T,price,dp,asset){
    +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
 
    /* ─── 2 · why ──────────────────────────────────────────────────── */
-   +act(2,'The case','Why does it say that, and what is the evidence made of?')
+   +act(3,'The case','Why does it say that, and what is the evidence made of?')
    +'<div class="ab-reads">'+reads.map(function(r){
        return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
          +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
@@ -8933,7 +9116,7 @@ function trendInvalidHtml(T,price,dp,asset){
    +'<div id="vb_slot"></div>'
 
    /* ─── 3 · where ────────────────────────────────────────────────── */
-   +act(3,'The map','Where are the prices that matter, and where is this one?')
+   +act(4,'The map','Where are the prices that matter, and where is this one?')
    +anaLadder(pts,price,lo,hi,dp,S,dir)
    +anaCycle(price,dp)
    +anaZones(price,dp)
@@ -8941,7 +9124,7 @@ function trendInvalidHtml(T,price,dp,asset){
    +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
 
    /* ─── 4 · how much, and act ────────────────────────────────────── */
-   +act(4,'Size it','How much, against what is already open, and what is left this month?')
+   +act(5,'Size it','How much, against what is already open, and what is left this month?')
    +riskChipHtml(S,conf,price,dp,asset)
    +tradeCardHtml()
    +openTradesHtml()
@@ -8950,7 +9133,7 @@ function trendInvalidHtml(T,price,dp,asset){
    +shareBar('setup')
 
    /* ─── 5 · show me ──────────────────────────────────────────────── */
-   +act(5,'The working','Show me the numbers behind all of it.')
+   +act(6,'The working','Show me the numbers behind all of it.')
    +'<details class="sec" id="qv_sec" open><summary><b>How is it moving right now?</b>'
      +'<span>volatility, volume and number patterns — in plain words first</span></summary>'
      +'<div class="qv-wrap" id="qv_ana"></div></details>'
@@ -8971,6 +9154,7 @@ function trendInvalidHtml(T,price,dp,asset){
   /* the dock lives on <body> so it survives this redraw, but its numbers came
      from the previous analysis and have to be refreshed */
   try{ if(RISK_OPEN)riskDockSync(); riskFabSync(); }catch(e){}
+  try{ scanRender(); }catch(e){}
 
   host.querySelectorAll('.mj-track .fill').forEach(function(f){
     f.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -13262,11 +13446,15 @@ function loadHistory(assetName,cb){
     if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No daily history mapped for "'+escHtml(assetName)+'" \u2014 supported: metals, major FX, top crypto and US stocks</div>';
     if(cb)cb(null);return;
   }
-  if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history\u2026</div>';
+  if(el&&!window.SCAN_QUIET)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history\u2026</div>';
   function done(rows,src){
     HIST_ROWS=rows;
-    /* the fear-and-greed strip is computed off these bars and drew before they
-       existed, so it reported "0 daily bars loaded" on every fresh page */
+    /* THE SCAN DOES NOT NEED A CHART.
+       Redrawing the candles and recomputing the monthly range for each of
+       fifteen instruments made a scan take about fifteen seconds per asset —
+       nearly four minutes for a pass — when the numbers it wants are already
+       in `rows`. In quiet mode the data lands and nothing is painted. */
+    if(window.SCAN_QUIET){ if(cb)cb(null); return; }
     try{renderFng();}catch(e){}
     drawCandles(rows,assetName+' \u00b7 '+src);
     var rng=applyMonthlyRange(rows);
