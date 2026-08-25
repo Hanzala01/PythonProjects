@@ -1424,8 +1424,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rk-c-m i{font-style:normal;font-size:9px;color:var(--t3)}
 .rk-c-go{margin-left:auto;font-size:9.5px;color:var(--p3);border:1px solid var(--b1);
   border-radius:99px;padding:3px 11px;white-space:nowrap}
+/* the round button, fixed to the window on every tab */
+.rfab{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;z-index:61;
+  display:grid;place-items:center;cursor:pointer;
+  background:radial-gradient(120% 120% at 30% 20%,#3F2280,#1A0D3C);
+  border:1px solid var(--b2);color:var(--t1);
+  box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 6px rgba(83,51,153,.14);
+  transition:.22s var(--ease);-webkit-user-select:none;user-select:none}
+.rfab:hover{transform:translateY(-2px);border-color:var(--bAct);
+  box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 0 8px rgba(83,51,153,.2)}
+.rfab:focus-visible{outline:2px solid var(--p3);outline-offset:3px}
+.rfab b{font-family:'Space Grotesk';font-size:19px;font-weight:800;line-height:1;
+  font-variant-numeric:tabular-nums}
+.rfab s{text-decoration:none;font-size:9px;color:var(--t3);margin-top:1px}
+.rfab.live{border-color:rgba(127,96,191,.9)}
+.rfab.live b{color:var(--p3)}
+.rfab.open{background:radial-gradient(120% 120% at 30% 20%,#533399,#22114A)}
+.rfab-x{font-style:normal;font-size:26px;line-height:1;color:var(--t1)}
+/* the dock sits above the button rather than on top of it */
 /* the dock */
-.rkd{position:fixed;right:16px;bottom:16px;width:296px;max-height:min(78vh,640px);z-index:60;
+.rkd{position:fixed;right:20px;bottom:88px;width:296px;max-height:min(78vh,640px);z-index:60;
   overflow:auto;border-radius:16px;border:1px solid var(--b2);padding:14px 15px 15px;
   background:rgba(9,5,26,.97);box-shadow:0 20px 60px rgba(0,0,0,.6);
   transform:translateY(14px);opacity:0;pointer-events:none;transition:.22s var(--ease)}
@@ -1467,7 +1485,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rkd-r i{font-style:normal;font-size:8.5px;color:var(--t3);line-height:1.35}
 .rkd-r.on{background:rgba(127,96,191,.26)}
 .rkd-r.on b{color:var(--p3)} .rkd-r.on i{color:var(--t1)}
-@media(max-width:760px){.rkd{left:12px;right:12px;width:auto}}
+@media(max-width:760px){.rkd{left:12px;right:12px;width:auto}
+  .rfab{right:14px;bottom:66px}}   /* clear of the mobile bottom nav */
 
 /* ══ THE VERDICT BLOCK ═══════════════════════════════════════════════
    One band carrying the decision, its prices, its invalidation and its
@@ -4381,7 +4400,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is">build 2026-08-25 · a520b40</div>
+    <div class="sc-build" title="Which copy of the file this is">build 2026-08-25 · d1c2d11</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7218,6 +7237,7 @@ function riskSetBal(el){
    a full re-render on every change stole focus from the box being typed in */
 function riskRefresh(){
   try{ riskDockSync(); }catch(e){}
+  try{ riskFabSync(); }catch(e){}
   try{
     var chip=document.querySelector('.rk-chip');
     if(!chip)return;
@@ -7254,6 +7274,7 @@ var RISK_OPEN=false;
 function riskToggle(on){
   RISK_OPEN=(on==null)?!RISK_OPEN:!!on;
   riskDockSync();
+  riskFabSync();
 }
 /* the one line that stays on the board */
 function riskChipHtml(S,conf,price,dp,asset){
@@ -7267,6 +7288,37 @@ function riskChipHtml(S,conf,price,dp,asset){
      +'</b><i>units</i></div>'
    +'<span class="rk-c-go">Open</span>'
   +'</div>';
+}
+/* ── the button that is always there ─────────────────────────────────
+   The calculator opened from a chip that sits deep inside the analytics board,
+   which meant scrolling to it to open it, and nothing at all on the other
+   tabs. Risk is not an analytics-tab question — you want it while looking at
+   the timing engine, the portfolio, anywhere.
+
+   So it is a round button fixed to the bottom-right of the window, on every
+   tab, carrying the current percentage on its face. The dock opens above it.
+   The chip on the board stays, because on that board it is worth having the
+   full line in the flow of reading. */
+function riskFabSync(){
+  var el=document.getElementById('risk_fab');
+  if(!el){
+    el=document.createElement('div');
+    el.id='risk_fab';
+    el.setAttribute('role','button');
+    el.setAttribute('tabindex','0');
+    el.onclick=function(){ riskToggle(); };
+    el.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();riskToggle();} };
+    document.body.appendChild(el);
+  }
+  var S=window._lastSig, conf=S?S.conf:0;
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+  var R=riskCompute(S,conf,price);
+  el.className='rfab'+(RISK_OPEN?' open':'')+(R.pct>0?' live':'');
+  el.title=RISK_OPEN?'Close the risk calculator'
+    :('Risk calculator — '+R.pct+'%'+(R.amount!=null?' · $'+R.amount.toFixed(0):''));
+  el.innerHTML=RISK_OPEN
+    ? '<i class="rfab-x">&times;</i>'
+    : '<b>'+R.pct+'</b><s>%</s>';
 }
 /* the panel itself, kept on <body> so a board redraw cannot wipe it */
 function riskDockSync(){
@@ -8741,7 +8793,7 @@ function trendInvalidHtml(T,price,dp,asset){
   try{renderFng();}catch(e){}
   /* the dock lives on <body> so it survives this redraw, but its numbers came
      from the previous analysis and have to be refreshed */
-  try{ if(RISK_OPEN)riskDockSync(); }catch(e){}
+  try{ if(RISK_OPEN)riskDockSync(); riskFabSync(); }catch(e){}
 
   host.querySelectorAll('.mj-track .fill').forEach(function(f){
     f.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -11824,6 +11876,8 @@ try {
     /* the board says what it is waiting for while the quote is in flight,
        rather than showing five rings reading zero */
     try{ dashMatrixIdle('waiting for a price'); }catch(e){}
+    /* the risk button belongs to the window, not to one tab */
+    try{ riskFabSync(); }catch(e){}
     try{ renderFng(); }catch(e){}
     fetchLivePrice(function(ok){
       if(ok){ runAI(); return; }
