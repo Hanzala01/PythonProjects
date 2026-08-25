@@ -1409,6 +1409,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ── index traded through its ETF ── */
 /* ── the level that would prove the trend wrong ── */
 /* ── risk: a one-line chip on the board, the rest docked to the side ── */
+.sc-build{font-size:8px;letter-spacing:.1em;color:var(--t3);opacity:.7;margin-top:5px;
+  font-variant-numeric:tabular-nums}
 .rk-chip{display:flex;align-items:center;gap:16px;flex-wrap:wrap;cursor:pointer;
   margin:0 0 12px;padding:10px 15px;border-radius:13px;border:1px solid var(--b1);
   background:rgba(11,6,40,.6);transition:.2s var(--ease)}
@@ -4375,6 +4377,11 @@ body{background:var(--bg0)}
   </nav>
   <div class="side-card rise" style="animation-delay:.1s;min-height:236px">
     <div class="sc-badge"><div class="b">CA</div><div class="n">Celestial Alpha</div></div>
+    <!-- A VISIBLE BUILD MARKER.
+         Downloaded copies pile up as "file (63).html", "file (64).html", and
+         then a feature that was added is reported missing because an older
+         copy is the one open. Now you can read the build off the page. -->
+    <div class="sc-build" title="Which copy of the file this is">build 2026-08-25 · a520b40</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
