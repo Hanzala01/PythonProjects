@@ -1443,7 +1443,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rfab-x{font-style:normal;font-size:26px;line-height:1;color:var(--t1)}
 /* the dock sits above the button rather than on top of it */
 /* the dock */
-.rkd{position:fixed;right:20px;bottom:88px;width:296px;max-height:min(78vh,640px);z-index:60;
+.rkd{position:fixed;right:20px;bottom:88px;width:322px;max-height:min(78vh,640px);z-index:60;
   overflow:auto;border-radius:16px;border:1px solid var(--b2);padding:14px 15px 15px;
   background:rgba(9,5,26,.97);box-shadow:0 20px 60px rgba(0,0,0,.6);
   transform:translateY(14px);opacity:0;pointer-events:none;transition:.22s var(--ease)}
@@ -1473,6 +1473,23 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   text-transform:uppercase;color:var(--t3)}
 .rkd-out b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:800;color:var(--p3);
   margin-top:3px;font-variant-numeric:tabular-nums}
+.rkd-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rkd-f.sm input{font-size:14px}
+.rkd-f select{width:100%;margin-top:3px;padding:5px 2px;font-family:'Space Grotesk';font-size:15px;
+  font-weight:700;background:transparent;border:none;border-bottom:1px solid var(--b1);
+  color:var(--t1);border-radius:0}
+.rkd-f select:focus{outline:none;border-bottom-color:var(--p2)}
+.rkd-f select option{background:#0B0628;color:var(--t1)}
+.rkd-swap{display:flex;gap:3px;padding:3px;border-radius:99px;border:1px solid var(--b1);
+  background:rgba(6,3,20,.7);margin-top:13px}
+.rkd-sw{flex:1;text-align:center;font-size:9px;padding:5px 0;border-radius:99px;cursor:pointer;
+  color:var(--t3);transition:.2s var(--ease);-webkit-user-select:none;user-select:none}
+.rkd-sw.on{background:rgba(127,96,191,.32);color:var(--t1);font-weight:700}
+.rkd-out.big>div{padding:11px}
+.rkd-out.big b{font-size:22px}
+.rkd-out u{display:block;text-decoration:none;font-size:8px;color:var(--t3);letter-spacing:.1em;
+  text-transform:uppercase;margin-top:2px}
+.rkd-need{color:var(--warn);font-weight:700}
 .rkd-w{font-size:9.5px;color:var(--warn);line-height:1.5;margin-top:9px}
 .rkd-d{margin-top:13px;border-top:1px solid var(--b1);padding-top:10px}
 .rkd-d>summary{list-style:none;cursor:pointer;font-size:9.5px;color:var(--p3)}
@@ -4400,7 +4417,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b12</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b13</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7196,11 +7213,98 @@ var RISK_LADDER=[
   {min:0,  pct:0,   why:'below 60 · no setup clears the threshold, so nothing is risked'}
 ];
 var RISK_MAX=5, RISK_KEY='ca_risk_prefs';
+/* ══ MANUAL MODE — a real position-size calculator ════════════════════
+   Auto sizes the trade the board has produced. Manual is for everything else:
+   your own instrument, your own stop, your own account, and an answer in lots.
+
+   Lots are where these calculators quietly go wrong, so the two numbers that
+   decide them are on the panel and editable rather than hidden in a table.
+   A "pip" and a "lot" are broker conventions, not facts about the market:
+   gold is quoted with a 0.01 pip and a 100oz lot at most brokers and a 0.1 pip
+   at others, and that single difference makes the answer wrong by ten times.
+   The presets below are the common ones; the boxes are there because your
+   broker is the authority, not this table.
+
+   The other honest limit is currency. Pip value is naturally in the QUOTE
+   currency — the second half of the pair. When that is not the currency your
+   account is in, the figure has to be converted, and this cannot invent the
+   rate. The conversion box holds 1 when no conversion is needed and takes a
+   rate when it is, with the panel saying which case it is in.
+   ══════════════════════════════════════════════════════════════════════ */
+var RISK_INST=[
+  {k:'EURUSD', n:'EUR/USD',  pip:0.0001, lot:100000, q:'USD'},
+  {k:'GBPUSD', n:'GBP/USD',  pip:0.0001, lot:100000, q:'USD'},
+  {k:'AUDUSD', n:'AUD/USD',  pip:0.0001, lot:100000, q:'USD'},
+  {k:'NZDUSD', n:'NZD/USD',  pip:0.0001, lot:100000, q:'USD'},
+  {k:'USDJPY', n:'USD/JPY',  pip:0.01,   lot:100000, q:'JPY'},
+  {k:'USDCHF', n:'USD/CHF',  pip:0.0001, lot:100000, q:'CHF'},
+  {k:'USDCAD', n:'USD/CAD',  pip:0.0001, lot:100000, q:'CAD'},
+  {k:'EURJPY', n:'EUR/JPY',  pip:0.01,   lot:100000, q:'JPY'},
+  {k:'GBPJPY', n:'GBP/JPY',  pip:0.01,   lot:100000, q:'JPY'},
+  {k:'XAUUSD', n:'Gold',     pip:0.01,   lot:100,    q:'USD'},
+  {k:'XAGUSD', n:'Silver',   pip:0.01,   lot:5000,   q:'USD'},
+  {k:'BTCUSD', n:'Bitcoin',  pip:1,      lot:1,      q:'USD'},
+  {k:'USOIL',  n:'WTI oil',  pip:0.01,   lot:1000,   q:'USD'},
+  {k:'US100',  n:'Nasdaq 100',pip:0.1,   lot:1,      q:'USD'},
+  {k:'US500',  n:'S&P 500',  pip:0.1,    lot:1,      q:'USD'}
+];
+function riskInst(k){
+  for(var i=0;i<RISK_INST.length;i++)if(RISK_INST[i].k===k)return RISK_INST[i];
+  return RISK_INST[0];
+}
+/* everything the manual side needs, with the preset filled in unless you have
+   overridden it for this instrument */
+function riskManual(){
+  var P=riskPrefs();
+  var M=P.man||{};
+  var I=riskInst(M.inst||'XAUUSD');
+  var pip=(M.pip>0)?M.pip:I.pip;
+  var lot=(M.lot>0)?M.lot:I.lot;
+  var acct=M.acct||'USD';
+  var rate=(M.rate>0)?M.rate:(acct===I.q?1:null);
+  var bal=(M.bal>0)?M.bal:(riskBalance()?riskBalance().v:null);
+  var mode=M.mode||'pct';
+  var pct=(typeof M.pct==='number')?M.pct:1;
+  var money=(typeof M.money==='number')?M.money:null;
+  var slPips=(M.sl>0)?M.sl:null;
+
+  var atRisk=(mode==='money')?money:(bal!=null?bal*pct/100:null);
+  /* pip value per lot, in the quote currency, then in the account currency */
+  var pvQuote=lot*pip;
+  var pvAcct=(rate!=null)?pvQuote*rate:null;
+  var lots=(atRisk!=null&&slPips>0&&pvAcct>0)?atRisk/(slPips*pvAcct):null;
+  var units=(lots!=null)?lots*lot:null;
+  return{I:I,pip:pip,lot:lot,acct:acct,rate:rate,bal:bal,mode:mode,pct:pct,money:money,
+         sl:slPips,atRisk:atRisk,pvQuote:pvQuote,pvAcct:pvAcct,lots:lots,units:units,
+         needsRate:(acct!==I.q&&(M.rate>0?false:true))};
+}
+function riskManSet(field,el){
+  var P=riskPrefs(); P.man=P.man||{};
+  var v=el.value;
+  if(field==='inst'){ P.man.inst=v; delete P.man.pip; delete P.man.lot; }
+  else if(field==='acct'){ P.man.acct=(v||'USD').toUpperCase(); delete P.man.rate; }
+  else if(field==='mode'){ P.man.mode=v; }
+  else {
+    var n=parseFloat(v);
+    P.man[field]=(isFinite(n)&&n>=0)?n:null;
+  }
+  riskSave(P); riskRefresh();
+}
+function riskManMode(m){ var P=riskPrefs(); P.man=P.man||{}; P.man.mode=m; riskSave(P); riskRefresh(); }
+
 function riskPrefs(){
-  try{ var d=JSON.parse(localStorage.getItem(RISK_KEY)||'{}');
-       return{auto:d.auto!==false, pct:(typeof d.pct==='number')?d.pct:null,
-              bal:(typeof d.bal==='number'&&d.bal>0)?d.bal:null}; }
-  catch(e){ return{auto:true,pct:null,bal:null}; }
+  /* this used to build a fresh object out of three named fields, which quietly
+     dropped everything else that had been saved — every manual input went into
+     localStorage and came back missing, so the manual side read as empty on
+     every single call. It carries the stored object through now. */
+  try{
+    var d=JSON.parse(localStorage.getItem(RISK_KEY)||'{}');
+    if(!d||typeof d!=='object')d={};
+    return{auto:d.auto!==false,
+           pct:(typeof d.pct==='number')?d.pct:null,
+           bal:(typeof d.bal==='number'&&d.bal>0)?d.bal:null,
+           man:(d.man&&typeof d.man==='object')?d.man:{}};
+  }catch(e){ return{auto:true,pct:null,bal:null,man:{}}; }
 }
 function riskSave(p){ try{ localStorage.setItem(RISK_KEY,JSON.stringify(p)); }catch(e){} }
 function riskSuggest(conf){
@@ -7334,42 +7438,115 @@ function riskDockSync(){
   var R=riskCompute(S,conf,price);
   var money=function(v){ return v==null?'—':'$'+v.toLocaleString('en',{maximumFractionDigits:2}); };
 
-  el.innerHTML=
-    '<div class="rkd-h"><b>Risk calculator</b>'
+  var num=function(v,d){ return v==null?'—':(+v).toLocaleString('en',{maximumFractionDigits:d}); };
+
+  var head='<div class="rkd-h"><b>Risk calculator</b>'
       +'<span class="rkd-x" onclick="riskToggle(false)" title="Close">&times;</span></div>'
     +'<div class="rkd-mode">'
       +'<span class="rkd-m'+(R.auto?' on':'')+'" onclick="riskSetAuto(true)">Auto</span>'
       +'<span class="rkd-m'+(!R.auto?' on':'')+'" onclick="riskSetAuto(false)">Manual</span>'
+    +'</div>';
+
+  if(R.auto){
+    el.innerHTML=head
+      +'<label class="rkd-f"><i>Account</i>'
+        +'<input type="number" step="1" value="'+(R.bal?R.bal.v:'')+'" placeholder="10000" '
+        +'onchange="riskSetBal(this)"></label>'
+      +'<div class="rkd-src">'+(R.bal?escHtml(R.bal.src):'set it to size anything')+'</div>'
+      +'<label class="rkd-f"><i>Risk %</i>'
+        +'<input type="number" value="'+R.pct+'" disabled></label>'
+      +'<div class="rkd-src">set by confidence ('+(conf||0)+'%)</div>'
+      +'<div class="rkd-out">'
+        +'<div><i>At risk</i><b>'+money(R.amount)+'</b></div>'
+        +'<div><i>Position</i><b>'+(R.units!=null?num(R.units,2):'—')+'</b></div>'
+      +'</div>'
+      +'<div class="rkd-src">'+(R.units!=null
+          ? 'units of '+escHtml(asset)+', at a '+R.stopDist.toFixed(dp)+' stop'
+          : (S&&S.style?'no stop on the setup':'no live setup — switch to Manual to size anything'))+'</div>'
+      +'<details class="rkd-d"><summary>The ladder, and what it does not know</summary>'
+        +'<div class="rkd-lad">'+RISK_LADDER.slice().reverse().map(function(L){
+            return '<div class="rkd-r'+(L.min===R.sug.min?' on':'')+'">'
+              +'<b>'+L.pct+'%</b><i>'+escHtml(L.why)+'</i></div>';
+          }).join('')+'</div>'
+        +'<p>The step from 2% to 5% is a jump, not a slope: at 89 the ladder allows 2% and at 90 two '
+        +'and a half times that, on one point. Five is a ceiling that opens, not a size that arrives.</p>'
+        +'<p>Confidence here is this app&rsquo;s own blended number, not a measured hit rate — nothing '
+        +'in it has been backtested into a win rate. A high reading means the methods agree, not that '
+        +'the trade is likely to work.</p>'
+      +'</details>';
+    return;
+  }
+
+  /* ── manual: instrument in, lots out ── */
+  var M=riskManual();
+  el.innerHTML=head
+    +'<label class="rkd-f"><i>Instrument</i>'
+      +'<select onchange="riskManSet(\'inst\',this)">'
+      +RISK_INST.map(function(x){
+          return '<option value="'+x.k+'"'+(x.k===M.I.k?' selected':'')+'>'+escHtml(x.n)+'</option>';
+        }).join('')+'</select></label>'
+
+    +'<div class="rkd-two">'
+      +'<label class="rkd-f sm"><i>Pip size</i><input type="number" step="0.00001" value="'+M.pip+'" '
+        +'onchange="riskManSet(\'pip\',this)"></label>'
+      +'<label class="rkd-f sm"><i>Units / lot</i><input type="number" step="1" value="'+M.lot+'" '
+        +'onchange="riskManSet(\'lot\',this)"></label>'
     +'</div>'
-    +'<label class="rkd-f"><i>Account</i>'
-      +'<input type="number" step="1" value="'+(R.bal?R.bal.v:'')+'" placeholder="10000" '
-      +'onchange="riskSetBal(this)"></label>'
-    +'<div class="rkd-src">'+(R.bal?escHtml(R.bal.src):'set it to size anything')+'</div>'
-    +'<label class="rkd-f"><i>Risk %</i>'
-      +'<input type="number" step="0.1" min="0" max="'+RISK_MAX+'" value="'+R.pct+'" '
-      +(R.auto?'disabled ':'')+'onchange="riskSetPct(this)"></label>'
-    +'<div class="rkd-src">'+(R.auto?'set by confidence ('+(conf||0)+'%)':'yours · '+RISK_MAX+'% hard cap')+'</div>'
-    +'<div class="rkd-out">'
-      +'<div><i>At risk</i><b>'+money(R.amount)+'</b></div>'
-      +'<div><i>Position</i><b>'+(R.units!=null?R.units.toLocaleString('en',{maximumFractionDigits:2}):'—')+'</b></div>'
+    +'<div class="rkd-src">Your broker&rsquo;s numbers win — gold is a 0.01 pip at most and 0.1 at '
+      +'some, which changes the answer tenfold.</div>'
+
+    +'<div class="rkd-two">'
+      +'<label class="rkd-f sm"><i>Account ccy</i><input value="'+escHtml(M.acct)+'" '
+        +'onchange="riskManSet(\'acct\',this)"></label>'
+      +'<label class="rkd-f sm"><i>'+escHtml(M.I.q)+' &rarr; '+escHtml(M.acct)+'</i>'
+        +'<input type="number" step="0.0001" value="'+(M.rate!=null?M.rate:'')+'" '
+        +(M.acct===M.I.q?'disabled ':'placeholder="rate" ')
+        +'onchange="riskManSet(\'rate\',this)"></label>'
     +'</div>'
-    +'<div class="rkd-src">'+(R.units!=null
-        ? 'units of '+escHtml(asset)+', at a '+R.stopDist.toFixed(dp)+' stop'
-        : (S&&S.style?'no stop on the setup':'no live setup to size'))+'</div>'
-    +(R.overLadder?'<div class="rkd-w">Above the rung this confidence sits on ('+R.sug.pct+'%).</div>':'')
-    +(R.capped?'<div class="rkd-w">'+RISK_MAX+'% is the hard cap; the ladder only opens it at 90+.</div>':'')
-    +'<details class="rkd-d"><summary>The ladder, and what it does not know</summary>'
-      +'<div class="rkd-lad">'+RISK_LADDER.slice().reverse().map(function(L){
-          return '<div class="rkd-r'+(L.min===R.sug.min?' on':'')+'">'
-            +'<b>'+L.pct+'%</b><i>'+escHtml(L.why)+'</i></div>';
-        }).join('')+'</div>'
-      +'<p>The step from 2% to 5% is a jump, not a slope: at 89 the ladder allows 2% and at 90 two '
-      +'and a half times that, on one point. Five is a ceiling that opens, not a size that arrives.</p>'
-      +'<p>Confidence here is this app&rsquo;s own blended number, not a measured hit rate — nothing '
-      +'in it has been backtested into a win rate. A high reading means the methods agree, not that '
-      +'the trade is likely to work.</p>'
-      +'<p>Position size is risk divided by stop distance, in units. What a broker calls a lot varies '
-      +'by instrument, so convert against your own contract size.</p>'
+    +'<div class="rkd-src">'+(M.acct===M.I.q
+        ? 'Quote currency matches the account, so no conversion is needed.'
+        : M.needsRate
+          ? '<b class="rkd-need">Pip value is in '+escHtml(M.I.q)+'. Enter the '+escHtml(M.I.q)+'&rarr;'
+            +escHtml(M.acct)+' rate — this cannot invent it.</b>'
+          : 'Converting at '+M.rate+'.')+'</div>'
+
+    +'<label class="rkd-f"><i>Account size</i><input type="number" step="1" '
+      +'value="'+(M.bal!=null?M.bal:'')+'" placeholder="10000" '
+      +'onchange="riskManSet(\'bal\',this)"></label>'
+
+    +'<div class="rkd-swap">'
+      +'<span class="rkd-sw'+(M.mode==='pct'?' on':'')+'" onclick="riskManMode(\'pct\')">Risk %</span>'
+      +'<span class="rkd-sw'+(M.mode==='money'?' on':'')+'" onclick="riskManMode(\'money\')">Risk money</span>'
+    +'</div>'
+    +(M.mode==='pct'
+      ? '<label class="rkd-f"><i>Risk ratio %</i><input type="number" step="0.1" min="0" '
+        +'value="'+M.pct+'" onchange="riskManSet(\'pct\',this)"></label>'
+      : '<label class="rkd-f"><i>Risk, '+escHtml(M.acct)+'</i><input type="number" step="1" '
+        +'value="'+(M.money!=null?M.money:'')+'" placeholder="200" '
+        +'onchange="riskManSet(\'money\',this)"></label>')
+
+    +'<label class="rkd-f"><i>Stop-loss, pips</i><input type="number" step="0.1" '
+      +'value="'+(M.sl!=null?M.sl:'')+'" placeholder="40" '
+      +'onchange="riskManSet(\'sl\',this)"></label>'
+
+    +'<div class="rkd-out big">'
+      +'<div><i>Trade size</i><b>'+(M.lots!=null?num(M.lots,2):'—')+'</b><u>lots</u></div>'
+      +'<div><i>At risk</i><b>'+(M.atRisk!=null?money(M.atRisk):'—')+'</b><u>'+escHtml(M.acct)+'</u></div>'
+    +'</div>'
+    +'<div class="rkd-src">'
+      +(M.lots!=null
+        ? num(M.units,0)+' units &middot; one pip is '+money(M.pvAcct)+' per lot, '
+          +'so '+M.sl+' pips on '+num(M.lots,2)+' lots is '+money(M.atRisk)+'.'
+        : (M.needsRate?'Waiting on the conversion rate.'
+           :!M.bal?'Enter the account size.'
+           :!(M.sl>0)?'Enter the stop in pips.'
+           :M.mode==='money'&&M.money==null?'Enter the amount to risk.':'—'))
+    +'</div>'
+    +'<details class="rkd-d"><summary>How this is worked out</summary>'
+      +'<p>Pip value per lot = units per lot &times; pip size, in the quote currency, converted to the '
+      +'account currency. Lots = money at risk &divide; (stop in pips &times; pip value per lot).</p>'
+      +'<p>Nothing here is rounded to your broker&rsquo;s minimum step or checked against its margin '
+      +'requirement, so the figure is the size the risk allows, not necessarily one you can place.</p>'
     +'</details>';
 }
 function anaBar(asset,price,dp){
