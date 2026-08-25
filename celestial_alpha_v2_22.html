@@ -1276,6 +1276,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   justify-content:center;text-align:center;padding:0 20%;pointer-events:none}
 .tk-now{font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
   color:var(--p3);margin-bottom:5px}
+.tk-leg{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;font-size:8.5px;color:var(--t3)}
+.tk-leg span{display:flex;align-items:center;gap:4px}
+.tk-leg span::before{content:'';width:9px;height:5px;border-radius:2px;background:currentColor}
+.tk-leg .lg-b{color:var(--up)}.tk-leg .lg-r{color:var(--dn)}
+.tk-leg .lg-n{color:rgba(180,155,230,.45)}
+.tk-slot.r2.neg{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.10)}
+.tk-slot.r2.neg b{color:var(--dn)}
+.tk-slot.r1.neg{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06)}
+.tk-slot.r1.neg b{color:#FCA5A5}
+.td-m b{font-size:8.5px;font-weight:800;letter-spacing:.06em;border-radius:99px;padding:1px 7px;
+  border:1px solid currentColor}
+.td-bull{color:var(--up)}.td-bear{color:var(--dn)}
 .tk-nxt{font-size:10.5px;color:var(--t2);text-align:center;max-width:306px;line-height:1.5;
   border:1px solid var(--b1);border-radius:99px;padding:7px 15px;background:rgba(11,6,40,.6)}
 /* the verdict can be one word ("Wait") or four ("Trade Gold now"), so the type
@@ -1395,6 +1407,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:900px){.fng-mini{flex-wrap:wrap}.fng-h{width:100%;justify-content:flex-start}}
 /* ── volume profile ── */
 /* ── index traded through its ETF ── */
+/* ── the level that would prove the trend wrong ── */
+.tinv{display:grid;grid-template-columns:auto auto 1fr;gap:6px 14px;align-items:baseline;
+  margin:12px 0 0;padding:13px 15px;border-radius:14px;border:1px solid var(--b1);
+  background:rgba(11,6,40,.55)}
+.tinv i{font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3);white-space:nowrap}
+.tinv b{font-family:'Space Grotesk';font-size:21px;font-weight:800;line-height:1;
+  font-variant-numeric:tabular-nums}
+.tinv u{text-decoration:none;font-size:9.5px;color:var(--t3)}
+.tinv span{grid-column:1/-1;font-size:10.5px;color:var(--t2);line-height:1.65;margin-top:3px}
+.tinv span b{font-family:inherit;font-size:inherit;font-weight:800;color:var(--t1)}
+.tinv.bear{border-color:rgba(239,68,68,.34)} .tinv.bear b{color:var(--dn)}
+.tinv.bull{border-color:rgba(34,197,94,.34)} .tinv.bull b{color:var(--up)}
+.tinv.broken{border-color:rgba(245,158,11,.4)} .tinv.broken b{color:var(--warn)}
+.tinv.range{grid-template-columns:1fr} .tinv.range b{display:none}
 .idxp{display:flex;gap:12px;align-items:flex-start;margin:12px 0;padding:11px 14px;
   border-radius:12px;border:1px solid rgba(245,158,11,.34);background:rgba(245,158,11,.07)}
 .idxp>b{font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--warn);
@@ -5982,10 +6009,57 @@ function calcMajorTrend(rows,price){
   /* The major level that would invalidate the trend: in a downtrend it is the
      last swing high, in an uptrend the last swing low. Nothing counts as a
      change of trend until price CLOSES beyond it. */
-  var keyLevel=null,broken=false;
-  if(dir==='bear'&&sp.hi.length)keyLevel=sp.hi[sp.hi.length-1].p;
-  if(dir==='bull'&&sp.lo.length)keyLevel=sp.lo[sp.lo.length-1].p;
-  if(keyLevel!=null)broken=(dir==='bear')?price>keyLevel:price<keyLevel;
+  var keyLevel=null,broken=false,keyDate=null,keyTyped=false;
+  /* THE LAST SWING HIGH IS NOT THE MAJOR ONE.
+     This took sp.hi[last] — whichever pivot happened most recently — so a small
+     three-bar wiggle two weeks old could stand as the level that defines a
+     months-long downtrend, and it was frequently BELOW the current price, which
+     made the trend read as broken every time price ticked over a minor pivot.
+
+     A level that invalidates a downtrend has to be above price: that is what
+     makes it something to break. Among the pivots that qualify, take the most
+     prominent — how far the swing stands clear of the lowest ground between it
+     and the current bar — rather than the most recent. If none qualifies, the
+     structure really has been taken out, and that is what broken means. */
+  var prom=function(pt,arr,isHigh){
+    var seg=closes.slice(pt.i);
+    if(!seg.length)return 0;
+    var base=isHigh?Math.min.apply(null,seg):Math.max.apply(null,seg);
+    return Math.abs(pt.p-base)/pt.p;
+  };
+  var pick=function(arr,isHigh){
+    var side=arr.filter(function(pt){return isHigh?pt.p>price:pt.p<price;});
+    if(!side.length)return null;
+    return side.slice().sort(function(a,b){
+      return prom(b,arr,isHigh)-prom(a,arr,isHigh);
+    })[0];
+  };
+  /* A LEVEL YOU TYPED BEATS ONE THAT WAS FOUND.
+     The board already takes a major high and a major low by hand, for exactly
+     the case where you are reading a longer chart than the history loaded here.
+     Those boxes fed the level map and nothing else, so the invalidation line
+     went on quoting a pivot found in 150 bars while a hand-set major level sat
+     ignored two panels away. If you have set the side that matters, that is
+     the level, and it is marked as yours. */
+  var typed=null;
+  try{
+    var tEl=document.getElementById(dir==='bear'?'sh_price':'sl2_price');
+    var tv=tEl?parseFloat(tEl.value):NaN;
+    if(isFinite(tv)&&tv>0)typed=tv;
+  }catch(e){}
+  var kp=null;
+  if(typed!=null){
+    keyLevel=typed; keyDate=null; keyTyped=true;
+    broken=(dir==='bear')?price>typed:price<typed;
+  }
+  else if(dir==='bear')kp=pick(sp.hi,true);
+  else if(dir==='bull')kp=pick(sp.lo,false);
+  if(kp){keyLevel=kp.p;keyDate=kp.d;broken=false;}
+  else if(typed==null&&dir!=='range'&&(dir==='bear'?sp.hi.length:sp.lo.length)){
+    /* every pivot on that side is now the wrong side of price */
+    var last=(dir==='bear')?sp.hi[sp.hi.length-1]:sp.lo[sp.lo.length-1];
+    keyLevel=last.p; keyDate=last.d; broken=true;
+  }
 
   /* relief rally = short-term move against an intact major trend */
   var relief=false,reliefNote='';
@@ -5995,7 +6069,7 @@ function calcMajorTrend(rows,price){
     if(dir==='bull'&&roc5<-0.005){relief=true;reliefNote='Pullback inside a bullish trend';}
   }
   var label=dir==='bull'?'BULLISH':dir==='bear'?'BEARISH':'RANGE';
-  return{dir:dir,label:label,score:score,factors:f,keyLevel:keyLevel,broken:broken,
+  return{dir:dir,label:label,score:score,factors:f,keyLevel:keyLevel,keyDate:keyDate,keyTyped:keyTyped,broken:broken,
          relief:relief,reliefNote:reliefNote,
          reason:broken?('Major level '+(keyLevel!=null?keyLevel.toFixed(2):'')+' broken — trend under review')
                :relief?reliefNote
@@ -6170,7 +6244,7 @@ function getTD(di,rs,cs){
      pinned the timing term of every signal at 30 instead of 100. */
   if(el<0){el+=1440;di=(di+6)%7;}
   var eh=Math.floor(el/60),em=el%60,hn=eh+1,pn=Math.floor(em/4)+1,pm=em%4,pl=4-pm;
-  var hi=hiIdx(di,hn),pi=piIdx(hi,pn),hp=PL[hi],pp=PL[pi],isPos=(hn<=7),an=getAN(pp,isPos),pct=(pm/4)*100;
+  var hi=hiIdx(di,hn),pi=piIdx(hi,pn),hp=PL[hi],pp=PL[pi],isPos=phIsPos(hn),an=getAN(pp,isPos),pct=(pm/4)*100;
   return{eh:eh,em:em,hn:hn,pn:pn,pm:pm,pl:pl,hi:hi,pi:pi,hp:hp,pp:pp,isPos:isPos,an:an,pct:pct};
 }
 
@@ -6804,7 +6878,7 @@ function renderTodayStrip(){
   var vib=_lastVib||0, span=12*60;
   var slots=[],best=null;
   for(var h=1;h<=12;h++){
-    var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
+    var hi=hiIdx(di,h), hp=PL[hi], isPos=phIsPos(h), an=getAN(hp,isPos);
     var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
     var kind=exact?'scalp':inter?'intra':'none';
     var start=srMin+(h-1)*60;
@@ -8013,6 +8087,43 @@ function renderAnalytics(){
   var col=dir==='BUY'?'var(--green)':dir==='SELL'?'var(--red)':'var(--amber)';
   var conf=S?S.conf:0;
 
+/* ══ THE LEVEL THAT WOULD PROVE THE TREND WRONG ═══════════════════════
+   A trend reading with no invalidation attached is an opinion. This is the
+   price at which the reading stops being true, said before the trade rather
+   than after it: in a downtrend the swing high that has to give way, in an
+   uptrend the swing low. Nothing counts until price CLOSES beyond it — an
+   intraday poke through and back is how most of these levels get tested.
+   ══════════════════════════════════════════════════════════════════════ */
+function trendInvalidHtml(T,price,dp,asset){
+  if(!T||T.dir==='unknown')return '';
+  if(T.dir==='range')
+    return '<div class="tinv range"><i>No trend to invalidate</i>'
+      +'<span>The structure is not pointing anywhere, so there is no single level that '
+      +'would change the read. Trade the range edges, not a direction.</span></div>';
+  if(T.keyLevel==null)
+    return '<div class="tinv range"><i>No level found</i>'
+      +'<span>The history loaded has no confirmed swing on the side that would invalidate '
+      +'this read, so nothing is being quoted.</span></div>';
+
+  var up=(T.dir==='bear');
+  var dist=Math.abs(T.keyLevel-price), pct=price>0?(dist/price*100):0;
+  return '<div class="tinv '+(T.broken?'broken':T.dir)+'">'
+   +'<i>'+(T.broken?'Level already gone':'Invalid '+(up?'above':'below'))+'</i>'
+   +'<b>'+T.keyLevel.toFixed(dp)+'</b>'
+   +'<u>'+pct.toFixed(2)+'% '+(T.keyLevel>price?'above':'below')+' price'
+     +(T.keyTyped?' · your level':T.keyDate?' · swing of '+escHtml(T.keyDate):'')+'</u>'
+   +'<span>'
+     +(T.broken
+        ? escHtml(asset)+' has already traded through the swing that held this read up, so the '
+          +T.label.toLowerCase()+' call is under review rather than intact. Treat it as no trend '
+          +'until a new structure forms.'
+        : escHtml(asset)+' stays <b>'+T.label.toLowerCase()+'</b> while it holds '
+          +(up?'below':'above')+' '+T.keyLevel.toFixed(dp)+'. A daily <b>close</b> '
+          +(up?'above':'below')+' that and this read is wrong — not a wick through it, a close. '
+          +'That is the level to put behind a position taken on this trend, and the one to stop '
+          +'arguing with if it goes.')
+   +'</span></div>';
+}
   /* three supporting reads */
   var reads=[
     {k:'Trend',   v:T?T.label:'—',
@@ -8098,6 +8209,7 @@ function renderAnalytics(){
          +anaMeter(r.p,r.c)
          +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
      }).join('')+'</div>'
+   +trendInvalidHtml(T,price,dp,asset)
 
    /* filled by renderFng once the index arrives — it is one network call and
       should not hold up the board that does not depend on it */
@@ -8160,7 +8272,7 @@ function timState(){
   try{vib=(calcNN(timAsset())||{}).f||0;}catch(e){vib=_lastVib||0;}
   var hours=[];
   for(var h=1;h<=PH_HOURS;h++){
-    var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
+    var hi=hiIdx(di,h), hp=PL[hi], isPos=phIsPos(h), an=getAN(hp,isPos);
     var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
     /* `end` was missing here while timHoursFor had it, so every block built
        from these hours came out with end === undefined. Nothing read it until
@@ -8490,7 +8602,7 @@ function timDayScore(date,asset,vib){
   var own=!!(aCyc&&key&&aCyc.n===key.n);
   var strong=0,support=0;
   for(var h=1;h<=PH_HOURS;h++){
-    var hp=PL[hiIdx(di,h)], isPos=(h<=7), an=getAN(hp,isPos);
+    var hp=PL[hiIdx(di,h)], isPos=phIsPos(h), an=getAN(hp,isPos);
     if(hp.nums.indexOf(vib)>=0)strong++;
     else if(an.indexOf(vib)>=0)support++;
   }
@@ -8539,10 +8651,19 @@ function timBestDays(asset,vib,n){
    midnight. Hours after the twelfth are marked as night so the surface can say
    which side of sunset a window falls on. */
 var PH_HOURS=24;
+/* THE POSITIVE HALF WAS NOT HALF.
+   The app calls these "the positive half of the day" and "the negative half"
+   in its own words, and when the engine ran fourteen hours the test `h<=7`
+   said exactly that. The hours were extended to twenty-four and the 7 was left
+   behind, so the positive half became seven hours out of twenty-four — under a
+   third — and every window from mid-morning onwards was scored as the weak
+   half of the day. It is the first half of the cycle, whatever the cycle is
+   long: sunrise to sunset. */
+function phIsPos(h){ return h<=PH_HOURS/2; }
 function timHoursFor(di,srMin,vib){
   var hours=[];
   for(var h=1;h<=PH_HOURS;h++){
-    var hi=hiIdx(di,h), hp=PL[hi], isPos=(h<=7), an=getAN(hp,isPos);
+    var hi=hiIdx(di,h), hp=PL[hi], isPos=phIsPos(h), an=getAN(hp,isPos);
     var exact=vib&&hp.nums.indexOf(vib)>=0, inter=vib&&!exact&&an.indexOf(vib)>=0;
     hours.push({h:h,name:hp.n,sym:hp.s,start:srMin+(h-1)*60,end:srMin+h*60,
                 rank:exact?2:inter?1:0,isPos:isPos,night:h>12});
@@ -8687,6 +8808,7 @@ function timTodayWindows(st){
     var kind=timTradeKind(mins,days,b.best);
     var inMin=(st.cur!=null)?(b.start-st.srMin)-st.cur:null;
     return{start:b.start,end:b.end,mins:mins,best:b.best,kind:kind.k,
+      pos:!!(b.hours[0]&&b.hours[0].isPos),
       night:!!(b.hours[0]&&b.hours[0].night),
       names:b.hours.map(function(x){return x.name;}),
       inMin:inMin, live:(inMin!=null&&inMin<=0&&inMin>-mins),
@@ -8740,7 +8862,9 @@ function timTodayHtml(st){
          return '<div class="td-w '+cls+'">'
           +'<div class="td-t">'+fmtT(w.start)+' <s>→</s> '+fmtT(w.end%1440)+'</div>'
           +'<div class="td-m"><em>'+(w.best===2?'STRONG':'SUPPORT')+'</em>'
-            +'<span>'+escHtml(w.kind)+'</span>'+(w.night?'<u>night</u>':'')+'</div>'
+            +'<span>'+escHtml(w.kind)+'</span>'
+            +'<b class="'+(w.pos?'td-bull':'td-bear')+'">'+(w.pos?'bull half':'bear half')+'</b>'
+            +(w.night?'<u>night</u>':'')+'</div>'
           +'<div class="td-c">'+(w.live?'open now'
               :w.gone?'closed'
               :w.inMin!=null?'opens in '+fmtIn(w.inMin):'')+'</div>'
@@ -9186,7 +9310,15 @@ function timDial(st){
   st.hours.forEach(function(x,i){
     if(!x.rank&&x.h!==st.live)return;                 /* a dead hour is just track */
     var live=(x.h===st.live);
-    var c=x.rank===2?'#22C55E':x.rank===1?'#B49BE6':'rgba(180,155,230,.30)';
+    /* BEAR WINDOWS WERE INVISIBLE.
+       Every lit hour was drawn the same green, so a window in the weak half of
+       the day looked exactly like one in the strong half and the dial could
+       only answer "is this hour lit", never "which way does it lean". A prime
+       hour in the positive half is green; a prime hour in the negative half is
+       red. Supporting hours take the paler version of the same two. */
+    var c=x.rank===2?(x.isPos?'#22C55E':'#EF4444')
+         :x.rank===1?(x.isPos?'#86EFAC':'#FCA5A5')
+         :'rgba(180,155,230,.30)';
     s+='<path d="'+dialArc(DIAL.R,i*step+gap/2,(i+1)*step-gap/2)+'" fill="none"'
       +' stroke="'+c+'" stroke-width="'+(live?DIAL.SW+6:DIAL.SW)+'" stroke-linecap="butt"'
       +' class="tk-w'+(live?' live':'')+'" style="animation-delay:'+(i*0.03).toFixed(2)+'s">'
@@ -9280,6 +9412,9 @@ function renderTiming(){
       /* directly under the wheel, because that is where the eye goes next and
          it was empty before */
       +'<div class="tk-nxt">'+escHtml(timNextLine(st))+'</div>'
+      +'<div class="tk-leg"><span class="lg-b">bull window</span>'
+        +'<span class="lg-r">bear window</span>'
+        +'<span class="lg-n">nothing lit</span></div>'
     +'</div>'
     +'<div class="tk-side">'
       +'<div class="tk-line">'+escHtml(v.line)+'</div>'
@@ -9297,7 +9432,9 @@ function renderTiming(){
    +'</div>'
    +'<div class="tk-bar">'
      +st.hours.map(function(x){
-        return '<div class="tk-slot r'+x.rank+(x.h===st.live?' live':'')+'" title="H'+x.h+' · '+escHtml(x.name)+' · '+fmtT(x.start)+'">'
+        return '<div class="tk-slot r'+x.rank+(x.isPos?' pos':' neg')
+          +(x.h===st.live?' live':'')+'" title="H'+x.h+' · '+escHtml(x.name)+' · '+fmtT(x.start)
+          +' · '+(x.isPos?'positive half':'negative half')+'">'
           +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
       }).join('')
    +'</div>'
@@ -9418,7 +9555,7 @@ function renderHourRail(){
   var rp=rs.split(':'), srMin=+rp[0]*60+ +rp[1];
   var html='';
   for(var h=1;h<=12;h++){
-    var hi=hiIdx(di,h), pl=PL[hi], isPos=(h<=7), on=td&&td.hn===h;
+    var hi=hiIdx(di,h), pl=PL[hi], isPos=phIsPos(h), on=td&&td.hn===h;
     html+='<div class="cyc-h'+(on?' on':'')+(isPos?' pos':'')+'" style="animation-delay:'+((h-1)*0.03).toFixed(2)+'s" '
       +'title="H'+h+' · '+pl.n+' · '+fmtT(srMin+(h-1)*60)+'">'
       +'<b>'+pl.s+'</b><span>H'+h+'</span></div>';
@@ -10989,7 +11126,7 @@ function buildWeek(){
     var di=dd.getDay(),dp2=PL[DS[di]];
     if(dp2.nums.indexOf(num)>=0&&swings.length<1)swings.push({dayName:DAY[di],planet:dp2.n,sym:dp2.s});
     for(var h=1;h<=12;h++){
-      var hi=hiIdx(di,h),hp=PL[hi],isPos=(h<=7),an=getAN(hp,isPos);
+      var hi=hiIdx(di,h),hp=PL[hi],isPos=phIsPos(h),an=getAN(hp,isPos);
       var eH=(hp.nums.indexOf(num)>=0),iH=(!eH&&an.indexOf(num)>=0);
       if(!eH&&!iH)continue;
       for(var p2=1;p2<=15;p2++){
@@ -11016,7 +11153,7 @@ function buildHT(){
   if(!rs)return;
   var rp=rs.split(':'),srMin=+rp[0]*60+ +rp[1],html='';
   for(var h=1;h<=14;h++){
-    var hi=hiIdx(di,h),p3=PL[hi],isPos=(h<=7),an=getAN(p3,isPos);
+    var hi=hiIdx(di,h),p3=PL[hi],isPos=phIsPos(h),an=getAN(p3,isPos);
     var ex=(hn2>0&&p3.nums.indexOf(hn2)>=0),ic=(hn2>0&&!ex&&an.indexOf(hn2)>=0);
     html+='<div class="br" style="padding:6px 0"><span class="dim f10" style="width:26px">H'+h+'</span><span class="soft f10 mono" style="width:46px">'+fmtT(srMin+(h-1)*60)+'</span><span style="flex:1;font-size:12px;font-weight:500">'+p3.s+' '+p3.n+'</span><span class="dim f10" style="width:54px">'+an.join(',')+'</span><div class="flex g4"><span class="tag '+(isPos?'tg':'tr')+'">'+(isPos?'Pos':'Neg')+'</span>'+(ex?'<span class="tag tb">Match</span>':ic?'<span class="tag ta">~</span>':'')+'</div></div>';
   }
@@ -14517,12 +14654,23 @@ function fngPartWords(k,v){
 /* the compact strip that sits under the price tiles on the dashboard.
    The asset you are actually looking at leads; the crypto index rides along on
    the end as wider-tape context, which is all it ever was on a gold board. */
+/* The crypto index was showing on every board, so someone reading Gold was
+   told about Bitcoin's mood for no reason. It belongs on crypto and nowhere
+   else — on a gold board it was a second number competing with the one that
+   actually applies. */
+function fngIsCrypto(asset){
+  var sym=(asset||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(typeof getAstroKey==='function'&&getAstroKey(asset||'')==='btc')return true;
+  var poly=(typeof polygonSymbol==='function')?polygonSymbol(sym):null;
+  return !!(poly&&poly.indexOf('X:')===0);
+}
 function fngMiniHtml(rows){
   var asset=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
   var A=assetFng(window.HIST_ROWS,asset);
   var tape=(rows&&rows.length)?rows[0]:null;
 
-  var tapeChip=tape
+  var tapeChip=!fngIsCrypto(asset) ? ''
+    : tape
     ? '<div class="fng-tape"><i>Crypto tape</i><b style="color:'+fngBand(tape.v).c+'">'+tape.v+'</b>'
       +'<s>'+escHtml(tape.k||fngBand(tape.v).w)+'</s></div>'
     : '<div class="fng-tape off"><i>Crypto tape</i><s>unavailable</s></div>';
@@ -14553,6 +14701,7 @@ function fngFullHtml(rows){
 
   /* the crypto index, kept as its own clearly separate reading */
   var tape=(function(){
+    if(!fngIsCrypto(asset))return '';
     if(!rows||!rows.length)
       return '<div class="fng-tp off"><i>Crypto Fear &amp; Greed</i>'
         +'<s>alternative.me did not answer — nothing is being estimated in its place</s></div>';
@@ -14563,10 +14712,8 @@ function fngFullHtml(rows){
         +'<em style="color:'+tb.c+'">'+escHtml(t.k||tb.w)+'</em>'
         +(y?'<u>yesterday '+y.v+'</u>':'')+(w?'<u>'+escHtml(fngAgo(wIx))+' '+w.v+'</u>':'')+'</div>'
       +'<s>alternative.me&rsquo;s index, built from Bitcoin&rsquo;s volatility, momentum, social volume, '
-      +'BTC dominance and search trends. It is the crypto tape'
-      +(/BITCOIN|BTC|ETH|SOL|CRYPTO|XRP|DOGE|ADA|LTC|BNB/i.test(asset)
-         ?', which is the market '+escHtml(asset)+' trades in.'
-         :' — background for '+escHtml(asset)+', not a reading of it.')+'</s></div>';
+      +'BTC dominance and search trends — the mood of the market '+escHtml(asset)
+      +' trades in, alongside its own reading above.</s></div>';
   })();
 
   if(!A||!A.ok)
@@ -14605,6 +14752,15 @@ function renderFng(){
   var hosts=[['dh_fng',fngMiniHtml],['ana_fng',fngFullHtml]]
     .filter(function(h){return document.getElementById(h[0]);});
   if(!hosts.length)return;
+  /* nothing on a gold board reads the crypto index, so it is not fetched there */
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
+  if(!fngIsCrypto(asset)){
+    hosts.forEach(function(h){
+      var e=document.getElementById(h[0]);
+      if(e)e.innerHTML=h[1](null);
+    });
+    return;
+  }
   fngFetch(function(rows){
     hosts.forEach(function(h){
       var e=document.getElementById(h[0]);
