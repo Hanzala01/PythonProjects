@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b28 — Precision in Timing</title>
+<title>Celestial Alpha b29 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1823,6 +1823,91 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border:1px solid var(--b1);color:var(--t3)}
 .cfm-steps em.y{border-color:rgba(34,197,94,.45);color:var(--up)}
 .cfm-steps em.stop{border-color:rgba(245,158,11,.5);color:var(--warn)}
+
+/* ══ TWO COLUMNS, AND EVERYTHING SMALLER ══════════════════════════════
+   The tab ran to nearly eight thousand pixels in one column. Half of that
+   was air: full-width cards holding four numbers, evidence lists printed in
+   full whether or not anyone wanted them, and every section stacked below
+   the last. Reading it meant scrolling past things to find things.
+
+   Two columns halve it at a stroke on any screen wide enough, and the
+   sections pair by what they answer rather than by height. Below 1100px it
+   collapses back to one, because two 500px columns are worse than one
+   1000px one. */
+.a2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;margin-bottom:16px}
+@media(max-width:1100px){.a2{grid-template-columns:1fr}}
+.a2>section{min-width:0}
+.acard{border:1px solid var(--b1);border-radius:16px;padding:14px 16px;
+  background:linear-gradient(180deg,rgba(15,9,38,.5),rgba(9,5,26,.35))}
+.acard+.acard{margin-top:12px}
+
+/* the plain-English line under every heading */
+.act-say{font-size:10.5px;line-height:1.65;color:var(--t3);margin:-4px 0 12px;max-width:62ch}
+.act-say b{color:var(--t2);font-weight:600}
+
+/* one-line answer strips — a label, a value, a plain sentence */
+.arow{display:flex;align-items:baseline;gap:10px;padding:8px 0;
+  border-top:1px solid rgba(43,21,91,.45);font-size:11px}
+.arow:first-child{border-top:none;padding-top:0}
+.arow u{text-decoration:none;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);width:78px;flex:none}
+.arow b{font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--t1);
+  flex:none;min-width:62px}
+.arow b.up{color:var(--up)} .arow b.dn{color:var(--dn)} .arow b.mid{color:var(--warn)}
+.arow span{color:var(--t3);font-size:10px;line-height:1.5}
+
+/* compact score chips, four across instead of five full-width tiles */
+.achips{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:7px}
+.achip{padding:7px 9px;border-radius:10px;border:1px solid var(--b1);background:rgba(6,3,20,.5)}
+.achip u{display:block;text-decoration:none;font-size:8px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--t3)}
+.achip b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:800;
+  color:var(--t1);margin:2px 0 3px;line-height:1}
+.achip.na b{font-size:9px;color:var(--warn);font-weight:700}
+.achip.zero b{color:var(--t3)}
+.achip s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);line-height:1.4}
+.achip-bar{height:2px;border-radius:99px;background:rgba(148,163,184,.16);margin-top:5px}
+.achip-bar i{display:block;height:100%;border-radius:99px;background:var(--p2)}
+
+/* detail that is there when wanted and out of the way when not */
+.amore{margin-top:10px;border-top:1px solid rgba(43,21,91,.45);padding-top:9px}
+.amore>summary{cursor:pointer;list-style:none;font-size:10px;color:var(--p3);
+  display:flex;align-items:center;gap:6px}
+.amore>summary::-webkit-details-marker{display:none}
+.amore>summary:before{content:'▸';font-size:9px;transition:.15s}
+.amore[open]>summary:before{transform:rotate(90deg)}
+.amore-b{margin-top:9px;font-size:10px;line-height:1.7;color:var(--t2)}
+.amore-b div{padding-left:13px;position:relative;margin-bottom:3px}
+.amore-b div:before{content:'·';position:absolute;left:4px;color:var(--p3)}
+.amore-b div.con:before{content:'\00d7';color:var(--warn);font-size:8px;top:1px}
+.amore-b div.con{color:var(--t3)}
+
+/* the three hypotheses, side by side instead of stacked */
+.hyp3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+@media(max-width:1250px){.hyp3{grid-template-columns:1fr}}
+.hyp3>div{min-width:0}
+.hc{border:1px solid var(--b1);border-radius:14px;padding:13px 15px;height:100%;
+  background:linear-gradient(180deg,rgba(15,9,38,.6),rgba(9,5,26,.4))}
+.hc.pri{border-color:rgba(127,96,191,.5)}
+.hc.rev{border-color:rgba(245,158,11,.35)}
+.hc.off{border-style:dashed;opacity:.8}
+.hc-t{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.hc-t u{text-decoration:none;font-size:7.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--t3);border:1px solid var(--b2);border-radius:99px;padding:2px 7px}
+.hc-t b{font-family:'Space Grotesk';font-size:13.5px;font-weight:800;color:var(--t1)}
+.hc-t em{font-style:normal;font-size:9px;color:var(--warn);margin-left:auto}
+.hc-n{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-bottom:9px}
+.hc-n>div{font-family:'Space Grotesk';font-size:12.5px;font-weight:800;color:var(--t1)}
+.hc-n i{display:block;font-style:normal;font-family:'Inter',sans-serif;font-size:7.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--t3);font-weight:700}
+.hc-n .dn{color:var(--dn)} .hc-n .up{color:var(--up)}
+.hc-w{font-size:10px;line-height:1.6;color:var(--t2);padding-top:9px;
+  border-top:1px solid rgba(43,21,91,.5)}
+.hc-w b{color:var(--t1);font-weight:700}
+
+/* a short plain sentence wherever a number could be mistaken for advice */
+.aplain{font-size:10px;line-height:1.7;color:var(--t3);margin-top:10px}
+.aplain b{color:var(--t2);font-weight:600}
 .scn-none{font-size:11px;color:var(--t2);line-height:1.65;padding:13px 15px;border-radius:12px;
   border:1px solid var(--b1);background:rgba(11,6,40,.5)}
 .scn-near{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px}
@@ -4759,7 +4844,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b28</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b29</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -10044,6 +10129,31 @@ function tradeCardHtml(){
   var px=parseFloat((document.getElementById('ai_price')||{}).value)||_lastPrice||0;
   var dp=px&&px<10?4:2;
   if(!S||!S.style){
+    /* TWO ENGINES, ONE SCREEN, AND THEY WERE CONTRADICTING EACH OTHER.
+       This card asks the older single-number engine, which issues nothing
+       below 68% — so it printed "NO TRADE · nothing qualifies" in the same
+       scroll as a headline reading WAIT and three cards offering a buy at
+       3.65 reward to risk. For a reader who has just arrived that is not a
+       nuance, it is a contradiction with no way to resolve it.
+
+       The five-method engine's primary scenario is shown instead when it has
+       one, labelled as a scenario rather than an instruction, and the older
+       engine's silence is reported underneath as the second opinion it is. */
+    var C=window.CQE_LAST, H=C&&C.hypotheses&&C.hypotheses[0];
+    if(H&&H.kind!=='Reversal'&&H.entryZone&&H.stop!=null&&H.target!=null){
+      var lng=/Long/i.test(H.direction||'');
+      var rr2=Math.abs(H.target-H.entryZone.anchor)/Math.abs(H.entryZone.anchor-H.stop);
+      return '<div class="sgc none" style="text-align:left">'
+        +'<div class="sgc-w" style="font-size:20px">'+(lng?'BUY':'SELL')+' — not yet</div>'
+        +'<div class="sgc-sub">The five methods have a scenario: '
+        +(lng?'buy':'sell')+' between '+H.entryZone.low.toFixed(dp)+' and '
+        +H.entryZone.high.toFixed(dp)+', out at '+(+H.stop).toFixed(dp)+', aiming for '
+        +(+H.target).toFixed(dp)+' — '+rr2.toFixed(2)+' to 1. '
+        +'It is not live until '+escHtml(H.activation)+'.</div>'
+        +'<div class="sgc-sub" style="margin-top:8px;opacity:.75">Second opinion: the older '
+        +'single-number engine issues nothing here — '
+        +escHtml(S&&S.reason?S.reason:'it is below its own threshold')+'.</div></div>';
+    }
     return '<div class="sgc none"><div class="sgc-w">NO TRADE</div>'
       +'<div class="sgc-sub">'+escHtml(S&&S.reason?S.reason:'Nothing qualifies right now.')+'</div></div>';
   }
@@ -12179,45 +12289,54 @@ function cqeEngineCell(name,score,sub){
 function cqeDivHtml(R,dp){
   var D=R.divergence, P=R.divergenceParts;
   if(!D)return '';
-  var LBL={momentum:'Momentum',volume:'Participation',volatility:'Volatility',
+  /* "Divergence" is jargon. What it means is that something the price
+     normally moves with has stopped moving with it — and that is a sentence
+     anyone can read. The number stays; it stops being the headline. */
+  var LBL={momentum:'Speed',volume:'Participation',volatility:'Volatility',
            dollar:'Dollar',yields:'Yields'};
-  var h='<div class="dvg">'
-    +'<div class="dvg-h"><b>Divergence</b>'
-      +'<s style="text-decoration:none;font-size:10px;color:var(--t3)">evidence against the current direction</s>'
-      +'<em>'+(D.score==null?'—':D.score)+'<s>/100 · '+D.coverage+'% computed</s></em></div>'
-    +'<div class="dvg-c">';
-  CQE.divergence.WEIGHTS.forEach(function(w){
-    var k=w[0], part=P[k], comp=(D.components||[]).filter(function(c){return c.k===k;})[0];
-    if(!comp){
-      var why=(part&&part.required&&part.required[0])||'not computed';
-      h+='<div class="dvg-i na"><u>'+LBL[k]+'</u><b>DATA REQUIRED</b><s>'+escHtml(why)+'</s></div>';
-      return;
-    }
-    var sub='';
-    if(k==='dollar'||k==='yields'){
-      sub=(part.classification||'')+(part.average!=null?' · r '+part.average.toFixed(2):'');
-    }else sub=(part.found&&part.found.length? part.found.length+' found':'none at the last pivots');
-    h+='<div class="dvg-i'+(comp.score===0?' zero':'')+'"><u>'+LBL[k]+'</u>'
-      +'<b>'+comp.score+'</b><s>'+escHtml(sub)+' · '+comp.weight+'%</s></div>';
-  });
-  h+='</div>';
+  var WORD={momentum:'is price still accelerating?',volume:'are more people trading it?',
+            volatility:'are the swings still widening?',dollar:'is the dollar moving as usual?',
+            yields:'are yields moving as usual?'};
   var found=[];
   ['momentum','volume','volatility'].forEach(function(k){
     ((P[k]&&P[k].found)||[]).forEach(function(f){
       found.push(f.kind+' — '+f.indicator+' at the '+f.at+', '+f.p1.date+' → '+f.p2.date
         +': price '+f.priceChangePct.toFixed(2)+'%, '+f.indicator+' '
-        +f.indicatorChangePct.toFixed(1)+'%. Strength '+f.strength+'.');
-    });
-  });
+        +f.indicatorChangePct.toFixed(1)+'%. Strength '+f.strength+'.'); }); });
   ['dollar','yields'].forEach(function(k){
-    if(P[k]&&P[k].classification==='DIVERGING'&&P[k].notes&&P[k].notes[0])found.push(P[k].notes[0]);
+    if(P[k]&&P[k].classification==='DIVERGING'&&P[k].notes&&P[k].notes[0])found.push(P[k].notes[0]); });
+
+  var lead = D.score==null ? 'Nothing could be measured.'
+    : D.score>=40 ? 'Several things have stopped agreeing with price.'
+    : D.score>=20 ? 'Something has stopped agreeing with price.'
+    : 'Everything is still moving with price.';
+
+  var h='<div class="acard" style="margin-top:14px">'
+    +'<div class="act-say" style="margin:0 0 11px"><b>Warning signs: '
+      +(D.score==null?'—':D.score)+' out of 100.</b> '+lead
+      +' This is a warning, never a reason to trade — it only raises how much '
+      +'the reversal has to prove before it counts.</div>'
+    +'<div class="achips">';
+  CQE.divergence.WEIGHTS.forEach(function(w){
+    var k=w[0], part=P[k], comp=(D.components||[]).filter(function(c){return c.k===k;})[0];
+    if(!comp){
+      h+=cqeChip(LBL[k],null,(part&&part.required&&part.required[0])||'not loaded',true);
+      return;
+    }
+    var sub;
+    if(k==='dollar'||k==='yields'){
+      sub = part.classification==='CORRELATION UNSTABLE — LOW CONFIRMATION VALUE'
+        ? 'relationship too unstable to use'
+        : (part.classification==='DIVERGING'?'not moving as it normally does':'moving as it normally does');
+    }else sub = (part.found&&part.found.length)? part.found.length+' warning sign' : WORD[k];
+    h+=cqeChip(LBL[k],comp.score,sub,false);
   });
-  if(found.length)h+='<div class="dvg-f">'+found.map(function(x){
-    return '<div>'+escHtml(x)+'</div>'; }).join('')+'</div>';
-  else h+='<div class="dvg-n">Nothing is contradicting price at the last confirmed pivots. '
-    +'That is the normal state and it is not a reason to do anything.</div>';
-  h+='<div class="dvg-n">'+escHtml(D.meaning)+' Divergence never opens a trade on its own — '
-    +'it raises how much confirmation the reversal below has to collect.</div>';
+  h+='</div>';
+  if(found.length){
+    h+='<details class="amore" open><summary>What exactly stopped agreeing</summary>'
+      +'<div class="amore-b">'+found.map(function(x){
+        return '<div class="con">'+escHtml(x)+'</div>'; }).join('')+'</div></details>';
+  }
   return h+'</div>';
 }
 /* ══ THE CONFIRMATION MATRIX ══════════════════════════════════════════ */
@@ -12239,207 +12358,266 @@ function cqeMatrixHtml(rev){
   h+='<div class="dvg-n">'+escHtml(M.note)+'</div>';
   return h+'</div>';
 }
-function cqeHypHtml(h,dp){
+/* ══ ONE HYPOTHESIS, IN A CARD THAT FITS BESIDE TWO OTHERS ════════════
+   Each of these used to be a full-width block, and the reversal ran to
+   eleven hundred pixels on its own — six evidence lists printed in full
+   whether or not the reader had asked for any of them. Three cards side by
+   side, each opening with the four numbers that decide anything and one
+   sentence of plain English, and everything else behind a disclosure. The
+   detail has not been removed; it has stopped being compulsory. */
+function hypWord(h){
   if(h.kind==='Reversal'){
-    /* the confirmation engine's shape, when it ran */
-    if(h.steps&&h.matrix){
-      var cls=h.status==='ACTIVE'?'':(h.status==='CONDITIONAL'?'':' none');
-      var ev=function(title,list){
-        if(!list||!list.length)return '';
-        return '<div class="cq-ev"><div><b>'+title+'</b></div>'
-          +list.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')+'</div>';
-      };
-      var rr=h.rr;
-      return '<div class="cq-h rev'+cls+'">'
-        +'<div class="cq-ht"><u>3 · reversal</u><b>'
-          +escHtml(h.side||'')+(h.window?'':' — no window yet')+'</b>'
-          +'<em>'+escHtml(h.status)+'</em></div>'
-        +(h.window?'<div class="cq-nums">'
-            +'<div class="cq-n"><u>window opens</u><b>'+escHtml(h.window.start)+'</b></div>'
-            +'<div class="cq-n"><u>window closes</u><b>'+escHtml(h.window.end)+'</b></div>'
-            +'<div class="cq-n"><u>entry</u><b>'+(h.entry!=null?(+h.entry).toFixed(dp):'—')+'</b></div>'
-            +'<div class="cq-n dn"><u>stop</u><b>'+(h.stop!=null?(+h.stop).toFixed(dp):'—')+'</b></div>'
-            +'<div class="cq-n up"><u>target</u><b>'+(h.target!=null?(+h.target).toFixed(dp):'—')+'</b></div>'
-            +'<div class="cq-n"><u>R : R</u><b>'+(rr?rr.toFixed(2):'—')+'</b></div>'
-          +'</div>':'')
-        +ev('Divergence',h.divergenceEvidence)
-        +ev('Price',h.priceEvidence)
-        +ev('Time',h.timeEvidence)
-        +ev('Structure',h.structuralEvidence.length?h.structuralEvidence
-             :(h.structuralMissing||[]).map(function(x){return 'missing — '+x;}))
-        +ev('Quant',h.quantEvidence)
-        +ev('Astro (experimental)',h.astro&&h.astro.near.length
-             ? h.astro.near.map(function(e){return e.date+' — '+e.what;})
-             : [h.astro?h.astro.status:'—'])
-        +cqeMatrixHtml(h)
-        +'<div class="cq-cond">'
-          +'<p><b>Trigger:</b> '+escHtml(h.trigger||'—')+'</p>'
-          +(h.invalidation?'<p><b>Invalidation:</b> '+escHtml(h.invalidation)+'</p>':'')
-          +'<p>'+escHtml(h.language)+'</p>'
-          +(h.astro?'<p style="color:var(--t3)">'+escHtml(h.astro.note)+'</p>':'')
-        +'</div></div>';
-    }
-    if(h.status!=='WATCH ONLY')
-      return '<div class="cq-h rev none"><div class="cq-ht"><u>3 · reversal</u>'
-        +'<b>NO VALID REVERSAL WINDOW DETECTED</b></div>'
-        +'<div class="cq-ev"><div>'+escHtml(h.why||'the conditions were not met')+'</div></div>'
-        +'<div class="cq-note">A reversal here has to be time-first: a cycle anniversary inside '
-        +'tolerance, a price cluster on the far side, and a structural trigger. Price merely '
-        +'reaching a level is not one of them.</div></div>';
-    return '<div class="cq-h rev"><div class="cq-ht"><u>3 · reversal</u>'
-      +'<b>'+escHtml(h.direction)+'</b><em>WATCH ONLY</em></div>'
-      +'<div class="cq-nums">'
-        +'<div class="cq-n"><u>window opens</u><b>'+escHtml(h.window.start)+'</b></div>'
-        +'<div class="cq-n"><u>window closes</u><b>'+escHtml(h.window.end)+'</b></div>'
-      +'</div>'
-      +'<div class="cq-ev"><div><b>Time</b></div>'
-        +h.timeEvidence.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
-        +'<div><b>Price</b></div>'
-        +h.priceEvidence.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
-      +'</div>'
-      +'<div class="cq-cond"><p><b>Trigger:</b> '+escHtml(h.structuralTrigger)+'</p>'
-        +'<p>'+escHtml(h.note)+'</p></div></div>';
+    if(h.status==='ACTIVE')return 'Every condition has been met.';
+    if(h.status==='CONDITIONAL')return 'Everything lines up except the last check.';
+    if(h.steps&&h.stoppedAt===1)return 'Nothing is contradicting price, so there is nothing to watch for yet.';
+    return 'Being watched. It does nothing until the trigger below happens.';
   }
+  var d=/Long/i.test(h.direction||'')?'up':'down';
+  if(h.rank===1)return 'The strongest case right now, and it points '+d+'.';
+  return 'If the first one plays out, this is where it goes next.';
+}
+function cqeHypHtml(h,dp){
+  var f=function(v){ return (v==null||!isFinite(v))?'—':(+v).toFixed(dp); };
+
+  /* ── the reversal, from the confirmation chain ── */
+  if(h.kind==='Reversal'&&h.steps&&h.matrix){
+    var M=h.matrix;
+    var gcls=M.grade==='STRONG CONFLUENCE'?'strong':M.grade==='MODERATE CONFIRMATION'?'mod':'low';
+    var ev=function(t,list,cls){
+      if(!list||!list.length)return '';
+      return '<div style="margin-top:7px"><b style="font-size:9px;letter-spacing:.08em;'
+        +'text-transform:uppercase;color:var(--t3)">'+t+'</b>'
+        +list.map(function(x){return '<div class="'+(cls||'')+'">'+escHtml(x)+'</div>';}).join('')+'</div>';
+    };
+    return '<div class="hc rev'+(h.status==='WATCH ONLY'?' off':'')+'">'
+      +'<div class="hc-t"><u>3 · reversal</u><b>'+escHtml(h.side||'—')+'</b>'
+        +'<em>'+escHtml(h.status)+'</em></div>'
+      +(h.window?'<div class="hc-n">'
+          +'<div><i>window</i>'+escHtml(h.window.start.slice(5))+' → '+escHtml(h.window.end.slice(5))+'</div>'
+          +'<div><i>R : R</i>'+(h.rr?h.rr.toFixed(2):'—')+'</div>'
+          +'<div class="dn"><i>stop</i>'+f(h.stop)+'</div>'
+          +'<div class="up"><i>target</i>'+f(h.target)+'</div>'
+        +'</div>':'')
+      +'<div class="cfm-h" style="margin-bottom:7px"><i>confirmation</i>'
+        +'<b class="'+gcls+'">'+M.hits+' of '+M.of+'</b></div>'
+      +'<div class="cfm-steps">'+(h.steps||[]).map(function(st){
+          return '<em class="'+(st.ok?'y':(h.stoppedAt===st.n?'stop':''))
+            +'" title="'+escHtml(st.why||'')+'">'+st.n+'</em>'; }).join('')
+        +'<em style="border:none;color:var(--t3)">'+escHtml(M.grade.toLowerCase())+'</em></div>'
+      +'<div class="hc-w">'+escHtml(hypWord(h))+'</div>'
+      +'<details class="amore"><summary>The whole case, step by step</summary>'
+        +'<div class="amore-b">'
+          +M.rows.map(function(r){
+            return '<div class="'+(r.ok?'':'con')+'"><b>'+escHtml(r.k)+(r.experimental?' (experimental)':'')
+              +'</b> — '+escHtml(r.why||'—')+'</div>'; }).join('')
+          +ev('Divergence',h.divergenceEvidence)
+          +ev('Price',h.priceEvidence)
+          +ev('Time',(h.timeEvidence||[]).slice(0,5))
+          +ev('Structure',h.structuralEvidence&&h.structuralEvidence.length?h.structuralEvidence
+               :(h.structuralMissing||[]).map(function(x){return 'missing — '+x;}),
+             h.structuralEvidence&&h.structuralEvidence.length?'':'con')
+          +ev('Quant',h.quantEvidence)
+          +ev('Astro (experimental)',h.astro&&h.astro.near.length
+               ? h.astro.near.map(function(e){return e.date+' — '+e.what;})
+               : [h.astro?h.astro.status:'—'])
+          +'<div style="margin-top:9px;color:var(--t2)"><b>Trigger:</b> '+escHtml(h.trigger||'—')+'</div>'
+          +(h.invalidation?'<div style="color:var(--t2)"><b>Invalidation:</b> '+escHtml(h.invalidation)+'</div>':'')
+          +'<div style="margin-top:8px;color:var(--t3)">'+escHtml(h.language)+'</div>'
+          +'<div style="color:var(--t3)">'+escHtml(M.note)+'</div>'
+          +(h.astro?'<div style="color:var(--t3)">'+escHtml(h.astro.note)+'</div>':'')
+        +'</div></details></div>';
+  }
+  /* ── the reversal, when the chain never ran ── */
+  if(h.kind==='Reversal'){
+    return '<div class="hc rev off">'
+      +'<div class="hc-t"><u>3 · reversal</u><b>None found</b></div>'
+      +'<div class="hc-w">'+escHtml(h.why||'the conditions were not met')+'</div>'
+      +'<div class="aplain">A turn here has to be timed, not guessed: a cycle date due, '
+      +'a price level ahead, and structure agreeing. Price simply reaching a level is not one of them.</div></div>';
+  }
+
+  /* ── primary and secondary ── */
   var rr=(h.target!=null&&h.stop!=null&&h.entryZone)
     ? Math.abs(h.target-h.entryZone.anchor)/Math.abs(h.entryZone.anchor-h.stop) : null;
   var long=/Long/i.test(h.direction||'');
-  return '<div class="cq-h'+(h.rank===1?' pri':'')+'">'
-    +'<div class="cq-ht"><u>'+h.rank+' · '+h.kind.toLowerCase()+'</u>'
-      +'<b>'+escHtml(h.direction)+'</b>'
-      +'<em>'+(h.timeWindow?'window '+escHtml(h.timeWindow):'no cycle window')+'</em></div>'
-    +'<div class="cq-nums">'
-      +'<div class="cq-n"><u>entry</u><b>'+cqeFmt(h.entryZone.low,dp)+' – '+cqeFmt(h.entryZone.high,dp)+'</b></div>'
-      +'<div class="cq-n dn"><u>stop</u><b>'+cqeFmt(h.stop,dp)+'</b></div>'
-      +'<div class="cq-n up"><u>target</u><b>'+cqeFmt(h.target,dp)+'</b></div>'
-      +'<div class="cq-n"><u>R : R</u><b>'+(rr?rr.toFixed(2):'—')+'</b></div>'
+  return '<div class="hc'+(h.rank===1?' pri':'')+'">'
+    +'<div class="hc-t"><u>'+h.rank+' · '+escHtml(h.kind.toLowerCase())+'</u>'
+      +'<b class="'+(long?'up':'dn')+'">'+escHtml(long?'Buy':'Sell')+'</b></div>'
+    +'<div class="hc-n">'
+      +'<div><i>buy between</i>'+f(h.entryZone.low)+'–'+f(h.entryZone.high)+'</div>'
+      +'<div><i>R : R</i>'+(rr?rr.toFixed(2):'—')+'</div>'
+      +'<div class="dn"><i>get out at</i>'+f(h.stop)+'</div>'
+      +'<div class="up"><i>aiming for</i>'+f(h.target)+'</div>'
     +'</div>'
-    +'<div class="cq-ev">'
-      +h.supporting.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
-      +(h.contradicting||[]).map(function(x){return '<div class="con">'+escHtml(x)+'</div>';}).join('')
-    +'</div>'
-    +'<div class="cq-cond">'
-      +'<p><b>Becomes active when:</b> '+escHtml(h.activation)+'</p>'
-      +'<p><b>Wrong if:</b> '+escHtml(h.invalidation)+'</p>'
-    +'</div></div>';
+    +'<div class="hc-w">'+escHtml(hypWord(h))+'<br>'
+      +'<b>Starts when:</b> '+escHtml(h.activation)+'</div>'
+    +'<details class="amore"><summary>Why, and what says otherwise</summary>'
+      +'<div class="amore-b">'
+        +h.supporting.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
+        +(h.contradicting||[]).map(function(x){return '<div class="con">'+escHtml(x)+'</div>';}).join('')
+        +'<div style="margin-top:8px;color:var(--t2)"><b>Wrong if:</b> '+escHtml(h.invalidation)+'</div>'
+      +'</div></details></div>';
+}
+/* ══ THE PANEL, SAID IN WORDS FIRST ═══════════════════════════════════
+   A reader who has just arrived does not know what Wyckoff is, what a Gann
+   cycle is, or why a number called Elliott is 41. The engines still run
+   exactly as they did — nothing below changes a calculation — but each one
+   now leads with what it means in a short sentence, and the number sits
+   beside it as the evidence rather than in front of it as the point. */
+function engWord(k,R){
+  var W=R.wyckoff,E=R.elliott,G=R.gann,T=R.time,Q=R.quant;
+  if(k==='wyckoff'){
+    if(W.score==null)return 'no volume for this one';
+    var m={'Markup':'buyers in control','Markdown':'sellers in control',
+      'Accumulation':'quietly being bought','Distribution':'quietly being sold',
+      'Spring Candidate':'washed out the lows and came back',
+      'Upthrust Candidate':'poked the highs and failed','Neutral':'no clear side'};
+    return m[W.state]||W.state.toLowerCase();
+  }
+  if(k==='elliott'){
+    if(E.score==null||!E.best)return 'no clean wave count';
+    return 'a '+E.best.type.toLowerCase()+' running '+E.best.dir;
+  }
+  if(k==='gann'){
+    if(G.score==null||!G.nearest)return 'no level agreement';
+    return G.nearest.strength+' methods point at the same price';
+  }
+  if(k==='time'){
+    if(!T.hits||!T.hits.length)return 'no cycle due today';
+    return T.hits[0].name+' cycle is '+(T.hits[0].error===0?'due today':T.hits[0].error+' days out');
+  }
+  if(k==='quant'){
+    if(Q.score==null)return 'not enough history';
+    var p=Math.round(Q.atrPercentile||0);
+    return p>=75?'moving harder than usual':p<=25?'unusually quiet':'moving about normally';
+  }
+  return '';
+}
+function cqeChip(label,score,word,na){
+  if(na)return '<div class="achip na"><u>'+label+'</u><b>NO DATA</b><s>'+escHtml(word)+'</s></div>';
+  return '<div class="achip'+(score===0?' zero':'')+'"><u>'+label+'</u><b>'+score+'</b>'
+    +'<s>'+escHtml(word)+'</s>'
+    +'<div class="achip-bar"><i style="width:'+Math.max(0,Math.min(100,score))+'%"></i></div></div>';
 }
 function cqeHtml(R,asset,dp){
   if(!R||R.required&&R.required.length)
     return '<div class="cq"><div class="cq-req"><b>DATA REQUIRED</b>'
       +escHtml((R&&R.required||['no data']).join('; '))+'</div></div>';
   var W=R.wyckoff,E=R.elliott,G=R.gann,T=R.time,Q=R.quant,g=R.gates;
-  var h='<div class="cq">'
-   +'<div class="cq-hd"><b>'+escHtml(asset)+' · daily</b>'
-     +'<s>'+R.bars+' bars'+(R.volumeFrom?' · volume from '+escHtml(R.volumeFrom):'')
-     +(R.repaired.length?' · '+R.repaired.length+' bad tick repaired':'')
-     +(window._priceStale?' · price is the '+escHtml(window._priceStale)+', not a live quote':'')
-     +'</s>'
-     +'<span class="cq-core">core <i>'+(R.core.score==null?'—':R.core.score)+'</i>'
-       +' · '+R.core.coverage+'% of the five</span></div>';
+  var dir=g.which.direction;
+  var split=g.which.agreement!=null&&g.which.agreement<0.5;
 
-  if(R.core.withheld)h+='<div class="cq-req"><b>No core score</b>'+escHtml(R.core.withheld)+'</div>';
+  var h='<div class="cq">';
 
-  h+='<div class="cq-eng">'
-   +cqeEngineCell('Wyckoff',W.score,W.score==null?(W.required[0]||''):W.state)
-   +cqeEngineCell('Elliott',E.score,E.best?(E.best.type+' '+E.best.dir):(E.required[0]||E.notes[0]||''))
-   +cqeEngineCell('Gann price',G.score,G.nearest?(G.nearest.strength+' methods at '+cqeFmt(G.nearest.price,dp)):(G.required[0]||''))
-   +cqeEngineCell('Gann time',T.score,T.hits.length?(T.hits[0].name+', '+T.hits[0].error+'d out'):'no anniversary in tolerance')
-   +cqeEngineCell('Quant',Q.score,Q.z==null?'':('z '+cqeFmt(Q.z)+' · ATR '+Math.round(Q.atrPercentile)+'th pct'))
-   +'</div>';
+  /* one sentence, before any number */
+  h+='<div class="act-say"><b>In one line:</b> the five methods below read '
+    +escHtml(asset)+' as <b>'+escHtml(dir.toLowerCase())+'</b>'
+    +(split?', though they do not agree with each other':'')
+    +'. Their average confidence is <b>'+(R.core.score==null?'—':R.core.score+' out of 100</b>')
+    +'. That is measured agreement, not a promise.</div>';
 
-  h+='<div class="cq-gates">'
-   +'<div class="cq-g"><u>1 · which way</u><b>'+escHtml(g.which.direction)+'</b>'+cqeBar(g.which.score)
-     +'<s style="display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:5px">'
-     +g.which.score+' · '+g.which.votes.length+' methods'
-     +(g.which.agreement!=null&&g.which.agreement<0.5?' · they disagree':'')+'</s></div>'
-   +'<div class="cq-g"><u>2 · where</u><b>'+(g.where.nearest?cqeFmt(g.where.nearest.price,dp):'—')+'</b>'
-     +cqeBar(g.where.score)
-     +'<s style="display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:5px">'
-     +(g.where.nearest?g.where.nearest.strength+' independent methods':'no cluster')+'</s></div>'
-   +'<div class="cq-g"><u>3 · when</u><b>'+(T.hits.length?T.hits[0].name:'—')+'</b>'+cqeBar(g.when.score)
-     +'<s style="display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:5px">'
-     +T.hits.length+' anniversaries · '+T.windows.length+' windows ahead</s></div>'
-   +'</div>';
+  h+='<div class="acard"><div class="achips">'
+   +cqeChip('Structure',W.score,engWord('wyckoff',R),W.score==null)
+   +cqeChip('Waves',E.score,engWord('elliott',R),E.score==null)
+   +cqeChip('Levels',G.score,engWord('gann',R),G.score==null)
+   +cqeChip('Timing',T.score,engWord('time',R),T.score==null)
+   +cqeChip('Volatility',Q.score,engWord('quant',R),Q.score==null)
+   +'</div>'
+   +'<div class="aplain">Each is scored 0–100 on its own evidence and they are averaged equally. '
+   +'<b>'+escHtml(asset)+'</b> · '+R.bars+' daily bars'
+   +(R.volumeFrom?' · volume borrowed from '+escHtml(R.volumeFrom)+', which trades on an exchange when this does not':'')
+   +(R.repaired.length?' · '+R.repaired.length+' bad price repaired':'')
+   +(window._priceStale?' · priced off the last close, not a live quote':'')
+   +'</div></div>';
+
+  if(R.core.withheld)h+='<div class="cq-req"><b>No overall score</b>'+escHtml(R.core.withheld)+'</div>';
 
   h+=cqeDivHtml(R,dp);
-  h+=R.hypotheses.map(function(x){return cqeHypHtml(x,dp);}).join('');
+
+  h+='<div class="act-say" style="margin-top:14px"><b>Three ways this can go.</b> Not a prediction — '
+   +'three scenarios with the price that starts each one and the price that kills it. '
+   +'The third only turns on if a cycle date, a level and the structure all arrive together.</div>';
+  h+='<div class="hyp3">'+R.hypotheses.map(function(x){
+      return '<div>'+cqeHypHtml(x,dp)+'</div>'; }).join('')+'</div>';
 
   var up=R.projections.upSummary,dn=R.projections.downSummary;
-  h+='<div class="cq-note"><b>Projections.</b> Up: median '+cqeFmt(up&&up.median,dp)
-    +' from '+((up&&up.methods)||[]).length+' methods, '+((up&&up.agreement)||'—')+' agreement. '
-    +'Down: median '+cqeFmt(dn&&dn.median,dp)+', '+((dn&&dn.agreement)||'—')+' agreement. '
-    +'A low agreement means the methods do not concur and the median is not a target.</div>';
-  h+='<div class="cq-note">Every figure above is computed from the bars listed. '
-    +'A high score is measured confluence, not certainty, and the risk gate overrides all of it. '
-    +'Astrology and numerology are not in any of these numbers.</div>';
+  var f=function(v){return (v==null||!isFinite(v))?'—':(+v).toFixed(dp);};
+  h+='<div class="aplain"><b>How far it could go.</b> Several methods project a target '
+    +'independently; when they land near each other that is worth something, when they scatter '
+    +'the middle of them is not a target. Upside around '+f(up&&up.median)+' ('
+    +((up&&up.agreement)||'—').toLowerCase()+' agreement), downside around '+f(dn&&dn.median)
+    +' ('+((dn&&dn.agreement)||'—').toLowerCase()+' agreement).</div>';
+  h+='<div class="aplain">Nothing here uses astrology or numerology. Those sit separately and are '
+    +'marked experimental. A high score means the methods agree, not that the trade will work — '
+    +'and how much to risk is decided under <a onclick="anaJump(5)" style="color:var(--p3);cursor:pointer">How much</a>, '
+    +'which can only ever say no.</div>';
   return h+'</div>';
 }
 /* ══ SECTION 22 · THE FINAL VERDICT ═══════════════════════════════════
-   Two engines were answering the same question in opposite directions, and
-   the older one had the headline. The band at the top of this tab read
-   "Stand aside — no setup on the board — 0% confidence" over three
-   hypotheses giving a long at 3.65 reward to risk. Both were doing what they
-   were built to do; only one of them was being read as the answer.
-
-   The verdict is the five engines' now, in the four words the framework
-   defines. Each is a test, not a mood:
+   Four words, each one a test rather than a mood:
 
      FIX RISK FIRST  the setup exists but cannot be sized — reward to risk
                      under 1.5, or a stop inside half an ATR of the entry,
                      where ordinary noise takes it out
-     TRADE           price is in the entry zone, the gates agree, and it can
-                     be sized
-     WAIT            the setup is real and the activation has not happened
-     STAY OUT        no hypothesis survived, or too little of the core could
-                     be computed to have an opinion
+     TRADE           price is in the entry zone, the methods agree, and it
+                     can be sized
+     WAIT            the setup is real and the thing that starts it has not
+                     happened yet
+     STAY OUT        no scenario survived, or too little could be computed
+                     to have an opinion
 
-   The older single-number read is not deleted. It drives the journal, the
-   monthly budget and the sizing chip, and two engines disagreeing is worth
-   seeing — so it moves down to the working, labelled as what it is. */
+   The older single-number engine used to own this spot and would print
+   "Stand aside, 0% confidence" directly above three scenarios offering a
+   long at 3.65 reward to risk. It still runs the journal, the budget and the
+   sizing chip, so it is kept — further down, in the working, named. */
 function cqeVerdict(R,price){
   if(!R||!R.hypotheses||!R.hypotheses.length||R.core.score==null)
     return{word:'STAY OUT',why:R&&R.core&&R.core.withheld
       ? R.core.withheld
-      :'the engines could not produce a hypothesis from the data loaded',tone:'out'};
+      :'the methods could not produce a scenario from the data loaded',tone:'out'};
   var H=R.hypotheses[0];
   if(!H||H.kind==='Reversal')
-    return{word:'STAY OUT',why:'no directional hypothesis survived the gates',tone:'out'};
+    return{word:'STAY OUT',why:'no directional scenario survived',tone:'out'};
   var rr=(H.target!=null&&H.stop!=null)
     ? Math.abs(H.target-H.entryZone.anchor)/Math.abs(H.entryZone.anchor-H.stop):null;
   var stopDist=Math.abs(H.entryZone.anchor-H.stop);
   if(rr!=null&&rr<1.5)
-    return{word:'FIX RISK FIRST',why:'reward to risk is '+rr.toFixed(2)+
-      ', below the 1.5 this will size at',tone:'risk',hyp:H,rr:rr};
+    return{word:'FIX RISK FIRST',why:'you would be risking more than you stand to make — '
+      +rr.toFixed(2)+' to 1, and 1.5 is the floor',tone:'risk',hyp:H,rr:rr};
   if(R.atr&&stopDist<R.atr*0.5)
-    return{word:'FIX RISK FIRST',why:'the stop is inside half an ATR of the entry — '
-      +'ordinary noise takes it out',tone:'risk',hyp:H,rr:rr};
+    return{word:'FIX RISK FIRST',why:'the stop sits inside half a normal day’s range — '
+      +'ordinary noise would take it out',tone:'risk',hyp:H,rr:rr};
   var inZone=price>=Math.min(H.entryZone.low,H.entryZone.high)
            &&price<=Math.max(H.entryZone.low,H.entryZone.high);
   var agree=R.gates.which.agreement;
   if(inZone&&(agree==null||agree>=0.5))
-    return{word:'TRADE',why:'price is in the entry zone and the methods agree',
+    return{word:'TRADE',why:'price is where the setup wants it and the methods agree',
            tone:'go',hyp:H,rr:rr};
   if(inZone)
-    return{word:'WAIT',why:'price is in the zone but the methods disagree — '
-      +R.gates.which.votes.length+' read it, and they do not point the same way',
+    return{word:'WAIT',why:'price is in the right place, but the methods disagree with each '
+      +'other — '+R.gates.which.votes.length+' read it and they do not point the same way',
       tone:'wait',hyp:H,rr:rr};
   return{word:'WAIT',why:H.activation,tone:'wait',hyp:H,rr:rr};
 }
 function cqeVerdictHtml(R,price,dp,asset){
-  var v=cqeVerdict(R,price);
-  var H=v.hyp;
+  var v=cqeVerdict(R,price), H=v.hyp;
+  var f=function(x){ return (x==null||!isFinite(x))?'—':(+x).toFixed(dp); };
   return '<div class="cqv '+v.tone+'">'
     +'<div class="cqv-t"><b>'+v.word+'</b>'
-      +'<u>'+(R&&R.core&&R.core.score!=null?'core '+R.core.score+' · '+R.core.coverage+'% of the five':'no core score')+'</u></div>'
+      +'<u>'+(R&&R.core&&R.core.score!=null
+        ? 'the five methods average '+R.core.score+' out of 100'
+        : 'no overall score')+'</u></div>'
     +(H?'<div class="cqv-n">'
-        +'<div><i>Direction</i>'+escHtml(H.direction)+'</div>'
-        +'<div><i>Entry</i>'+(H.entryZone.low!=null?(+H.entryZone.low).toFixed(dp)+'–'+(+H.entryZone.high).toFixed(dp):'—')+'</div>'
-        +'<div><i>Stop</i>'+(H.stop!=null?(+H.stop).toFixed(dp):'—')+'</div>'
-        +'<div><i>Target</i>'+(H.target!=null?(+H.target).toFixed(dp):'—')+'</div>'
-        +'<div><i>R : R</i>'+(v.rr?v.rr.toFixed(2):'—')+'</div>'
+        +'<div><i>which way</i>'+escHtml(/Long/i.test(H.direction||'')?'Buy':'Sell')+'</div>'
+        +'<div><i>buy between</i>'+f(H.entryZone.low)+'–'+f(H.entryZone.high)+'</div>'
+        +'<div><i>get out at</i>'+f(H.stop)+'</div>'
+        +'<div><i>aiming for</i>'+f(H.target)+'</div>'
+        +'<div><i>reward : risk</i>'+(v.rr?v.rr.toFixed(2):'—')+'</div>'
       +'</div>':'')
     +'<div class="cqv-w">'+escHtml(v.why)+'</div>'
-    +'<div class="cqv-f">A verdict from measured confluence, not a forecast. '
-      +'How much to risk is decided under <a onclick="anaJump(5)">How much</a>, and that gate can only say no.</div>'
+    +'<div class="cqv-f">Measured agreement between methods, not a forecast. '
+      +'How much to risk is decided under <a onclick="anaJump(5)">How much</a>, '
+      +'and that step can only ever say no.</div>'
   +'</div>';
 }
 /* run it and put it on the page */
@@ -12505,6 +12683,8 @@ function renderCQE(){
            if(w)w.innerHTML=anaWhen(price,dp); }catch(e){}
       try{ var v=document.getElementById('verdict_slot');
            if(v)v.innerHTML=cqeVerdictHtml(R,price,dp,asset); }catch(e){}
+      try{ var tc=document.getElementById('trade_slot');
+           if(tc)tc.innerHTML=tradeCardHtml(); }catch(e){}
     }catch(e){
       slot.innerHTML='<div class="cq"><div class="cq-req"><b>The engine failed</b>'
         +escHtml(e.message)+'</div></div>';
@@ -12946,9 +13126,14 @@ function trendInvalidHtml(T,price,dp,asset){
      actually come up: what do I do · why · where · how much · show me. Each
      act states its own question, and the jump bar skips between them.
      ══════════════════════════════════════════════════════════════════════ */
-  var act=function(n,title,question){
+  /* THE HEADING SAYS WHAT THE SECTION IS FOR, IN WORDS.
+     "Where" and "When" are precise and mean nothing to someone who has just
+     opened the page. The question stays as the subtitle and a plain sentence
+     goes under it, so a section explains itself before any number appears. */
+  var act=function(n,title,question,say){
     return '<div class="act-h" id="act'+n+'"><span class="act-n">'+n+'</span>'
-      +'<div><b class="act-t">'+title+'</b><i class="act-q">'+question+'</i></div></div>';
+      +'<div><b class="act-t">'+title+'</b><i class="act-q">'+question+'</i></div></div>'
+      +(say?'<div class="act-say">'+say+'</div>':'');
   };
   /* ══ THE ORDER OF THIS TAB ════════════════════════════════════════
      It used to open with a scan of twelve other instruments, then a verdict,
@@ -12993,12 +13178,23 @@ function trendInvalidHtml(T,price,dp,asset){
       shown, further down, named as the older engine. */
    +'<div id="verdict_slot"><div class="cqv wait"><div class="cqv-t"><b>Reading the board…</b></div></div></div>'
 
+   /* ══ TWO COLUMNS, PAIRED BY WHAT THEY ANSWER ══════════════════════
+      Which way and When go together: one is direction, the other is timing,
+      and neither is long. Where and The setups take the full width because
+      both carry maps and cards that need the room. How much and Elsewhere
+      pair at the end — the decision and the alternatives. Below 1100px the
+      grid collapses to one column, because two narrow columns read worse
+      than one wide one. */
+   +'<div class="a2"><section>'
    /* ─── GATE 1 · WHICH WAY ────────────────────────────────────────
       The day's lean first, because it is the first thing anyone actually
       looks at, and it used to sit fourth, inside a section called "the case".
       Fear and greed and the evidence meters join it: they are all answers to
       the same question, and they were scattered across two sections. */
-   +act(1,'Which way','Is '+escHtml(asset)+' leaning up, down, or neither — and on what evidence?')
+   +act(1,'Which way','Up, down, or neither?',
+        'Before anything else: which side has the upper hand today. The bar below is a vote '
+        +'of the methods that read direction &mdash; 50 means they cancel out. Fear and greed '
+        +'underneath measures how price has behaved, not what anyone is saying.')
    +'<div id="vb_slot"></div>'
    +'<div id="ana_fng"></div>'
    +'<div class="ab-reads">'+reads.map(function(r){
@@ -13012,8 +13208,32 @@ function trendInvalidHtml(T,price,dp,asset){
 
    /* ─── 3 · where ────────────────────────────────────────────────── */
 
+   +'</section><section>'
+   /* ─── GATE 3 · WHEN ─────────────────────────────────────────────
+      There was no "when" on this tab at all. Every cycle and window lived on
+      the Timing Engine, one click away, so the third of the four gates was
+      simply missing from the walk — and the hypotheses below quote time
+      evidence the reader had no way to see here. */
+   +act(3,'When','Which hours, and which dates?',
+        'Two different clocks. The hours are today&rsquo;s trading windows. The cycles are counted '
+        +'forward from real turning points &mdash; if this market turned 180 days ago, the 180-day '
+        +'mark is a date worth watching. Neither of them says which way.')
+   /* THE CYCLES ARRIVE AFTER THIS HTML DOES.
+      The five engines run asynchronously — they may still be fetching a
+      volume proxy when the board is built — so reading CQE_LAST while
+      assembling this string got whatever the previous asset had left, or
+      nothing at all, and the block announced "no anniversary falls inside
+      tolerance" on a day with twelve of them. It renders into its own slot
+      and is repainted the moment the engines finish. */
+   +'<div id="when_slot">'+anaWhen(price,dp)+'</div>'
+
+   +'</section></div>'
+
    /* ─── GATE 2 · WHERE ────────────────────────────────────────────── */
-   +act(2,'Where','Which prices matter, and where is this one among them?')
+   +act(2,'Where','Which prices matter?',
+        'A level is only worth watching when several unrelated methods land on the same one. '
+        +'Those are marked. The rest of this map is context: where price sits in its recent '
+        +'range, and which prices it has reacted to before.')
    +anaLadder(pts,price,lo,hi,dp,S,dir)
    /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
       / Markdown" — Wyckoff's own vocabulary — from sqrt(price) mod 2. That is
@@ -13028,33 +13248,32 @@ function trendInvalidHtml(T,price,dp,asset){
 
    /* ─── 4 · how much, and act ────────────────────────────────────── */
 
-   /* ─── GATE 3 · WHEN ─────────────────────────────────────────────
-      There was no "when" on this tab at all. Every cycle and window lived on
-      the Timing Engine, one click away, so the third of the four gates was
-      simply missing from the walk — and the hypotheses below quote time
-      evidence the reader had no way to see here. */
-   +act(3,'When','Which hours today, and which cycles are due?')
-   /* THE CYCLES ARRIVE AFTER THIS HTML DOES.
-      The five engines run asynchronously — they may still be fetching a
-      volume proxy when the board is built — so reading CQE_LAST while
-      assembling this string got whatever the previous asset had left, or
-      nothing at all, and the block announced "no anniversary falls inside
-      tolerance" on a day with twelve of them. It renders into its own slot
-      and is repainted the moment the engines finish. */
-   +'<div id="when_slot">'+anaWhen(price,dp)+'</div>'
 
    /* ─── GATE 4a · THE SETUPS ──────────────────────────────────────
       After which way, where and when — because it is built from all three,
       and reading it first meant reading a conclusion before its reasons. */
-   +act(4,'The setups','Given all of the above, what are the three scenarios?')
+   +act(4,'The setups','What could actually be traded?',
+        'Everything above, turned into three scenarios. Each names the price that starts it and '
+        +'the price that proves it wrong, so being wrong is something you see coming rather than '
+        +'find out about afterwards.')
    +'<div id="cqe_slot"></div>'
 
    /* ─── 2 · why ──────────────────────────────────────────────────── */
 
+
+   +'<div class="a2"><section>'
    /* ─── GATE 4b · HOW MUCH ────────────────────────────────────────── */
-   +act(5,'How much','What size, against what is already open, and what is left this month?')
+   +act(5,'How much','What size, and what is left this month?',
+        'The only section that can say no. It sizes the position from the stop distance and '
+        +'refuses anything the risk rules do not allow, however good the setup above looks.')
    +riskChipHtml(S,conf,price,dp,asset)
-   +tradeCardHtml()
+   /* THE SAME RACE THAT CAUGHT THE WHEN BLOCK.
+      This card reads CQE_LAST, and the five methods finish after this HTML
+      is built — so it saw whatever the previous asset left behind, or
+      nothing, and fell through to the older engine's "NO TRADE" while the
+      headline two screens up read WAIT over a buy. It gets a slot and is
+      repainted when the engines land. */
+   +'<div id="trade_slot">'+tradeCardHtml()+'</div>'
    +openTradesHtml()
    +qvRiskHtml(S,window._lastQV,price)
    +quotaHtml()
@@ -13062,16 +13281,22 @@ function trendInvalidHtml(T,price,dp,asset){
 
    /* ─── 5 · show me ──────────────────────────────────────────────── */
 
+   +'</section><section>'
    /* ─── ELSEWHERE ─────────────────────────────────────────────────
       This opened the tab. Twelve other instruments, before the reader had
       learned anything about the one they came for. It is a fine question and
       it is the last one. */
-   +act(6,'Elsewhere','Is anything else setting up right now?')
+   +act(6,'Elsewhere','Anything else setting up?',
+        'The same five methods across every other instrument, ranked by how much their evidence '
+        +'agrees. Worth a look after this asset, not instead of it.')
    +'<div class="scn" id="scan_body"></div>'
 
 
+   +'</section></div>'
    /* ─── THE WORKING ───────────────────────────────────────────────── */
-   +act(7,'The working','Show me the numbers behind all of it.')
+   +act(7,'The working','Show me the raw numbers.',
+        'Everything above, unrounded, plus the older single-number engine this board used to run '
+        +'on. Two engines disagreeing is worth seeing rather than hiding.')
    +'<details class="sec"><summary><b>The older single-number engine</b>'
      +'<span>what drove this board before the five engines, and still drives the journal and the budget</span></summary>'
 
