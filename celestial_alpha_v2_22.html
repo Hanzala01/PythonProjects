@@ -1420,9 +1420,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   margin:0 0 12px;padding:10px 15px;border-radius:13px;border:1px solid var(--b1);
   background:rgba(11,6,40,.6);transition:.2s var(--ease)}
 .rk-chip:hover{border-color:var(--p2);background:rgba(83,51,153,.18)}
-.rk-c-i{display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:8px;
-  font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--p3);
+.rk-c-i{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:9px;
   background:rgba(83,51,153,.3);border:1px solid var(--b2)}
+.rk-c-i svg{width:16px;height:16px;fill:none;stroke:var(--p3);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.rk-c-i svg circle{fill:var(--p3);stroke:none}
 .rk-c-m{display:flex;align-items:baseline;gap:6px}
 .rk-c-m b{font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t1);
   font-variant-numeric:tabular-nums}
@@ -1544,11 +1546,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rfab:hover{transform:translateY(-2px);border-color:var(--bAct);
   box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 0 8px rgba(83,51,153,.2)}
 .rfab:focus-visible{outline:2px solid var(--p3);outline-offset:3px}
-.rfab b{font-family:'Space Grotesk';font-size:19px;font-weight:800;line-height:1;
-  font-variant-numeric:tabular-nums}
-.rfab s{text-decoration:none;font-size:9px;color:var(--t3);margin-top:1px}
+.rfab-i{width:23px;height:23px;fill:none;stroke:var(--p3);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.rfab-i circle{fill:var(--p3);stroke:none}
+.rfab-b{position:absolute;top:-5px;right:-5px;font-family:'Space Grotesk';font-size:10px;
+  font-weight:800;line-height:1;padding:3px 6px;border-radius:99px;background:var(--p2);
+  color:#fff;border:1.5px solid #0B0628;font-variant-numeric:tabular-nums}
+.rfab{position:relative}
 .rfab.live{border-color:rgba(127,96,191,.9)}
-.rfab.live b{color:var(--p3)}
+.rfab.live .rfab-i{stroke:var(--pGlow)}
 .rfab.open{background:radial-gradient(120% 120% at 30% 20%,#533399,#22114A)}
 .rfab-x{font-style:normal;font-size:26px;line-height:1;color:var(--t1)}
 /* the dock sits above the button rather than on top of it */
@@ -4531,22 +4537,27 @@ body{background:var(--bg0)}
   <nav class="side-nav rise">
     <div class="side-brand">
       <!-- THE MARK.
-           What was here was an empty ring with a crescent inside it at 14%
-           opacity — invisible on this background — and a four-point star
-           pushed off to one side, so at 36px it read as a bare circle with a
-           speck stuck to it. This says both halves of the name in one shape:
-           an orbit, a rising line through it, and the star at the top of the
-           rise. Everything is drawn at a weight that survives 36px. -->
+           Two shapes, and that is the whole thing. A ring left open at the top,
+           and a rising stroke that comes up through the gap and out the other
+           side — the break in the circle is the point of it, and it is what
+           makes the shape read as one idea rather than a chart parked inside a
+           planet. The previous version had five elements in it (ring, disc,
+           line, star, dot) which at 36px turned into texture rather than a
+           mark; this survives being small because there is almost nothing in
+           it to lose.
+
+           It is drawn here from circles and straight lines. Basic geometry is
+           not anyone's property — what would be a problem is copying an
+           existing logo, and nothing here is taken from one. -->
       <svg class="sb-orb" viewBox="0 0 40 40" role="img" aria-label="Celestial Alpha">
-        <circle cx="20" cy="20" r="15.2" fill="none" stroke="url(#logring)" stroke-width="1.6"/>
-        <circle cx="20" cy="20" r="15.2" fill="rgba(127,96,191,.13)"/>
-        <path d="M10.5 26.5 16 21 20.5 24.5 29 14.5" fill="none" stroke="#E9DEFC"
-              stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M29 8.4l1.05 2.85L32.9 12.3l-2.85 1.05L29 16.2l-1.05-2.85L25.1 12.3l2.85-1.05z"
-              fill="#C4B5FD"/>
-        <circle cx="10.5" cy="26.5" r="1.9" fill="#C4B5FD"/>
-        <defs><linearGradient id="logring" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#D5C3F2"/><stop offset="1" stop-color="#533399"/></linearGradient></defs>
+        <defs><linearGradient id="logring" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="#533399"/><stop offset="1" stop-color="#D5C3F2"/></linearGradient></defs>
+        <!-- the ring, open where the stroke passes through -->
+        <path d="M27.9 8.6a14 14 0 1 1-11.4-1.9" fill="none" stroke="url(#logring)"
+              stroke-width="2.4" stroke-linecap="round"/>
+        <!-- the rise, breaking out at the top right -->
+        <path d="M12.6 26.4 20 19l4.2 4.2L32.6 6.8" fill="none" stroke="#EDE6FF"
+              stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <div class="t">CELESTIAL<span>ALPHA</span></div>
     </div>
@@ -4568,7 +4579,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b17</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b18</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7538,7 +7549,11 @@ function riskChipHtml(S,conf,price,dp,asset){
   var R=riskCompute(S,conf,price);
   var money=function(v){ return v==null?'—':'$'+v.toLocaleString('en',{maximumFractionDigits:0}); };
   return '<div class="rk-chip" onclick="riskToggle(true)" title="Open the risk calculator">'
-   +'<span class="rk-c-i">%</span>'
+   +'<span class="rk-c-i"><svg viewBox="0 0 24 24">'
+     +'<rect x="5" y="2.5" width="14" height="19" rx="3"/><path d="M8.4 6.6h7.2"/>'
+     +'<circle cx="9.1" cy="12" r=".95"/><circle cx="14.9" cy="12" r=".95"/>'
+     +'<circle cx="9.1" cy="16.6" r=".95"/><circle cx="14.9" cy="16.6" r=".95"/>'
+     +'</svg></span>'
    +'<div class="rk-c-m"><b>'+R.pct+'%</b><i>'+(R.auto?'auto':'yours')+'</i></div>'
    +'<div class="rk-c-m"><b>'+money(R.amount)+'</b><i>at risk</i></div>'
    +'<div class="rk-c-m"><b>'+(R.units!=null?R.units.toLocaleString('en',{maximumFractionDigits:2}):'—')
@@ -7570,12 +7585,25 @@ function riskFabSync(){
   var S=window._lastSig, conf=S?S.conf:0;
   var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
   var R=riskCompute(S,conf,price);
+  /* A BUTTON READING "0 %" LOOKS BROKEN.
+     The face carried the percentage whatever it was, and the ladder gives zero
+     below sixty confidence — so on a cold page, and on every ordinary day, a
+     round button sat in the corner showing a permanent nought. It carries a
+     calculator now, and the percentage rides on it as a small badge only while
+     there is a percentage worth reading. */
   el.className='rfab'+(RISK_OPEN?' open':'')+(R.pct>0?' live':'');
   el.title=RISK_OPEN?'Close the risk calculator'
-    :('Risk calculator — '+R.pct+'%'+(R.amount!=null?' · $'+R.amount.toFixed(0):''));
+    :('Risk calculator — '+(R.pct>0?R.pct+'%'+(R.amount!=null?' · $'+R.amount.toFixed(0):'')
+       :'nothing clears the threshold, so nothing is sized'));
   el.innerHTML=RISK_OPEN
     ? '<i class="rfab-x">&times;</i>'
-    : '<b>'+R.pct+'</b><s>%</s>';
+    : '<svg viewBox="0 0 24 24" class="rfab-i">'
+      +'<rect x="5" y="2.5" width="14" height="19" rx="3"/>'
+      +'<path d="M8.4 6.6h7.2"/>'
+      +'<circle cx="9.1" cy="12" r=".95"/><circle cx="14.9" cy="12" r=".95"/>'
+      +'<circle cx="9.1" cy="16.6" r=".95"/><circle cx="14.9" cy="16.6" r=".95"/>'
+      +'</svg>'
+      +(R.pct>0?'<b class="rfab-b">'+R.pct+'%</b>':'');
 }
 /* the panel itself, kept on <body> so a board redraw cannot wipe it */
 function riskDockSync(){
@@ -7615,7 +7643,9 @@ function riskDockSync(){
       +'</div>'
       +'<div class="rkd-src">'+(R.units!=null
           ? 'units of '+escHtml(asset)+', at a '+R.stopDist.toFixed(dp)+' stop'
-          : (S&&S.style?'no stop on the setup':'no live setup — switch to Manual to size anything'))+'</div>'
+          : (S&&S.style?'no stop on the setup'
+             :'Nothing on the board clears the confidence bar, so the ladder allows nothing and there '
+              +'is nothing to size. Switch to Manual to size a trade of your own.'))+'</div>'
       +'<details class="rkd-d"><summary>The ladder, and what it does not know</summary>'
         +'<div class="rkd-lad">'+RISK_LADDER.slice().reverse().map(function(L){
             return '<div class="rkd-r'+(L.min===R.sug.min?' on':'')+'">'
