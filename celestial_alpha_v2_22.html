@@ -4603,7 +4603,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b23</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b24</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -6775,27 +6775,57 @@ function confParts(gannScore,astroBull,timingMatch,levels,price){
      both came from the same reading. One number now, computed once. */
   var astroNorm=Math.max(0,Math.min(100,Math.round(astroBull)));
   var timingNorm=timingMatch?100:30;
-  var raw=gannNorm*0.40+sigmaNorm*0.25+astroNorm*0.25+timingNorm*0.10;
+
+  /* ══ ASTROLOGY IS AN OVERLAY, NOT A TERM ══════════════════════════
+     This line used to read
+         gannNorm*0.40 + sigmaNorm*0.25 + astroNorm*0.25 + timingNorm*0.10
+     which put the cycle-bias meter and the planetary hour inside the number
+     the app calls confidence — 35% of every score, sitting in the same sum
+     as measured price structure and never labelled as anything different.
+     A reader looking at 68% had no way to know that a third of it came from
+     where the planets were.
+
+     They are still computed, still shown, and still their own reading. They
+     are no longer added in. The measured half is renormalised over the two
+     terms that survive, so the scale does not silently shrink by a third:
+     0.40 and 0.25 become 0.615 and 0.385 of what is left.
+
+     Where the five-engine core score is available it replaces this entirely.
+     This path remains for assets whose history is too short to run it. */
+  var mRaw=gannNorm*(0.40/0.65)+sigmaNorm*(0.25/0.65);
+  var raw=mRaw;
+  var overlay={ astro:astroNorm, hour:timingNorm,
+                note:'Experimental. Computed and shown, never added to the score.' };
   return{
     conf:Math.max(10,Math.min(95,Math.round(raw))),
     raw:Math.round(raw),
+    overlay:overlay,
     clamped:Math.round(raw)<10||Math.round(raw)>95,
     parts:[
-      {k:'Level Quality', v:gannNorm,  w:40, s:(+gannScore||0).toFixed(1)+'/'+GANN_MAX,
+      {k:'Level Quality', v:gannNorm,  w:62, s:(+gannScore||0).toFixed(1)+'/'+GANN_MAX,
        long:'Level score '+(+gannScore||0).toFixed(1)+' of a measured ceiling of '+GANN_MAX
            +' — how many independent methods (sigma band, Gann degree, resonance, planet '
            +'alignment, session level) agree on the level price is working. Median scan scores 9.'},
-      {k:'Level Distance',v:sigmaNorm, w:25,
+      {k:'Level Distance',v:sigmaNorm, w:38,
        s:(levels&&levels.length?sigma.toFixed(1)+'σ away':'no level'),
        long:(levels&&levels.length
          ?'The nearest aligned level sits '+sigma.toFixed(1)+' sigma bands from price. Closer scores higher.'
          :'No aligned level inside the scan range, so this term falls back to the 4σ floor.')},
-      {k:'Cycle Bias',    v:astroNorm, w:25, s:astroNorm+'% bull',
-       long:'The cycle-bias meter for this asset, the same number the Timing tab shows: '
-           +astroNorm+'% bull. 50% means the sky is saying nothing either way.'},
-      {k:'Hour Match',    v:timingNorm,w:10, s:timingMatch?'match':'no match',
-       long:timingMatch?'The current planetary hour carries this asset\u2019s cycle number.'
-                       :'The current planetary hour does not carry this asset\u2019s cycle number, so this term sits at its 30% floor.'}
+      /* SHOWN, WEIGHTED ZERO, AND SAID SO ON THE TILE.
+         These two were 35% of the score. Removing them from the sum but
+         leaving them in this list unchanged would have been worse than
+         either — the panel would still read like they counted. They carry
+         w:0 and an explicit label, so the ring is the weighted mean of the
+         terms above and these sit beside it as what they are. */
+      {k:'Cycle Bias',    v:astroNorm, w:0, overlay:true, s:astroNorm+'% bull',
+       long:'EXPERIMENTAL OVERLAY — not counted in the score. The cycle-bias meter for '
+           +'this asset, the same number the Timing tab shows: '+astroNorm+'% bull. '
+           +'50% means the sky is saying nothing either way. It was 25% of this '
+           +'confidence figure until it was measured against nothing and taken out.'},
+      {k:'Hour Match',    v:timingNorm,w:0, overlay:true, s:timingMatch?'match':'no match',
+       long:'EXPERIMENTAL OVERLAY — not counted in the score. '
+           +(timingMatch?'The current planetary hour carries this asset\u2019s cycle number.'
+                        :'The current planetary hour does not carry this asset\u2019s cycle number.')}
     ]};
 }
 
@@ -9999,6 +10029,1092 @@ function vbMount(){
    ══════════════════════════════════════════════════════════════════════ */
 var VP_WIN=90, VP_BINS=46, VP_VA=0.70;
 /* what the numbers in the volume field actually are, for this instrument */
+/* ══════════════════════════════════════════════════════════════════════
+   CQE — CELESTIAL QUANTITATIVE ENGINE
+   Five measurable engines, four gates, three conditional hypotheses.
+
+   Every number here is computed from OHLCV that was actually delivered.
+   Where a calculation cannot be performed the field is null and a reason is
+   recorded in .required — nothing is estimated, defaulted or filled in.
+
+   Astrology and numerology are NOT in this file. They are overlays that sit
+   beside the core score, never inside it.
+   ══════════════════════════════════════════════════════════════════════ */
+(function(root){
+'use strict';
+
+/* ── small maths, shared ─────────────────────────────────────────────── */
+function num(x){ var v=+x; return isFinite(v)?v:null; }
+function med(a){ if(!a.length)return null; var s=a.slice().sort(function(x,y){return x-y;});
+  var m=s.length>>1; return s.length%2?s[m]:(s[m-1]+s[m])/2; }
+function mean(a){ return a.length? a.reduce(function(s,x){return s+x;},0)/a.length : null; }
+function sd(a){ if(a.length<2)return null; var m=mean(a);
+  return Math.sqrt(a.reduce(function(s,x){return s+(x-m)*(x-m);},0)/(a.length-1)); }
+/* midpoint rank: a new extreme scores 100 only if nothing ever equalled it */
+function pctileOf(arr,v){
+  if(!arr.length)return null;
+  var lt=0,eq=0;
+  for(var i=0;i<arr.length;i++){ if(arr[i]<v)lt++; else if(arr[i]===v)eq++; }
+  return (lt+eq/2)/arr.length*100;
+}
+function quantile(a,q){
+  if(!a.length)return null;
+  var s=a.slice().sort(function(x,y){return x-y;});
+  var p=(s.length-1)*q, lo=Math.floor(p), hi=Math.ceil(p);
+  return lo===hi? s[lo] : s[lo]+(s[hi]-s[lo])*(p-lo);
+}
+function dayOf(r){ return r.t!=null? new Date(+r.t) : new Date(r.date||r.time||r.datetime); }
+
+function trueRange(rows,i){
+  var h=num(rows[i].high), l=num(rows[i].low);
+  if(h==null||l==null)return null;
+  if(i<1)return h-l;
+  var pc=num(rows[i-1].close); if(pc==null)return h-l;
+  return Math.max(h-l, Math.abs(h-pc), Math.abs(l-pc));
+}
+function atr(rows,n,end){
+  if(end==null)end=rows.length-1;
+  var s=0,c=0;
+  for(var i=Math.max(1,end-n+1);i<=end;i++){ var t=trueRange(rows,i); if(t!=null){s+=t;c++;} }
+  return c>=Math.min(n,5)? s/c : null;
+}
+
+/* ══ BAD TICKS ════════════════════════════════════════════════════════
+   A bar can be internally valid — low ≤ open, close ≤ high — and still be
+   junk. Real Polygon XAU/USD carries 2025-11-23 with a low of 1964.99 while
+   that same bar opened at 4063.84, closed at 4074.86, and every neighbour
+   traded between 4022 and 4144. One broken print, on a thin Sunday session.
+
+   Left in, it set the dominant swing low at 1964.99 and put the entire Gann
+   grid, every Fibonacci retracement and the Square-of-9 anchors on a price
+   that never existed.
+
+   THE OBVIOUS TEST IS THE WRONG TEST. Flagging any bar whose wick is more
+   than 8% from its own close also deletes 2026-01-30, where gold fell from
+   5437 to 4884 for real — continuous with its neighbours, on the heaviest
+   volume in the sample. A crash is not a bad tick. So the comparison is
+   against the surrounding closes, not against the bar itself: an extreme
+   that sits many ATR outside where the market was trading either side of it
+   is a print, and an extreme the neighbours agree with is the market.
+
+   The repair clamps the offending wick back to the bar's own body and keeps
+   the session. Deleting the bar would put a hole in every time count. */
+function scrubTicks(rows,opt){
+  opt=opt||{};
+  var k=opt.atrMult||8, look=opt.look||3;
+  var out=rows.slice(), bad=[];
+  for(var i=0;i<rows.length;i++){
+    var a=atr(rows,14,Math.max(1,i)); if(!a||a<=0)continue;
+    var ctx=[];
+    for(var j=Math.max(0,i-look);j<=Math.min(rows.length-1,i+look);j++){
+      if(j===i)continue; var c=num(rows[j].close); if(c!=null)ctx.push(c);
+    }
+    if(ctx.length<3)continue;
+    var cMin=Math.min.apply(null,ctx), cMax=Math.max.apply(null,ctx);
+    var o=num(rows[i].open), c0=num(rows[i].close),
+        h=num(rows[i].high), l=num(rows[i].low);
+    if(o==null||c0==null||h==null||l==null)continue;
+    var bodyHi=Math.max(o,c0), bodyLo=Math.min(o,c0), fixed=null;
+    if(cMin-l > k*a){ fixed=Object.assign({},rows[i]);
+      fixed.low=Math.min(bodyLo,cMin);
+      bad.push({date:dayOf(rows[i]).toISOString().slice(0,10), field:'low',
+                was:l, now:fixed.low, atrAway:(cMin-l)/a}); }
+    if(h-cMax > k*a){ fixed=fixed||Object.assign({},rows[i]);
+      fixed.high=Math.max(bodyHi,cMax);
+      bad.push({date:dayOf(rows[i]).toISOString().slice(0,10), field:'high',
+                was:h, now:fixed.high, atrAway:(h-cMax)/a}); }
+    if(fixed)out[i]=fixed;
+  }
+  return {rows:out, repaired:bad};
+}
+
+/* ══ SECTION 1 — DATA QUALITY ═════════════════════════════════════════
+   Run before anything else. Whatever fails here disables the engines that
+   depend on it rather than being carried silently into a score. */
+function dataQuality(rows,opts){
+  opts=opts||{};
+  var Q={bars:rows?rows.length:0, ok:false, required:[], notes:[],
+         dupes:0, badOHLC:0, nulls:0, gaps:[], span:null, weekendBars:0};
+  if(!rows||rows.length<2){ Q.required.push('historical OHLC bars — none were delivered'); return Q; }
+
+  var seen={}, days=[];
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i], o=num(r.open),h=num(r.high),l=num(r.low),c=num(r.close);
+    if(o==null||h==null||l==null||c==null){ Q.nulls++; continue; }
+    if(h<l||o>h||o<l||c>h||c<l) Q.badOHLC++;
+    var d=dayOf(r); if(isNaN(d)) continue;
+    var key=d.toISOString().slice(0,10);
+    if(seen[key])Q.dupes++; else seen[key]=1;
+    days.push(d.getTime());
+    var wd=d.getUTCDay(); if(wd===0||wd===6)Q.weekendBars++;
+  }
+  days.sort(function(a,b){return a-b;});
+  for(i=1;i<days.length;i++){
+    var gap=Math.round((days[i]-days[i-1])/86400000);
+    if(gap>4)Q.gaps.push({after:new Date(days[i-1]).toISOString().slice(0,10),days:gap});
+  }
+  Q.span=days.length? {from:new Date(days[0]).toISOString().slice(0,10),
+                       to:new Date(days[days.length-1]).toISOString().slice(0,10),
+                       calendarDays:Math.round((days[days.length-1]-days[0])/86400000)} : null;
+
+  if(Q.bars<60)Q.required.push('at least 60 bars for volatility statistics — '+Q.bars+' delivered');
+  if(Q.bars<250)Q.notes.push('Fewer than 250 bars: one-year and longer Gann anniversaries cannot be tested.');
+  if(Q.badOHLC)Q.notes.push(Q.badOHLC+' bar(s) violate low ≤ open,close ≤ high and are excluded.');
+  if(Q.dupes)Q.notes.push(Q.dupes+' duplicate date(s) in the series.');
+  Q.ok=Q.bars>=60&&Q.nulls===0&&Q.badOHLC===0;
+  return Q;
+}
+
+/* ══ VOLUME QUALITY ═══════════════════════════════════════════════════
+   Wyckoff is entirely a volume method, so the volume series is checked as
+   hard as the price series is. Two things kill it and both were measured on
+   real XAU/USD data before this was written:
+
+   A LEVEL SHIFT. Polygon's quote count for C:XAUUSD jumps 39× on
+   2025-09-02 — more feeds, not more trading. Relative Volume against a
+   trailing mean then reads 2.6–3.2 for twenty sessions on a feed change.
+
+   WEEKEND SESSIONS. Spot FX prints a Sunday bar worth about 6% of a
+   weekday's activity. Its Relative Volume is 0.07, which trips "low volume
+   into expansion" every single week for a reason that is not the market.
+
+   Both are detected here. A series that fails is not used. */
+function volumeQuality(rows){
+  var V={usable:false, reason:null, isQuoteCount:false, levelShift:null, weekendLow:false, n:0};
+  if(!rows||rows.length<40){ V.reason='fewer than 40 bars carry volume'; return V; }
+  var v=[], qc=0, has=0;
+  for(var i=0;i<rows.length;i++){
+    var x=num(rows[i].volume);
+    if(x!=null&&x>0){ v.push(x); has++;
+      /* The app's own parser already labels this: volKind is 'ticks' for the
+         C: forex feeds and 'traded' for equities and crypto. Trust that
+         first. The equality test is the fallback for any row that predates
+         the label — Polygon returns v and n identical on a quote-count feed,
+         which is what gave this away on XAU/USD in the first place. */
+      var kind=rows[i].volKind, cnt=num(rows[i].n);
+      if(cnt==null)cnt=num(rows[i].trades);
+      if(kind==='ticks'||(kind==null&&cnt!=null&&cnt===x))qc++; }
+  }
+  V.n=has;
+  if(has<40){ V.reason='fewer than 40 bars carry a volume figure'; return V; }
+  V.isQuoteCount = qc>=has*0.95;
+
+  /* a step change in the level of the series, found by the largest ratio
+     between adjacent 30-bar medians */
+  var best=0,at=-1;
+  for(i=30;i<v.length-30;i++){
+    var a=med(v.slice(i-30,i)), b=med(v.slice(i,i+30));
+    if(a>0&&b/a>best){ best=b/a; at=i; }
+  }
+  if(best>=3){ V.levelShift={ratio:best, index:at,
+    date:rows[at]?dayOf(rows[at]).toISOString().slice(0,10):null}; }
+
+  /* weekend sessions carrying a fraction of weekday activity */
+  var wk=[],wd=[];
+  for(i=0;i<rows.length;i++){
+    var q=num(rows[i].volume); if(q==null||q<=0)continue;
+    var d=dayOf(rows[i]); if(isNaN(d))continue;
+    ((d.getUTCDay()===0||d.getUTCDay()===6)?wk:wd).push(q);
+  }
+  if(wk.length>=8&&wd.length>=8&&med(wk)<med(wd)*0.35)V.weekendLow=true;
+
+  if(V.isQuoteCount)     V.reason='this feed reports a quote count, not traded volume';
+  else if(V.levelShift)  V.reason='the series steps up '+V.levelShift.ratio.toFixed(1)+'× on '
+                                 +V.levelShift.date+', which is a feed change rather than participation';
+  else if(V.weekendLow)  V.reason='weekend sessions carry a fraction of weekday activity and distort every average';
+  else V.usable=true;
+  return V;
+}
+
+/* ══ PIVOTS ═══════════════════════════════════════════════════════════
+   Elliott and every time cycle start here, so the pivot detector is not a
+   three-bar fractal — it is an ATR-scaled zigzag. A swing counts only if it
+   retraces the previous one by at least `k` ATR *and* is at least `sep` bars
+   from the last confirmed pivot, so a quiet week does not manufacture waves. */
+function pivots(rows,opt){
+  opt=opt||{};
+  var k=opt.atrMult||2.0, sep=opt.minBars||3, n=opt.atrLen||14;
+  if(!rows||rows.length<n+5)return [];
+  /* ONE EXTREME, TRACKED IN BOTH DIRECTIONS UNTIL THE FIRST LEG IS KNOWN.
+     Written first with a single `extPx` and two unguarded updates, so while
+     direction was still undecided the running high was overwritten by the
+     same bar's low every iteration and the reversal test compared a low
+     against itself. Direction never initialised, no pivot was ever emitted,
+     and the failure was invisible: 0 pivots at 60, 90 and 120 bars, then 14
+     at 180 — not a threshold, a cliff, and the 180-bar window is simply the
+     first one wide enough to contain a single bar whose own range clears two
+     ATR. Elliott and every time cycle were silently dead on the 220 bars the
+     app actually loads.
+
+     The running high and the running low are now separate, which is what a
+     zigzag needs: whichever side gives way first defines the leg. */
+  var out=[], dir=0;
+  var runHi=num(rows[0].high), runHiIdx=0, runLo=num(rows[0].low), runLoIdx=0;
+  function emit(idx,px,kind){ out.push({i:idx,px:px,kind:kind,t:dayOf(rows[idx]).getTime()}); }
+  for(var i=1;i<rows.length;i++){
+    var a=atr(rows,n,i); if(a==null||a<=0)continue;
+    var thr=k*a, h=num(rows[i].high), l=num(rows[i].low);
+    if(h==null||l==null)continue;
+    if(h>runHi){ runHi=h; runHiIdx=i; }
+    if(l<runLo){ runLo=l; runLoIdx=i; }
+    if(dir>=0&&runHi-l>=thr&&i-runHiIdx>=sep){
+      emit(runHiIdx,runHi,'H');
+      dir=-1; runLo=l; runLoIdx=i;
+    }else if(dir<=0&&h-runLo>=thr&&i-runLoIdx>=sep){
+      emit(runLoIdx,runLo,'L');
+      dir=1; runHi=h; runHiIdx=i;
+    }
+  }
+  /* alternate strictly — two highs in a row means the smaller one is noise */
+  var clean=[];
+  for(i=0;i<out.length;i++){
+    if(clean.length&&clean[clean.length-1].kind===out[i].kind){
+      var p=clean[clean.length-1];
+      var keep=(out[i].kind==='H')?(out[i].px>p.px):(out[i].px<p.px);
+      if(keep)clean[clean.length-1]=out[i];
+    }else clean.push(out[i]);
+  }
+  for(i=1;i<clean.length;i++){
+    clean[i].swing=Math.abs(clean[i].px-clean[i-1].px);
+    clean[i].swingPct=clean[i].swing/clean[i-1].px*100;
+    clean[i].bars=clean[i].i-clean[i-1].i;
+    clean[i].days=Math.round((clean[i].t-clean[i-1].t)/86400000);
+    var aa=atr(rows,n,clean[i].i);
+    clean[i].swingATR=aa?clean[i].swing/aa:null;
+  }
+  return clean;
+}
+
+/* ══ ENGINE 1 — WYCKOFF ═══════════════════════════════════════════════
+   Phases are not read off a chart. Each concept becomes a number:
+     Relative Volume  = volume / mean volume over n
+     Price Result     = |close − open| / ATR
+     Effort / Result  = Relative Volume / Price Result
+   and springs and upthrusts are range penetrations measured in ATR.
+
+   `volRows` may be a different instrument than `rows`. For spot gold the
+   price is XAU/USD and the volume is GLD's, because GLD trades on an
+   exchange and has a real tape while spot gold has neither. That
+   substitution is recorded in the result and shown wherever it is used —
+   it is a proxy, and calling it the instrument's own volume would be a lie. */
+function wyckoff(rows,volRows,opt){
+  opt=opt||{};
+  var W={score:null, state:'DATA REQUIRED', confirmed:false, required:[], notes:[],
+         relVol:null, priceResult:null, effortResult:null, range:null,
+         spring:null, upthrust:null, volumeFrom:opt.volumeFrom||'self'};
+  var n=opt.lookback||20, rn=opt.rangeLen||30;
+  if(!rows||rows.length<rn+5){ W.required.push('at least '+(rn+5)+' bars for Wyckoff'); return W; }
+
+  var src=volRows&&volRows.length?volRows:rows;
+  var vq=volumeQuality(src);
+  W.volumeQuality=vq;
+  if(!vq.usable){ W.required.push('usable volume — '+vq.reason); return W; }
+
+  /* align the volume series to the price series by date, so a proxy with a
+     different calendar cannot silently shift by a day */
+  var vmap={};
+  for(var i=0;i<src.length;i++){
+    var d=dayOf(src[i]); if(isNaN(d))continue;
+    vmap[d.toISOString().slice(0,10)]=num(src[i].volume);
+  }
+  var vser=[];
+  for(i=0;i<rows.length;i++){
+    var key=dayOf(rows[i]).toISOString().slice(0,10);
+    vser.push(vmap[key]!=null?vmap[key]:null);
+  }
+  var last=rows.length-1;
+  var hist=[]; for(i=Math.max(0,last-n);i<last;i++) if(vser[i]!=null)hist.push(vser[i]);
+  if(vser[last]==null||hist.length<Math.floor(n*0.6)){
+    W.required.push('volume for the most recent session — the proxy series has not printed it yet');
+    return W;
+  }
+  var avg=mean(hist);
+  var a=atr(rows,14,last);
+  if(!a||!avg){ W.required.push('a computable ATR and mean volume'); return W; }
+
+  W.relVol       = vser[last]/avg;
+  W.priceResult  = Math.abs(num(rows[last].close)-num(rows[last].open))/a;
+  W.effortResult = W.priceResult>0 ? W.relVol/W.priceResult : null;
+
+  /* trading range over the last rn bars, excluding the bar being judged */
+  var hi=-Infinity, lo=Infinity;
+  for(i=last-rn;i<last;i++){ var h=num(rows[i].high),l=num(rows[i].low);
+    if(h!=null&&h>hi)hi=h; if(l!=null&&l<lo)lo=l; }
+  var mid=(hi+lo)/2;
+  W.range={high:hi, low:lo, width:hi-lo, widthPct:(hi-lo)/mid*100, bars:rn, midpoint:mid};
+
+  /* spring: took out the range low and closed back inside it */
+  var L=num(rows[last].low), C=num(rows[last].close), H=num(rows[last].high);
+  if(L<lo&&C>lo){
+    W.spring={penetrationATR:(lo-L)/a, recoveryATR:(C-lo)/a, relVol:W.relVol};
+  }
+  if(H>hi&&C<hi){
+    W.upthrust={penetrationATR:(H-hi)/a, recoveryATR:(hi-C)/a, relVol:W.relVol};
+  }
+
+  /* effort against result, in words that match the numbers */
+  var HIVOL=1.5, LOVOL=0.7, BIGMOVE=0.8, SMALLMOVE=0.35;
+  if(W.relVol>=HIVOL&&W.priceResult<=SMALLMOVE)      W.notes.push('High effort, little result — possible absorption.');
+  else if(W.relVol>=HIVOL&&W.priceResult>=BIGMOVE)   W.notes.push('High effort with matching result — expansion.');
+  else if(W.relVol<=LOVOL&&W.priceResult>=BIGMOVE)   W.notes.push('Large move on light participation — weak.');
+
+  /* position in the range and the direction of the last leg give the phase.
+     Nothing here is called confirmed unless the measurable condition held. */
+  var pos=(C-lo)/(hi-lo);
+  var pv=pivots(rows,{atrMult:2.0});
+  /* THE LAST CONFIRMED PIVOT IS NOT WHERE THE MARKET IS.
+     A pivot is only confirmed once price has retraced from it, so the list
+     always ends in the past — on this data, 27 sessions and 660 points
+     behind. Reading the direction from the last two pivots therefore called
+     a market at the top of its range "leg down". The leg that matters is the
+     one still running: from the most recent pivot to the current close. */
+  var legUp = pv.length ? C>pv[pv.length-1].px
+            : (rows.length>20 ? C>num(rows[rows.length-20].close) : null);
+  W.currentLeg = pv.length ? {from:new Date(pv[pv.length-1].t).toISOString().slice(0,10),
+                              fromPrice:pv[pv.length-1].px, to:C,
+                              move:C-pv[pv.length-1].px,
+                              moveATR:(C-pv[pv.length-1].px)/a} : null;
+
+  var s=0;
+  if(W.spring&&W.relVol>=1.2){ W.state='Spring Candidate'; W.confirmed=true;  s=+55; }
+  else if(W.upthrust&&W.relVol>=1.2){ W.state='Upthrust Candidate'; W.confirmed=true; s=-55; }
+  /* ACCUMULATION AND DISTRIBUTION ONLY EXIST INSIDE A RANGE.
+     Written first as `widthPct<=opt.tightPct||8`, which JavaScript reads as
+     `(widthPct<=undefined)||8` — always truthy, so every bar fell into this
+     branch. Gold in a clean markup, 96% of the way up a 15.8%-wide window,
+     came back "Distribution". The range test has to actually run. */
+  else if(W.range.widthPct<=(opt.tightPct||8)){
+    if(pos<0.35){ W.state='Accumulation'; s=+25; }
+    else if(pos>0.65){ W.state='Distribution'; s=-25; }
+    else { W.state='Neutral'; s=0; }
+  }
+  if(W.state==='Neutral'||W.state==='DATA REQUIRED'){
+    if(legUp===true&&pos>0.6){ W.state='Markup'; s=+40; }
+    else if(legUp===false&&pos<0.4){ W.state='Markdown'; s=-40; }
+    else { W.state='Neutral'; s=0; }
+  }
+  /* effort/result nudges, it does not decide */
+  if(W.relVol>=HIVOL&&W.priceResult<=SMALLMOVE) s*=0.6;      /* absorption argues against continuation */
+  if(W.relVol<=LOVOL&&W.priceResult>=BIGMOVE)   s*=0.5;      /* unconvincing move */
+  W.score=Math.max(-100,Math.min(100,Math.round(s)));
+  W.rangePosition=pos;
+  return W;
+}
+
+/* ══ ENGINE 2 — ELLIOTT ═══════════════════════════════════════════════
+   No wave is ever forced. Candidate 1-2-3-4-5 counts are read off the pivot
+   list and each is tested against the three hard rules; a count that breaks
+   one is discarded, not adjusted. Fibonacci relationships score conformity
+   and never gate a count, because a wave that is not at a ratio is still a
+   wave. If nothing survives, the answer is that nothing survives. */
+var FIB_SET=[0.236,0.382,0.5,0.618,0.786,1.0,1.272,1.618,2.0,2.618];
+function nearestFib(x){
+  if(x==null||!isFinite(x))return null;
+  var best=null;
+  for(var i=0;i<FIB_SET.length;i++){
+    var e=Math.abs(x-FIB_SET[i])/FIB_SET[i];
+    if(best===null||e<best.err)best={ratio:FIB_SET[i],err:e};
+  }
+  return best;
+}
+function elliott(rows,pv,opt){
+  opt=opt||{};
+  var E={score:null, counts:[], required:[], notes:[]};
+  if(!pv||pv.length<6){ E.required.push('at least 6 confirmed pivots for a five-wave count — '
+    +(pv?pv.length:0)+' found'); return E; }
+
+  /* the last six pivots give 0-1-2-3-4-5; earlier windows give alternatives */
+  var tried=0;
+  for(var start=pv.length-6; start>=0 && tried<3; start--){
+    var p=pv.slice(start,start+6);
+    if(p.length<6)continue;
+    var up=p[1].px>p[0].px;
+    /* alternation must be clean for an impulse */
+    var okAlt=true;
+    for(var i=1;i<6;i++){ if((p[i].px>p[i-1].px)!==(i%2===1?up:!up)){ okAlt=false; break; } }
+    if(!okAlt)continue;
+    tried++;
+
+    var W1=Math.abs(p[1].px-p[0].px), W2=Math.abs(p[2].px-p[1].px),
+        W3=Math.abs(p[3].px-p[2].px), W4=Math.abs(p[4].px-p[3].px),
+        W5=Math.abs(p[5].px-p[4].px);
+    var c={dir:up?'up':'down', pivots:p, W1:W1,W2:W2,W3:W3,W4:W4,W5:W5,
+           broke:[], flags:[], ratios:{}, type:'Impulse'};
+
+    /* HARD RULE 1 — wave 2 cannot retrace all of wave 1 */
+    if(W2>=W1)c.broke.push('W2 retraced 100% or more of W1');
+    /* HARD RULE 2 — wave 3 cannot be the shortest of 1, 3, 5 */
+    if(W3<W1&&W3<W5)c.broke.push('W3 is the shortest of W1, W3, W5');
+    /* HARD RULE 3 — in a standard impulse W4 cannot enter W1 territory.
+       A diagonal is allowed to overlap, so an overlap is not discarded — it
+       is relabelled and tested as a diagonal instead. */
+    var w1End=p[1].px, w4End=p[4].px;
+    var overlap = up ? (w4End<=w1End) : (w4End>=w1End);
+    if(overlap){
+      /* LEADING OR ENDING CANNOT BE TOLD APART FROM HERE.
+         The first version guessed from the pivot index, which is a fact about
+         this array and not about the market — it labelled three unrelated
+         counts "Ending Diagonal" on the same data. Which one it is depends on
+         where the sequence sits inside its parent wave, and this engine only
+         sees one degree. So it is named for what was measured, and the thing
+         that was not measured is stated. */
+      c.type='Diagonal';
+      c.flags.push('W4 overlaps W1 — permitted in a diagonal, so read as one');
+      c.flags.push('leading or ending cannot be told apart at a single degree');
+    }
+    /* truncation is a flag, never a rule */
+    var w3End=p[3].px, w5End=p[5].px;
+    if(up? w5End<w3End : w5End>w3End)c.flags.push('W5 failed to exceed W3 — possible truncation');
+
+    c.ratios={ 'W2/W1':W2/W1, 'W3/W1':W3/W1, 'W4/W3':W4/W3, 'W5/W1':W5/W1, 'W5/W3':W5/W3 };
+    var conform=[];
+    Object.keys(c.ratios).forEach(function(k){
+      var f=nearestFib(c.ratios[k]);
+      if(f){ c.ratios[k]={value:c.ratios[k], nearest:f.ratio, error:f.err};
+             conform.push(Math.max(0,1-f.err/0.10)); }   /* within 10% counts, linearly */
+    });
+    c.conformity=conform.length? Math.round(mean(conform)*100) : null;
+    c.durations={W1:p[1].days,W2:p[2].days,W3:p[3].days,W4:p[4].days,W5:p[5].days};
+    c.velocity={W1:p[1].days?W1/p[1].days:null, W3:p[3].days?W3/p[3].days:null,
+                W5:p[5].days?W5/p[5].days:null};
+    c.valid=c.broke.length===0;
+    E.counts.push(c);
+  }
+  var valid=E.counts.filter(function(c){return c.valid;});
+  if(!valid.length){
+    E.notes.push(E.counts.length
+      ? 'Candidate counts were found but every one broke a hard rule, so no count is offered.'
+      : 'No alternating five-swing sequence in the pivot list.');
+    E.score=0; return E;
+  }
+  valid.sort(function(a,b){ return (b.conformity||0)-(a.conformity||0); });
+  E.best=valid[0];
+  E.score=Math.round(
+      50                                              /* a valid count exists */
+    + (valid[0].conformity||0)*0.35                   /* how Fibonacci it is */
+    - (valid[0].flags.length*7));                     /* truncation / diagonal doubt */
+  E.score=Math.max(0,Math.min(100,E.score));
+  E.alternatives=valid.length-1;
+  return E;
+}
+
+/* ══ ENGINE 3 — GANN PRICE ════════════════════════════════════════════ */
+function gannEighths(hi,lo){
+  var r=hi-lo, out=[];
+  for(var n=0;n<=8;n++) out.push({label:(n*12.5)+'%', n:n, price:lo+(n/8)*r, src:'Gann 1/8'});
+  out.push({label:'1/3', price:lo+r/3,     src:'Gann 1/3'});
+  out.push({label:'2/3', price:lo+2*r/3,   src:'Gann 2/3'});
+  return out;
+}
+var SQ9_DEG=[45,90,120,135,180,225,270,315,360];
+function sq9Levels(anchor,price,a,opt){
+  opt=opt||{};
+  var maxATR=opt.maxATR||6, out=[], r=Math.sqrt(anchor);
+  if(!(anchor>0)||!(r>0))return out;
+  for(var i=0;i<SQ9_DEG.length;i++){
+    for(var s=-1;s<=1;s+=2){
+      var k=s*SQ9_DEG[i]/180;
+      var root=r+k; if(root<=0)continue;
+      var px=root*root;
+      var dist=Math.abs(px-price);
+      var dATR=a?dist/a:null;
+      /* an unbounded generator produces a level every few dollars and means
+         nothing; only levels within reach of price are kept */
+      if(dATR!=null&&dATR<=maxATR)
+        out.push({price:px, deg:SQ9_DEG[i]*s, distance:dist, distATR:dATR,
+                  src:'Square of 9', anchor:anchor});
+    }
+  }
+  return out;
+}
+function gannPrice(rows,price,pv,opt){
+  var G={score:null, levels:[], required:[], notes:[]};
+  var a=atr(rows,14);
+  if(!a){ G.required.push('a computable ATR'); return G; }
+  if(!pv||pv.length<2){ G.required.push('at least 2 pivots to define a swing'); return G; }
+
+  /* TWO SWINGS, NOT ONE, AND THE BIG ONE MATTERS MORE.
+     Taking only the last completed swing put the whole Gann grid on a
+     169-point consolidation that price had already left 490 points behind —
+     every eighth landed far below the market and the panel filled with
+     levels nobody could trade. The dominant swing of the loaded window is
+     what the eighths belong on; the recent swing is added as a second, finer
+     grid. Both are labelled so it is clear which is which. */
+  var lastH=null,lastL=null;
+  for(var i=pv.length-1;i>=0&&(!lastH||!lastL);i--){
+    if(pv[i].kind==='H'&&!lastH)lastH=pv[i];
+    if(pv[i].kind==='L'&&!lastL)lastL=pv[i];
+  }
+  if(!lastH||!lastL){ G.required.push('one confirmed high and one confirmed low'); return G; }
+
+  var domH=pv[0], domL=pv[0];
+  pv.forEach(function(p){ if(p.px>domH.px)domH=p; if(p.px<domL.px)domL=p; });
+  var swings=[
+    {name:'dominant', hi:domH.px, lo:domL.px, upFirst:domL.i<domH.i, tag:''},
+    {name:'recent',   hi:Math.max(lastH.px,lastL.px), lo:Math.min(lastH.px,lastL.px),
+     upFirst:lastL.i<lastH.i, tag:' (recent swing)'}
+  ].filter(function(s){ return s.hi>s.lo; });
+  G.swing={ dominant:{high:domH.px, low:domL.px, range:domH.px-domL.px,
+                      from:new Date(domL.t).toISOString().slice(0,10),
+                      to:new Date(domH.t).toISOString().slice(0,10)},
+            recent:{high:Math.max(lastH.px,lastL.px), low:Math.min(lastH.px,lastL.px),
+                    range:Math.abs(lastH.px-lastL.px)} };
+
+  var pool=[];
+  swings.forEach(function(sw){
+    gannEighths(sw.hi,sw.lo).forEach(function(L){
+      L.src=L.src+sw.tag; pool.push(L); });
+    FIB_SET.forEach(function(f){
+      var rp=sw.upFirst? sw.hi-(sw.hi-sw.lo)*f : sw.lo+(sw.hi-sw.lo)*f;
+      pool.push({label:(f*100).toFixed(1)+'%', price:rp, src:'Fibonacci'+sw.tag});
+      if(f>1){ var ext=sw.upFirst? sw.lo+(sw.hi-sw.lo)*f : sw.hi-(sw.hi-sw.lo)*f;
+               pool.push({label:(f*100).toFixed(1)+'% ext', price:ext, src:'Fibonacci'+sw.tag}); }
+    });
+  });
+  pool=pool.concat(sq9Levels(domH.px,price,a),sq9Levels(domL.px,price,a),
+                   sq9Levels(lastH.px,price,a),sq9Levels(lastL.px,price,a));
+  pv.forEach(function(p){ pool.push({label:p.kind==='H'?'prior high':'prior low',
+    price:p.px, src:p.kind==='H'?'Swing high':'Swing low'}); });
+
+  pool.forEach(function(L){ L.distance=Math.abs(L.price-price); L.distATR=L.distance/a; });
+  pool=pool.filter(function(L){ return isFinite(L.price)&&L.distATR<=8; });
+  pool.sort(function(x,y){ return x.distATR-y.distATR; });
+  G.levels=pool.slice(0,40);
+  G.atr=a;
+
+  /* THE SCORE IS AGREEMENT, NOT COUNT.
+     Forty levels within eight ATR is not evidence of anything — a dense
+     enough grid puts a line near any price. What counts is how many
+     INDEPENDENT methods land in the same place and how near that place is,
+     so the score comes from the clusters, not from the pool. */
+  G.clusters=clusterLevels(pool,a);
+  if(G.clusters.length){
+    var c=G.clusters[0];
+    var near=Math.max(0,1-Math.abs(c.price-price)/(a*4));
+    G.score=Math.round(Math.min(100, (c.strength-1)*20 + near*40));
+    G.nearest=c;
+  }else{
+    G.score=0;
+    G.notes.push('No two independent methods agree within a third of an ATR.');
+  }
+  return G;
+}
+
+/* ══ SECTION 18 — PROJECTIONS ═════════════════════════════════════════
+   Never one target. Each method projects on its own and the spread between
+   them is the answer: tight agreement is information, a wide scatter is the
+   honest statement that the methods do not concur. */
+function projections(rows,price,pv,q,opt){
+  opt=opt||{};
+  var P={up:[], down:[], required:[], notes:[]};
+  var a=atr(rows,14);
+  if(!a||!pv||pv.length<2){ P.required.push('an ATR and at least two pivots'); return P; }
+  var lastH=null,lastL=null;
+  for(var i=pv.length-1;i>=0&&(!lastH||!lastL);i--){
+    if(pv[i].kind==='H'&&!lastH)lastH=pv[i];
+    if(pv[i].kind==='L'&&!lastL)lastL=pv[i];
+  }
+  if(!lastH||!lastL)return P;
+  var swing=Math.abs(lastH.px-lastL.px), base=Math.min(lastH.px,lastL.px), top=Math.max(lastH.px,lastL.px);
+
+  /* Fibonacci extension of the last swing */
+  [1.272,1.618,2.0,2.618].forEach(function(f){
+    P.up.push({method:'Fibonacci', label:(f*100).toFixed(1)+'%', price:base+swing*f});
+    P.down.push({method:'Fibonacci', label:(f*100).toFixed(1)+'%', price:top-swing*f});
+  });
+  /* Gann: the swing repeated in eighths above and below */
+  [1.0,1.5,2.0].forEach(function(f){
+    P.up.push({method:'Gann swing', label:f+'× range', price:top+swing*(f-1)+swing*0});
+    P.down.push({method:'Gann swing', label:f+'× range', price:base-swing*(f-1)});
+  });
+  /* Square of 9: the next harmonics above and below price */
+  sq9Levels(price,price,a,{maxATR:8}).forEach(function(L){
+    (L.price>price?P.up:P.down).push({method:'Square of 9', label:L.deg+'°', price:L.price});
+  });
+  /* Sigma: where n standard deviations of daily return reach over h days */
+  if(q&&q.sd!=null){
+    var h=opt.horizon||20;
+    [1,2,3].forEach(function(k){
+      P.up.push({method:'Sigma', label:k+'σ · '+h+'d', price:price*Math.exp(q.mean*h+k*q.sd*Math.sqrt(h))});
+      P.down.push({method:'Sigma', label:k+'σ · '+h+'d', price:price*Math.exp(q.mean*h-k*q.sd*Math.sqrt(h))});
+    });
+  }
+  ['up','down'].forEach(function(side){
+    /* an "upside projection" below the current price is not an upside
+       projection — a 127.2% extension of a swing price has already left can
+       land underneath it, and it was being averaged into the median */
+    var arr=P[side].filter(function(x){ return isFinite(x.price)&&x.price>0
+      && (side==='up'? x.price>price : x.price<price); });
+    arr.sort(function(x,y){return x.price-y.price;});
+    P[side]=arr;
+    var px=arr.map(function(x){return x.price;});
+    var methods={}; arr.forEach(function(x){methods[x.method]=1;});
+    var m=med(px), lo=quantile(px,0.25), hi=quantile(px,0.75);
+    /* agreement: how tight the middle half is, measured in ATR */
+    var spreadATR=(hi-lo)/a;
+    P[side+'Summary']={ n:arr.length, methods:Object.keys(methods),
+      median:m, q1:lo, q3:hi, spreadATR:spreadATR,
+      agreement: spreadATR<=1.5?'HIGH':spreadATR<=4?'MODERATE':'LOW' };
+  });
+  return P;
+}
+
+/* ══ GATE 4 — HOW MUCH, AND THE VETO ══════════════════════════════════
+   This gate can only say no. It never proposes a trade and it never raises
+   a size. Contract specification is passed in rather than assumed, because
+   a fixed dollar-per-point for XAU/USD is wrong on most brokers. */
+function riskGate(inp){
+  var R={ok:false, veto:null, required:[], entry:inp.entry, stop:inp.stop, target:inp.target};
+  if(inp.entry==null||inp.stop==null){ R.required.push('an entry and a stop'); return R; }
+  if(inp.entry===inp.stop){ R.veto='the stop is at the entry — there is no risk to size'; return R; }
+  R.stopDistance=Math.abs(inp.entry-inp.stop);
+  if(inp.target!=null){
+    R.reward=Math.abs(inp.target-inp.entry);
+    R.rr=R.reward/R.stopDistance;
+  }
+  if(inp.balance==null){ R.required.push('an account balance'); return R; }
+  if(inp.riskPct==null){ R.required.push('a risk percentage'); return R; }
+  if(inp.valuePerPoint==null){
+    R.required.push('the contract value per point for this instrument — it is broker-specific '
+      +'and assuming one would size every trade wrong');
+    return R;
+  }
+  R.riskAmount=inp.balance*(inp.riskPct/100);
+  R.units=R.riskAmount/(R.stopDistance*inp.valuePerPoint);
+  R.ok=true;
+  /* the vetoes */
+  if(inp.maxRiskPct!=null&&inp.riskPct>inp.maxRiskPct){
+    R.ok=false; R.veto='risk '+inp.riskPct+'% is above the '+inp.maxRiskPct+'% ceiling for this confluence';
+  }else if(R.rr!=null&&inp.minRR!=null&&R.rr<inp.minRR){
+    R.ok=false; R.veto='reward to risk is '+R.rr.toFixed(2)+', below the '+inp.minRR+' minimum';
+  }else if(inp.atr!=null&&R.stopDistance<inp.atr*0.5){
+    R.ok=false; R.veto='the stop is inside half an ATR of the entry — normal noise would take it out';
+  }
+  return R;
+}
+
+/* ══ SECTION 7 — PRICE CLUSTERING ═════════════════════════════════════
+   Strength is the number of INDEPENDENT methods that land in the same place.
+   Two Gann eighths next to each other are one method twice and score one. */
+function clusterLevels(levels,a,opt){
+  opt=opt||{};
+  var tol=(opt.tolATR||0.35)*a;
+  var s=levels.slice().sort(function(x,y){return x.price-y.price;});
+  var out=[], cur=null;
+  for(var i=0;i<s.length;i++){
+    if(cur&&s[i].price-cur.lo<=tol){ cur.hi=s[i].price; cur.members.push(s[i]); }
+    else { if(cur)out.push(cur); cur={lo:s[i].price,hi:s[i].price,members:[s[i]]}; }
+  }
+  if(cur)out.push(cur);
+  out.forEach(function(c){
+    var srcs={}; c.members.forEach(function(m){ srcs[m.src]=1; });
+    c.methods=Object.keys(srcs);
+    c.strength=c.methods.length;
+    c.price=mean(c.members.map(function(m){return m.price;}));
+  });
+  return out.filter(function(c){return c.strength>=2;})
+            .sort(function(x,y){return y.strength-x.strength;});
+}
+
+/* ══ ENGINE 4 — GANN TIME ═════════════════════════════════════════════
+   Elapsed days from every confirmed pivot are tested against the cycle list.
+   The output is a WINDOW, never a date: a cycle that lands within tolerance
+   opens a window around it, and the tolerance scales with the cycle so a
+   360-day count is not held to the same day-accuracy as a 30-day one. */
+var CYCLES=[30,45,49,60,90,120,144,180,225,256,270,315,360,365,547,730,1095];
+var CYCLE_NAMES={365:'1 year',547:'18 months',730:'2 years',1095:'3 years'};
+function gannTime(rows,pv,opt){
+  opt=opt||{};
+  var T={score:null, hits:[], windows:[], required:[], notes:[]};
+  if(!pv||!pv.length){ T.required.push('confirmed pivots to count time from'); return T; }
+  var now=dayOf(rows[rows.length-1]).getTime();
+  var tolPct=opt.tolPct||0.06, maxTolDays=opt.maxTolDays||12;
+
+  var spanDays=Math.round((now-pv[0].t)/86400000);
+  CYCLES.forEach(function(cy){
+    if(cy>spanDays+maxTolDays)return;      /* cannot test a cycle longer than the data */
+    pv.forEach(function(p){
+      var elapsed=Math.round((now-p.t)/86400000);
+      if(elapsed<5)return;
+      var err=Math.abs(elapsed-cy);
+      var tol=Math.min(maxTolDays,Math.max(2,Math.round(cy*tolPct)));
+      if(err<=tol){
+        T.hits.push({cycle:cy, name:CYCLE_NAMES[cy]||(cy+' days'), from:p.kind,
+          fromDate:new Date(p.t).toISOString().slice(0,10), fromPrice:p.px,
+          elapsed:elapsed, error:err, normalisedError:err/cy, tolerance:tol});
+      }else if(elapsed<cy&&cy-elapsed<=90){
+        T.windows.push({cycle:cy, name:CYCLE_NAMES[cy]||(cy+' days'),
+          fromDate:new Date(p.t).toISOString().slice(0,10),
+          daysRemaining:cy-elapsed,
+          opens:new Date(p.t+ (cy-tol)*86400000).toISOString().slice(0,10),
+          closes:new Date(p.t+ (cy+tol)*86400000).toISOString().slice(0,10)});
+      }
+    });
+  });
+  T.hits.sort(function(a,b){return a.normalisedError-b.normalisedError;});
+  T.windows.sort(function(a,b){return a.daysRemaining-b.daysRemaining;});
+  T.hits=T.hits.slice(0,12); T.windows=T.windows.slice(0,12);
+
+  if(!T.hits.length){ T.score=0; T.notes.push('No pivot anniversary falls inside tolerance today.'); }
+  else{
+    /* the closer the fit and the more independent pivots agree, the higher */
+    var fits=T.hits.map(function(h){return Math.max(0,1-h.normalisedError/tolPct);});
+    var distinct={}; T.hits.forEach(function(h){distinct[h.fromDate]=1;});
+    T.score=Math.round(Math.min(100, mean(fits)*70 + Math.min(3,Object.keys(distinct).length)*10));
+  }
+  T.testedSpanDays=spanDays;
+  var maxTestable=Math.max.apply(null,CYCLES.filter(function(c){return c<=spanDays;}).concat([0]));
+  if(maxTestable<730)T.notes.push('History spans '+spanDays+' days, so cycles beyond '
+    +maxTestable+' days could not be tested.');
+  return T;
+}
+
+/* ══ ENGINE 5 — QUANT / SIGMA / VOLATILITY ════════════════════════════ */
+function quant(rows,opt){
+  opt=opt||{};
+  var Q={score:null, required:[], notes:[]};
+  if(!rows||rows.length<60){ Q.required.push('at least 60 bars for return statistics'); return Q; }
+  var r=[];
+  for(var i=1;i<rows.length;i++){
+    var c0=num(rows[i-1].close), c1=num(rows[i].close);
+    if(c0>0&&c1>0)r.push(Math.log(c1/c0));
+  }
+  if(r.length<50){ Q.required.push('at least 50 usable closes'); return Q; }
+  Q.n=r.length;
+  Q.mean=mean(r); Q.sd=sd(r); Q.variance=Q.sd*Q.sd;
+  Q.lastReturn=r[r.length-1];
+  Q.z=Q.sd? (Q.lastReturn-Q.mean)/Q.sd : null;
+
+  var px=num(rows[rows.length-1].close);
+  Q.sigmaBands={};
+  [1,2,3,4].forEach(function(k){
+    Q.sigmaBands[k+'σ']={ up:px*Math.exp(Q.mean+k*Q.sd), down:px*Math.exp(Q.mean-k*Q.sd) };
+  });
+  /* RETURNS ARE NOT NORMAL AND THIS SAYS SO WITH A NUMBER.
+     Under a normal distribution 4σ is a once-in-126-years event. The
+     empirical count is printed beside it so the gap is visible rather than
+     assumed away. */
+  Q.tails={};
+  [1,2,3,4].forEach(function(k){
+    var lim=Q.mean+k*Q.sd, cnt=r.filter(function(x){return Math.abs(x-Q.mean)>=k*Q.sd;}).length;
+    Q.tails[k+'σ']={observed:cnt, observedPct:cnt/r.length*100,
+                    normalPct:[31.73,4.55,0.27,0.0063][k-1]};
+  });
+  Q.percentiles={p05:quantile(r,0.05),p25:quantile(r,0.25),p50:quantile(r,0.5),
+                 p75:quantile(r,0.75),p95:quantile(r,0.95)};
+  Q.returnPercentile=pctileOf(r,Q.lastReturn);
+
+  Q.atr14=atr(rows,14);
+  var atrs=[]; for(i=20;i<rows.length;i++){ var a=atr(rows,14,i); if(a)atrs.push(a); }
+  Q.atrPercentile=Q.atr14!=null? pctileOf(atrs,Q.atr14) : null;
+  var tr=trueRange(rows,rows.length-1);
+  Q.rangeExpansion=(tr!=null&&Q.atr14)? tr/Q.atr14 : null;
+  /* annualised, from daily log returns */
+  Q.realisedVol=Q.sd!=null? Q.sd*Math.sqrt(252)*100 : null;
+  var r20=r.slice(-20);
+  Q.realisedVol20=r20.length>=20? sd(r20)*Math.sqrt(252)*100 : null;
+
+  /* the score is "how stretched is this", not "which way" */
+  var az=Math.abs(Q.z||0);
+  Q.score=Math.round(Math.max(0,Math.min(100, az*22 + (Q.rangeExpansion||0)*18 )));
+  return Q;
+}
+
+/* ══ MOMENTUM — supporting evidence only ══════════════════════════════ */
+function momentum(rows){
+  var M={required:[]};
+  if(!rows||rows.length<40){ M.required.push('at least 40 bars'); return M; }
+  var c=rows.map(function(r){return num(r.close);}).filter(function(x){return x!=null;});
+  var n=c.length;
+  M.roc10=(c[n-1]/c[n-11]-1)*100;
+  /* Wilder RSI */
+  var g=0,l=0;
+  for(var i=n-14;i<n;i++){ var d=c[i]-c[i-1]; if(d>0)g+=d; else l-=d; }
+  M.rsi14=l===0?100:100-100/(1+(g/14)/(l/14));
+  function ema(a,p){ var k=2/(p+1), e=a[0]; for(var i=1;i<a.length;i++)e=a[i]*k+e*(1-k); return e; }
+  M.macd=ema(c.slice(-60),12)-ema(c.slice(-60),26);
+  var a=atr(rows,14);
+  M.momATR=a? (c[n-1]-c[n-11])/a : null;
+  return M;
+}
+
+/* ══ THE FOUR GATES ═══════════════════════════════════════════════════ */
+function gates(ctx){
+  var W=ctx.wyckoff, E=ctx.elliott, G=ctx.gann, T=ctx.time, Q=ctx.quant, M=ctx.momentum;
+  var g={};
+
+  /* GATE 1 — WHICH WAY */
+  var votes=[], dir=0;
+  if(W.score!=null){ votes.push({k:'Wyckoff',v:W.score}); dir+=W.score; }
+  if(E.best){ votes.push({k:'Elliott',v:E.best.dir==='up'?E.score:-E.score});
+              dir+=(E.best.dir==='up'?E.score:-E.score); }
+  if(ctx.trendScore!=null){ votes.push({k:'Trend',v:ctx.trendScore}); dir+=ctx.trendScore; }
+  if(M.momATR!=null){ var mv=Math.max(-100,Math.min(100,M.momATR*25));
+                      votes.push({k:'Momentum',v:mv}); dir+=mv; }
+  /* CONFLICT AND WEAKNESS ARE NOT THE SAME READING.
+     |sum|/n gave 14 to three methods that disagreed violently (-41, 0, +84)
+     and would give the same 14 to three that mildly agreed. The score now
+     carries how much the votes concur, so a split board reads as split. */
+  var agree=null;
+  if(votes.length>1){
+    var vals=votes.map(function(v){return v.v;});
+    var sameSign=vals.filter(function(v){return (v>0)===(dir>0)&&v!==0;}).length;
+    var spread=sd(vals);
+    agree=Math.max(0,Math.min(1, (sameSign/vals.length)*(1-Math.min(1,spread/80)) ));
+  }
+  var netAbs=votes.length? Math.abs(dir)/votes.length : 0;
+  g.which={ votes:votes, agreement:agree,
+    direction: votes.length? (dir>15?'Bullish':dir<-15?'Bearish':'Neutral') : 'DATA REQUIRED',
+    score: votes.length? Math.round(Math.min(100, netAbs*(agree==null?1:0.4+0.6*agree))) : null };
+
+  /* GATE 2 — WHERE */
+  var cl=ctx.clusters||[];
+  g.where={ clusters:cl,
+    nearest: cl.length? cl[0] : null,
+    score: cl.length? Math.round(Math.min(100, cl[0].strength*22
+             + Math.max(0,(1-(Math.abs(cl[0].price-ctx.price)/(ctx.atr||1))/4))*22 )) : 0 };
+
+  /* GATE 3 — WHEN */
+  g.when={ hits:T.hits, windows:T.windows, score:T.score };
+
+  /* GATE 4 — HOW MUCH is computed by the caller, which owns account size
+     and contract specification. This gate is a veto and never a suggestion. */
+  return g;
+}
+
+/* ══ SECTION 17 — THREE CONDITIONAL HYPOTHESES ════════════════════════
+   Not a direction. Three scenarios, each with the condition that turns it
+   on and the condition that kills it, so the engine can be wrong in a way
+   you can see coming rather than wrong in a way you find out about later.
+
+   THE THIRD ONE IS NOT THE OTHER TWO WITH THE SIGN FLIPPED.
+   A reversal called because price reached resistance is just the WHERE gate
+   talking twice. This one is built from TIME first: it does not exist unless
+   a cycle anniversary lands inside its window. Price confluence and a
+   structural trigger are then both required on top. Missing any of the
+   three, it returns no window rather than a weaker guess. */
+function hypotheses(ctx){
+  var out=[], price=ctx.price, a=ctx.atr, g=ctx.gates,
+      W=ctx.wyckoff, E=ctx.elliott, T=ctx.time, P=ctx.projections;
+  var dir=g.which.direction;
+  var cl=(g.where.clusters||[]);
+  var above=cl.filter(function(c){return c.price>price;}).sort(function(x,y){return x.price-y.price;});
+  var below=cl.filter(function(c){return c.price<price;}).sort(function(x,y){return y.price-x.price;});
+
+  /* EVIDENCE HAS A SIGN, AND LISTING IT WITHOUT ONE IS WORSE THAN SILENCE.
+     The first version handed the same list to every hypothesis, so a long
+     setup came back "supported by" a bearish Elliott count. Each method is
+     now asked which way it points, and anything pointing the other way is
+     reported as contradicting rather than quietly dropped — a scenario with
+     evidence against it is exactly what the reader needs to see. */
+  function evidence(long){
+    var pro=[], con=[];
+    function put(ok,txt){ (ok?pro:con).push(txt); }
+    if(W.score!=null&&W.state!=='Neutral')
+      put((W.score>0)===long, 'Wyckoff: '+W.state+' ('+W.score+')');
+    if(E.best)
+      put((E.best.dir==='up')===long,
+          'Elliott: '+E.best.type+' '+E.best.dir
+          +(E.best.conformity!=null?' ('+E.best.conformity+'% Fibonacci conformity)':''));
+    if(g.where.nearest){
+      var isSupport=g.where.nearest.price<price;
+      put(isSupport===long, 'Cluster '+(isSupport?'below':'above')+' at '
+          +g.where.nearest.price.toFixed(2)+' — '+g.where.nearest.strength+' methods');
+    }
+    /* a cycle anniversary is direction-neutral: it says when, never which way */
+    if(T.hits.length)pro.push('Time: '+T.hits[0].name+' from '+T.hits[0].fromDate+', '
+      +T.hits[0].error+' days out (a cycle says when, not which way)');
+    return {supporting:pro, contradicting:con};
+  }
+
+  /* ── 1. PRIMARY — the way the gates already lean ── */
+  if(dir==='Bullish'||dir==='Bearish'){
+    var long=dir==='Bullish';
+    var entryZone=long?(below[0]||null):(above[0]||null);
+    var tgt=long?(above[0]||null):(below[0]||null);
+    var proj=long?P.upSummary:P.downSummary;
+    out.push({
+      rank:1, kind:'Primary', direction:long?'Long':'Short',
+      entryZone: entryZone? {low:Math.min(entryZone.price,price), high:Math.max(entryZone.price,price),
+                             anchor:entryZone.price} : {low:price,high:price,anchor:price,note:'no cluster between price and the next level — entry is at market'},
+      target: tgt? tgt.price : (proj?proj.median:null),
+      stop: entryZone? (long? entryZone.price-a*1.0 : entryZone.price+a*1.0)
+                     : (long? price-a*1.5 : price+a*1.5),
+      supporting: evidence(long).supporting,
+      contradicting: evidence(long).contradicting,
+      coreScore: ctx.coreScore.score,
+      timeWindow: T.windows.length? (T.windows[0].opens+' → '+T.windows[0].closes) : null,
+      activation: entryZone
+        ? 'price trades into '+entryZone.price.toFixed(2)+' and closes back '+(long?'above':'below')+' it'
+        : 'a daily close '+(long?'above':'below')+' '+price.toFixed(2),
+      invalidation: 'a daily close '+(long?'below':'above')+' '
+        +((long? (below[0]?below[0].price:price-a*2) : (above[0]?above[0].price:price+a*2)).toFixed(2))
+    });
+  }
+
+  /* ── 2. SECONDARY — continuation to the level beyond the first ── */
+  var long2=dir!=='Bearish';
+  var far=long2? above[1]||above[0] : below[1]||below[0];
+  if(far){
+    out.push({
+      rank:2, kind:'Secondary', direction:long2?'Long continuation':'Short continuation',
+      entryZone:{low:price-a*0.5, high:price+a*0.5, anchor:price},
+      target:far.price,
+      stop: long2? price-a*2 : price+a*2,
+      supporting: evidence(long2).supporting.concat(
+        ['Projection agreement: '+((long2?P.upSummary:P.downSummary)||{}).agreement]),
+      contradicting: evidence(long2).contradicting,
+      coreScore: ctx.coreScore.score,
+      timeWindow: T.windows.length>1? (T.windows[1].opens+' → '+T.windows[1].closes) : null,
+      activation:'a daily close beyond '+((long2? (above[0]?above[0].price:price) : (below[0]?below[0].price:price)).toFixed(2))
+        +' that holds for two sessions',
+      invalidation:'a daily close back '+(long2?'below':'above')+' '+price.toFixed(2)
+    });
+  }
+
+  /* ── 3. REVERSAL — time first, and it may simply not exist ── */
+  var rev={rank:3, kind:'Reversal', status:'NO VALID REVERSAL WINDOW DETECTED',
+           timeEvidence:[], priceEvidence:[], structuralTrigger:null, window:null};
+  var timeHits=T.hits.filter(function(h){return h.normalisedError<=0.03;});
+  var soon=T.windows.filter(function(w){return w.daysRemaining<=45;});
+  var haveTime=timeHits.length>=1||soon.length>=2;
+  if(haveTime){
+    /* A REVERSAL TURNS AHEAD OF PRICE, NOT BEHIND IT.
+       Written first as "the other side", which put the turn zone for a
+       bullish trend BELOW price — that is not where a rally ends, it is
+       where it came from. The zone is in the direction the trend is still
+       travelling; the trade taken there is the opposite one. */
+    var against=dir==='Bearish'?below:above;
+    var zone=against[0]||null;
+    var haveStructure=!!(W.spring||W.upthrust||(E.best&&/Diagonal/.test(E.best.type))
+                        ||(E.best&&E.best.flags.some(function(f){return /truncation/.test(f);})));
+    if(zone&&haveStructure){
+      rev.status='WATCH ONLY';
+      rev.direction=dir==='Bearish'?'Long':'Short';
+      rev.timeEvidence=timeHits.map(function(h){
+        return h.name+' from the '+h.from+' of '+h.fromDate+': '+h.elapsed+' days elapsed, '
+              +h.error+' from exact (tolerance '+h.tolerance+')'; })
+        .concat(soon.slice(0,3).map(function(w){
+          return w.name+' from '+w.fromDate+' opens in '+w.daysRemaining+' days'; }));
+      var opens=soon.length?soon[0].opens:new Date(Date.now()).toISOString().slice(0,10);
+      var closes=soon.length?soon[soon.length-1].closes
+                 :new Date(Date.now()+14*86400000).toISOString().slice(0,10);
+      rev.window={start:opens, end:closes};
+      rev.priceEvidence=[zone.price.toFixed(2)+' — '+zone.strength+' independent methods ('+zone.methods.join(', ')+')'];
+      rev.structuralTrigger = W.upthrust
+        ? 'an upthrust that closes back inside the range on relative volume above 1.2'
+        : W.spring
+          ? 'a spring that closes back inside the range on relative volume above 1.2'
+          : 'a daily close beyond '+zone.price.toFixed(2)+' followed by a failure to hold it';
+      rev.note='Nothing here says price will reverse. If the stated trigger occurs inside this '
+        +'window, the reversal hypothesis becomes active; until then it is watch only.';
+    }else{
+      rev.why = !zone ? 'time lines up but no price cluster sits on the reversal side'
+                      : 'time and price line up but no structural condition (spring, upthrust, '
+                       +'diagonal or truncation) has been measured';
+    }
+  }else{
+    rev.why='no cycle anniversary falls inside tolerance and no window opens within 45 days';
+  }
+  out.push(rev);
+  return out;
+}
+
+/* ══ CORE SCORE — five engines, 20% each, nothing else ════════════════ */
+function coreScore(parts){
+  var w=[['wyckoff',0.20],['elliott',0.20],['gannPrice',0.20],['gannTime',0.20],['quant',0.20]];
+  var sum=0, have=0, miss=[];
+  w.forEach(function(p){
+    var v=parts[p[0]];
+    if(v==null){ miss.push(p[0]); return; }
+    sum+=Math.abs(v)*p[1]; have+=p[1];
+  });
+  /* A SCORE OFF ONE ENGINE IS NOT A CORE SCORE.
+     Renormalising over whatever happened to compute meant 90 bars of history
+     produced "26" from the volatility engine alone, at 20% coverage, printed
+     in the same place and the same size as a figure backed by all five. Below
+     a working majority the number is withheld and the reason is what shows. */
+  var cov=Math.round(have*100);
+  return { score: (have>0&&cov>=60)? Math.round(sum/have) : null,
+           coverage: cov, missing: miss,
+           withheld: (have>0&&cov<60)
+             ? 'only '+cov+'% of the core is computable, so no core score is given'
+             : null };
+}
+
+root.CQE={ dataQuality:dataQuality, scrubTicks:scrubTicks,
+  projections:projections, riskGate:riskGate, hypotheses:hypotheses, volumeQuality:volumeQuality, pivots:pivots,
+  wyckoff:wyckoff, elliott:elliott, gannPrice:gannPrice, gannTime:gannTime,
+  quant:quant, momentum:momentum, clusterLevels:clusterLevels, gates:gates,
+  coreScore:coreScore, atr:atr, trueRange:trueRange, sq9Levels:sq9Levels,
+  gannEighths:gannEighths, nearestFib:nearestFib, FIB_SET:FIB_SET, CYCLES:CYCLES };
+
+})(typeof window!=='undefined'?window:global);
+
+/* ══ CQE GLUE — WHAT THE ENGINE IS GIVEN ══════════════════════════════
+   The module above is deliberately ignorant of this app: hand it OHLCV and
+   it hands back numbers. This is the only place that knows where the bars
+   come from, and the only place that knows gold's volume has to be borrowed.
+
+   VOLUME PROXIES. Spot metals and spot FX have no exchange and no tape, so
+   the volume field is a quote count and Wyckoff cannot be run on it — that
+   was measured on 621 real XAU/USD bars: v equalled n on every one, and the
+   series steps 39× on 2025-09-02 when the feed added sources. The exchange
+   traded fund tracking the same metal does have a tape. GLD against XAU/USD
+   correlates 0.9274 on daily log returns over 498 shared sessions, which is
+   close enough to read participation from and not close enough to call it
+   the same instrument — so it is named wherever it is used. Where no honest
+   proxy exists the engine is told so and Wyckoff returns DATA REQUIRED
+   rather than a number. */
+var CQE_VOL_PROXY={ GOLD:'GLD', XAU:'GLD', XAUUSD:'GLD',
+                    SILVER:'SLV', XAG:'SLV', XAGUSD:'SLV',
+                    'S&P 500':'SPY', SPX:'SPY', 'NASDAQ':'QQQ', NDX:'QQQ',
+                    BITCOIN:'IBIT', BTC:'IBIT', BTCUSD:'IBIT' };
+var CQE_VOL_CACHE={};
+function cqeVolProxy(asset){
+  return CQE_VOL_PROXY[String(asset||'').toUpperCase()]||null;
+}
+function cqeLoadVolume(asset,cb){
+  var p=cqeVolProxy(asset);
+  if(!p){ cb(null,null); return; }
+  var hit=CQE_VOL_CACHE[p];
+  if(hit&&Date.now()-hit.at<30*60*1000){ cb(hit.rows,p); return; }
+  polygonDaily(p,760,function(rows){
+    if(rows&&rows.length>60){ CQE_VOL_CACHE[p]={rows:rows,at:Date.now()}; cb(rows,p); }
+    else cb(null,p);
+  });
+}
+/* one call, everything the four gates need */
+function cqeRun(rows,volRows,volName,price,opt){
+  opt=opt||{};
+  if(!rows||rows.length<60)
+    return {required:['at least 60 daily bars — '+(rows?rows.length:0)+' loaded']};
+  var scrub=CQE.scrubTicks(rows);
+  var R=scrub.rows;
+  var vScrub=volRows?CQE.scrubTicks(volRows):null;
+  price=price||+R[R.length-1].close;
+  var a=CQE.atr(R,14);
+  var pv=CQE.pivots(R,{atrMult:opt.atrMult||2.0});
+  var W=CQE.wyckoff(R,vScrub?vScrub.rows:null,{volumeFrom:volName||'self'});
+  var E=CQE.elliott(R,pv);
+  var G=CQE.gannPrice(R,price,pv);
+  var T=CQE.gannTime(R,pv);
+  var Q=CQE.quant(R);
+  var M=CQE.momentum(R);
+  var PR=CQE.projections(R,price,pv,Q);
+  var core=CQE.coreScore({wyckoff:W.score,elliott:E.score,gannPrice:G.score,
+                          gannTime:T.score,quant:Q.score});
+  var g=CQE.gates({wyckoff:W,elliott:E,gann:G,time:T,quant:Q,momentum:M,
+                   clusters:G.clusters,price:price,atr:a,trendScore:opt.trendScore});
+  var H=CQE.hypotheses({price:price,atr:a,gates:g,wyckoff:W,elliott:E,time:T,
+                        projections:PR,coreScore:core});
+  return {price:price, atr:a, bars:R.length, dq:CQE.dataQuality(R), repaired:scrub.repaired,
+          pivots:pv, wyckoff:W, elliott:E, gann:G, time:T, quant:Q, momentum:M,
+          projections:PR, core:core, gates:g, hypotheses:H,
+          volumeFrom:volName||null, required:[]};
+}
+window.cqeRun=cqeRun;
+
 /* ══ INDEX PROXIES ════════════════════════════════════════════════════
    The Nasdaq and the S&P are asked for by name and answered with QQQ and SPY,
    because the indices themselves sit behind paid plans on every provider wired
@@ -14112,7 +15228,12 @@ var POLY_SYM={
   SPX:'SPY',SPX500:'SPY',SP500:'SPY',US500:'SPY',SPY:'SPY',SANDP500:'SPY',
   APPLE:'AAPL',AAPL:'AAPL',TESLA:'TSLA',TSLA:'TSLA',MICROSOFT:'MSFT',MSFT:'MSFT',
   NVIDIA:'NVDA',NVDA:'NVDA',AMAZON:'AMZN',AMZN:'AMZN',NETFLIX:'NFLX',NFLX:'NFLX',
-  OIL:'CL',CL:'CL'
+  OIL:'CL',CL:'CL',
+  /* The volume proxies. Not tradable choices on this board — they are here
+     so the Wyckoff engine can borrow a real tape for instruments that have
+     none. GLD and SLV are the metal funds; IBIT is the spot bitcoin fund.
+     See CQE_VOL_PROXY for which asset borrows which, and why. */
+  GLD:'GLD',SLV:'SLV',IBIT:'IBIT'
 };
 function polygonSymbol(sym){return POLY_SYM[sym]||null;}
 /* v is traded size for equities and crypto, tick count for the C: (forex and
