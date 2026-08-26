@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b26 — Precision in Timing</title>
+<title>Celestial Alpha b27 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1734,6 +1734,56 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scn-tags em.warn{color:var(--warn);border-color:rgba(245,158,11,.35)}
 .scn-tags em.rev{color:var(--p3);border-color:rgba(127,96,191,.5)}
 .scn-note{font-size:9.5px;color:var(--t3);line-height:1.7;margin-top:11px}
+/* gate 3 · when */
+.whn{border:1px solid var(--b1);border-radius:15px;padding:15px 17px;
+  background:linear-gradient(180deg,rgba(15,9,38,.55),rgba(9,5,26,.4))}
+.whn-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}
+.whn-c{padding:11px 13px;border-radius:12px;border:1px solid var(--b1);background:rgba(6,3,20,.5)}
+.whn-c.on{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.06)}
+.whn-c u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3)}
+.whn-c b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:800;
+  color:var(--t1);margin:4px 0 3px}
+.whn-c.on b{color:var(--up)}
+.whn-c s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.5}
+.whn-cy{margin-top:13px}
+.whn-cy>i,.whn-up>i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:7px}
+.whn-h{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;padding:7px 0;
+  border-top:1px solid rgba(43,21,91,.5);font-size:11px}
+.whn-h b{font-weight:800;color:var(--t1);min-width:82px}
+.whn-h span{color:var(--t3);font-size:10.5px}
+.whn-h em{margin-left:auto;font-style:normal;font-size:10px;color:var(--p3)}
+.whn-up{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.whn-up span{font-size:9.5px;color:var(--t3);border:1px solid var(--b1);
+  border-radius:99px;padding:3px 9px}
+.whn-none{margin-top:12px;font-size:10.5px;color:var(--t3);line-height:1.7}
+.whn-f{margin-top:13px}
+/* the headline verdict */
+.cqv{border:1px solid var(--b2);border-radius:18px;padding:19px 22px;margin-bottom:6px;
+  background:linear-gradient(135deg,rgba(20,12,48,.8),rgba(9,5,26,.6))}
+.cqv.go{border-color:rgba(34,197,94,.5)}
+.cqv.wait{border-color:rgba(245,158,11,.4)}
+.cqv.risk{border-color:rgba(239,68,68,.5)}
+.cqv.out{border-color:var(--b1)}
+.cqv-t{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.cqv-t b{font-family:'Space Grotesk';font-size:31px;font-weight:800;letter-spacing:-.01em;
+  line-height:1.05;color:var(--t1)}
+.cqv.go .cqv-t b{color:var(--up)}
+.cqv.wait .cqv-t b{color:var(--warn)}
+.cqv.risk .cqv-t b{color:var(--dn)}
+.cqv.out .cqv-t b{color:var(--t2)}
+.cqv-t u{margin-left:auto;text-decoration:none;font-size:10px;color:var(--t3);
+  border:1px solid var(--b1);border-radius:99px;padding:4px 11px;white-space:nowrap}
+.cqv-n{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px;
+  margin:15px 0 13px;padding:13px 0;border-top:1px solid rgba(43,21,91,.55);
+  border-bottom:1px solid rgba(43,21,91,.55)}
+.cqv-n>div{font-family:'Space Grotesk';font-size:14.5px;font-weight:800;color:var(--t1)}
+.cqv-n i{display:block;font-style:normal;font-family:'Inter',sans-serif;font-size:8.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--t3);font-weight:700;margin-bottom:4px}
+.cqv-w{font-size:12px;line-height:1.65;color:var(--t2)}
+.cqv-f{font-size:9.5px;line-height:1.7;color:var(--t3);margin-top:10px}
+.cqv-f a{color:var(--p3);cursor:pointer;text-decoration:underline}
 .scn-none{font-size:11px;color:var(--t2);line-height:1.65;padding:13px 15px;border-radius:12px;
   border:1px solid var(--b1);background:rgba(11,6,40,.5)}
 .scn-near{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px}
@@ -4670,7 +4720,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b26</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b27</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -11374,6 +11424,75 @@ function cqeHtml(R,asset,dp){
     +'Astrology and numerology are not in any of these numbers.</div>';
   return h+'</div>';
 }
+/* ══ SECTION 22 · THE FINAL VERDICT ═══════════════════════════════════
+   Two engines were answering the same question in opposite directions, and
+   the older one had the headline. The band at the top of this tab read
+   "Stand aside — no setup on the board — 0% confidence" over three
+   hypotheses giving a long at 3.65 reward to risk. Both were doing what they
+   were built to do; only one of them was being read as the answer.
+
+   The verdict is the five engines' now, in the four words the framework
+   defines. Each is a test, not a mood:
+
+     FIX RISK FIRST  the setup exists but cannot be sized — reward to risk
+                     under 1.5, or a stop inside half an ATR of the entry,
+                     where ordinary noise takes it out
+     TRADE           price is in the entry zone, the gates agree, and it can
+                     be sized
+     WAIT            the setup is real and the activation has not happened
+     STAY OUT        no hypothesis survived, or too little of the core could
+                     be computed to have an opinion
+
+   The older single-number read is not deleted. It drives the journal, the
+   monthly budget and the sizing chip, and two engines disagreeing is worth
+   seeing — so it moves down to the working, labelled as what it is. */
+function cqeVerdict(R,price){
+  if(!R||!R.hypotheses||!R.hypotheses.length||R.core.score==null)
+    return{word:'STAY OUT',why:R&&R.core&&R.core.withheld
+      ? R.core.withheld
+      :'the engines could not produce a hypothesis from the data loaded',tone:'out'};
+  var H=R.hypotheses[0];
+  if(!H||H.kind==='Reversal')
+    return{word:'STAY OUT',why:'no directional hypothesis survived the gates',tone:'out'};
+  var rr=(H.target!=null&&H.stop!=null)
+    ? Math.abs(H.target-H.entryZone.anchor)/Math.abs(H.entryZone.anchor-H.stop):null;
+  var stopDist=Math.abs(H.entryZone.anchor-H.stop);
+  if(rr!=null&&rr<1.5)
+    return{word:'FIX RISK FIRST',why:'reward to risk is '+rr.toFixed(2)+
+      ', below the 1.5 this will size at',tone:'risk',hyp:H,rr:rr};
+  if(R.atr&&stopDist<R.atr*0.5)
+    return{word:'FIX RISK FIRST',why:'the stop is inside half an ATR of the entry — '
+      +'ordinary noise takes it out',tone:'risk',hyp:H,rr:rr};
+  var inZone=price>=Math.min(H.entryZone.low,H.entryZone.high)
+           &&price<=Math.max(H.entryZone.low,H.entryZone.high);
+  var agree=R.gates.which.agreement;
+  if(inZone&&(agree==null||agree>=0.5))
+    return{word:'TRADE',why:'price is in the entry zone and the methods agree',
+           tone:'go',hyp:H,rr:rr};
+  if(inZone)
+    return{word:'WAIT',why:'price is in the zone but the methods disagree — '
+      +R.gates.which.votes.length+' read it, and they do not point the same way',
+      tone:'wait',hyp:H,rr:rr};
+  return{word:'WAIT',why:H.activation,tone:'wait',hyp:H,rr:rr};
+}
+function cqeVerdictHtml(R,price,dp,asset){
+  var v=cqeVerdict(R,price);
+  var H=v.hyp;
+  return '<div class="cqv '+v.tone+'">'
+    +'<div class="cqv-t"><b>'+v.word+'</b>'
+      +'<u>'+(R&&R.core&&R.core.score!=null?'core '+R.core.score+' · '+R.core.coverage+'% of the five':'no core score')+'</u></div>'
+    +(H?'<div class="cqv-n">'
+        +'<div><i>Direction</i>'+escHtml(H.direction)+'</div>'
+        +'<div><i>Entry</i>'+(H.entryZone.low!=null?(+H.entryZone.low).toFixed(dp)+'–'+(+H.entryZone.high).toFixed(dp):'—')+'</div>'
+        +'<div><i>Stop</i>'+(H.stop!=null?(+H.stop).toFixed(dp):'—')+'</div>'
+        +'<div><i>Target</i>'+(H.target!=null?(+H.target).toFixed(dp):'—')+'</div>'
+        +'<div><i>R : R</i>'+(v.rr?v.rr.toFixed(2):'—')+'</div>'
+      +'</div>':'')
+    +'<div class="cqv-w">'+escHtml(v.why)+'</div>'
+    +'<div class="cqv-f">A verdict from measured confluence, not a forecast. '
+      +'How much to risk is decided under <a onclick="anaJump(5)">How much</a>, and that gate can only say no.</div>'
+  +'</div>';
+}
 /* run it and put it on the page */
 var CQE_FETCHING=false;
 function renderCQE(){
@@ -11418,6 +11537,12 @@ function renderCQE(){
       var R=cqeRun(rows,vr,vr?vn:null,price);
       CQE_LAST=R; window.CQE_LAST=R;
       slot.innerHTML=cqeHtml(R,asset,dp);
+      /* the When gate quotes this engine's cycle counts, and it was drawn
+         before they existed */
+      try{ var w=document.getElementById('when_slot');
+           if(w)w.innerHTML=anaWhen(price,dp); }catch(e){}
+      try{ var v=document.getElementById('verdict_slot');
+           if(v)v.innerHTML=cqeVerdictHtml(R,price,dp,asset); }catch(e){}
     }catch(e){
       slot.innerHTML='<div class="cq"><div class="cq-req"><b>The engine failed</b>'
         +escHtml(e.message)+'</div></div>';
@@ -11639,6 +11764,62 @@ function vpHtml(price,dp,sig){
      +'roughly — do not read it to the tick.</div>'
   +'</div>';
 }
+/* ══ GATE 3 · WHEN, ON THIS TAB ═══════════════════════════════════════
+   The third gate had no presence here. Hours and cycles lived entirely on
+   the Timing Engine, so a reader walking this tab went straight from where
+   to the setups — and the setups quote time evidence ("18 months from the
+   high of 2025-02-24, 0 days out") that nothing on the page had shown them.
+
+   This is the short version: what is left of today, and which anniversaries
+   are due. The full working stays where it was, one button away. */
+function anaWhen(price,dp){
+  var out='<div class="whn">';
+  /* today's remaining windows, from the same engine the Timing tab draws */
+  var st=null,wins=[];
+  try{ st=timState(); wins=timTodayWindows(st)||[]; }catch(e){}
+  var ahead=wins.filter(function(w){return !w.gone;});
+  var live=ahead.filter(function(w){return w.live;})[0]||null;
+  var next=ahead.filter(function(w){return !w.live;})[0]||null;
+  function hm(m){ m=((m%1440)+1440)%1440;
+    return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); }
+
+  out+='<div class="whn-row">'
+    +'<div class="whn-c'+(live?' on':'')+'"><u>Right now</u><b>'
+      +(live?hm(live.start)+'–'+hm(live.end):'no window open')+'</b>'
+      +'<s>'+(live?escHtml(live.kind)+(live.best?' · strong':''):'outside the day’s windows')+'</s></div>'
+    +'<div class="whn-c"><u>Next window</u><b>'
+      +(next?hm(next.start)+'–'+hm(next.end):'none left today')+'</b>'
+      +'<s>'+(next?(next.inMin>0?'in '+Math.round(next.inMin/60*10)/10+' h':'now')
+                  +' · '+escHtml(next.kind):'the day is done')+'</s></div>'
+    +'<div class="whn-c"><u>Left today</u><b>'+ahead.length+'</b>'
+      +'<s>'+ahead.filter(function(w){return w.best;}).length+' of them strong</s></div>'
+  +'</div>';
+
+  /* cycle anniversaries, from the measured time engine rather than a table */
+  var T=window.CQE_LAST&&window.CQE_LAST.time;
+  if(T&&T.hits&&T.hits.length){
+    out+='<div class="whn-cy"><i>Cycles due — counted from confirmed pivots</i>'
+      +T.hits.slice(0,5).map(function(h){
+        return '<div class="whn-h"><b>'+escHtml(h.name)+'</b>'
+          +'<span>from the '+(h.from==='H'?'high':'low')+' of '+escHtml(h.fromDate)+'</span>'
+          +'<em>'+h.error+'d from exact</em></div>';
+      }).join('')+'</div>';
+    if(T.windows&&T.windows.length){
+      out+='<div class="whn-up"><i>Opening soon</i>'
+        +T.windows.slice(0,4).map(function(w){
+          return '<span>'+escHtml(w.name)+' in '+w.daysRemaining+'d</span>';
+        }).join('')+'</div>';
+    }
+  }else{
+    out+='<div class="whn-none">No cycle anniversary falls inside tolerance today. '
+      +'That is an answer, not a gap — the time gate simply is not adding anything '
+      +'to the case right now.</div>';
+  }
+  out+='<div class="whn-f"><button class="btn btn-g btn-sm" '
+    +'onclick="goTab(\'timing\',document.querySelector(\'.nav-item[onclick*=&quot;timing&quot;]\'))">'
+    +'The full timing engine</button></div>';
+  return out+'</div>';
+}
 function renderAnalytics(){
   /* Daily Bias is a section of this board, so it redraws whenever the board
      does — and it sits ABOVE the no-price early return below, because the
@@ -11793,8 +11974,24 @@ function trendInvalidHtml(T,price,dp,asset){
     return '<div class="act-h" id="act'+n+'"><span class="act-n">'+n+'</span>'
       +'<div><b class="act-t">'+title+'</b><i class="act-q">'+question+'</i></div></div>';
   };
+  /* ══ THE ORDER OF THIS TAB ════════════════════════════════════════
+     It used to open with a scan of twelve other instruments, then a verdict,
+     then the setups, then the evidence the setups were built from, and only
+     then the levels — conclusions before their reasons, and the day's bias
+     buried fourth. Someone landing on it to read one asset had to work
+     backwards to find out why anything said what it said.
+
+     It follows the four gates now, which is the order the analysis is
+     actually performed in and the order this app's own framework defines:
+     which way, then where, then when, then the setups those three support,
+     then how much. The verdict stays pinned at the top as a headline outside
+     the sequence, so the answer is still the first thing on screen without
+     pretending it comes before its evidence. The scan of everything else
+     moves to the end, where "what about the others" belongs — you look at
+     it after this asset, not instead of it. */
   var jump='<div class="ana-jump">'
-    +[[1,'Setups'],[2,'Call'],[3,'Case'],[4,'Map'],[5,'Size'],[6,'Working']].map(function(x){
+    +[[1,'Which way'],[2,'Where'],[3,'When'],[4,'Setups'],[5,'Size'],
+      [6,'Elsewhere'],[7,'Working']].map(function(x){
         return '<a onclick="anaJump('+x[0]+')">'+x[1]+'</a>';
       }).join('')
     +'</div>';
@@ -11806,10 +12003,101 @@ function trendInvalidHtml(T,price,dp,asset){
    +jump
 
    /* ─── 1 · what do I do ─────────────────────────────────────────── */
-   +act(1,'Where are the setups','Is there anything to take today, on anything?')
+   /* ─── the headline, outside the sequence ────────────────────────
+      The five engines' verdict, in the four words the framework defines. It
+      is not numbered: the numbered walk below is the analysis and this is
+      its conclusion, printed first because that is what a reader wants and
+      last in the reasoning because that is what it is.
+
+      The older single-number band that used to live here has moved to the
+      working. It said "Stand aside, 0% confidence" directly above three
+      hypotheses offering a long at 3.65 reward to risk, and the reader had
+      no way to know which one to believe. It still runs — the journal, the
+      monthly budget and the sizing chip are all driven from it — so it is
+      shown, further down, named as the older engine. */
+   +'<div id="verdict_slot"><div class="cqv wait"><div class="cqv-t"><b>Reading the board…</b></div></div></div>'
+
+   /* ─── GATE 1 · WHICH WAY ────────────────────────────────────────
+      The day's lean first, because it is the first thing anyone actually
+      looks at, and it used to sit fourth, inside a section called "the case".
+      Fear and greed and the evidence meters join it: they are all answers to
+      the same question, and they were scattered across two sections. */
+   +act(1,'Which way','Is '+escHtml(asset)+' leaning up, down, or neither — and on what evidence?')
+   +'<div id="vb_slot"></div>'
+   +'<div id="ana_fng"></div>'
+   +'<div class="ab-reads">'+reads.map(function(r){
+       return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
+         +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
+         +anaMeter(r.p,r.c)
+         +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
+     }).join('')+'</div>'
+   /* the day's lean is a reason for the call, so it sits with the reasons.
+      It lives outside this innerHTML so its date input survives a redraw. */
+
+   /* ─── 3 · where ────────────────────────────────────────────────── */
+
+   /* ─── GATE 2 · WHERE ────────────────────────────────────────────── */
+   +act(2,'Where','Which prices matter, and where is this one among them?')
+   +anaLadder(pts,price,lo,hi,dp,S,dir)
+   /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
+      / Markdown" — Wyckoff's own vocabulary — from sqrt(price) mod 2. That is
+      a property of the price's digits: 4654 gives one phase and 4655 another,
+      with no volume, no range and no structure anywhere in it. There is a
+      real Wyckoff engine now, at the top of this tab, so the labels are gone.
+      The wheel position it also drew is kept, without the phase words. */
+   +anaWheel(price,dp)
+   +anaZones(price,dp)
+   +anaRungs(price,dp)
+   +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
+
+   /* ─── 4 · how much, and act ────────────────────────────────────── */
+
+   /* ─── GATE 3 · WHEN ─────────────────────────────────────────────
+      There was no "when" on this tab at all. Every cycle and window lived on
+      the Timing Engine, one click away, so the third of the four gates was
+      simply missing from the walk — and the hypotheses below quote time
+      evidence the reader had no way to see here. */
+   +act(3,'When','Which hours today, and which cycles are due?')
+   /* THE CYCLES ARRIVE AFTER THIS HTML DOES.
+      The five engines run asynchronously — they may still be fetching a
+      volume proxy when the board is built — so reading CQE_LAST while
+      assembling this string got whatever the previous asset had left, or
+      nothing at all, and the block announced "no anniversary falls inside
+      tolerance" on a day with twelve of them. It renders into its own slot
+      and is repainted the moment the engines finish. */
+   +'<div id="when_slot">'+anaWhen(price,dp)+'</div>'
+
+   /* ─── GATE 4a · THE SETUPS ──────────────────────────────────────
+      After which way, where and when — because it is built from all three,
+      and reading it first meant reading a conclusion before its reasons. */
+   +act(4,'The setups','Given all of the above, what are the three scenarios?')
+   +'<div id="cqe_slot"></div>'
+
+   /* ─── 2 · why ──────────────────────────────────────────────────── */
+
+   /* ─── GATE 4b · HOW MUCH ────────────────────────────────────────── */
+   +act(5,'How much','What size, against what is already open, and what is left this month?')
+   +riskChipHtml(S,conf,price,dp,asset)
+   +tradeCardHtml()
+   +openTradesHtml()
+   +qvRiskHtml(S,window._lastQV,price)
+   +quotaHtml()
+   +shareBar('setup')
+
+   /* ─── 5 · show me ──────────────────────────────────────────────── */
+
+   /* ─── ELSEWHERE ─────────────────────────────────────────────────
+      This opened the tab. Twelve other instruments, before the reader had
+      learned anything about the one they came for. It is a fine question and
+      it is the last one. */
+   +act(6,'Elsewhere','Is anything else setting up right now?')
    +'<div class="scn" id="scan_body"></div>'
 
-   +act(2,'The call','What am I supposed to do with '+escHtml(asset)+' right now?')
+
+   /* ─── THE WORKING ───────────────────────────────────────────────── */
+   +act(7,'The working','Show me the numbers behind all of it.')
+   +'<details class="sec"><summary><b>The older single-number engine</b>'
+     +'<span>what drove this board before the five engines, and still drives the journal and the budget</span></summary>'
 
    /* ══ THE VERDICT BLOCK — rebuilt, not re-ordered ═════════════════════
       The last pass moved this card around the page and left the card itself
@@ -11893,53 +12181,7 @@ function trendInvalidHtml(T,price,dp,asset){
       +'</div>';
     })()
    +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
-
-   /* ─── the five engines and the three hypotheses ─────────────────
-      First, because it is the answer. Everything under it is the older
-      single-number read, kept because it drives the journal, the budget and
-      the sizing chip, and because two readings that disagree is information
-      worth having rather than something to hide. */
-   +act(2,'The three hypotheses','Five measured engines, four gates, and the three scenarios they support.')
-   +'<div id="cqe_slot"></div>'
-
-   /* ─── 2 · why ──────────────────────────────────────────────────── */
-   +act(3,'The case','Why does it say that, and what is the evidence made of?')
-   +'<div class="ab-reads">'+reads.map(function(r){
-       return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
-         +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
-         +anaMeter(r.p,r.c)
-         +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
-     }).join('')+'</div>'
-   +'<div id="ana_fng"></div>'
-   /* the day's lean is a reason for the call, so it sits with the reasons.
-      It lives outside this innerHTML so its date input survives a redraw. */
-   +'<div id="vb_slot"></div>'
-
-   /* ─── 3 · where ────────────────────────────────────────────────── */
-   +act(4,'The map','Where are the prices that matter, and where is this one?')
-   +anaLadder(pts,price,lo,hi,dp,S,dir)
-   /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
-      / Markdown" — Wyckoff's own vocabulary — from sqrt(price) mod 2. That is
-      a property of the price's digits: 4654 gives one phase and 4655 another,
-      with no volume, no range and no structure anywhere in it. There is a
-      real Wyckoff engine now, at the top of this tab, so the labels are gone.
-      The wheel position it also drew is kept, without the phase words. */
-   +anaWheel(price,dp)
-   +anaZones(price,dp)
-   +anaRungs(price,dp)
-   +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
-
-   /* ─── 4 · how much, and act ────────────────────────────────────── */
-   +act(5,'Size it','How much, against what is already open, and what is left this month?')
-   +riskChipHtml(S,conf,price,dp,asset)
-   +tradeCardHtml()
-   +openTradesHtml()
-   +qvRiskHtml(S,window._lastQV,price)
-   +quotaHtml()
-   +shareBar('setup')
-
-   /* ─── 5 · show me ──────────────────────────────────────────────── */
-   +act(6,'The working','Show me the numbers behind all of it.')
+   +'</details>'
    +'<details class="sec" id="qv_sec" open><summary><b>How is it moving right now?</b>'
      +'<span>volatility, volume and number patterns — in plain words first</span></summary>'
      +'<div class="qv-wrap" id="qv_ana"></div></details>'
