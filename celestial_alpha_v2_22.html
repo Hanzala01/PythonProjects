@@ -1429,6 +1429,64 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rk-c-m i{font-style:normal;font-size:9px;color:var(--t3)}
 .rk-c-go{margin-left:auto;font-size:9.5px;color:var(--p3);border:1px solid var(--b1);
   border-radius:99px;padding:3px 11px;white-space:nowrap}
+/* ── Celestial: the assistant button and panel ── */
+.jfab{position:fixed;right:88px;bottom:20px;width:56px;height:56px;border-radius:50%;z-index:61;
+  display:grid;place-items:center;cursor:pointer;
+  background:radial-gradient(120% 120% at 30% 20%,#2A1A5E,#120A2E);
+  border:1px solid var(--b2);color:var(--p3);
+  box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 6px rgba(83,51,153,.12);
+  transition:.22s var(--ease);-webkit-user-select:none;user-select:none}
+.jfab:hover{transform:translateY(-2px);border-color:var(--bAct);color:var(--pGlow)}
+.jfab:focus-visible{outline:2px solid var(--p3);outline-offset:3px}
+.jfab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.jfab i{font-style:normal;font-size:26px;line-height:1;color:var(--t1)}
+.jfab.open{background:radial-gradient(120% 120% at 30% 20%,#533399,#22114A)}
+.jfab.hot{border-color:var(--dn);box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 7px rgba(239,68,68,.22)}
+@keyframes jvPulse{0%,100%{box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 5px rgba(239,68,68,.28)}
+  50%{box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 12px rgba(239,68,68,.05)}}
+.jfab.hot{animation:jvPulse 1.5s var(--ease) infinite}
+.jvp{position:fixed;right:20px;bottom:88px;width:352px;max-height:min(78vh,620px);z-index:60;
+  display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:1px solid var(--b2);
+  background:rgba(9,5,26,.97);box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transform:translateY(14px);opacity:0;pointer-events:none;transition:.22s var(--ease)}
+.jvp.open{transform:none;opacity:1;pointer-events:auto}
+.jvp-h{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--b1);
+  flex:none}
+.jvp-h b{font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--t1)}
+.jvp-v{margin-left:auto;cursor:pointer;font-size:14px;opacity:.45;line-height:1}
+.jvp-v.on{opacity:1}
+.jvp-x{cursor:pointer;font-size:19px;line-height:1;color:var(--t3);padding:0 2px}
+.jvp-x:hover{color:var(--t1)}
+.jvp-log{flex:1;overflow:auto;padding:12px 15px;display:flex;flex-direction:column;gap:9px}
+.jvm{font-size:11.5px;line-height:1.6;padding:9px 12px;border-radius:12px;max-width:92%}
+.jvm.me{align-self:flex-end;background:rgba(127,96,191,.28);color:var(--t1);border-bottom-right-radius:4px}
+.jvm.bot{align-self:flex-start;background:rgba(6,3,20,.85);border:1px solid var(--b1);color:var(--t2);
+  border-bottom-left-radius:4px}
+.jvm.sys{align-self:stretch;max-width:100%;background:transparent;border:1px dashed var(--b1);
+  color:var(--t3);font-size:10.5px}
+.jvm.busy{opacity:.6;font-style:italic}
+.jvp-in{display:flex;gap:7px;align-items:center;padding:11px 13px;border-top:1px solid var(--b1);flex:none}
+.jvp-mic{width:34px;height:34px;flex:none;border-radius:50%;cursor:pointer;font-size:11px;
+  border:1px solid var(--b2);background:rgba(6,3,20,.8);color:var(--p3);transition:.2s var(--ease)}
+.jvp-mic:hover:not(:disabled){border-color:var(--bAct);color:var(--pGlow)}
+.jvp-mic:disabled{opacity:.35;cursor:not-allowed}
+.jvp-mic.hot{border-color:var(--dn);color:var(--dn);background:rgba(239,68,68,.14)}
+.jvp-in input{flex:1;min-width:0;padding:8px 12px;font-size:11.5px;border-radius:99px;
+  border:1px solid var(--b1);background:rgba(6,3,20,.8);color:var(--t1)}
+.jvp-in input:focus{outline:none;border-color:var(--p2)}
+.jvp-go{width:34px;height:34px;flex:none;border-radius:50%;cursor:pointer;font-size:15px;
+  border:1px solid var(--b2);background:rgba(127,96,191,.28);color:var(--t1)}
+.jvp-set{flex:none;border-top:1px solid var(--b1);padding:10px 15px 13px}
+.jvp-set>summary{list-style:none;cursor:pointer;font-size:9.5px;color:var(--p3)}
+.jvp-set>summary::-webkit-details-marker{display:none}
+.jvp-set p{font-size:9px;color:var(--t3);line-height:1.6;margin:8px 0 0}
+.jvp-key{width:100%;margin-top:8px;padding:7px 11px;font-size:11px;border-radius:9px;
+  border:1px solid var(--b1);background:rgba(6,3,20,.8);color:var(--t1)}
+.jvp-key:focus{outline:none;border-color:var(--p2)}
+.jvp-warn{color:var(--warn)!important}
+@media(max-width:760px){.jvp{left:12px;right:12px;width:auto}
+  .jfab{right:82px;bottom:66px}}
 /* the round button, fixed to the window on every tab */
 .rfab{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;z-index:61;
   display:grid;place-items:center;cursor:pointer;
@@ -4463,7 +4521,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b14</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b15</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7423,6 +7481,8 @@ function riskCompute(S,conf,price){
 var RISK_OPEN=false;
 function riskToggle(on){
   RISK_OPEN=(on==null)?!RISK_OPEN:!!on;
+  /* both panels want the same corner, so one opening closes the other */
+  if(RISK_OPEN&&typeof JV_OPEN!=='undefined'&&JV_OPEN){ JV_OPEN=false; try{jvRender();}catch(e){} }
   riskDockSync();
   riskFabSync();
 }
@@ -7728,6 +7788,313 @@ function scanPick(name){
     var ab=document.getElementById('ab_asset'); if(ab)ab.value=name;
     fetchLivePrice(function(ok){ if(ok)runAI(); else renderAnalytics(); });
   }catch(e){}
+}
+/* ══ JARVIS — talking to the board ════════════════════════════════════
+   Three layers, and only the third one costs anything or needs a key.
+
+   HEARING and SPEAKING are the browser's own: SpeechRecognition for the
+   microphone and speechSynthesis for the reply. No key, no account, no cost,
+   and nothing leaves the page except what the browser's own dictation service
+   already handles. Recognition is Chrome and Edge only — Firefox and most of
+   Safari have never shipped it — so the panel says so rather than sitting
+   there dead, and typing works everywhere.
+
+   THE LOCAL BRAIN answers everything about this app with no network at all,
+   because the app already knows it: the call, the levels, the windows, the
+   risk, the scan, the trend and what would break it. Those answers are read
+   off live state, so they cannot drift from what is on screen and they work
+   with the wifi off.
+
+   CLAUDE is optional, for anything the local brain does not recognise. It
+   needs an API key, and there is no way around the fact that a key in a page
+   like this is readable by anyone who opens the file — Anthropic's own docs
+   say browser access is only reasonable for a personal or internal tool with
+   a key you can rotate. So the key is never written into this file: you paste
+   it at runtime, it lives in your browser's storage on your machine, and the
+   panel says all of this before you type it in.
+   ══════════════════════════════════════════════════════════════════════ */
+var JV_KEY='ca_jarvis', JV_OPEN=false, JV_LISTENING=false, JV_LOG=[], JV_REC=null, JV_BUSY=false;
+var JV_MODEL='claude-opus-5';
+
+function jvPrefs(){
+  try{ var d=JSON.parse(localStorage.getItem(JV_KEY)||'{}');
+       return{key:d.key||'', voice:d.voice!==false, name:d.name||''}; }
+  catch(e){ return{key:'',voice:true,name:''}; }
+}
+function jvSave(p){ try{ localStorage.setItem(JV_KEY,JSON.stringify(p)); }catch(e){} }
+function jvSetKey(el){ var p=jvPrefs(); p.key=(el.value||'').trim(); jvSave(p); jvRender(); }
+function jvToggleVoice(){ var p=jvPrefs(); p.voice=!p.voice; jvSave(p);
+  if(!p.voice)try{speechSynthesis.cancel();}catch(e){} jvRender(); }
+
+/* ── speaking ── */
+function jvSpeak(text){
+  if(!jvPrefs().voice)return;
+  try{
+    if(!window.speechSynthesis)return;
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(String(text).replace(/[*_`#]/g,''));
+    u.rate=1.02; u.pitch=0.95;
+    var vs=speechSynthesis.getVoices()||[];
+    var pick=vs.filter(function(v){return /en-GB|en_GB/.test(v.lang);})[0]
+           ||vs.filter(function(v){return /^en/.test(v.lang);})[0];
+    if(pick)u.voice=pick;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+/* ── hearing ── */
+function jvCanHear(){
+  return !!(window.SpeechRecognition||window.webkitSpeechRecognition);
+}
+function jvListen(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ jvPush('sys','This browser has no speech recognition — Chrome and Edge have it, Firefox and Safari do not. Type instead.'); return; }
+  if(JV_LISTENING){ try{JV_REC.stop();}catch(e){} return; }
+  try{
+    JV_REC=new SR();
+    JV_REC.lang='en-GB'; JV_REC.interimResults=false; JV_REC.maxAlternatives=1;
+    JV_REC.onstart=function(){ JV_LISTENING=true; jvRender(); };
+    JV_REC.onerror=function(e){ JV_LISTENING=false;
+      jvPush('sys', e.error==='not-allowed'
+        ? 'Microphone permission was refused. The browser asks once — allow it in the address bar and try again.'
+        : e.error==='no-speech' ? 'Heard nothing.' : 'Microphone error: '+e.error);
+      jvRender(); };
+    JV_REC.onend=function(){ JV_LISTENING=false; jvRender(); };
+    JV_REC.onresult=function(e){
+      var t=e.results[0][0].transcript;
+      jvAsk(t);
+    };
+    JV_REC.start();
+  }catch(e){ JV_LISTENING=false; jvPush('sys','Could not start the microphone: '+e.message); jvRender(); }
+}
+function jvPush(who,text){ JV_LOG.push({w:who,t:text}); if(JV_LOG.length>40)JV_LOG.shift(); }
+
+/* ── what the app knows about itself, in one object ── */
+function jvState(){
+  var S=window._lastSig, T=window._lastTrend;
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+  var dp=price<10?4:2;
+  var st=null; try{ st=timState(); }catch(e){}
+  var win=null;
+  if(st){ try{ win=timTodayWindows(st).filter(function(w){return !w.gone;})[0]||null; }catch(e){} }
+  var R=null; try{ R=riskCompute(S,S?S.conf:0,price); }catch(e){}
+  var fg=null; try{ fg=assetFng(window.HIST_ROWS,asset); }catch(e){}
+  return{asset:asset,price:price,dp:dp,S:S,T:T,st:st,win:win,R:R,fg:fg,
+         scan:SCAN.filter(function(x){return x.style;})};
+}
+function jvMoney(v,dp){ return v==null?'—':(+v).toFixed(dp); }
+
+/* ── the local brain ── */
+function jvLocal(q){
+  var s=jvState(), L=q.toLowerCase();
+  var has=function(){ for(var i=0;i<arguments.length;i++) if(L.indexOf(arguments[i])>=0)return true; return false; };
+
+  if(has('scan','anything to trade','any setup','setups','what should i trade')){
+    if(!s.scan.length)
+      return SCAN.length
+        ? 'Nothing clears the bar on any of the '+SCAN.length+' instruments scanned. Quiet days are the normal case — the thresholds fire on about one reading in eight.'
+        : 'Nothing has been scanned yet. Say "run the scan" and I will go through every instrument.';
+    return s.scan.length+' setup'+(s.scan.length===1?'':'s')+': '
+      +s.scan.map(function(x){return (x.bull?'buy ':'sell ')+x.a+' at '+jvMoney(x.entry,x.dp)+', '+x.conf+' per cent';}).join('; ')+'.';
+  }
+  if(has('run the scan','start the scan','scan everything')){
+    try{ scanRun(); }catch(e){}
+    return 'Running the scan across every instrument. It takes a moment — each one needs its own daily history.';
+  }
+  if(has('call','should i buy','should i sell','trade now','what do i do')){
+    if(!s.S) return 'No analysis has been run yet. Pick an asset and press Analyse.';
+    if(!s.S.style)
+      return 'No trade on '+s.asset+'. Confidence is '+s.S.conf+' per cent, which is short of the threshold. '
+        +'Standing aside is the answer.';
+    return (s.S.isBull?'Buy ':'Sell ')+s.asset+' as an '+s.S.style.toLowerCase()+'. '
+      +'Entry '+jvMoney(s.S.entry,s.dp)+', stop '+jvMoney(s.S.sl,s.dp)+', target '+jvMoney(s.S.tp,s.dp)
+      +', reward to risk '+s.S.rr+' to one. Confidence '+s.S.conf+' per cent.';
+  }
+  if(has('invalid','wrong','breaks','trend')){
+    if(!s.T) return 'No trend reading yet.';
+    if(s.T.keyLevel==null) return s.asset+' reads '+s.T.label.toLowerCase()+', but no level is being quoted against it.';
+    return s.asset+' is '+s.T.label.toLowerCase()+' while it holds '+(s.T.dir==='bear'?'below ':'above ')
+      +jvMoney(s.T.keyLevel,s.dp)+'. It takes a daily close beyond that to turn it — not a wick.';
+  }
+  if(has('risk','how much','position size','lots')){
+    if(!s.R) return 'The risk calculator has nothing to work from yet.';
+    return 'The ladder allows '+s.R.pct+' per cent'
+      +(s.R.amount!=null?', which is '+Math.round(s.R.amount)+' on your account':'')
+      +(s.R.units!=null?', about '+s.R.units.toFixed(2)+' units at the current stop':'')
+      +'. Five per cent is the ceiling and only opens above ninety.';
+  }
+  if(has('window','timing','when','hour')){
+    if(!s.win) return 'No window left today. The next one opens after tomorrow’s sunrise.';
+    return 'The next window is '+fmtT(s.win.start)+' to '+fmtT(s.win.end%1440)+', '
+      +(s.win.best===2?'a strong one':'a supporting one')+', trade it as a '+s.win.kind.toLowerCase()+'. '
+      +(s.win.live?'It is open now.':'It opens in '+fmtIn(s.win.inMin)+'.');
+  }
+  if(has('fear','greed','sentiment','mood')){
+    if(!s.fg||!s.fg.ok) return 'No fear and greed reading — '+(s.fg?s.fg.why:'no history loaded')+'.';
+    return s.asset+' reads '+s.fg.v+' out of a hundred, which is '+fngBand(s.fg.v).w.toLowerCase()
+      +'. That is price behaviour, not a survey of anyone’s mood.';
+  }
+  if(has('level','support','resistance','where is price')){
+    if(!s.price) return 'No price loaded.';
+    /* anaLevelsNear wants the flat anchor LIST; anaAnchors returns an object
+       wrapping it, so passing the object found no anchors and this answered
+       "nothing near" while the level map on screen was full */
+    var near=null;
+    try{ near=anaLevelsNear((anaAnchors(s.price)||{}).list,s.price,dailySigma().v,2); }catch(e){}
+    if(!near||(!near.up.length&&!near.dn.length))
+      return near&&near.why?near.why:'The level map has nothing near '+jvMoney(s.price,s.dp)+' yet.';
+    return 'Price is '+jvMoney(s.price,s.dp)+'. '
+      +(near.at?'It is sitting on a level at '+jvMoney(near.at.p,s.dp)+'. ':'')
+      +'Nearest above is '+(near.up[0]?jvMoney(near.up[0].p,s.dp):'not in range')
+      +', nearest below is '+(near.dn[0]?jvMoney(near.dn[0].p,s.dp):'not in range')+'.';
+  }
+  if(has('hello','hi ','hey','are you there','jarvis')){
+    return 'Here. Ask me for the call, the levels, the next window, the risk, or say run the scan.';
+  }
+  if(has('what can you','help','commands')){
+    return 'Without a key I can answer anything on this board: the call, the trend and what would break it, '
+      +'the levels, the next trading window, the risk size, the fear and greed reading, and I can run the scan. '
+      +'Anything else needs a Claude key in the settings below.';
+  }
+  return null;
+}
+/* ── Claude, for everything else ── */
+function jvContext(){
+  var s=jvState();
+  var L=[];
+  L.push('Asset: '+s.asset+' at '+jvMoney(s.price,s.dp));
+  if(s.T)L.push('Trend: '+s.T.label+(s.T.keyLevel!=null?', invalid past '+jvMoney(s.T.keyLevel,s.dp):''));
+  if(s.S)L.push('Signal: '+(s.S.style?((s.S.isBull?'BUY':'SELL')+' '+s.S.style+' entry '+jvMoney(s.S.entry,s.dp)
+    +' stop '+jvMoney(s.S.sl,s.dp)+' target '+jvMoney(s.S.tp,s.dp)+' RR '+s.S.rr):'no setup')
+    +', confidence '+s.S.conf+'%');
+  if(s.fg&&s.fg.ok)L.push('Fear & Greed for this asset: '+s.fg.v+' ('+fngBand(s.fg.v).w+')');
+  if(s.win)L.push('Next window: '+fmtT(s.win.start)+'-'+fmtT(s.win.end%1440)+' '+s.win.kind);
+  if(s.R)L.push('Risk allowed: '+s.R.pct+'%');
+  if(s.scan.length)L.push('Scan setups: '+s.scan.map(function(x){return x.a+' '+(x.bull?'buy':'sell');}).join(', '));
+  return L.join('\n');
+}
+function jvClaude(q){
+  var key=jvPrefs().key;
+  if(!key){
+    jvPush('sys','I do not recognise that one, and there is no Claude key set — open Settings below to add one, or ask me about the board.');
+    jvRender(); return;
+  }
+  JV_BUSY=true; jvRender();
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-api-key':key,
+      'anthropic-version':'2023-06-01',
+      /* the browser-access opt-in. Anthropic's own docs are blunt that this
+         exposes the key to anyone who can open the page, and are clear it is
+         only reasonable for a personal or internal tool. */
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify({
+      model:JV_MODEL,
+      max_tokens:900,
+      system:'You are the voice of Celestial Alpha, a trading and timing board. Answer in at most four '
+        +'short sentences, plainly, for speaking aloud — no markdown, no lists, no headings. You may use '
+        +'the board state below. Never invent a price, a level or a number that is not in it; if something '
+        +'is not there, say it is not on the board. Never promise a trade will work.\n\nBOARD STATE:\n'
+        +jvContext(),
+      messages:[{role:'user',content:q}]
+    })
+  }).then(function(r){
+    return r.json().then(function(d){ return{ok:r.ok,status:r.status,d:d}; });
+  }).then(function(res){
+    JV_BUSY=false;
+    if(!res.ok){
+      var m=(res.d&&res.d.error&&res.d.error.message)||('HTTP '+res.status);
+      jvPush('sys','Claude refused that: '+m
+        +(res.status===401?' — the key is wrong or has been revoked.':''));
+      jvRender(); return;
+    }
+    var txt=(res.d.content||[]).filter(function(b){return b.type==='text';})
+             .map(function(b){return b.text;}).join(' ').trim();
+    if(res.d.stop_reason==='refusal')txt=txt||'Claude declined to answer that one.';
+    jvPush('bot',txt||'(no answer came back)');
+    jvRender(); jvSpeak(txt);
+  }).catch(function(e){
+    JV_BUSY=false;
+    jvPush('sys','Could not reach Claude from the page: '+e.message
+      +'. A browser blocks cross-site calls unless the endpoint allows them; if this keeps failing you '
+      +'need to run the request through your own small proxy rather than from the file.');
+    jvRender();
+  });
+}
+function jvAsk(q){
+  q=(q||'').trim();
+  if(!q)return;
+  jvPush('me',q); jvRender();
+  var a=null;
+  try{ a=jvLocal(q); }catch(e){ a=null; }
+  if(a!=null){ jvPush('bot',a); jvRender(); jvSpeak(a); return; }
+  jvClaude(q);
+}
+function jvSend(){
+  var el=document.getElementById('jv_in');
+  if(!el)return;
+  var v=el.value; el.value='';
+  jvAsk(v);
+}
+function jvToggle(on){
+  JV_OPEN=(on==null)?!JV_OPEN:!!on;
+  if(JV_OPEN){ RISK_OPEN=false; try{riskDockSync();riskFabSync();}catch(e){} }
+  jvRender();
+}
+function jvRender(){
+  var el=document.getElementById('jv_panel');
+  if(!el){ el=document.createElement('div'); el.id='jv_panel'; document.body.appendChild(el); }
+  el.className='jvp'+(JV_OPEN?' open':'');
+  var fab=document.getElementById('jv_fab');
+  if(!fab){
+    fab=document.createElement('div'); fab.id='jv_fab';
+    fab.setAttribute('role','button'); fab.setAttribute('tabindex','0');
+    fab.onclick=function(){ jvToggle(); };
+    fab.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();jvToggle();} };
+    document.body.appendChild(fab);
+  }
+  fab.className='jfab'+(JV_OPEN?' open':'')+(JV_LISTENING?' hot':'');
+  fab.title=JV_OPEN?'Close Celestial':'Talk to Celestial';
+  fab.innerHTML=JV_OPEN?'<i>&times;</i>':'<svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+  if(!JV_OPEN){ el.innerHTML=''; return; }
+
+  var P=jvPrefs();
+  el.innerHTML=
+    '<div class="jvp-h"><b>Celestial</b>'
+      +'<span class="jvp-v'+(P.voice?' on':'')+'" onclick="jvToggleVoice()" '
+        +'title="'+(P.voice?'Speaking is on':'Speaking is off')+'">'+(P.voice?'🔊':'🔇')+'</span>'
+      +'<span class="jvp-x" onclick="jvToggle(false)">&times;</span></div>'
+    +'<div class="jvp-log" id="jv_log">'
+      +(JV_LOG.length?JV_LOG.map(function(m){
+          return '<div class="jvm '+m.w+'">'+escHtml(m.t)+'</div>';
+        }).join('')
+        :'<div class="jvm sys">Ask for the call, the trend, the levels, the next window, the risk, '
+         +'or say “run the scan”. Everything on this board I answer with no key and no network.</div>')
+      +(JV_BUSY?'<div class="jvm bot busy">thinking…</div>':'')
+    +'</div>'
+    +'<div class="jvp-in">'
+      +'<button class="jvp-mic'+(JV_LISTENING?' hot':'')+'" onclick="jvListen()" '
+        +(jvCanHear()?'':'disabled ')+'title="'+(jvCanHear()?'Hold a thought and speak':'This browser cannot listen')+'">'
+        +(JV_LISTENING?'■':'●')+'</button>'
+      +'<input id="jv_in" placeholder="'+(jvCanHear()?'Speak or type…':'Type — this browser cannot listen')+'" '
+        +'onkeydown="if(event.key===\'Enter\')jvSend()">'
+      +'<button class="jvp-go" onclick="jvSend()">&rarr;</button>'
+    +'</div>'
+    +'<details class="jvp-set"><summary>Settings &amp; the key</summary>'
+      +'<p>Everything above about this board is answered here in the page — no key, no network, works offline. '
+      +'A key is only needed for questions outside it.</p>'
+      +'<input class="jvp-key" type="password" placeholder="sk-ant-… (optional)" value="'+escHtml(P.key)+'" '
+        +'onchange="jvSetKey(this)">'
+      +'<p class="jvp-warn">A key in a page like this is readable by anyone who opens the file. Anthropic’s own '
+      +'guidance is that browser access is only reasonable for a personal tool with a key you can rotate. '
+      +'It is never written into this file — it is stored in this browser, on this machine, and you can clear '
+      +'it by emptying the box. Use a key with a spend limit.</p>'
+      +'<p>Model: '+JV_MODEL+'. Speech recognition needs Chrome or Edge; speaking works everywhere.</p>'
+    +'</details>';
+  var lg=document.getElementById('jv_log'); if(lg)lg.scrollTop=lg.scrollHeight;
 }
 function anaBar(asset,price,dp){
   var risk=(document.getElementById('ai_risk')||{}).value||'100';
@@ -12237,8 +12604,9 @@ try {
     /* the board says what it is waiting for while the quote is in flight,
        rather than showing five rings reading zero */
     try{ dashMatrixIdle('waiting for a price'); }catch(e){}
-    /* the risk button belongs to the window, not to one tab */
+    /* both round buttons belong to the window, not to one tab */
     try{ riskFabSync(); }catch(e){}
+    try{ jvRender(); }catch(e){}
     try{ renderFng(); }catch(e){}
     fetchLivePrice(function(ok){
       if(ok){ runAI(); return; }
