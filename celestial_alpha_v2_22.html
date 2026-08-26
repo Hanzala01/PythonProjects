@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b27 — Precision in Timing</title>
+<title>Celestial Alpha b28 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1784,6 +1784,45 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cqv-w{font-size:12px;line-height:1.65;color:var(--t2)}
 .cqv-f{font-size:9.5px;line-height:1.7;color:var(--t3);margin-top:10px}
 .cqv-f a{color:var(--p3);cursor:pointer;text-decoration:underline}
+/* divergence + confirmation matrix */
+.dvg{border:1px solid var(--b1);border-radius:15px;padding:15px 17px;margin-top:11px;
+  background:linear-gradient(180deg,rgba(15,9,38,.55),rgba(9,5,26,.4))}
+.dvg-h{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;margin-bottom:12px}
+.dvg-h b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1)}
+.dvg-h em{margin-left:auto;font-style:normal;font-family:'Space Grotesk';font-size:22px;
+  font-weight:800;color:var(--p3)}
+.dvg-h em s{text-decoration:none;font-family:'Inter',sans-serif;font-size:9.5px;
+  font-weight:600;color:var(--t3);margin-left:5px}
+.dvg-c{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;margin-bottom:12px}
+.dvg-i{padding:9px 11px;border-radius:11px;border:1px solid var(--b1);background:rgba(6,3,20,.5)}
+.dvg-i u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.dvg-i b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:800;
+  color:var(--t1);margin:3px 0 2px}
+.dvg-i.zero b{color:var(--t3)}
+.dvg-i.na b{font-size:10px;color:var(--warn)}
+.dvg-i s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3)}
+.dvg-f{font-size:10.5px;line-height:1.7;color:var(--t2)}
+.dvg-f div{padding-left:15px;position:relative;margin-bottom:3px}
+.dvg-f div:before{content:'!';position:absolute;left:5px;color:var(--warn);font-weight:800;font-size:9px}
+.dvg-n{font-size:9.5px;color:var(--t3);line-height:1.7;margin-top:10px}
+.cfm{margin-top:13px;border-top:1px solid rgba(43,21,91,.55);padding-top:12px}
+.cfm-h{display:flex;align-items:baseline;gap:10px;margin-bottom:9px}
+.cfm-h i{font-style:normal;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--t3)}
+.cfm-h b{margin-left:auto;font-size:11.5px;font-weight:800}
+.cfm-h b.strong{color:var(--up)} .cfm-h b.mod{color:var(--warn)} .cfm-h b.low{color:var(--t3)}
+.cfm-r{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:10.5px;
+  border-top:1px solid rgba(43,21,91,.4)}
+.cfm-r i{font-style:normal;width:14px;flex:none;font-weight:800;text-align:center}
+.cfm-r.y i{color:var(--up)} .cfm-r.n i{color:var(--t3)}
+.cfm-r b{width:104px;flex:none;font-weight:700;color:var(--t1)}
+.cfm-r.exp b:after{content:' exp';font-size:8px;color:var(--warn);font-weight:600}
+.cfm-r span{color:var(--t3);line-height:1.55}
+.cfm-steps{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.cfm-steps em{font-style:normal;font-size:9px;padding:3px 9px;border-radius:99px;
+  border:1px solid var(--b1);color:var(--t3)}
+.cfm-steps em.y{border-color:rgba(34,197,94,.45);color:var(--up)}
+.cfm-steps em.stop{border-color:rgba(245,158,11,.5);color:var(--warn)}
 .scn-none{font-size:11px;color:var(--t2);line-height:1.65;padding:13px 15px;border-radius:12px;
   border:1px solid var(--b1);background:rgba(11,6,40,.5)}
 .scn-near{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px}
@@ -4720,7 +4759,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b27</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b28</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -10436,7 +10475,11 @@ function pivots(rows,opt){
      zigzag needs: whichever side gives way first defines the leg. */
   var out=[], dir=0;
   var runHi=num(rows[0].high), runHiIdx=0, runLo=num(rows[0].low), runLoIdx=0;
-  function emit(idx,px,kind){ out.push({i:idx,px:px,kind:kind,t:dayOf(rows[idx]).getTime()}); }
+  /* the date comes along, because everything downstream reports pivots by
+     date and was re-deriving it from the index every time */
+  function emit(idx,px,kind){ var d=dayOf(rows[idx]);
+    out.push({i:idx,px:px,kind:kind,t:d.getTime(),
+              date:isNaN(d)?null:d.toISOString().slice(0,10)}); }
   for(var i=1;i<rows.length;i++){
     var a=atr(rows,n,i); if(a==null||a<=0)continue;
     var thr=k*a, h=num(rows[i].high), l=num(rows[i].low);
@@ -10927,10 +10970,14 @@ function gannTime(rows,pv,opt){
       if(err<=tol){
         T.hits.push({cycle:cy, name:CYCLE_NAMES[cy]||(cy+' days'), from:p.kind,
           fromDate:new Date(p.t).toISOString().slice(0,10), fromPrice:p.px,
+          /* the day the count actually lands on — everything downstream was
+             re-deriving it, and the astro test needs it exactly */
+          dueDate:new Date(p.t+cy*86400000).toISOString().slice(0,10),
           elapsed:elapsed, error:err, normalisedError:err/cy, tolerance:tol});
       }else if(elapsed<cy&&cy-elapsed<=90){
         T.windows.push({cycle:cy, name:CYCLE_NAMES[cy]||(cy+' days'),
           fromDate:new Date(p.t).toISOString().slice(0,10),
+          dueDate:new Date(p.t+cy*86400000).toISOString().slice(0,10),
           daysRemaining:cy-elapsed,
           opens:new Date(p.t+ (cy-tol)*86400000).toISOString().slice(0,10),
           closes:new Date(p.t+ (cy+tol)*86400000).toISOString().slice(0,10)});
@@ -11237,6 +11284,680 @@ root.CQE={ dataQuality:dataQuality, scrubTicks:scrubTicks,
 
 })(typeof window!=='undefined'?window:global);
 
+/* ══════════════════════════════════════════════════════════════════════
+   DIVERGENCE & CONFIRMATION ENGINE
+
+   Divergence is a warning, never a signal. Nothing in this file can put on
+   a trade; it can only raise the amount of evidence standing against the
+   current direction, and that in turn raises how much confirmation the
+   reversal hypothesis has to collect before it may become active.
+
+   Every comparison is made between CONFIRMED pivots. An unconfirmed high
+   is a high that has not finished happening, and reading a divergence off
+   one is reading the future.
+   ══════════════════════════════════════════════════════════════════════ */
+(function(root){
+'use strict';
+var C=root.CQE; if(!C)throw new Error('CQE core must load first');
+
+function num(x){ var v=+x; return isFinite(v)?v:null; }
+function mean(a){ return a.length?a.reduce(function(s,x){return s+x;},0)/a.length:null; }
+function sd(a){ if(a.length<2)return null; var m=mean(a);
+  return Math.sqrt(a.reduce(function(s,x){return s+(x-m)*(x-m);},0)/(a.length-1)); }
+function pctileOf(a,v){ if(!a.length)return null; var lt=0,eq=0;
+  for(var i=0;i<a.length;i++){ if(a[i]<v)lt++; else if(a[i]===v)eq++; }
+  return (lt+eq/2)/a.length*100; }
+function dayKey(r){ var d=r.t!=null?new Date(+r.t):new Date(r.date||r.time);
+  return isNaN(d)?null:d.toISOString().slice(0,10); }
+
+/* ── indicator series, one value per bar ─────────────────────────────── */
+function rocSeries(rows,n){
+  var out=[]; for(var i=0;i<rows.length;i++){
+    var a=num(rows[i].close), b=i>=n?num(rows[i-n].close):null;
+    out.push(a!=null&&b!=null&&b!==0?(a/b-1)*100:null); }
+  return out;
+}
+function rsiSeries(rows,n){
+  n=n||14; var out=new Array(rows.length).fill(null);
+  var g=0,l=0,i;
+  for(i=1;i<=n&&i<rows.length;i++){ var d=num(rows[i].close)-num(rows[i-1].close);
+    if(d>0)g+=d; else l-=d; }
+  var ag=g/n, al=l/n;
+  out[n]=al===0?100:100-100/(1+ag/al);
+  for(i=n+1;i<rows.length;i++){
+    var dd=num(rows[i].close)-num(rows[i-1].close);
+    ag=(ag*(n-1)+(dd>0?dd:0))/n;
+    al=(al*(n-1)+(dd<0?-dd:0))/n;
+    out[i]=al===0?100:100-100/(1+ag/al);
+  }
+  return out;
+}
+function atrSeries(rows,n){
+  var out=[]; for(var i=0;i<rows.length;i++) out.push(i<n?null:C.atr(rows,n,i));
+  return out;
+}
+function bbWidthSeries(rows,n){
+  n=n||20; var out=new Array(rows.length).fill(null);
+  for(var i=n-1;i<rows.length;i++){
+    var w=[]; for(var k=i-n+1;k<=i;k++){ var c=num(rows[k].close); if(c!=null)w.push(c); }
+    if(w.length<n)continue;
+    var m=mean(w), s=sd(w);
+    if(m)out[i]=(4*s)/m*100;                     /* 2σ either side, as % of price */
+  }
+  return out;
+}
+function realisedVolSeries(rows,n){
+  n=n||20; var out=new Array(rows.length).fill(null), r=[];
+  for(var i=1;i<rows.length;i++){
+    var a=num(rows[i-1].close), b=num(rows[i].close);
+    r.push(a>0&&b>0?Math.log(b/a):null);
+    if(i>=n){ var w=r.slice(i-n,i).filter(function(x){return x!=null;});
+      if(w.length>=n*0.8)out[i]=sd(w)*Math.sqrt(252)*100; }
+  }
+  return out;
+}
+
+/* ── the comparison ──────────────────────────────────────────────────── */
+/* Two same-kind pivots, and what the indicator was doing at each. `higher`
+   says the second pivot is above the first in price; `indHigher` the same
+   for the indicator. A divergence is the two disagreeing. */
+function pairPivots(pv,kind,maxAgeBars,lastIdx){
+  var same=pv.filter(function(p){return p.kind===kind;});
+  if(same.length<2)return null;
+  var b=same[same.length-1], a=same[same.length-2];
+  if(maxAgeBars&&lastIdx!=null&&lastIdx-b.i>maxAgeBars)return null;
+  return {a:a,b:b};
+}
+function divergePair(pair,series,label,invert){
+  if(!pair)return null;
+  var i1=series[pair.a.i], i2=series[pair.b.i];
+  if(i1==null||i2==null)return null;
+  if(invert){ i1=-i1; i2=-i2; }
+  var pUp=pair.b.px>pair.a.px, iUp=i2>i1;
+  var pct=pair.a.px!==0?(pair.b.px-pair.a.px)/Math.abs(pair.a.px)*100:null;
+  var ipct=i1!==0?(i2-i1)/Math.abs(i1)*100:null;
+  return {
+    indicator:label,
+    p1:{date:pair.a.date,price:pair.a.px}, p2:{date:pair.b.date,price:pair.b.px},
+    i1:invert?-i1:i1, i2:invert?-i2:i2,
+    priceChangePct:pct, indicatorChangePct:ipct,
+    priceHigher:pUp, indicatorHigher:iUp,
+    diverging:pUp!==iUp,
+    /* strength is how far apart the two moved, in the indicator's own units,
+       scaled by how far price travelled — a big price move contradicted by a
+       small indicator move is weaker evidence than a small one contradicted
+       by a large one */
+    strength:(pUp!==iUp&&pct!=null&&ipct!=null)
+      ? Math.min(100,Math.round(Math.min(Math.abs(ipct),200)/2+Math.min(Math.abs(pct),20)*1.5))
+      : 0
+  };
+}
+
+/* ══ 1 · PRICE vs MOMENTUM ════════════════════════════════════════════ */
+function momentumDivergence(rows,pv,opt){
+  opt=opt||{};
+  var D={found:[], score:0, required:[], notes:[]};
+  if(!pv||pv.length<4){ D.required.push('at least 4 confirmed pivots'); return D; }
+  var last=rows.length-1, age=opt.maxAgeBars||40;
+  var roc=rocSeries(rows,opt.rocLen||10);
+  var rsi=rsiSeries(rows,14);
+  var hi=pairPivots(pv,'H',age,last), lo=pairPivots(pv,'L',age,last);
+  [['ROC('+(opt.rocLen||10)+')',roc],['RSI(14)',rsi]].forEach(function(s){
+    var h=divergePair(hi,s[1],s[0]);
+    if(h&&h.diverging&&h.priceHigher){ h.kind='BEARISH'; h.at='swing highs'; D.found.push(h); }
+    var l=divergePair(lo,s[1],s[0]);
+    if(l&&l.diverging&&!l.priceHigher){ l.kind='BULLISH'; l.at='swing lows'; D.found.push(l); }
+  });
+  if(!D.found.length)D.notes.push('The last two confirmed highs and lows agree with momentum.');
+  D.score=D.found.length?Math.round(Math.min(100,mean(D.found.map(function(x){return x.strength;}))
+                                             +(D.found.length-1)*8)):0;
+  return D;
+}
+
+/* ══ 2 · PRICE vs VOLUME (participation) ══════════════════════════════ */
+function volumeDivergence(rows,volRows,pv,opt){
+  opt=opt||{};
+  var D={found:[], score:0, required:[], notes:[]};
+  var src=volRows&&volRows.length?volRows:rows;
+  var vq=C.volumeQuality(src);
+  if(!vq.usable){ D.required.push('usable volume — '+vq.reason); return D; }
+  if(!pv||pv.length<4){ D.required.push('at least 4 confirmed pivots'); return D; }
+
+  /* align by date so a proxy on a different calendar cannot shift a day */
+  var vmap={}; for(var i=0;i<src.length;i++){ var k=dayKey(src[i]); if(k)vmap[k]=num(src[i].volume); }
+  var vser=rows.map(function(r){ var k=dayKey(r); return k&&vmap[k]!=null?vmap[k]:null; });
+
+  /* participation around a pivot, not on the single bar: a pivot day's own
+     volume is noisy, the five sessions around it are the effort spent there */
+  var win=opt.win||5;
+  var part=rows.map(function(_,ix){
+    var w=[]; for(var k=Math.max(0,ix-Math.floor(win/2));k<=Math.min(rows.length-1,ix+Math.floor(win/2));k++)
+      if(vser[k]!=null)w.push(vser[k]);
+    return w.length?mean(w):null;
+  });
+  var hist=vser.filter(function(x){return x!=null;});
+  var last=rows.length-1, age=opt.maxAgeBars||40;
+  var hi=pairPivots(pv,'H',age,last), lo=pairPivots(pv,'L',age,last);
+  var h=divergePair(hi,part,'participation');
+  if(h&&h.diverging&&h.priceHigher){ h.kind='BEARISH PARTICIPATION DIVERGENCE'; h.at='swing highs';
+    h.pctile1=pctileOf(hist,h.i1); h.pctile2=pctileOf(hist,h.i2); D.found.push(h); }
+  var l=divergePair(lo,part,'participation');
+  if(l&&l.diverging&&!l.priceHigher){ l.kind='BULLISH PARTICIPATION DIVERGENCE'; l.at='swing lows';
+    l.pctile1=pctileOf(hist,l.i1); l.pctile2=pctileOf(hist,l.i2); D.found.push(l); }
+  if(!D.found.length)D.notes.push('Participation moved with price at the last two pivots.');
+  D.volumeFrom=opt.volumeFrom||null;
+  D.score=D.found.length?Math.round(Math.min(100,mean(D.found.map(function(x){return x.strength;})))):0;
+  return D;
+}
+
+/* ══ 3 · PRICE vs VOLATILITY (exhaustion) ═════════════════════════════ */
+function volatilityDivergence(rows,pv,opt){
+  opt=opt||{};
+  var D={found:[], score:0, required:[], notes:[]};
+  if(!pv||pv.length<4){ D.required.push('at least 4 confirmed pivots'); return D; }
+  if(rows.length<60){ D.required.push('at least 60 bars for volatility series'); return D; }
+  var last=rows.length-1, age=opt.maxAgeBars||40;
+  var series=[['ATR(14)',atrSeries(rows,14)],
+              ['realised vol',realisedVolSeries(rows,20)],
+              ['Bollinger width',bbWidthSeries(rows,20)]];
+  var hi=pairPivots(pv,'H',age,last), lo=pairPivots(pv,'L',age,last);
+  series.forEach(function(s){
+    var h=divergePair(hi,s[1],s[0]);
+    if(h&&h.diverging&&h.priceHigher){ h.kind='POTENTIAL VOLATILITY EXHAUSTION'; h.at='swing highs'; D.found.push(h); }
+    var l=divergePair(lo,s[1],s[0]);
+    if(l&&l.diverging&&!l.priceHigher){ l.kind='POTENTIAL DOWNSIDE EXHAUSTION'; l.at='swing lows'; D.found.push(l); }
+  });
+  if(!D.found.length)D.notes.push('Volatility expanded with price at the last two pivots.');
+  D.score=D.found.length?Math.round(Math.min(100,mean(D.found.map(function(x){return x.strength;}))
+                                             +(D.found.length-1)*6)):0;
+  return D;
+}
+
+/* ══ 4 & 5 · CROSS-MARKET ═════════════════════════════════════════════
+   THE RELATIONSHIP IS NOT A CONSTANT AND THIS REFUSES TO PRETEND IT IS.
+   "Gold goes up when the dollar goes down" is a tendency, not a law, and it
+   has broken for months at a time. So the rolling correlation is measured at
+   three lengths first; if the three disagree, or the relationship is too weak
+   to lean on, the answer is that it cannot be used today rather than a
+   divergence read off an assumption. */
+function crossDivergence(rows,otherRows,pv,label,opt){
+  opt=opt||{};
+  var D={label:label, correlations:{}, classification:'DATA REQUIRED',
+         score:0, required:[], notes:[], stable:false};
+  if(!otherRows||otherRows.length<60){
+    D.required.push(label+' series — at least 60 aligned sessions'); return D; }
+  if(!pv||pv.length<4){ D.required.push('at least 4 confirmed pivots'); return D; }
+
+  var omap={};
+  for(var i=0;i<otherRows.length;i++){ var k=dayKey(otherRows[i]);
+    if(k)omap[k]=num(otherRows[i].close!=null?otherRows[i].close:otherRows[i].value); }
+  var A=[],B=[],idx=[];
+  for(i=0;i<rows.length;i++){ var kk=dayKey(rows[i]);
+    if(kk&&omap[kk]!=null&&num(rows[i].close)!=null){ A.push(num(rows[i].close)); B.push(omap[kk]); idx.push(i); } }
+  D.alignedSessions=A.length;
+  if(A.length<60){ D.required.push(label+' overlaps this asset on only '+A.length
+    +' sessions — 60 are needed'); return D; }
+
+  function corr(n){
+    if(A.length<n+1)return null;
+    var ra=[],rb=[];
+    for(var j=A.length-n;j<A.length;j++){
+      if(A[j-1]>0&&A[j]>0)ra.push(Math.log(A[j]/A[j-1]));
+      /* yields are levels, not prices — a difference, not a log return */
+      rb.push(opt.isLevel?(B[j]-B[j-1]):(B[j-1]>0&&B[j]>0?Math.log(B[j]/B[j-1]):0));
+    }
+    if(ra.length<n*0.8)return null;
+    var ma=mean(ra), mb=mean(rb), sa=sd(ra), sb=sd(rb);
+    if(!sa||!sb)return null;
+    var cov=0; for(var q=0;q<ra.length;q++)cov+=(ra[q]-ma)*(rb[q]-mb);
+    return cov/ra.length/(sa*sb);
+  }
+  [20,50,100].forEach(function(n){ D.correlations[n]=corr(n); });
+  var cs=[20,50,100].map(function(n){return D.correlations[n];}).filter(function(x){return x!=null;});
+  if(!cs.length){ D.required.push('enough overlapping sessions to correlate'); return D; }
+  var avg=mean(cs), spread=cs.length>1?Math.max.apply(null,cs)-Math.min.apply(null,cs):0;
+  D.average=avg; D.spread=spread;
+  var signsAgree=cs.every(function(c){return (c>0)===(avg>0);});
+
+  /* weak, or the three lengths disagree, or they do not even share a sign */
+  if(Math.abs(avg)<0.3||spread>0.6||!signsAgree){
+    D.classification='CORRELATION UNSTABLE — LOW CONFIRMATION VALUE';
+    D.notes.push('Rolling correlation averages '+avg.toFixed(2)+' with a spread of '
+      +spread.toFixed(2)+' across 20, 50 and 100 sessions'
+      +(signsAgree?'':', and the three do not agree on sign')
+      +'. Nothing is read from it today.');
+    D.score=0; return D;
+  }
+  D.stable=true;
+
+  /* both structures over the same window as the last completed swing */
+  var last=rows.length-1, age=opt.maxAgeBars||40;
+  var hi=pairPivots(pv,'H',age,last), lo=pairPivots(pv,'L',age,last);
+  var pair=hi||lo;
+  if(!pair){ D.classification='NEUTRAL'; D.notes.push('No recent confirmed pivot pair to compare.'); return D; }
+  function at(i){ var k=dayKey(rows[i]); return k?omap[k]:null; }
+  var o1=at(pair.a.i), o2=at(pair.b.i);
+  if(o1==null||o2==null){
+    /* the pivot dates may be holidays in the other series */
+    D.classification='NEUTRAL'; D.notes.push(label+' has no print on one of the pivot dates.'); return D; }
+  var pUp=pair.b.px>pair.a.px, oUp=o2>o1;
+  D.pivotPair={p1:pair.a.date,p2:pair.b.date,priceUp:pUp,otherUp:oUp,o1:o1,o2:o2};
+
+  /* with a negative relationship the two moving the SAME way is the anomaly */
+  var expectedSame=avg>0;
+  var behaving=(pUp===oUp)===expectedSame;
+  D.classification=behaving?'CONFIRMING':'DIVERGING';
+  if(!behaving){
+    D.score=Math.round(Math.min(100,Math.abs(avg)*100));
+    D.notes.push(label+' and price both moved '+(pUp?'up':'down')+' between '+pair.a.date
+      +' and '+pair.b.date+', while their rolling relationship is '
+      +(avg>0?'positive':'negative')+' at '+avg.toFixed(2)+'. That is the anomaly, not the rule — '
+      +'it does not say which of the two is wrong.');
+  }else{
+    D.score=0;
+    D.notes.push(label+' is behaving as the measured relationship ('+avg.toFixed(2)+') would suggest.');
+  }
+  return D;
+}
+
+/* ══ 6 · THE DIVERGENCE SCORE ═════════════════════════════════════════
+   A weighted mean of whatever could actually be computed, renormalised over
+   those, with the missing ones named. It counts contradictory evidence. It
+   is NOT a probability of reversal and the panel says so. */
+var DIV_WEIGHTS=[['momentum',0.30],['volume',0.25],['volatility',0.20],
+                 ['dollar',0.15],['yields',0.10]];
+function divergenceScore(parts){
+  var sum=0, have=0, missing=[], shown=[];
+  DIV_WEIGHTS.forEach(function(w){
+    var p=parts[w[0]];
+    if(!p||p.score==null||(p.required&&p.required.length)){
+      missing.push({k:w[0],why:p&&p.required&&p.required.length?p.required[0]:'not computed'});
+      return;
+    }
+    sum+=p.score*w[1]; have+=w[1];
+    shown.push({k:w[0],score:p.score,weight:Math.round(w[1]*100)});
+  });
+  return { score: have>0?Math.round(sum/have):null,
+           coverage: Math.round(have*100), components: shown, missing: missing,
+           meaning:'How much measured evidence contradicts the current price direction. '
+                  +'Not a probability of reversal.' };
+}
+
+root.CQE.divergence={
+  momentum:momentumDivergence, volume:volumeDivergence, volatility:volatilityDivergence,
+  cross:crossDivergence, score:divergenceScore,
+  rocSeries:rocSeries, rsiSeries:rsiSeries, atrSeries:atrSeries,
+  bbWidthSeries:bbWidthSeries, realisedVolSeries:realisedVolSeries,
+  WEIGHTS:DIV_WEIGHTS
+};
+})(typeof window!=='undefined'?window:global);
+
+/* ══════════════════════════════════════════════════════════════════════
+   CONFIRMATION ENGINE — sections 9 to 13
+
+   A reversal is not declared. It is assembled, one independent dimension at
+   a time, and it stays WATCH ONLY until the measurable trigger fires. Six
+   things are asked in order; the first that fails stops the count, and what
+   stopped it is reported rather than skipped over.
+   ══════════════════════════════════════════════════════════════════════ */
+(function(root){
+'use strict';
+var C=root.CQE, DV=C.divergence;
+function mean(a){ return a.length?a.reduce(function(s,x){return s+x;},0)/a.length:null; }
+
+/* ══ 9 · STRUCTURAL CONFIRMATION ══════════════════════════════════════ */
+function structuralConfirmation(R,side){
+  var S={found:[], missing:[], confirmed:false};
+  var W=R.wyckoff, E=R.elliott, Q=R.quant, G=R.gann;
+  var wantShort=side==='Short';
+
+  /* Wyckoff — an upthrust argues a top, a spring argues a bottom */
+  if(W&&W.score!=null){
+    if(wantShort&&W.upthrust)S.found.push({d:'Wyckoff',w:'upthrust — took the range high and closed back inside, '
+      +W.upthrust.penetrationATR.toFixed(2)+' ATR through it'});
+    else if(!wantShort&&W.spring)S.found.push({d:'Wyckoff',w:'spring — took the range low and closed back inside, '
+      +W.spring.penetrationATR.toFixed(2)+' ATR through it'});
+    else if(wantShort&&W.state==='Distribution')S.found.push({d:'Wyckoff',w:'distribution — ranging in the upper third'});
+    else if(!wantShort&&W.state==='Accumulation')S.found.push({d:'Wyckoff',w:'accumulation — ranging in the lower third'});
+    else if(W.relVol>=1.5&&W.priceResult<=0.35)S.found.push({d:'Wyckoff',
+      w:'high effort against little result — relative volume '+W.relVol.toFixed(2)
+        +' moved price '+W.priceResult.toFixed(2)+' ATR'});
+    else S.missing.push('Wyckoff shows '+W.state+', which is not a turn');
+  }else S.missing.push('Wyckoff could not be computed'+(W&&W.required[0]?' — '+W.required[0]:''));
+
+  /* Elliott — a completed or truncated five, or a diagonal, argues exhaustion */
+  if(E&&E.best){
+    var f=E.best.flags||[];
+    if(f.some(function(x){return /truncation/.test(x);}))
+      S.found.push({d:'Elliott',w:'wave five failed to exceed wave three — possible truncation'});
+    else if(/Diagonal/.test(E.best.type))
+      S.found.push({d:'Elliott',w:'diagonal — overlapping structure, which ends moves rather than starting them'});
+    else if(E.best.conformity!=null&&E.best.conformity>=60)
+      S.found.push({d:'Elliott',w:'a five-wave count at '+E.best.conformity+'% Fibonacci conformity is complete enough to end'});
+    else S.missing.push('the Elliott count is neither complete nor exhausted');
+  }else S.missing.push('no valid Elliott count');
+
+  /* Quant — an extreme is a stretched rubber band, not a direction */
+  if(Q&&Q.z!=null){
+    var az=Math.abs(Q.z);
+    if(az>=2)S.found.push({d:'Quant',w:'today’s return is '+Q.z.toFixed(2)+' sigma from the mean'});
+    else if(Q.atrPercentile!=null&&Q.atrPercentile>=90)
+      S.found.push({d:'Quant',w:'ATR is in the '+Math.round(Q.atrPercentile)+'th percentile — volatility is stretched'});
+    else if(Q.rangeExpansion!=null&&Q.rangeExpansion>=2)
+      S.found.push({d:'Quant',w:'today’s range is '+Q.rangeExpansion.toFixed(2)+' times the average'});
+    else S.missing.push('nothing quantitatively extreme — z '+Q.z.toFixed(2)
+      +', ATR at the '+Math.round(Q.atrPercentile||0)+'th percentile');
+  }else S.missing.push('no return statistics');
+
+  S.confirmed=S.found.length>=2;      /* two independent structural readings, not one */
+  return S;
+}
+
+/* ══ 8 · ASTROLOGY — EXPERIMENTAL TIMING OVERLAY ══════════════════════
+   Events are supplied by the caller, because the ephemeris belongs to the
+   app and this module does not compute astronomy. Nothing here can add to
+   the divergence score or the core score, and nothing here can move a stop.
+   It answers exactly one question: did a dated sky event fall near a time
+   window that was found mathematically, without any reference to the sky. */
+function astroConfirmation(events,window,opt){
+  opt=opt||{};
+  var A={confluence:false, near:[], status:'NO ASTRO CONFIRMATION', baseRate:opt.baseRate||null,
+         experimental:true, note:'Experimental timing overlay. It is not evidence of cause, '
+           +'it never overrides price, structure or risk, and it is not in any score.'};
+  if(!events||!events.length){ A.status='no ephemeris events supplied'; return A; }
+
+  /* ANCHOR ON THE CYCLE DATE, NOT ON THE WHOLE WINDOW.
+     Asking whether anything happened anywhere inside a three-week window is
+     a question that answers itself: even after filtering the sky down to
+     events that occur on 19% of days, the chance of at least one landing in
+     a 26-day span is over 99%. A tick that is always true tells the reader
+     nothing and makes the matrix read stronger than it is.
+
+     So the test is tight and specific: did a significant event fall within
+     three days of the EXACT cycle anniversary the time engine calculated?
+     That is a question with a real chance of answering no. */
+  var anchors=(opt.anchors||[]).filter(function(x){return !!x;});
+  if(!anchors.length&&window&&window.start)anchors=[window.start];
+  if(!anchors.length){ A.status='no cycle date to test against'; return A; }
+  A.anchors=anchors;
+  var pad=(opt.padDays==null?3:opt.padDays)*86400000;
+  events.forEach(function(ev){
+    var t=Date.parse(ev.date+(ev.date.length<=10?'T00:00:00Z':''));
+    if(!isFinite(t))return;
+    for(var i=0;i<anchors.length;i++){
+      var at=Date.parse(anchors[i]+'T00:00:00Z');
+      if(isFinite(at)&&Math.abs(t-at)<=pad){
+        A.near.push({date:ev.date,what:ev.what,kind:ev.kind,
+          anchor:anchors[i], daysFrom:Math.round((t-at)/86400000)});
+        return;
+      }
+    }
+  });
+  if(A.near.length){ A.confluence=true; A.status='ASTRO-TIMING CONFLUENCE'; }
+  /* the reader is told how often this could have said yes by chance */
+  if(A.baseRate)A.note+=' Events of this class fall on '+A.baseRate.pct
+    +'% of days ('+A.baseRate.days+' of 365 this year), so a hit inside ±'
+    +(opt.padDays==null?3:opt.padDays)+' days of one cycle date is not rare.';
+  return A;
+}
+
+/* ══ 11 · THE CONFIRMATION MATRIX ═════════════════════════════════════ */
+function confirmationMatrix(inp){
+  var rows=[
+    {k:'Divergence',   ok:!!inp.divergence,   why:inp.divergenceWhy},
+    {k:'Price level',  ok:!!inp.priceLevel,   why:inp.priceWhy},
+    {k:'Time cycle',   ok:!!inp.timeCycle,    why:inp.timeWhy},
+    {k:'Structure',    ok:!!inp.structure,    why:inp.structureWhy},
+    {k:'Quant extreme',ok:!!inp.quantExtreme, why:inp.quantWhy},
+    {k:'Astro event',  ok:!!inp.astro,        why:inp.astroWhy, experimental:true},
+    {k:'Risk',         ok:!!inp.risk,         why:inp.riskWhy}
+  ];
+  /* THE EXPERIMENTAL ROW DOES NOT COUNT TOWARDS THE GRADE.
+     Letting it would mean an unvalidated overlay could lift a setup from
+     moderate to strong, which is exactly what section 8 forbids. It is shown
+     because it was asked for, and it is excluded from the arithmetic. */
+  var counted=rows.filter(function(r){return !r.experimental;});
+  var hits=counted.filter(function(r){return r.ok;}).length;
+  var grade = hits>=5?'STRONG CONFLUENCE' : hits>=3?'MODERATE CONFIRMATION' : 'LOW CONFIRMATION';
+  return {rows:rows, hits:hits, of:counted.length, grade:grade,
+          note:'The astro row is shown but not counted — an experimental overlay '
+              +'cannot raise the grade of a measured one.'};
+}
+
+/* ══ 10 & 13 · THE REVERSAL HYPOTHESIS ════════════════════════════════
+   Six steps, in order. Each one that holds moves the status forward; the
+   first that does not is where it stops, and it is named. Divergence alone
+   never gets past step one. */
+function reversalHypothesis(inp){
+  var R=inp.engine, price=inp.price, div=inp.divergence, side=inp.side;
+  var H={status:'WATCH ONLY', side:side, steps:[], window:null,
+         divergenceEvidence:[], priceEvidence:[], timeEvidence:[],
+         structuralEvidence:[], quantEvidence:[], astro:null,
+         trigger:null, invalidation:null, rr:null, matrix:null,
+         language:'Divergence indicates contradictory evidence and increases the need for '
+                 +'confirmation. It is not a forecast, and nothing here says price will reverse.'};
+
+  /* STEP 1 — divergence */
+  var haveDiv=div&&div.score!=null&&div.score>=20;
+  ['momentum','volume','volatility','dollar','yields'].forEach(function(k){
+    var p=inp.parts&&inp.parts[k]; if(!p)return;
+    if(p.found&&p.found.length)p.found.forEach(function(f){
+      H.divergenceEvidence.push(f.kind+' — '+f.indicator+', '+f.at
+        +' ('+f.p1.date+' → '+f.p2.date+'), strength '+f.strength); });
+    else if(p.classification==='DIVERGING'){
+      /* the note already opens with the label — prefixing it printed the
+         whole "Dollar (UUP — tracks the index…)" twice on one line */
+      var n=p.notes[0]||'diverging';
+      H.divergenceEvidence.push(n.indexOf(p.label)===0? n : (p.label+' — '+n));
+    }
+  });
+  H.steps.push({n:1,name:'Divergence',ok:haveDiv,
+    why:haveDiv?'divergence score '+div.score+' of 100'
+       :'divergence score '+(div&&div.score!=null?div.score:'—')
+         +' — too little contradictory evidence to open a watch'});
+  if(!haveDiv){
+    H.stoppedAt=1;
+    /* the overlay still has to exist as an object even when the chain stops
+       here — every consumer reads .astro.status, and returning null made the
+       panel throw rather than print "no window to test against" */
+    H.astro=astroConfirmation(inp.astroEvents,null);
+    H.matrix=matrixFrom(H,inp,false);
+    return H;
+  }
+  H.status='REVERSAL WATCH';
+
+  /* STEP 2 — an important price level, on the side the trend is travelling */
+  var cl=(R.gann&&R.gann.clusters)||[];
+  var ahead=side==='Short'
+    ? cl.filter(function(c){return c.price>price;}).sort(function(a,b){return a.price-b.price;})
+    : cl.filter(function(c){return c.price<price;}).sort(function(a,b){return b.price-a.price;});
+  var zone=ahead[0]||null;
+  var atLevel=!!(zone&&R.atr&&Math.abs(zone.price-price)<=R.atr*1.5);
+  if(zone)H.priceEvidence.push(zone.price.toFixed(2)+' — '+zone.strength
+    +' independent methods ('+zone.methods.join(', ')+'), '
+    +(R.atr?(Math.abs(zone.price-price)/R.atr).toFixed(2)+' ATR away':''));
+  H.steps.push({n:2,name:'Price level',ok:atLevel,
+    why:!zone?'no cluster on the side the move is travelling'
+       :atLevel?'price is within 1.5 ATR of a '+zone.strength+'-method cluster'
+       :'the nearest cluster is '+(Math.abs(zone.price-price)/R.atr).toFixed(2)+' ATR away — not there yet'});
+  if(atLevel)H.status='PRICE CONFIRMED';
+
+  /* STEP 3 — a live cycle window */
+  var T=R.time||{hits:[],windows:[]};
+  var tight=(T.hits||[]).filter(function(h){return h.normalisedError<=0.03;});
+  var soon=(T.windows||[]).filter(function(w){return w.daysRemaining<=30;});
+  var haveTime=tight.length>=1||soon.length>=2;
+  tight.forEach(function(h){ H.timeEvidence.push(h.name+' from the '+(h.from==='H'?'high':'low')
+    +' of '+h.fromDate+': '+h.elapsed+' days elapsed, '+h.error+' from exact (tolerance '+h.tolerance+')'); });
+  soon.slice(0,3).forEach(function(w){ H.timeEvidence.push(w.name+' from '+w.fromDate
+    +' opens in '+w.daysRemaining+' days ('+w.opens+' → '+w.closes+')'); });
+  if(haveTime){
+    var opens=soon.length?soon[0].opens:new Date().toISOString().slice(0,10);
+    var closes=soon.length?soon[soon.length-1].closes
+              :new Date(Date.now()+14*86400000).toISOString().slice(0,10);
+    H.window={start:opens,end:closes};
+  }
+  H.steps.push({n:3,name:'Time cycle',ok:haveTime,
+    why:haveTime?tight.length+' anniversary inside tolerance, '+soon.length+' window(s) within 30 days'
+       :'DIVERGENCE ONLY — NO TIME CONFIRMATION'});
+  if(atLevel&&haveTime)H.status='TIME CONFIRMED';
+
+  /* STEP 4 — structure */
+  var S=structuralConfirmation(R,side);
+  H.structuralEvidence=S.found.map(function(x){return x.d+': '+x.w;});
+  H.structuralMissing=S.missing;
+  H.steps.push({n:4,name:'Structure',ok:S.confirmed,
+    why:S.confirmed?S.found.length+' independent structural readings agree'
+       :'only '+S.found.length+' structural reading — two are required'});
+  if(atLevel&&haveTime&&S.confirmed)H.status='STRUCTURE CONFIRMED';
+
+  /* quant extreme is reported on its own row of the matrix */
+  var Q=R.quant||{};
+  var qExtreme=!!(Q.z!=null&&Math.abs(Q.z)>=2)||!!(Q.atrPercentile>=90);
+  if(Q.z!=null)H.quantEvidence.push('z-score '+Q.z.toFixed(2)+', ATR at the '
+    +Math.round(Q.atrPercentile||0)+'th percentile, range expansion '
+    +(Q.rangeExpansion!=null?Q.rangeExpansion.toFixed(2):'—'));
+
+  /* STEP 5 — the experimental overlay, anchored on the cycle dates */
+  var anchors=[];
+  tight.forEach(function(h){ if(h.dueDate)anchors.push(h.dueDate); });
+  soon.forEach(function(w){ if(w.dueDate)anchors.push(w.dueDate); });
+  H.astro=astroConfirmation(inp.astroEvents,H.window,
+    {padDays:3, anchors:anchors, baseRate:inp.astroBaseRate});
+
+  /* STEP 6 — risk, which can only refuse */
+  var stop=null,target=null,entry=price;
+  if(zone&&R.atr){
+    entry=zone.price;
+    stop = side==='Short' ? zone.price+R.atr*1.0 : zone.price-R.atr*1.0;
+    var back=side==='Short'
+      ? cl.filter(function(c){return c.price<price;}).sort(function(a,b){return b.price-a.price;})[0]
+      : cl.filter(function(c){return c.price>price;}).sort(function(a,b){return a.price-b.price;})[0];
+    target = back?back.price:(side==='Short'?price-R.atr*3:price+R.atr*3);
+    H.rr=Math.abs(target-entry)/Math.abs(entry-stop);
+  }
+  H.entry=entry; H.stop=stop; H.target=target;
+  var riskOk=H.rr!=null&&H.rr>=1.5;
+  H.steps.push({n:5,name:'Astro (experimental)',ok:H.astro.confluence,
+    why:H.astro.status,experimental:true});
+  H.steps.push({n:6,name:'Risk',ok:riskOk,
+    why:H.rr==null?'no level to size against':'reward to risk '+H.rr.toFixed(2)
+      +(riskOk?'':' — below the 1.5 minimum, so this cannot be taken even if everything else lines up')});
+
+  /* ACTIVE requires every counted step. The astro row is not one of them. */
+  var allOk=haveDiv&&atLevel&&haveTime&&S.confirmed&&riskOk;
+  if(allOk){
+    H.status='ACTIVE';
+  }else if(atLevel&&haveTime&&S.confirmed){
+    H.status='CONDITIONAL';
+  }
+  H.trigger = zone
+    ? (side==='Short'
+        ? 'a daily close back below '+zone.price.toFixed(2)+' after trading above it, on relative volume above 1.2'
+        : 'a daily close back above '+zone.price.toFixed(2)+' after trading below it, on relative volume above 1.2')
+    : 'a measurable rejection at a level — there is no cluster to name yet';
+  H.invalidation = zone&&R.atr
+    ? (side==='Short'
+        ? 'a daily close above '+(zone.price+R.atr*1.5).toFixed(2)
+        : 'a daily close below '+(zone.price-R.atr*1.5).toFixed(2))
+    : null;
+  H.matrix=matrixFrom(H,inp,qExtreme,zone,atLevel,haveTime,S.confirmed,riskOk,haveDiv);
+  return H;
+
+  function matrixFrom(HH,inp2,qx,zone2,atL,hT,sC,rOk,hD){
+    return confirmationMatrix({
+      divergence:!!hD, divergenceWhy:HH.divergenceEvidence[0]||'below the watch threshold',
+      priceLevel:!!atL, priceWhy:HH.priceEvidence[0]||'no cluster ahead',
+      timeCycle:!!hT,  timeWhy:HH.timeEvidence[0]||'no anniversary inside tolerance',
+      structure:!!sC,  structureWhy:HH.structuralEvidence[0]||(HH.structuralMissing&&HH.structuralMissing[0])||'—',
+      quantExtreme:!!qx, quantWhy:HH.quantEvidence[0]||'—',
+      astro:!!(HH.astro&&HH.astro.confluence), astroWhy:HH.astro?HH.astro.status:'—',
+      risk:!!rOk, riskWhy:HH.rr!=null?'reward to risk '+HH.rr.toFixed(2):'nothing to size'
+    });
+  }
+}
+
+root.CQE.confirm={ structural:structuralConfirmation, astro:astroConfirmation,
+  matrix:confirmationMatrix, reversal:reversalHypothesis };
+})(typeof window!=='undefined'?window:global);
+
+/* ══ THE SKY, AS DATED EVENTS ═════════════════════════════════════════
+   timSkyEvents answers for one day. The confirmation engine needs a range,
+   because the question it asks is whether anything happened NEAR a window
+   that was found by arithmetic alone. Walking the profile day by day is the
+   honest way to build that list — nothing is interpolated and nothing is
+   assumed to recur. Capped, because a wide window on a slow machine is not
+   worth a stalled panel. */
+/* ══ WHICH SKY EVENTS ARE RARE ENOUGH TO MEAN ANYTHING ════════════════
+   The first version passed everything the ephemeris produced to the
+   confirmation matrix, and the result was an astro row that was true almost
+   always. Counted over 2026: 628 events across 365 days, at least one on
+   315 of them. A confluence that occurs on 86% of days is not a confluence,
+   and putting a tick beside it made the matrix read stronger than it was.
+
+   The Moon is most of it — 422 of the 628. It changes sign every two and a
+   half days and aspects something almost daily, so its sign changes and its
+   aspects are removed. Its LUNATIONS are kept: a new or full moon is a real
+   dated instant and there are only about twenty-five a year.
+
+   What is left is rare by construction: lunations, eclipses, stations, sign
+   changes by Mars and slower, and tight aspects (inside one degree) between
+   Mars and slower. The panel prints how often the surviving set actually
+   fires, measured over the year on screen, so the reader can judge the tick
+   rather than take it. */
+var CQE_SLOW=/mars|jupiter|saturn|uranus|neptune|pluto|chiron|node/i;
+function cqeAstroSignificant(ev){
+  if(!ev)return false;
+  if(ev.kind==='moon'||ev.kind==='eclipse'||ev.kind==='station')return true;
+  var what=String(ev.what||'');
+  if(/^Moon\b/.test(what))return false;                  /* too frequent to be an event */
+  if(ev.kind==='sign')return CQE_SLOW.test(what);
+  if(ev.kind==='aspect'){
+    if(ev.orb==null||ev.orb>1.0)return false;            /* only what is nearly exact */
+    return CQE_SLOW.test(String(ev.a||''))&&CQE_SLOW.test(String(ev.b||''));
+  }
+  return false;
+}
+/* the base rate, so a tick can be read against how often it is possible */
+function cqeAstroBaseRate(year){
+  year=year||new Date().getUTCFullYear();
+  var all=cqeAstroEvents(year+'-01-01',year+'-12-31',400);
+  var keep=all.filter(cqeAstroSignificant);
+  var days={}; keep.forEach(function(e){ days[e.date]=1; });
+  return { events:keep.length, days:Object.keys(days).length,
+           of:365, pct:Math.round(Object.keys(days).length/365*100) };
+}
+function cqeAstroEvents(startISO,endISO,cap){
+  var out=[];
+  if(!startISO||!endISO)return out;
+  if(!(window.VIBP&&VIBP.profile))return out;
+  var s=Date.parse(startISO+'T00:00:00Z'), e=Date.parse(endISO+'T00:00:00Z');
+  if(!isFinite(s)||!isFinite(e)||e<s)return out;
+  var days=Math.min(Math.round((e-s)/86400000)+1, cap||60);
+  for(var i=0;i<days;i++){
+    var d=new Date(s+i*86400000);
+    var iso=d.toISOString().slice(0,10);
+    var P=null; try{ P=VIBP.profile(d); }catch(err){ continue; }
+    if(!P)continue;
+    (P.lunations||[]).forEach(function(l){ if(l&&l.at)
+      out.push({date:iso,what:l.type,kind:'moon'}); });
+    (P.stations||[]).forEach(function(x){
+      out.push({date:iso,what:x.name+' turns '+x.kind,kind:'station'}); });
+    (P.signChanges||[]).forEach(function(c){ if(c&&c.at)
+      out.push({date:iso,what:(c.name||c.body)+' enters '+c.toSign,kind:'sign'}); });
+    (P.aspects||[]).forEach(function(a){
+      if(!a||!a.perfectsToday)return;
+      /* only the five Ptolemaic angles the framework names, and only inside
+         the orb the app is configured with — no wider net */
+      if(!/conjunction|opposition|square|trine|sextile/i.test(a.type||''))return;
+      out.push({date:iso,kind:'aspect',
+        what:a.aName+' '+a.type+' '+a.bName+(a.orb!=null?' (orb '+a.orb.toFixed(2)+'°)':''),
+        orb:a.orb, a:a.aName, b:a.bName}); });
+    if(P.eclipse)out.push({date:iso,what:'Eclipse — '+(P.eclipse.type||'candidate'),kind:'eclipse'});
+  }
+  return out;
+}
+
 /* ══ CQE GLUE — WHAT THE ENGINE IS GIVEN ══════════════════════════════
    The module above is deliberately ignorant of this app: hand it OHLCV and
    it hands back numbers. This is the only place that knows where the bars
@@ -11270,6 +11991,81 @@ function cqeLoadVolume(asset,cb){
     else cb(null,p);
   });
 }
+/* ══ THE CROSS-MARKET SERIES ══════════════════════════════════════════
+   What the framework asks for and what a browser can actually reach are not
+   the same thing, and this says which is which rather than substituting
+   quietly.
+
+   THE DOLLAR. The ICE Dollar Index itself sits behind an Indices plan on
+   every provider wired up here — I:DXY and C:USDIDX both return zero rows
+   on this key. UUP is the fund that tracks the same basket, it is an
+   ordinary stock, and it comes down the same pipeline as everything else.
+   It is named as a proxy wherever it is used.
+
+   THE YIELDS. Constant-maturity treasury yields are published free by FRED
+   as DGS1, DGS5, DGS10 and DGS30 — real yields, not a bond fund's price —
+   but fredgraph.csv sends no CORS header, so a browser cannot read it
+   directly and both public relays answered 522 when tried. So: if
+   celestial_bridge.py is running it fetches them server-side, which is a
+   dozen lines and exact. If it is not, the treasury ETFs are used and the
+   substitution is stated — and a bond fund's PRICE moves opposite to yield,
+   so the series is negated before it is correlated. Getting that sign wrong
+   would invert every reading. */
+var CQE_DOLLAR_TICKER='UUP';
+var CQE_YIELD_ETF={ '1Y':'SHY', '10Y':'IEF', '30Y':'TLT' };
+var CQE_XM_CACHE={};
+
+function cqeLoadCross(cb){
+  var need=2, out={dollar:null,dollarLabel:null,yield:null,yieldLabel:null};
+  function done(){ if(--need===0)cb(out); }
+
+  /* dollar — always the ETF, always labelled */
+  var dc=CQE_XM_CACHE.dollar;
+  if(dc&&Date.now()-dc.at<30*60*1000){ out.dollar=dc.rows; out.dollarLabel=dc.label; done(); }
+  else polygonDaily(CQE_DOLLAR_TICKER,760,function(rows){
+    if(rows&&rows.length>60){ out.dollar=rows;
+      out.dollarLabel='Dollar (UUP — tracks the index; the index itself is licensed)';
+      CQE_XM_CACHE.dollar={rows:rows,label:out.dollarLabel,at:Date.now()}; }
+    done();
+  });
+
+  /* yields — real ones through the bridge, else the fund, negated */
+  var yc=CQE_XM_CACHE.yield;
+  if(yc&&Date.now()-yc.at<30*60*1000){ out.yield=yc.rows; out.yieldLabel=yc.label; done(); return; }
+  var cfg=(typeof syncCfg==='function')?syncCfg():null;
+  if(cfg&&cfg.url){
+    var t=setTimeout(function(){ t=null; yieldFallback(); },6000);
+    fetch(String(cfg.url).replace(/\/+$/,'')+'/fred/DGS10')
+      .then(function(r){ if(!r.ok)throw new Error('HTTP '+r.status); return r.json(); })
+      .then(function(j){
+        if(!t)return; clearTimeout(t); t=null;
+        var rows=(j.observations||[]).filter(function(o){return o.value!=null;})
+          .map(function(o){ return {t:Date.parse(o.date+'T00:00:00Z'), close:+o.value}; });
+        if(rows.length>60){ out.yield=rows; out.yieldLabel='US 10Y yield (FRED DGS10)';
+          CQE_XM_CACHE.yield={rows:rows,label:out.yieldLabel,at:Date.now()}; done(); }
+        else yieldFallback();
+      })
+      .catch(function(){ if(t){clearTimeout(t);t=null;} yieldFallback(); });
+  }else yieldFallback();
+
+  function yieldFallback(){
+    polygonDaily(CQE_YIELD_ETF['10Y'],760,function(rows){
+      if(rows&&rows.length>60){
+        /* A BOND FUND'S PRICE IS THE INVERSE OF ITS YIELD.
+           Correlating IEF's price against gold and calling it a yield
+           correlation would report every sign backwards. Negated here, once,
+           where it is visible. */
+        out.yield=rows.map(function(r){ return {t:r.t!=null?r.t:Date.parse(r.date),
+          close:-(+r.close)}; });
+        out.yieldLabel='10Y yield, inferred from IEF (bond fund price, negated — '
+          +'not a published yield)';
+        CQE_XM_CACHE.yield={rows:out.yield,label:out.yieldLabel,at:Date.now()};
+      }
+      done();
+    });
+  }
+}
+
 /* one call, everything the four gates need */
 function cqeRun(rows,volRows,volName,price,opt){
   opt=opt||{};
@@ -11294,9 +12090,55 @@ function cqeRun(rows,volRows,volName,price,opt){
                    clusters:G.clusters,price:price,atr:a,trendScore:opt.trendScore});
   var H=CQE.hypotheses({price:price,atr:a,gates:g,wyckoff:W,elliott:E,time:T,
                         projections:PR,coreScore:core});
+
+  /* ══ DIVERGENCE, THEN THE CONFIRMATION CHAIN ═══════════════════════
+     Divergence never trades. It raises the amount of evidence standing
+     against the current direction, and that is the only door into the
+     reversal hypothesis — which then has to collect a price level, a live
+     cycle window, two independent structural readings and an acceptable
+     reward to risk before it may call itself anything but a watch.
+
+     The cross-market series are optional. Where they were not supplied the
+     component is named as missing and the score renormalises over what was
+     computed rather than quietly scoring the gap as zero. */
+  var DV=CQE.divergence;
+  var dparts={
+    momentum:   DV.momentum(R,pv),
+    volume:     DV.volume(R,vScrub?vScrub.rows:null,pv,{volumeFrom:volName||null}),
+    volatility: DV.volatility(R,pv),
+    dollar:     opt.dollarRows? DV.cross(R,opt.dollarRows,pv,opt.dollarLabel||'Dollar',{}) : null,
+    yields:     opt.yieldRows?  DV.cross(R,opt.yieldRows,pv,opt.yieldLabel||'10Y yield',{isLevel:true}) : null
+  };
+  if(!dparts.dollar)dparts.dollar={score:null,required:['a dollar series — none loaded'],
+    label:'Dollar',classification:'DATA REQUIRED',notes:[],correlations:{}};
+  if(!dparts.yields)dparts.yields={score:null,required:['a treasury yield series — none loaded'],
+    label:'Yield',classification:'DATA REQUIRED',notes:[],correlations:{}};
+  var dscore=DV.score(dparts);
+
+  /* the reversal takes the side against the leg that is still running */
+  var side=(pv.length&&price>pv[pv.length-1].px)?'Short':'Long';
+  var rev=null;
+  try{
+    /* the window has to exist before the sky can be asked about it, so the
+       chain runs once with no events, and again with the events for whatever
+       window it produced. Asking the ephemeris for a range that does not
+       exist yet would be answering before the question. */
+    var first=CQE.confirm.reversal({engine:{atr:a,wyckoff:W,elliott:E,gann:G,time:T,quant:Q},
+      price:price, divergence:dscore, parts:dparts, side:side, astroEvents:[]});
+    var ev=first.window
+      ? cqeAstroEvents(first.window.start,first.window.end,45).filter(cqeAstroSignificant)
+      : [];
+    var br=null; try{ br=cqeAstroBaseRate(); }catch(e2){}
+    rev=CQE.confirm.reversal({engine:{atr:a,wyckoff:W,elliott:E,gann:G,time:T,quant:Q},
+      price:price, divergence:dscore, parts:dparts, side:side,
+      astroEvents:ev, astroBaseRate:br});
+  }catch(e){ console.error('reversal chain:',e); }
+  if(rev)H[2]=Object.assign({rank:3,kind:'Reversal'},rev);
+
   return {price:price, atr:a, bars:R.length, dq:CQE.dataQuality(R), repaired:scrub.repaired,
           pivots:pv, wyckoff:W, elliott:E, gann:G, time:T, quant:Q, momentum:M,
           projections:PR, core:core, gates:g, hypotheses:H,
+          divergence:dscore, divergenceParts:dparts, reversal:rev,
           volumeFrom:volName||null, required:[]};
 }
 
@@ -11329,8 +12171,114 @@ function cqeEngineCell(name,score,sub){
     return '<div class="cq-e na"><u>'+name+'</u><b>DATA REQUIRED</b><s>'+escHtml(sub||'')+'</s></div>';
   return '<div class="cq-e"><u>'+name+'</u><b>'+score+'</b><s>'+escHtml(sub||'')+'</s></div>';
 }
+/* ══ THE DIVERGENCE PANEL ═════════════════════════════════════════════
+   Every component is shown with its own score and its own weight, including
+   the ones that could not be computed and why. The framework's instruction
+   was "do not hide the calculation", and a composite with an invisible
+   denominator hides the most important part of it. */
+function cqeDivHtml(R,dp){
+  var D=R.divergence, P=R.divergenceParts;
+  if(!D)return '';
+  var LBL={momentum:'Momentum',volume:'Participation',volatility:'Volatility',
+           dollar:'Dollar',yields:'Yields'};
+  var h='<div class="dvg">'
+    +'<div class="dvg-h"><b>Divergence</b>'
+      +'<s style="text-decoration:none;font-size:10px;color:var(--t3)">evidence against the current direction</s>'
+      +'<em>'+(D.score==null?'—':D.score)+'<s>/100 · '+D.coverage+'% computed</s></em></div>'
+    +'<div class="dvg-c">';
+  CQE.divergence.WEIGHTS.forEach(function(w){
+    var k=w[0], part=P[k], comp=(D.components||[]).filter(function(c){return c.k===k;})[0];
+    if(!comp){
+      var why=(part&&part.required&&part.required[0])||'not computed';
+      h+='<div class="dvg-i na"><u>'+LBL[k]+'</u><b>DATA REQUIRED</b><s>'+escHtml(why)+'</s></div>';
+      return;
+    }
+    var sub='';
+    if(k==='dollar'||k==='yields'){
+      sub=(part.classification||'')+(part.average!=null?' · r '+part.average.toFixed(2):'');
+    }else sub=(part.found&&part.found.length? part.found.length+' found':'none at the last pivots');
+    h+='<div class="dvg-i'+(comp.score===0?' zero':'')+'"><u>'+LBL[k]+'</u>'
+      +'<b>'+comp.score+'</b><s>'+escHtml(sub)+' · '+comp.weight+'%</s></div>';
+  });
+  h+='</div>';
+  var found=[];
+  ['momentum','volume','volatility'].forEach(function(k){
+    ((P[k]&&P[k].found)||[]).forEach(function(f){
+      found.push(f.kind+' — '+f.indicator+' at the '+f.at+', '+f.p1.date+' → '+f.p2.date
+        +': price '+f.priceChangePct.toFixed(2)+'%, '+f.indicator+' '
+        +f.indicatorChangePct.toFixed(1)+'%. Strength '+f.strength+'.');
+    });
+  });
+  ['dollar','yields'].forEach(function(k){
+    if(P[k]&&P[k].classification==='DIVERGING'&&P[k].notes&&P[k].notes[0])found.push(P[k].notes[0]);
+  });
+  if(found.length)h+='<div class="dvg-f">'+found.map(function(x){
+    return '<div>'+escHtml(x)+'</div>'; }).join('')+'</div>';
+  else h+='<div class="dvg-n">Nothing is contradicting price at the last confirmed pivots. '
+    +'That is the normal state and it is not a reason to do anything.</div>';
+  h+='<div class="dvg-n">'+escHtml(D.meaning)+' Divergence never opens a trade on its own — '
+    +'it raises how much confirmation the reversal below has to collect.</div>';
+  return h+'</div>';
+}
+/* ══ THE CONFIRMATION MATRIX ══════════════════════════════════════════ */
+function cqeMatrixHtml(rev){
+  if(!rev||!rev.matrix)return '';
+  var M=rev.matrix;
+  var cls=M.grade==='STRONG CONFLUENCE'?'strong':M.grade==='MODERATE CONFIRMATION'?'mod':'low';
+  var h='<div class="cfm">'
+    +'<div class="cfm-h"><i>Confirmation matrix</i>'
+      +'<b class="'+cls+'">'+M.grade+' — '+M.hits+' of '+M.of+'</b></div>';
+  h+='<div class="cfm-steps">'+(rev.steps||[]).map(function(st){
+      return '<em class="'+(st.ok?'y':(rev.stoppedAt===st.n?'stop':''))+'">'
+        +st.n+'. '+escHtml(st.name)+'</em>'; }).join('')+'</div>';
+  M.rows.forEach(function(r){
+    h+='<div class="cfm-r '+(r.ok?'y':'n')+(r.experimental?' exp':'')+'">'
+      +'<i>'+(r.ok?'✓':'✗')+'</i><b>'+escHtml(r.k)+'</b>'
+      +'<span>'+escHtml(r.why||'—')+'</span></div>';
+  });
+  h+='<div class="dvg-n">'+escHtml(M.note)+'</div>';
+  return h+'</div>';
+}
 function cqeHypHtml(h,dp){
   if(h.kind==='Reversal'){
+    /* the confirmation engine's shape, when it ran */
+    if(h.steps&&h.matrix){
+      var cls=h.status==='ACTIVE'?'':(h.status==='CONDITIONAL'?'':' none');
+      var ev=function(title,list){
+        if(!list||!list.length)return '';
+        return '<div class="cq-ev"><div><b>'+title+'</b></div>'
+          +list.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')+'</div>';
+      };
+      var rr=h.rr;
+      return '<div class="cq-h rev'+cls+'">'
+        +'<div class="cq-ht"><u>3 · reversal</u><b>'
+          +escHtml(h.side||'')+(h.window?'':' — no window yet')+'</b>'
+          +'<em>'+escHtml(h.status)+'</em></div>'
+        +(h.window?'<div class="cq-nums">'
+            +'<div class="cq-n"><u>window opens</u><b>'+escHtml(h.window.start)+'</b></div>'
+            +'<div class="cq-n"><u>window closes</u><b>'+escHtml(h.window.end)+'</b></div>'
+            +'<div class="cq-n"><u>entry</u><b>'+(h.entry!=null?(+h.entry).toFixed(dp):'—')+'</b></div>'
+            +'<div class="cq-n dn"><u>stop</u><b>'+(h.stop!=null?(+h.stop).toFixed(dp):'—')+'</b></div>'
+            +'<div class="cq-n up"><u>target</u><b>'+(h.target!=null?(+h.target).toFixed(dp):'—')+'</b></div>'
+            +'<div class="cq-n"><u>R : R</u><b>'+(rr?rr.toFixed(2):'—')+'</b></div>'
+          +'</div>':'')
+        +ev('Divergence',h.divergenceEvidence)
+        +ev('Price',h.priceEvidence)
+        +ev('Time',h.timeEvidence)
+        +ev('Structure',h.structuralEvidence.length?h.structuralEvidence
+             :(h.structuralMissing||[]).map(function(x){return 'missing — '+x;}))
+        +ev('Quant',h.quantEvidence)
+        +ev('Astro (experimental)',h.astro&&h.astro.near.length
+             ? h.astro.near.map(function(e){return e.date+' — '+e.what;})
+             : [h.astro?h.astro.status:'—'])
+        +cqeMatrixHtml(h)
+        +'<div class="cq-cond">'
+          +'<p><b>Trigger:</b> '+escHtml(h.trigger||'—')+'</p>'
+          +(h.invalidation?'<p><b>Invalidation:</b> '+escHtml(h.invalidation)+'</p>':'')
+          +'<p>'+escHtml(h.language)+'</p>'
+          +(h.astro?'<p style="color:var(--t3)">'+escHtml(h.astro.note)+'</p>':'')
+        +'</div></div>';
+    }
     if(h.status!=='WATCH ONLY')
       return '<div class="cq-h rev none"><div class="cq-ht"><u>3 · reversal</u>'
         +'<b>NO VALID REVERSAL WINDOW DETECTED</b></div>'
@@ -11412,6 +12360,7 @@ function cqeHtml(R,asset,dp){
      +T.hits.length+' anniversaries · '+T.windows.length+' windows ahead</s></div>'
    +'</div>';
 
+  h+=cqeDivHtml(R,dp);
   h+=R.hypotheses.map(function(x){return cqeHypHtml(x,dp);}).join('');
 
   var up=R.projections.upSummary,dn=R.projections.downSummary;
@@ -11532,9 +12481,22 @@ function renderCQE(){
             ||+rows[rows.length-1].close;
   var dp=price<10?4:2;
   slot.innerHTML='<div class="cq"><div class="cq-note">Running the five engines…</div></div>';
-  cqeLoadVolume(asset,function(vr,vn){
+  /* THE CROSS-MARKET SERIES MUST NOT HOLD UP THE BOARD.
+     The dollar and the yields are two more Polygon calls on top of the
+     asset's own bars and its volume proxy — four against a five-a-minute
+     free budget, fired at once, which rate-limits the very first load and
+     leaves the panel waiting on the least important input it has.
+
+     So the engines run immediately on what is in hand, the panel is drawn,
+     and the two cross-market components are fetched afterwards; when they
+     land the panel is rebuilt with them. Until then they read DATA REQUIRED,
+     which is true — they are not loaded — rather than scoring zero, which
+     would be a claim that nothing diverges. */
+  function paint(xm){
     try{
-      var R=cqeRun(rows,vr,vr?vn:null,price);
+      var R=cqeRun(rows,vr,vr?vn:null,price, xm?{
+        dollarRows:xm.dollar, dollarLabel:xm.dollarLabel,
+        yieldRows:xm.yield,   yieldLabel:xm.yieldLabel}:{});
       CQE_LAST=R; window.CQE_LAST=R;
       slot.innerHTML=cqeHtml(R,asset,dp);
       /* the When gate quotes this engine's cycle counts, and it was drawn
@@ -11548,6 +12510,20 @@ function renderCQE(){
         +escHtml(e.message)+'</div></div>';
       console.error('CQE:',e);
     }
+  }
+  var vr=null, vn=null;
+  cqeLoadVolume(asset,function(v,n){
+    vr=v; vn=n;
+    paint(null);                                   /* the board, now */
+    setTimeout(function(){                         /* the extras, shortly */
+      cqeLoadCross(function(xm){
+        if(!xm||(!xm.dollar&&!xm.yield))return;
+        /* only repaint if this is still the asset on screen */
+        var cur=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
+        if(cur!==asset)return;
+        paint(xm);
+      });
+    },1500);
   });
 }
 window.renderCQE=renderCQE;
@@ -15835,7 +16811,12 @@ var POLY_SYM={
      so the Wyckoff engine can borrow a real tape for instruments that have
      none. GLD and SLV are the metal funds; IBIT is the spot bitcoin fund.
      See CQE_VOL_PROXY for which asset borrows which, and why. */
-  GLD:'GLD',SLV:'SLV',IBIT:'IBIT'
+  GLD:'GLD',SLV:'SLV',IBIT:'IBIT',
+  /* the cross-market series. UUP tracks the dollar basket the index itself
+     charges for; SHY, IEF and TLT stand in for the short, middle and long end
+     of the curve when real yields cannot be reached. None of these are
+     offered as instruments to trade on this board. */
+  UUP:'UUP',SHY:'SHY',IEF:'IEF',TLT:'TLT'
 };
 function polygonSymbol(sym){return POLY_SYM[sym]||null;}
 /* v is traded size for equities and crypto, tick count for the C: (forex and

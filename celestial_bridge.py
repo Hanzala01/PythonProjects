@@ -356,6 +356,66 @@ def export_all(uid: int = Depends(user_from_token)):
     return JSONResponse(body, headers={"Content-Disposition": 'attachment; filename="celestial-backup.json"'})
 
 
+# ── FRED passthrough ──────────────────────────────────────────────────────
+# Constant-maturity treasury yields are published free by the St. Louis Fed,
+# but fredgraph.csv sends no Access-Control-Allow-Origin header, so a browser
+# cannot read it and both public CORS relays answered 522 when tried. A dozen
+# lines here get the real series instead of inferring a yield from a bond
+# fund's price, which is only ever the right sign and never the right number.
+#
+# No key, no credentials, no user data leaves this machine — the request is a
+# fixed URL with a series id from a fixed list, so this cannot be turned into
+# an open proxy for anything else.
+FRED_SERIES = {
+    "DGS1": "US 1-year treasury yield",
+    "DGS5": "US 5-year treasury yield",
+    "DGS10": "US 10-year treasury yield",
+    "DGS30": "US 30-year treasury yield",
+    "DTWEXBGS": "Broad trade-weighted dollar index",
+}
+_FRED_CACHE: dict[str, tuple[float, list]] = {}
+FRED_TTL = 6 * 3600
+
+
+@app.get("/fred/{series_id}")
+def fred(series_id: str, start: str = "2020-01-01"):
+    if series_id not in FRED_SERIES:
+        raise HTTPException(404, f"unknown series — this endpoint serves only {sorted(FRED_SERIES)}")
+    now = time.time()
+    hit = _FRED_CACHE.get(series_id)
+    if hit and now - hit[0] < FRED_TTL:
+        return {"series": series_id, "name": FRED_SERIES[series_id],
+                "cached": True, "observations": hit[1]}
+    import urllib.request
+
+    url = ("https://fred.stlouisfed.org/graph/fredgraph.csv"
+           f"?id={series_id}&cosd={start}")
+    try:
+        with urllib.request.urlopen(url, timeout=20) as f:
+            body = f.read().decode("utf-8", "replace")
+    except Exception as e:  # network, DNS, timeout — say which, do not pretend
+        raise HTTPException(502, f"could not reach FRED: {e}")
+    lines = body.strip().split("\n")
+    if len(lines) < 2:
+        raise HTTPException(502, "FRED returned nothing usable")
+    obs = []
+    for line in lines[1:]:
+        parts = line.split(",")
+        if len(parts) < 2:
+            continue
+        # FRED writes "." for a day the series has no print — a holiday is not
+        # a zero, and carrying it as one would put a fake collapse in the data
+        if parts[1] in ("", "."):
+            continue
+        try:
+            obs.append({"date": parts[0], "value": float(parts[1])})
+        except ValueError:
+            continue
+    _FRED_CACHE[series_id] = (now, obs)
+    return {"series": series_id, "name": FRED_SERIES[series_id],
+            "cached": False, "observations": obs}
+
+
 if __name__ == "__main__":
     import uvicorn
 
