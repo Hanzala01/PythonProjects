@@ -1510,6 +1510,56 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cset-key{width:100%;margin-top:11px;padding:9px 13px;font-size:12px;border-radius:10px;
   border:1px solid var(--b1);background:rgba(6,3,20,.8);color:var(--t1)}
 .cset-key:focus{outline:none;border-color:var(--p2)}
+
+/* ══ THE THREE HYPOTHESES ═════════════════════════════════════════ */
+.cq{margin:18px 0 6px}
+.cq-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.cq-hd b{font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--t1)}
+.cq-hd s{text-decoration:none;font-size:10.5px;color:var(--t3)}
+.cq-core{margin-left:auto;font-size:11px;color:var(--t2);white-space:nowrap}
+.cq-core i{font-style:normal;font-weight:800;color:var(--p3);font-size:14px}
+.cq-eng{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:8px;margin-bottom:14px}
+.cq-e{padding:9px 11px;border-radius:11px;border:1px solid var(--b1);background:rgba(9,5,26,.6)}
+.cq-e u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.cq-e b{font-family:'Space Grotesk';font-size:17px;font-weight:800;color:var(--t1)}
+.cq-e.na b{color:var(--t3);font-size:11px;font-weight:700}
+.cq-e s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:3px;line-height:1.45}
+.cq-gates{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:16px}
+.cq-g{padding:10px 12px;border-radius:11px;border:1px solid var(--b1);background:rgba(6,3,20,.5)}
+.cq-g u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3)}
+.cq-g b{display:block;font-size:13px;font-weight:800;color:var(--t1);margin:4px 0 6px}
+.cq-bar{height:4px;border-radius:99px;background:rgba(148,163,184,.16);overflow:hidden}
+.cq-bar i{display:block;height:100%;border-radius:99px;background:var(--p2)}
+.cq-h{border:1px solid var(--b1);border-radius:15px;padding:15px 17px;margin-bottom:11px;
+  background:linear-gradient(180deg,rgba(15,9,38,.7),rgba(9,5,26,.5))}
+.cq-h.pri{border-color:rgba(127,96,191,.5)}
+.cq-h.rev{border-color:rgba(245,158,11,.35)}
+.cq-h.none{border-style:dashed;opacity:.85}
+.cq-ht{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.cq-ht u{text-decoration:none;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--t3);border:1px solid var(--b2);border-radius:99px;padding:2px 8px}
+.cq-ht b{font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--t1)}
+.cq-ht em{font-style:normal;font-size:10.5px;color:var(--t3);margin-left:auto}
+.cq-nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:9px;margin-bottom:11px}
+.cq-n u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:3px}
+.cq-n b{font-family:'Space Grotesk';font-size:14.5px;font-weight:800;color:var(--t1)}
+.cq-n.up b{color:var(--up)} .cq-n.dn b{color:var(--down)}
+.cq-ev{font-size:10.5px;line-height:1.7;color:var(--t2)}
+.cq-ev div{padding-left:15px;position:relative}
+.cq-ev div:before{content:'·';position:absolute;left:4px;color:var(--p3)}
+.cq-ev div.con:before{content:'\00d7';color:var(--warn);font-size:9px;top:1px}
+.cq-ev div.con{color:var(--t3)}
+.cq-cond{margin-top:11px;padding-top:10px;border-top:1px solid rgba(43,21,91,.55);
+  font-size:10.5px;line-height:1.65}
+.cq-cond p{margin:0 0 5px;color:var(--t2)}
+.cq-cond p b{color:var(--t1);font-weight:700}
+.cq-req{font-size:10.5px;line-height:1.7;color:var(--warn);padding:10px 13px;border-radius:11px;
+  border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.06);margin-bottom:12px}
+.cq-req b{display:block;margin-bottom:3px}
+.cq-note{font-size:10px;color:var(--t3);line-height:1.7;margin-top:10px}
 .cset-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
 .cset-btns .cset-b{flex:0 1 auto}
 .cset-b.ghost{background:transparent;color:var(--t2)}
@@ -4603,7 +4653,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b24</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b25</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7072,7 +7122,10 @@ function renderDegreeCircle(price){
   var col2=(deg>=90&&deg<=225)?'#3ecf8e':'#e05666';
   document.getElementById('deg_num').textContent=deg.toFixed(1)+'\u00b0';
   document.getElementById('deg_num').style.color=col2;
-  var zoneName=deg<90?'Accumulation':deg<135?'Markup':deg<180?'Mid-Cycle':deg<225?'Distribution':deg<270?'Markdown':'Late Cycle';
+  /* the same borrowed vocabulary as the old anaCycle, from the same
+     sqrt(price) degree — a wheel quadrant, named as one */
+  var zoneName=deg<90?'0\u201390\u00b0':deg<135?'90\u2013135\u00b0':deg<180?'135\u2013180\u00b0'
+              :deg<225?'180\u2013225\u00b0':deg<270?'225\u2013270\u00b0':'270\u2013360\u00b0';
   document.getElementById('deg_zone_lbl').textContent=zoneName;
   document.getElementById('deg_badge').textContent=deg.toFixed(1)+'\u00b0';
   document.getElementById('deg_badge').className='tag '+((deg>=90&&deg<=225)?'tg':'tr');
@@ -9721,12 +9774,22 @@ function anaRungs(price,dp){
 }
 /* ══ MARKET CYCLE — where price sits on the wheel, in the range, and in the
    nine-day count, with the phase named in plain words ══ */
-function anaCycle(price,dp){
+/* ══ THE GANN WHEEL, WITHOUT WYCKOFF'S WORDS ══════════════════════════
+   This was anaCycle, and it labelled the wheel position "Accumulation",
+   "Markup", "Distribution", "Markdown" — the Wyckoff phase names — off
+   sqrt(price) mod 2. Nothing about volume, range, effort or result went into
+   it; gold at 4654 and gold at 4655 could be given different phases. Borrowed
+   vocabulary made a number-theory reading look like a market-structure one.
+
+   The wheel itself is a real Gann construction and it stays. The phase words
+   are gone, replaced by what the degree actually is. Wyckoff is measured by
+   the engine at the top of this tab, from volume. */
+function anaWheel(price,dp){
   var root=Math.sqrt(price);
   var deg=((root%2)/2)*360;
   var ring=Math.floor(root/2)+1, step=Math.floor((root%2)/0.25);
-  var phase = deg<90?'Accumulation' : deg<135?'Markup' : deg<180?'Mid-cycle'
-            : deg<225?'Distribution': deg<270?'Markdown' : 'Late cycle';
+  var phase = deg<90?'0–90° quadrant' : deg<135?'90–135°' : deg<180?'135–180°'
+            : deg<225?'180–225°': deg<270?'225–270°' : '270–360° quadrant';
   var inZone = deg>=90&&deg<=225;
   var rows=HIST_ROWS||[];
   var pos=null,hi,lo;
@@ -9743,7 +9806,7 @@ function anaCycle(price,dp){
   var nextPrice=Math.pow((next/360)*2+Math.floor(root/2)*2,2);
   return '<div class="mc">'
    +'<div class="mc-l">'
-     +'<div class="ab-cap">Market cycle</div>'
+     +'<div class="ab-cap">Gann wheel position</div>'
      +'<div class="mc-phase" style="color:'+(inZone?'var(--green)':'var(--amber)')+'">'+phase+'</div>'
      +'<div class="mc-sub">Wheel '+deg.toFixed(1)+'° · ring '+ring+' / step '+step
        +' · '+(inZone?'inside the 90–225° entry zone':'outside the entry zone')+'</div>'
@@ -11113,6 +11176,184 @@ function cqeRun(rows,volRows,volName,price,opt){
           projections:PR, core:core, gates:g, hypotheses:H,
           volumeFrom:volName||null, required:[]};
 }
+
+/* ══ THE PANEL ════════════════════════════════════════════════════════
+   The engine had been computing all of this and drawing none of it, which
+   from the outside is indistinguishable from it not existing. Everything
+   below comes out of cqeRun and nothing is written here that was not
+   measured there — where a figure is missing it says what is missing
+   instead of printing a placeholder.
+
+   THE OLD ENGINE WOULD NOT ISSUE A TRADE. It gated on one confidence
+   number: 68 for an intraday, 80 for a swing, and below that it returned
+   "no setup" and showed nothing at all. On a split board — which is most
+   days — that number sits in the fifties and the screen stays empty for
+   weeks, which is exactly what happened.
+
+   Three conditional hypotheses replace that. They always exist, because a
+   scenario with its activation and its invalidation written down is useful
+   at any confidence: it tells you what would have to happen. The score is
+   still shown, and it still decides how much may be risked — that is the
+   risk gate's job, and it is a veto. It is no longer allowed to decide
+   whether you are told anything. */
+var CQE_LAST=null;
+function cqeFmt(v,dp){ return (v==null||!isFinite(v))?'—':(+v).toFixed(dp==null?2:dp); }
+function cqeBar(v){ var n=Math.max(0,Math.min(100,+v||0));
+  return '<div class="cq-bar"><i style="width:'+n+'%"></i></div>'; }
+
+function cqeEngineCell(name,score,sub){
+  if(score==null)
+    return '<div class="cq-e na"><u>'+name+'</u><b>DATA REQUIRED</b><s>'+escHtml(sub||'')+'</s></div>';
+  return '<div class="cq-e"><u>'+name+'</u><b>'+score+'</b><s>'+escHtml(sub||'')+'</s></div>';
+}
+function cqeHypHtml(h,dp){
+  if(h.kind==='Reversal'){
+    if(h.status!=='WATCH ONLY')
+      return '<div class="cq-h rev none"><div class="cq-ht"><u>3 · reversal</u>'
+        +'<b>NO VALID REVERSAL WINDOW DETECTED</b></div>'
+        +'<div class="cq-ev"><div>'+escHtml(h.why||'the conditions were not met')+'</div></div>'
+        +'<div class="cq-note">A reversal here has to be time-first: a cycle anniversary inside '
+        +'tolerance, a price cluster on the far side, and a structural trigger. Price merely '
+        +'reaching a level is not one of them.</div></div>';
+    return '<div class="cq-h rev"><div class="cq-ht"><u>3 · reversal</u>'
+      +'<b>'+escHtml(h.direction)+'</b><em>WATCH ONLY</em></div>'
+      +'<div class="cq-nums">'
+        +'<div class="cq-n"><u>window opens</u><b>'+escHtml(h.window.start)+'</b></div>'
+        +'<div class="cq-n"><u>window closes</u><b>'+escHtml(h.window.end)+'</b></div>'
+      +'</div>'
+      +'<div class="cq-ev"><div><b>Time</b></div>'
+        +h.timeEvidence.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
+        +'<div><b>Price</b></div>'
+        +h.priceEvidence.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
+      +'</div>'
+      +'<div class="cq-cond"><p><b>Trigger:</b> '+escHtml(h.structuralTrigger)+'</p>'
+        +'<p>'+escHtml(h.note)+'</p></div></div>';
+  }
+  var rr=(h.target!=null&&h.stop!=null&&h.entryZone)
+    ? Math.abs(h.target-h.entryZone.anchor)/Math.abs(h.entryZone.anchor-h.stop) : null;
+  var long=/Long/i.test(h.direction||'');
+  return '<div class="cq-h'+(h.rank===1?' pri':'')+'">'
+    +'<div class="cq-ht"><u>'+h.rank+' · '+h.kind.toLowerCase()+'</u>'
+      +'<b>'+escHtml(h.direction)+'</b>'
+      +'<em>'+(h.timeWindow?'window '+escHtml(h.timeWindow):'no cycle window')+'</em></div>'
+    +'<div class="cq-nums">'
+      +'<div class="cq-n"><u>entry</u><b>'+cqeFmt(h.entryZone.low,dp)+' – '+cqeFmt(h.entryZone.high,dp)+'</b></div>'
+      +'<div class="cq-n dn"><u>stop</u><b>'+cqeFmt(h.stop,dp)+'</b></div>'
+      +'<div class="cq-n up"><u>target</u><b>'+cqeFmt(h.target,dp)+'</b></div>'
+      +'<div class="cq-n"><u>R : R</u><b>'+(rr?rr.toFixed(2):'—')+'</b></div>'
+    +'</div>'
+    +'<div class="cq-ev">'
+      +h.supporting.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
+      +(h.contradicting||[]).map(function(x){return '<div class="con">'+escHtml(x)+'</div>';}).join('')
+    +'</div>'
+    +'<div class="cq-cond">'
+      +'<p><b>Becomes active when:</b> '+escHtml(h.activation)+'</p>'
+      +'<p><b>Wrong if:</b> '+escHtml(h.invalidation)+'</p>'
+    +'</div></div>';
+}
+function cqeHtml(R,asset,dp){
+  if(!R||R.required&&R.required.length)
+    return '<div class="cq"><div class="cq-req"><b>DATA REQUIRED</b>'
+      +escHtml((R&&R.required||['no data']).join('; '))+'</div></div>';
+  var W=R.wyckoff,E=R.elliott,G=R.gann,T=R.time,Q=R.quant,g=R.gates;
+  var h='<div class="cq">'
+   +'<div class="cq-hd"><b>'+escHtml(asset)+' · daily</b>'
+     +'<s>'+R.bars+' bars'+(R.volumeFrom?' · volume from '+escHtml(R.volumeFrom):'')
+     +(R.repaired.length?' · '+R.repaired.length+' bad tick repaired':'')
+     +(window._priceStale?' · price is the '+escHtml(window._priceStale)+', not a live quote':'')
+     +'</s>'
+     +'<span class="cq-core">core <i>'+(R.core.score==null?'—':R.core.score)+'</i>'
+       +' · '+R.core.coverage+'% of the five</span></div>';
+
+  if(R.core.withheld)h+='<div class="cq-req"><b>No core score</b>'+escHtml(R.core.withheld)+'</div>';
+
+  h+='<div class="cq-eng">'
+   +cqeEngineCell('Wyckoff',W.score,W.score==null?(W.required[0]||''):W.state)
+   +cqeEngineCell('Elliott',E.score,E.best?(E.best.type+' '+E.best.dir):(E.required[0]||E.notes[0]||''))
+   +cqeEngineCell('Gann price',G.score,G.nearest?(G.nearest.strength+' methods at '+cqeFmt(G.nearest.price,dp)):(G.required[0]||''))
+   +cqeEngineCell('Gann time',T.score,T.hits.length?(T.hits[0].name+', '+T.hits[0].error+'d out'):'no anniversary in tolerance')
+   +cqeEngineCell('Quant',Q.score,Q.z==null?'':('z '+cqeFmt(Q.z)+' · ATR '+Math.round(Q.atrPercentile)+'th pct'))
+   +'</div>';
+
+  h+='<div class="cq-gates">'
+   +'<div class="cq-g"><u>1 · which way</u><b>'+escHtml(g.which.direction)+'</b>'+cqeBar(g.which.score)
+     +'<s style="display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:5px">'
+     +g.which.score+' · '+g.which.votes.length+' methods'
+     +(g.which.agreement!=null&&g.which.agreement<0.5?' · they disagree':'')+'</s></div>'
+   +'<div class="cq-g"><u>2 · where</u><b>'+(g.where.nearest?cqeFmt(g.where.nearest.price,dp):'—')+'</b>'
+     +cqeBar(g.where.score)
+     +'<s style="display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:5px">'
+     +(g.where.nearest?g.where.nearest.strength+' independent methods':'no cluster')+'</s></div>'
+   +'<div class="cq-g"><u>3 · when</u><b>'+(T.hits.length?T.hits[0].name:'—')+'</b>'+cqeBar(g.when.score)
+     +'<s style="display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:5px">'
+     +T.hits.length+' anniversaries · '+T.windows.length+' windows ahead</s></div>'
+   +'</div>';
+
+  h+=R.hypotheses.map(function(x){return cqeHypHtml(x,dp);}).join('');
+
+  var up=R.projections.upSummary,dn=R.projections.downSummary;
+  h+='<div class="cq-note"><b>Projections.</b> Up: median '+cqeFmt(up&&up.median,dp)
+    +' from '+((up&&up.methods)||[]).length+' methods, '+((up&&up.agreement)||'—')+' agreement. '
+    +'Down: median '+cqeFmt(dn&&dn.median,dp)+', '+((dn&&dn.agreement)||'—')+' agreement. '
+    +'A low agreement means the methods do not concur and the median is not a target.</div>';
+  h+='<div class="cq-note">Every figure above is computed from the bars listed. '
+    +'A high score is measured confluence, not certainty, and the risk gate overrides all of it. '
+    +'Astrology and numerology are not in any of these numbers.</div>';
+  return h+'</div>';
+}
+/* run it and put it on the page */
+var CQE_FETCHING=false;
+function renderCQE(){
+  var slot=document.getElementById('cqe_slot'); if(!slot)return;
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
+  var rows=window.HIST_ROWS;
+  /* HISTORY WAS ONLY EVER LOADED AS A SIDE EFFECT OF A LIVE QUOTE.
+     loadHistory is called from inside runAI, runAI runs only once a price
+     arrives, and the price comes from a quote feed. So a quote outage did
+     not merely leave the price blank — it meant no daily bars were ever
+     fetched, and every engine that reads bars had nothing, for a reason
+     that had nothing to do with them. The bars are the important input
+     here; the quote is a convenience. This asks for them itself. */
+  if((!rows||rows.length<60)&&!CQE_FETCHING&&typeof loadHistory==='function'){
+    CQE_FETCHING=true;
+    slot.innerHTML='<div class="cq"><div class="cq-note">Loading daily history for '
+      +escHtml(asset)+'…</div></div>';
+    loadHistory(asset,function(){
+      CQE_FETCHING=false;
+      /* with bars in hand the board itself can now be drawn from the last
+         close, so redraw the whole tab rather than only this panel */
+      var hasPrice=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+      if(!hasPrice&&window.HIST_ROWS&&window.HIST_ROWS.length){
+        try{ renderAnalytics(); return; }catch(e){}
+      }
+      try{ renderCQE(); }catch(e){ console.error('CQE:',e); }
+    });
+    return;
+  }
+  if(!rows||rows.length<60){
+    slot.innerHTML='<div class="cq"><div class="cq-req"><b>DATA REQUIRED</b>'
+      +'At least 60 daily bars for the five engines. '+(rows?rows.length:0)
+      +' are loaded'+(CQE_FETCHING?' — still fetching':'')+'.</div></div>';
+    return;
+  }
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)
+            ||+rows[rows.length-1].close;
+  var dp=price<10?4:2;
+  slot.innerHTML='<div class="cq"><div class="cq-note">Running the five engines…</div></div>';
+  cqeLoadVolume(asset,function(vr,vn){
+    try{
+      var R=cqeRun(rows,vr,vr?vn:null,price);
+      CQE_LAST=R; window.CQE_LAST=R;
+      slot.innerHTML=cqeHtml(R,asset,dp);
+    }catch(e){
+      slot.innerHTML='<div class="cq"><div class="cq-req"><b>The engine failed</b>'
+        +escHtml(e.message)+'</div></div>';
+      console.error('CQE:',e);
+    }
+  });
+}
+window.renderCQE=renderCQE;
+
 window.cqeRun=cqeRun;
 
 /* ══ INDEX PROXIES ════════════════════════════════════════════════════
@@ -11338,14 +11579,43 @@ function renderAnalytics(){
   var asset=(document.getElementById('ai_asset_txt')||{}).value||'—';
   var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
 
+  /* A MISSING LIVE QUOTE IS NOT A MISSING PRICE.
+     This used to blank the entire tab the moment the quote feed did not
+     answer — one empty input and every engine, level and cycle went away,
+     replaced by "Pick an asset above" even with a year of daily bars sitting
+     in memory. That is why the board could look dead for days at a time: the
+     analysis was computable the whole while and was being thrown away over a
+     field the reader had no way to fill.
+
+     The last daily close is a real price. It is used, it is labelled as not
+     live wherever it appears, and the board draws. Only with no history AND
+     no quote is there genuinely nothing to say. */
+  var priceIsLive=!!price;
+  if(!price){
+    var hr=window.HIST_ROWS;
+    if(hr&&hr.length){
+      price=+hr[hr.length-1].close||0;
+      window._priceStale=price?('last daily close, '+(hr[hr.length-1].date||'')):null;
+    }
+  }else window._priceStale=null;
+
   if(!price){
     host.className='ab';
+    /* THE SLOT SURVIVES THE EMPTY STATE, WHICH IS THE POINT.
+       No price meant no board, no board meant no slot, no slot meant the
+       engines never ran — and they are what fetches the history that would
+       have supplied a price. The loop closed on itself and the tab stayed
+       empty indefinitely. The panel is mounted here too, so it can ask for
+       the bars, and once they land the board redraws with the last close. */
     host.innerHTML=anaBar(asset,0,2)
       +idxProxyHtml(asset)
       +'<div id="vb_slot"></div>'
+      +'<div id="cqe_slot"></div>'
       +'<div class="ab-empty"><div class="ab-e-ic">◎</div>'
-      +'<div><b>Pick an asset above</b><span>Or type any name and press Live — the read appears here</span></div></div>';
+      +'<div><b>Waiting on a price</b><span>The five engines below run on daily bars and do not need one. '
+      +'Type any asset name and press Live to price the rest of the board.</span></div></div>';
     vbMount();
+    try{ renderCQE(); }catch(e){ console.error('CQE panel:',e); }
     return;
   }
   var dir=S&&S.style?(S.isBull?'BUY':'SELL'):null;
@@ -11551,6 +11821,14 @@ function trendInvalidHtml(T,price,dp,asset){
     })()
    +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
 
+   /* ─── the five engines and the three hypotheses ─────────────────
+      First, because it is the answer. Everything under it is the older
+      single-number read, kept because it drives the journal, the budget and
+      the sizing chip, and because two readings that disagree is information
+      worth having rather than something to hide. */
+   +act(2,'The three hypotheses','Five measured engines, four gates, and the three scenarios they support.')
+   +'<div id="cqe_slot"></div>'
+
    /* ─── 2 · why ──────────────────────────────────────────────────── */
    +act(3,'The case','Why does it say that, and what is the evidence made of?')
    +'<div class="ab-reads">'+reads.map(function(r){
@@ -11567,7 +11845,13 @@ function trendInvalidHtml(T,price,dp,asset){
    /* ─── 3 · where ────────────────────────────────────────────────── */
    +act(4,'The map','Where are the prices that matter, and where is this one?')
    +anaLadder(pts,price,lo,hi,dp,S,dir)
-   +anaCycle(price,dp)
+   /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
+      / Markdown" — Wyckoff's own vocabulary — from sqrt(price) mod 2. That is
+      a property of the price's digits: 4654 gives one phase and 4655 another,
+      with no volume, no range and no structure anywhere in it. There is a
+      real Wyckoff engine now, at the top of this tab, so the labels are gone.
+      The wheel position it also drew is kept, without the phase words. */
+   +anaWheel(price,dp)
    +anaZones(price,dp)
    +anaRungs(price,dp)
    +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
@@ -11600,6 +11884,9 @@ function trendInvalidHtml(T,price,dp,asset){
   /* same reason: this host is recreated empty by the innerHTML above, and the
      index is cached, so refilling it costs nothing after the first call */
   try{renderFng();}catch(e){}
+  /* the five engines run after the board's own HTML has landed, because the
+     panel writes into a slot that only exists once it has */
+  try{ renderCQE(); }catch(e){ console.error('CQE panel:',e); }
   /* the dock lives on <body> so it survives this redraw, but its numbers came
      from the previous analysis and have to be refreshed */
   try{ if(RISK_OPEN)riskDockSync(); riskFabSync(); }catch(e){}
@@ -15537,6 +15824,16 @@ function goTab(name,btn){
     renderSentiment();
     /* the previous prints arrive asynchronously; repaint once they have */
     econLoadAll(function(){try{renderSentiment();}catch(e){}});
+  }
+  /* ANALYTICS HAD NO BUILDER HERE AND EVERY OTHER TAB DID.
+     It was drawn only as the last step of runAI, which runs only once a live
+     quote lands. So a quote outage did not just leave the price blank — the
+     tab was never rendered at all, and opening it showed whatever the last
+     successful run had left behind, or nothing. Every other panel on this
+     list populates itself on open; this one now does too, and it has a last
+     daily close to fall back on when the quote is missing. */
+  if(name==='analytics'){
+    try{ renderAnalytics(); }catch(e){ console.error('analytics:',e); }
   }
 
   if(name==='fundamentals'){
