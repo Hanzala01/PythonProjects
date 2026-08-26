@@ -1,0 +1,11 @@
+# celestial_bridge's database: password hashes and every trade you have taken.
+# It belongs on your machine, not in a repository.
+celestial.db
+celestial.db-wal
+celestial.db-shm
+celestial-backup-*.json
+
+__pycache__/
+*.pyc
+.venv/
+venv/

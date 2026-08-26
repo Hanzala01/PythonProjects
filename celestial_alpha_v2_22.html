@@ -1510,6 +1510,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cset-key{width:100%;margin-top:11px;padding:9px 13px;font-size:12px;border-radius:10px;
   border:1px solid var(--b1);background:rgba(6,3,20,.8);color:var(--t1)}
 .cset-key:focus{outline:none;border-color:var(--p2)}
+.cset-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.cset-btns .cset-b{flex:0 1 auto}
+.cset-b.ghost{background:transparent;color:var(--t2)}
+.cset-st{display:flex;align-items:center;gap:7px;margin-top:11px;font-size:10.5px;color:var(--t3)}
+.cset-st i{width:7px;height:7px;border-radius:50%;background:rgba(148,163,184,.4);flex:none}
+.cset-st.on i{background:var(--up);box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+.cset-st.err i{background:var(--warn);box-shadow:0 0 0 3px rgba(245,158,11,.15)}
+.cset-st.busy i{background:var(--p2);animation:jvDotPulse 1.2s var(--ease) infinite}
 .jvp{position:fixed;right:20px;bottom:88px;width:352px;max-height:min(78vh,620px);z-index:60;
   display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:1px solid var(--b2);
   background:#0A0620;box-shadow:0 20px 60px rgba(0,0,0,.6);
@@ -4595,7 +4603,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b22</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b23</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -8585,6 +8593,275 @@ function jvAnswerAloud(q){
   jvPill('Thinking…','hot',true);
   jvClaude(q);
 }
+/* ══ WHERE THE DATA LIVES ═════════════════════════════════════════════
+   Every trade, level and preference was in one browser's localStorage. That
+   is not storage, it is a cache with sentimental value: clear the browser
+   and a year of journal is gone, open the page on a phone and it is empty,
+   and there is no copy anywhere. celestial_bridge.py is the other half —
+   SQLite behind four endpoints — and this is the page's side of it.
+
+   IT DOES NOT REPLACE localStorage, IT SHADOWS IT.
+   Rewriting every read in a file this size to go through the network would
+   be a large change with a large blast radius, and would break the page the
+   moment the server was not running. So localStorage stays the thing the app
+   reads, always, and this layer only mirrors it: writes are noticed and
+   pushed, and on load the server's copy is pulled back in. Sign out, or turn
+   the server off, and everything still works exactly as it did before.
+
+   WHAT SYNCS AND WHAT DOES NOT.
+   The five things you would be upset to lose, plus the bot's configuration.
+   Not ca_jarvis — it holds the Claude and ElevenLabs keys, and pushing those
+   to a database and back out to every device turns one exposure into several.
+   Not the caches (last price, news, fear and greed): they are re-fetched in
+   seconds and syncing them would be traffic for nothing.
+   ══════════════════════════════════════════════════════════════════════ */
+var SYNC_CFG_KEY='ca_sync', SYNC_TS_KEY='ca_sync_ts', SYNC_SHADOW_KEY='ca_sync_shadow';
+var SYNC_KEYS=['ca_journal','ca_major_levels','ca_risk_prefs','ca_tim_alerts',
+               'ca_approvals','ca_bot_cfg'];
+var SYNC={busy:false,last:0,err:'',msg:'',dirty:{},t:null};
+var LS_SET=null;   /* the unpatched setItem, so a pull cannot look like an edit */
+
+function syncCfg(){
+  try{ var d=JSON.parse(localStorage.getItem(SYNC_CFG_KEY)||'{}');
+       return{url:d.url||'http://127.0.0.1:8770', token:d.token||'', email:d.email||''}; }
+  catch(e){ return{url:'http://127.0.0.1:8770',token:'',email:''}; }
+}
+function syncCfgSave(c){ try{ (LS_SET||localStorage.setItem).call(localStorage,SYNC_CFG_KEY,JSON.stringify(c)); }catch(e){} }
+function syncOn(){ var c=syncCfg(); return !!(c.url&&c.token); }
+function syncTs(){ try{ return JSON.parse(localStorage.getItem(SYNC_TS_KEY)||'{}')||{}; }catch(e){ return {}; } }
+function syncTsSet(m){ try{ (LS_SET||localStorage.setItem).call(localStorage,SYNC_TS_KEY,JSON.stringify(m)); }catch(e){} }
+
+/* every write to a synced key, wherever in the page it came from */
+function syncTouch(k){
+  var m=syncTs(); m[k]=Date.now()/1000; syncTsSet(m);
+  SYNC.dirty[k]=true;
+  if(!syncOn())return;
+  clearTimeout(SYNC.t);
+  SYNC.t=setTimeout(function(){ syncPush(); },1500);   /* typing is not one write per keystroke */
+}
+/* ONE HOOK INSTEAD OF A HUNDRED EDITS.
+   jrnlSave, mtlSet, riskPrefs, botSave and the rest all end at
+   localStorage.setItem. Catching it there means none of them had to change,
+   and anything added later is synced without remembering to wire it up. */
+(function(){
+  try{
+    var S=Storage.prototype, orig=S.setItem;
+    LS_SET=orig;
+    S.setItem=function(k,v){
+      orig.apply(this,arguments);
+      try{ if(this===window.localStorage&&SYNC_KEYS.indexOf(k)>=0)syncTouch(k); }catch(e){}
+    };
+  }catch(e){}
+})();
+
+function syncFetch(path,opt,cb){
+  var c=syncCfg();
+  opt=opt||{}; opt.headers=opt.headers||{};
+  opt.headers['Content-Type']='application/json';
+  if(c.token)opt.headers['Authorization']='Bearer '+c.token;
+  var done=false, t=setTimeout(function(){ if(!done){done=true;cb('the server did not answer',null);} },9000);
+  fetch(String(c.url).replace(/\/+$/,'')+path,opt).then(function(r){
+    return r.text().then(function(b){
+      var j={}; try{ j=JSON.parse(b||'{}'); }catch(e){}
+      if(!r.ok)throw new Error(j.detail||('HTTP '+r.status));
+      return j;
+    });
+  }).then(function(j){ if(done)return; done=true; clearTimeout(t); cb(null,j); })
+    .catch(function(e){ if(done)return; done=true; clearTimeout(t);
+      /* "Failed to fetch" is what the browser says for a server that is not
+         running, a wrong port and a CORS refusal alike — all of which look
+         the same from here, so say the useful thing rather than repeating it */
+      cb(/failed to fetch|networkerror/i.test(e.message)
+         ? 'could not reach '+c.url+' — is celestial_bridge.py running?'
+         : e.message, null); });
+}
+function syncPush(cb){
+  if(!syncOn()){ if(cb)cb(); return; }
+  var ks=Object.keys(SYNC.dirty); if(!ks.length){ if(cb)cb(); return; }
+  var m=syncTs(), items=[];
+  ks.forEach(function(k){
+    var v=localStorage.getItem(k);
+    items.push({k:k, v:(v===null?null:v), updated_at:m[k]||Date.now()/1000});
+  });
+  SYNC.busy=true; syncPaint();
+  syncFetch('/data',{method:'PUT',body:JSON.stringify(items)},function(err,j){
+    SYNC.busy=false;
+    if(err){ SYNC.err=err; syncPaint(); if(cb)cb(err); return; }
+    SYNC.err=''; SYNC.last=Date.now();
+    /* the server may have kept its own copy of a key because it was newer;
+       take that back rather than carrying on believing this device won */
+    var m2=syncTs(), pulled=0;
+    Object.keys(j.items||{}).forEach(function(k){
+      var r=j.items[k];
+      if(r&&r.kept==='server'&&typeof r.v==='string'){
+        LS_SET.call(localStorage,k,r.v); m2[k]=r.updated_at; pulled++;
+      }
+      delete SYNC.dirty[k];
+    });
+    syncTsSet(m2);
+    if(pulled)syncApply();
+    syncPaint(); if(cb)cb(null);
+  });
+}
+function syncPull(cb){
+  if(!syncOn()){ if(cb)cb('not signed in'); return; }
+  SYNC.busy=true; syncPaint();
+  syncFetch('/data',{method:'GET'},function(err,j){
+    SYNC.busy=false;
+    if(err){ SYNC.err=err; syncPaint(); if(cb)cb(err); return; }
+    SYNC.err=''; SYNC.last=Date.now();
+    var srv=(j&&j.items)||{}, m=syncTs(), changed=0;
+    SYNC_KEYS.forEach(function(k){
+      var s=srv[k], lt=m[k]||0, mine=localStorage.getItem(k);
+      if(s&&s.updated_at>lt){ LS_SET.call(localStorage,k,s.v); m[k]=s.updated_at; changed++; }
+      else if(mine!==null&&(!s||lt>s.updated_at)){ SYNC.dirty[k]=true; }
+    });
+    syncTsSet(m);
+    if(changed)syncApply();
+    syncPush(function(){ syncPaint(); if(cb)cb(null,changed); });
+  });
+}
+function syncNow(){ SYNC.msg=''; syncPull(function(err,n){
+  SYNC.msg=err?'':(n?n+' '+(n===1?'thing':'things')+' came down':'already up to date');
+  syncPaint(); }); }
+
+/* THE DATA CHANGED UNDER THE PAGE, SO THE PAGE HAS TO BE TOLD.
+   A pull rewrites localStorage, but JRNL and the approval list are already
+   in memory from load — without this the new journal sits in storage while
+   the screen keeps showing the old one until a reload. */
+function syncApply(){
+  try{ JRNL=jrnlLoad(); }catch(e){}
+  try{ apprLoad(); }catch(e){}
+  try{ if(typeof renderApprovals==='function')renderApprovals(); }catch(e){}
+  try{ if(typeof dashStats==='function')dashStats(); }catch(e){}
+  try{ if(typeof dashCalendar==='function')dashCalendar(); }catch(e){}
+  try{ if(typeof renderJournal==='function')renderJournal(); }catch(e){}
+  try{ if(typeof updatePortStats==='function')updatePortStats(); }catch(e){}
+  try{ if(typeof botLoad==='function')botLoad(); }catch(e){}
+  try{ if(typeof riskRefresh==='function')riskRefresh(); }catch(e){}
+}
+
+/* ── signing in ── */
+function syncAuth(mode){
+  var url=(document.getElementById('sy_url')||{}).value||'';
+  var em=((document.getElementById('sy_em')||{}).value||'').trim();
+  var pw=(document.getElementById('sy_pw')||{}).value||'';
+  if(!em||!pw){ SYNC.err='email and password, both'; syncPaint(); return; }
+  var c=syncCfg(); c.url=url.trim()||c.url; c.token=''; syncCfgSave(c);
+  SYNC.busy=true; SYNC.err=''; SYNC.msg=''; syncPaint();
+  syncFetch(mode==='new'?'/auth/signup':'/auth/login',
+    {method:'POST',body:JSON.stringify({email:em,password:pw})},function(err,j){
+    SYNC.busy=false;
+    if(err){ SYNC.err=err; syncPaint(); return; }
+    /* KEEP A COPY OF WHAT WAS HERE FIRST.
+       The first pull on a device can overwrite local data with the server's,
+       and if this machine held the only good journal that would be the worst
+       possible moment to find out. Nothing is lost silently — the copy from
+       just before sign-in stays restorable from this panel. */
+    try{
+      var shadow={at:Date.now(),items:{}};
+      SYNC_KEYS.forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)shadow.items[k]=v; });
+      if(Object.keys(shadow.items).length)
+        LS_SET.call(localStorage,SYNC_SHADOW_KEY,JSON.stringify(shadow));
+    }catch(e){}
+    c.token=j.token; c.email=j.email; syncCfgSave(c);
+    SYNC.msg=mode==='new'?'account created':'signed in';
+    syncPull(function(){ syncPaint(); try{renderCelestialSettings();}catch(e){} });
+    try{ renderCelestialSettings(); }catch(e){}
+  });
+}
+function syncSignOut(){
+  syncFetch('/auth/logout',{method:'POST'},function(){});
+  var c=syncCfg(); c.token=''; syncCfgSave(c);
+  SYNC.msg='signed out — the data on this device is untouched'; SYNC.err='';
+  try{ renderCelestialSettings(); }catch(e){}
+}
+function syncShadow(){ try{ return JSON.parse(localStorage.getItem(SYNC_SHADOW_KEY)||'null'); }catch(e){ return null; } }
+function syncRestore(){
+  var s=syncShadow(); if(!s||!s.items)return;
+  var m=syncTs(), now=Date.now()/1000;
+  Object.keys(s.items).forEach(function(k){ LS_SET.call(localStorage,k,s.items[k]);
+    m[k]=now; SYNC.dirty[k]=true; });
+  syncTsSet(m); syncApply();
+  SYNC.msg='restored the copy from before sign-in'; syncPush();
+  try{ renderCelestialSettings(); }catch(e){}
+}
+
+/* ── a file on your disk, which needs no server at all ── */
+function syncExport(){
+  var out={celestial_export:1,at:Date.now(),items:{}};
+  SYNC_KEYS.forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)out.items[k]=v; });
+  try{
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,1)],{type:'application/json'}));
+    a.download='celestial-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); },4000);
+    SYNC.msg='backup saved'; syncPaint();
+  }catch(e){ SYNC.err='could not save the file: '+e.message; syncPaint(); }
+}
+function syncImport(input){
+  var f=input.files&&input.files[0]; if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var j=JSON.parse(r.result);
+      var items=j.items||{};
+      var n=0, m=syncTs(), now=Date.now()/1000;
+      Object.keys(items).forEach(function(k){
+        if(SYNC_KEYS.indexOf(k)<0)return;
+        var v=items[k]; if(v&&typeof v==='object'&&typeof v.v==='string')v=v.v;  /* server export shape */
+        if(typeof v!=='string')return;
+        LS_SET.call(localStorage,k,v); m[k]=now; SYNC.dirty[k]=true; n++;
+      });
+      syncTsSet(m); syncApply();
+      SYNC.err=''; SYNC.msg=n?('loaded '+n+' '+(n===1?'thing':'things')+' from the file'):'nothing in that file to load';
+      if(n&&syncOn())syncPush();
+      try{ renderCelestialSettings(); }catch(e){}
+    }catch(e){ SYNC.err='that file did not read as a backup'; try{renderCelestialSettings();}catch(x){} }
+  };
+  r.readAsText(f);
+  input.value='';
+}
+/* a file input cannot be styled, so it hides inside a label that can */
+function syncLoadBtn(){
+  return '<label class="cset-b ghost" style="cursor:pointer">Load a backup'
+    +'<input type="file" accept="application/json" style="display:none" onchange="syncImport(this)">'
+    +'</label>';
+}
+function syncWords(){
+  if(SYNC.busy)return{cls:'busy',t:'talking to the server…'};
+  if(SYNC.err)return{cls:'err',t:SYNC.err};
+  /* a backup saved or loaded while signed out still deserves a reply — the
+     first version dropped the message here and the button looked inert */
+  if(!syncOn())return{cls:'',t:'not signed in — this device only'+(SYNC.msg?' · '+SYNC.msg:'')};
+  var c=syncCfg();
+  return{cls:'on',t:c.email+(SYNC.last?' · synced '+new Date(SYNC.last).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'')
+                 +(SYNC.msg?' · '+SYNC.msg:'')};
+}
+function syncPaint(){
+  var el=document.getElementById('sy_st'); if(!el)return;
+  var w=syncWords(); el.className='cset-st '+w.cls; el.innerHTML='<i></i><span>'+escHtml(w.t)+'</span>';
+}
+function syncBoot(){
+  if(!syncOn())return;
+  syncPull(function(){});
+  /* a tab left open all day should not drift away from the other device */
+  setInterval(function(){ if(syncOn()&&!document.hidden)syncPull(function(){}); },5*60*1000);
+  /* and a tab being closed should not take an unpushed edit with it */
+  window.addEventListener('beforeunload',function(){
+    if(!syncOn()||!Object.keys(SYNC.dirty).length)return;
+    try{
+      var c=syncCfg(), m=syncTs(), items=[];
+      Object.keys(SYNC.dirty).forEach(function(k){
+        items.push({k:k,v:localStorage.getItem(k),updated_at:m[k]||Date.now()/1000}); });
+      /* fetch with keepalive survives the page going away; a normal one does not */
+      fetch(String(c.url).replace(/\/+$/,'')+'/data',{method:'PUT',keepalive:true,
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+c.token},
+        body:JSON.stringify(items)});
+    }catch(e){}
+  });
+}
+
 /* IT SHIPPED OFF AND SAID SO NOWHERE.
    Deliberately off is the right default for a microphone, but the page then
    looked exactly like a page with no voice in it — say the name, nothing
@@ -8686,6 +8963,44 @@ function renderCelestialSettings(){
      +'</div>'
    +'</div>'
 
+   +'<div class="cset-s"><i>Where your data lives</i>'
+     +(syncOn()
+        ? '<div class="cset-row">'
+            +'<div><b>Signed in</b><s>The journal, your major levels, risk settings, timing alerts, '
+              +'approvals and the bot configuration are kept on the server and pulled back on every '
+              +'device you sign in on.</s></div>'
+            +'<button class="cset-b" onclick="syncNow()">Sync now</button>'
+          +'</div>'
+          +'<div class="cset-btns">'
+            +'<button class="cset-b ghost" onclick="syncSignOut()">Sign out</button>'
+            +'<button class="cset-b ghost" onclick="syncExport()">Save a backup</button>'
+            +syncLoadBtn()
+            +(syncShadow()?'<button class="cset-b ghost" onclick="syncRestore()">Restore pre-sign-in copy</button>':'')
+          +'</div>'
+        : '<div class="cset-row">'
+            +'<div><b>This browser only</b><s>Everything is in this browser&rsquo;s storage and nowhere '
+              +'else. Clear the browser and it is gone; open the page on another device and it is empty. '
+              +'Run <code>python3 celestial_bridge.py</code> and sign in to keep it properly.</s></div>'
+          +'</div>'
+          +'<input class="cset-key" id="sy_url" type="text" placeholder="http://127.0.0.1:8770" '
+            +'value="'+escHtml(syncCfg().url)+'">'
+          +'<input class="cset-key" id="sy_em" type="email" placeholder="email" autocomplete="username">'
+          +'<input class="cset-key" id="sy_pw" type="password" placeholder="password" '
+            +'autocomplete="current-password" onkeydown="if(event.key===\'Enter\')syncAuth(\'in\')">'
+          +'<div class="cset-btns">'
+            +'<button class="cset-b" onclick="syncAuth(\'in\')">Sign in</button>'
+            +'<button class="cset-b ghost" onclick="syncAuth(\'new\')">Create account</button>'
+            +'<button class="cset-b ghost" onclick="syncExport()">Save a backup</button>'
+            +syncLoadBtn()
+          +'</div>')
+     +'<div class="cset-st" id="sy_st"><i></i><span></span></div>'
+     +'<s class="cset-p">Your API keys are never sent to the server — they stay in the browser you '
+     +'typed them into. Nor are the price, news and fear-and-greed caches, which come back in seconds '
+     +'anyway. If the server is off the page carries on exactly as before, on this device.</s>'
+     +'<s class="cset-p warn">Over plain http the password is readable in transit, so keep the bridge '
+     +'on your own machine or put TLS in front of it before it goes anywhere else.</s>'
+   +'</div>'
+
    +'<div class="cset-s"><i>Questions beyond the board</i>'
      +'<s class="cset-p">Everything about this board — the call, the trend, the levels, the windows, '
      +'the risk, the scan — is answered inside the page with no key and no network. A Claude key is '
@@ -8699,6 +9014,7 @@ function renderCelestialSettings(){
      +'<s class="cset-p">Model: '+JV_MODEL+'.</s>'
    +'</div>'
   +'</div>';
+  syncPaint();
 }
 function jvRender(){
   var el=document.getElementById('jv_panel');
@@ -13259,6 +13575,8 @@ try {
     try{ jvRender(); }catch(e){}
     /* a wake word that was switched on should still be on after a reload */
     try{ jvDot(); if(jvPrefs().wake)jvWakeStart(); else jvFirstRun(); }catch(e){}
+    /* if this browser is signed in, the server's copy is the one that counts */
+    try{ syncBoot(); }catch(e){ console.error('sync:',e); }
     try{ renderFng(); }catch(e){}
     fetchLivePrice(function(ok){
       if(ok){ runAI(); return; }
