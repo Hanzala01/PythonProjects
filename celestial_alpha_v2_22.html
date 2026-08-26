@@ -852,7 +852,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border-radius:22px;padding:20px 14px;backdrop-filter:blur(20px);box-shadow:0 18px 50px rgba(0,0,0,.55);flex:1;
   display:flex;flex-direction:column;overflow-y:auto}
 .side-brand{display:flex;align-items:center;gap:11px;padding:2px 8px 18px;border-bottom:1px solid var(--bd);margin-bottom:14px}
-.sb-orb{width:40px;height:40px;flex-shrink:0;filter:drop-shadow(0 0 9px rgba(138,91,224,.5))}
+.sb-orb{width:38px;height:38px;flex-shrink:0}
 /* both words were the same size, the same weight and tracked out to .22em, so
    the stack read as one word broken across two lines by accident. The name is
    Celestial Alpha; ALPHA is the half that matters, so it carries the weight. */
@@ -4536,61 +4536,29 @@ body{background:var(--bg0)}
 <aside class="side">
   <nav class="side-nav rise">
     <div class="side-brand">
-      <!-- THE MARK — a ringed body, lit.
-           The flat line versions were correct and dull; strokes of one colour on
-           a dark ground have nothing to catch the eye. The lit ring that
-           replaced them shone but read as a camera lens — concentric circles
-           always do. Tilting the ring fixes both: a band at an angle around a
-           sphere is a ringed planet at any size, and nothing else.
+      <!-- THE MARK — one hour of the dial.
+           This took four goes and two wrong directions, so the reasoning is
+           worth leaving here. Flat line drawings of a ring were correct and
+           lifeless. Adding gradients, a specular highlight and a bloom to a
+           ringed planet made it shine and made it look machine-made — glossy
+           orbs with soft glows are the house style of generated art, which is
+           exactly why it read as fake. Going flat again produced a crescent
+           with a dot beside it, which is clean and is also on a dozen national
+           flags and a thousand logos; correct, and nobody's.
 
-           It is built the way a lit object is. The band is graded so it is
-           bright where the light falls and deep where it turns away, and it
-           passes BEHIND the body at the top and in FRONT of it at the bottom,
-           which is the whole reason the shape reads as three-dimensional. The
-           sphere carries its own highlight and a shadow along the lower right,
-           and a soft bloom sits under all of it.
+           A mark should be flat, precise, readable in one colour — and about
+           the thing it sits on. What this app is about is which hour to trade:
+           a dial, and the one slice of it that matters. So that is the mark. A
+           ring for the day and a single filled sector for the window, cut at
+           the top where the day begins.
 
-           Ellipses, circles and gradients, drawn here from nothing. Geometry and
-           shading belong to nobody, and none of this is traced from an existing
-           logo. -->
-      <svg class="sb-orb" viewBox="0 0 44 44" role="img" aria-label="Celestial Alpha">
-        <defs>
-          <linearGradient id="lgBand" x1="0" y1="0" x2="1" y2="0.6">
-            <stop offset="0" stop-color="#5B37A8"/>
-            <stop offset="0.34" stop-color="#B79BF0"/>
-            <stop offset="0.55" stop-color="#F6F1FF"/>
-            <stop offset="0.78" stop-color="#8A5BE0"/>
-            <stop offset="1" stop-color="#4A2A8E"/>
-          </linearGradient>
-          <radialGradient id="lgBody" cx="0.33" cy="0.27" r="0.92">
-            <stop offset="0" stop-color="#FFFFFF"/>
-            <stop offset="0.26" stop-color="#E4D6FF"/>
-            <stop offset="0.62" stop-color="#9C6BEC"/>
-            <stop offset="0.88" stop-color="#4A268F"/>
-            <stop offset="1" stop-color="#2A1257"/>
-          </radialGradient>
-          <radialGradient id="lgBloom" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0.38" stop-color="#9C6BEC" stop-opacity="0.4"/>
-            <stop offset="1" stop-color="#9C6BEC" stop-opacity="0"/>
-          </radialGradient>
-          <filter id="lgSoft" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="0.75"/>
-          </filter>
-        </defs>
-        <circle cx="22" cy="22" r="21.5" fill="url(#lgBloom)"/>
-        <g transform="rotate(-24 22 22)">
-          <!-- the band, complete: the half that runs behind the body -->
-          <ellipse cx="22" cy="22" rx="17.2" ry="6.1" fill="none"
-                   stroke="url(#lgBand)" stroke-width="3"/>
-        </g>
-        <circle cx="22" cy="22" r="9.9" fill="url(#lgBody)"/>
-        <g transform="rotate(-24 22 22)">
-          <!-- and the half that runs in front of it -->
-          <path d="M4.8 22A17.2 6.1 0 0 0 39.2 22" fill="none"
-                stroke="url(#lgBand)" stroke-width="3" stroke-linecap="round"/>
-        </g>
-        <ellipse cx="18.6" cy="18.4" rx="2.8" ry="1.9" fill="#FFFFFF" opacity="0.8"
-                 transform="rotate(-34 18.6 18.4)" filter="url(#lgSoft)"/>
+           A circle and a wedge of a circle. Nobody owns those, and none of this
+           is traced from an existing logo. -->
+      <svg class="sb-orb" viewBox="0 0 40 40" role="img" aria-label="Celestial Alpha">
+        <path d="M33.74 17.33A14 14 0 1 1 19.76 6.00" fill="none" stroke="#4A2C8F"
+              stroke-width="5.2" stroke-linecap="butt"/>
+        <path d="M21.46 6.08A14 14 0 0 1 33.31 15.67" fill="none" stroke="#C9B4F2"
+              stroke-width="5.2" stroke-linecap="butt"/>
       </svg>
       <div class="t">CELESTIAL<span>ALPHA</span></div>
     </div>
@@ -4612,7 +4580,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b20</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b21</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
