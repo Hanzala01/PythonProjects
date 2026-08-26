@@ -1717,6 +1717,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scn-n i{display:block;font-style:normal;font-family:'Inter',sans-serif;font-size:8px;
   font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 .scn-f{grid-column:1/-1;font-size:9px;color:var(--t3);padding-top:6px;border-top:1px solid var(--b1)}
+/* the card now carries four numbers, a score bar and its tags */
+.scn-c{grid-template-columns:1fr 1fr!important}
+.scn-sc{grid-column:1/-1;height:3px;border-radius:99px;background:rgba(148,163,184,.16);overflow:hidden}
+.scn-sc i{display:block;height:100%;border-radius:99px;background:var(--p2)}
+.scn-c.buy .scn-sc i{background:var(--up)} .scn-c.sell .scn-sc i{background:var(--dn)}
+.scn-tags{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px}
+.scn-tags em{font-style:normal;font-size:8.5px;letter-spacing:.04em;padding:2px 7px;border-radius:99px;
+  border:1px solid var(--b1);color:var(--t2);background:rgba(9,5,26,.5)}
+.scn-tags em.na{color:var(--t3)}
+.scn-tags em.warn{color:var(--warn);border-color:rgba(245,158,11,.35)}
+.scn-tags em.rev{color:var(--p3);border-color:rgba(127,96,191,.5)}
+.scn-note{font-size:9.5px;color:var(--t3);line-height:1.7;margin-top:11px}
 .scn-none{font-size:11px;color:var(--t2);line-height:1.65;padding:13px 15px;border-radius:12px;
   border:1px solid var(--b1);background:rgba(11,6,40,.5)}
 .scn-near{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px}
@@ -4653,7 +4665,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b25</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b26</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7895,10 +7907,42 @@ function scanOne(name,cb){
       var lv=findAlignedLevels(px,vib,eph,[0,0,0,0]);
       var tr=calcMajorTrend(rows,px);
       var sig=buildSignal(px,vib,astro,lv,100,eph,tr);
+      /* THE SCAN ASKED THE SAME QUESTION THAT WAS ALREADY ANSWERING "NO".
+         It ran buildSignal, which returns a style only above 68%, so the
+         panel spent most days saying "nothing clears the bar on any of them"
+         — the board's silence repeated twelve times over. The five engines
+         run here too, so the answer becomes which instrument has the
+         strongest measured case and what the setup on it would be.
+
+         VOLUME IS TAKEN ONLY IF IT IS ALREADY IN HAND. Fetching a proxy per
+         instrument would double the calls against a five-a-minute budget and
+         make the pass fail on rate limits instead of finishing. Whatever the
+         analytics tab has already cached is used; the rest run at 80% of the
+         core with Wyckoff reported as DATA REQUIRED, which the card says. */
+      var C=null;
+      try{
+        var vp=cqeVolProxy(name), cache=vp&&CQE_VOL_CACHE[vp];
+        var fresh=cache&&Date.now()-cache.at<30*60*1000;
+        C=cqeRun(rows,fresh?cache.rows:null,fresh?vp:null,px);
+      }catch(e){ C=null; }
+      var H=C&&C.hypotheses&&C.hypotheses[0];
+      var rev=C&&C.hypotheses&&C.hypotheses[2];
       cb({a:name,px:px,conf:sig?sig.conf:0,style:sig?sig.style:null,
           bull:sig?sig.isBull:null,entry:sig?sig.entry:null,sl:sig?sig.sl:null,
           tp:sig?sig.tp:null,rr:sig?sig.rr:null,trend:tr?tr.label:'—',
-          dp:px<10?4:2});
+          dp:px<10?4:2,
+          core:C&&C.core?C.core.score:null,
+          coverage:C&&C.core?C.core.coverage:null,
+          gate:C&&C.gates?C.gates.which.direction:null,
+          gateScore:C&&C.gates?C.gates.which.score:null,
+          split:!!(C&&C.gates&&C.gates.which.agreement!=null&&C.gates.which.agreement<0.5),
+          hyp:H&&H.kind?{dir:H.direction,lo:H.entryZone.low,hi:H.entryZone.high,
+                          anchor:H.entryZone.anchor,stop:H.stop,tgt:H.target,
+                          act:H.activation,inv:H.invalidation,
+                          con:(H.contradicting||[]).length}:null,
+          wyck:C&&C.wyckoff?C.wyckoff.state:null,
+          revWatch:!!(rev&&rev.status==='WATCH ONLY'),
+          revWin:rev&&rev.window?rev.window:null});
     }catch(e){ cb({a:name,err:e.message}); }
   });
 }
@@ -7926,44 +7970,68 @@ function scanRun(){
 function scanRender(){
   var host=document.getElementById('scan_body');
   if(!host)return;
-  var live=SCAN.filter(function(x){return x.style;})
-               .sort(function(a,b){return b.conf-a.conf;});
-  var near=SCAN.filter(function(x){return !x.style&&!x.err;})
-               .sort(function(a,b){return b.conf-a.conf;}).slice(0,4);
+  /* RANKED BY THE MEASURED CASE, NOT BY WHETHER IT CLEARED A BAR.
+     Every instrument that returned bars has a Primary hypothesis, so every
+     one of them has something to show: which way, from where, to where, and
+     what would prove it wrong. The core score orders them. A bar is still
+     drawn on each card so a 70 does not read like a 40. */
+  var ok=SCAN.filter(function(x){return !x.err&&x.hyp;})
+             .sort(function(a,b){return (b.core||0)-(a.core||0);});
+  var thin=SCAN.filter(function(x){return !x.err&&!x.hyp;});
   var bad=SCAN.filter(function(x){return x.err;});
+  var watch=ok.filter(function(x){return x.revWatch;});
 
   host.innerHTML=
     '<div class="scn-h">'
-      +'<b>'+(SCAN_BUSY?'Scanning…':(SCAN.length?live.length+' setup'+(live.length===1?'':'s')+' across '
-          +SCAN.length+' instruments':'Nothing scanned yet'))+'</b>'
-      +'<span>'+escHtml(SCAN_BUSY?SCAN_AT:(SCAN.length?'as of '+SCAN_AT:'same thresholds as the board — more places to look'))+'</span>'
+      +'<b>'+(SCAN_BUSY?'Scanning…':(SCAN.length
+          ? ok.length+' of '+SCAN.length+' instrument'+(SCAN.length===1?'':'s')+' read'
+          :'Nothing scanned yet'))+'</b>'
+      +'<span>'+escHtml(SCAN_BUSY?SCAN_AT:(SCAN.length
+          ?'as of '+SCAN_AT+(watch.length?' · '+watch.length+' with a reversal window open':'')
+          :'five engines on every instrument — ranked by the measured case'))+'</span>'
       +'<button class="btn btn-a btn-sm" '+(SCAN_BUSY?'disabled':'')+' onclick="scanRun()">'
         +(SCAN.length?'Scan again':'Scan every instrument')+'</button>'
     +'</div>'
-    +(live.length
-      ? '<div class="scn-grid">'+live.map(function(x){
-          return '<div class="scn-c '+(x.bull?'buy':'sell')+'" onclick="scanPick(\''+escHtml(x.a)+'\')">'
-            +'<div class="scn-t"><b>'+(x.bull?'BUY':'SELL')+'</b><span>'+escHtml(x.a)+'</span>'
-              +'<u>'+escHtml(x.style)+'</u></div>'
-            +'<div class="scn-n"><i>Entry</i>'+(x.entry!=null?x.entry.toFixed(x.dp):'—')+'</div>'
-            +'<div class="scn-n"><i>Stop</i>'+(x.sl!=null?x.sl.toFixed(x.dp):'—')+'</div>'
-            +'<div class="scn-n"><i>Target</i>'+(x.tp!=null?x.tp.toFixed(x.dp):'—')+'</div>'
-            +'<div class="scn-f">'+x.conf+'% confidence · trend '+escHtml(x.trend)+'</div>'
+    +(ok.length
+      ? '<div class="scn-grid">'+ok.map(function(x){
+          var long=/Long/i.test(x.hyp.dir||'');
+          var rr=(x.hyp.tgt!=null&&x.hyp.stop!=null)
+            ? Math.abs(x.hyp.tgt-x.hyp.anchor)/Math.abs(x.hyp.anchor-x.hyp.stop) : null;
+          return '<div class="scn-c '+(long?'buy':'sell')+'" onclick="scanPick(\''+escHtml(x.a)+'\')">'
+            +'<div class="scn-t"><b>'+(long?'LONG':'SHORT')+'</b><span>'+escHtml(x.a)+'</span>'
+              +'<u>core '+(x.core==null?'—':x.core)+'</u></div>'
+            +'<div class="scn-sc"><i style="width:'+Math.max(0,Math.min(100,+x.core||0))+'%"></i></div>'
+            +'<div class="scn-n"><i>Entry</i>'+(x.hyp.lo!=null?x.hyp.lo.toFixed(x.dp)+'–'+x.hyp.hi.toFixed(x.dp):'—')+'</div>'
+            +'<div class="scn-n"><i>Stop</i>'+(x.hyp.stop!=null?x.hyp.stop.toFixed(x.dp):'—')+'</div>'
+            +'<div class="scn-n"><i>Target</i>'+(x.hyp.tgt!=null?x.hyp.tgt.toFixed(x.dp):'—')+'</div>'
+            +'<div class="scn-n"><i>R : R</i>'+(rr?rr.toFixed(2):'—')+'</div>'
+            +'<div class="scn-tags">'
+              +(x.wyck&&x.wyck!=='DATA REQUIRED'?'<em>'+escHtml(x.wyck)+'</em>':'<em class="na">no volume</em>')
+              +(x.split?'<em class="warn">methods disagree</em>':'')
+              +(x.hyp.con?'<em class="warn">'+x.hyp.con+' against</em>':'')
+              +(x.revWatch?'<em class="rev">reversal window</em>':'')
+              +(x.coverage!=null&&x.coverage<100?'<em class="na">'+x.coverage+'% of the core</em>':'')
+            +'</div>'
+            +'<div class="scn-f">'+escHtml(x.hyp.act||'')+'</div>'
           +'</div>';
         }).join('')+'</div>'
       : (SCAN.length&&!SCAN_BUSY
-          ? '<div class="scn-none">Nothing clears the bar on any of them today. That is a real answer '
-            +'— the thresholds fire on about one reading in eight, so quiet days are the normal case '
-            +'and sitting out is what the engine is telling you to do.</div>'
+          ? '<div class="scn-none">No instrument returned enough daily history to run the engines. '
+            +'The free tiers cap how many can be pulled in a minute — try again shortly.</div>'
           : ''))
-    +(near.length
-      ? '<div class="scn-near"><i>Closest to clearing</i>'+near.map(function(x){
-          return '<span>'+escHtml(x.a)+' <b>'+x.conf+'%</b></span>';
+    +(thin.length
+      ? '<div class="scn-near"><i>Too little history to read</i>'+thin.map(function(x){
+          return '<span>'+escHtml(x.a)+'</span>';
         }).join('')+'</div>'
       : '')
     +(bad.length
       ? '<div class="scn-bad">No data for '+bad.map(function(x){return escHtml(x.a);}).join(', ')
         +' — the free tiers cap how many instruments can be pulled in a minute, so try again shortly.</div>'
+      : '')
+    +(ok.length&&!SCAN_BUSY
+      ? '<div class="scn-note">Every card is the primary hypothesis for that instrument, not an '
+        +'instruction. The line at the bottom is what would have to happen for it to become active. '
+        +'How much to risk is the risk gate’s decision and it can only say no.</div>'
       : '');
 }
 function scanPick(name){
