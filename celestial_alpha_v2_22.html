@@ -1458,6 +1458,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jvpill.hot{border-color:var(--p2);color:var(--t1)}
 .jvpill.said{border-color:rgba(127,96,191,.55);color:var(--t1)}
 .jvpill.warn{border-color:rgba(245,158,11,.5);color:var(--warn)}
+/* THE ONE PIECE OF PROOF THAT IT IS RUNNING.
+   A switch that reads On told you nothing about whether the microphone
+   actually opened — and when it silently did not, the page looked identical
+   to when it was working. This dot is lit only while the browser has really
+   started listening, so "is it on?" is answerable at a glance. */
+.jvdot{position:fixed;right:26px;bottom:26px;width:9px;height:9px;border-radius:50%;
+  z-index:61;cursor:pointer;background:rgba(148,163,184,.30);
+  border:1px solid rgba(148,163,184,.30);
+  opacity:0;pointer-events:none;transition:.3s var(--ease)}
+.jvdot.on{opacity:1;pointer-events:auto;background:var(--p2);
+  border-color:rgba(167,139,250,.55);box-shadow:0 0 0 4px rgba(127,96,191,.16)}
+.jvdot.armed{opacity:1;pointer-events:auto;background:#EF4444;border-color:rgba(239,68,68,.6);
+  animation:jvDotPulse 1.35s var(--ease) infinite}
+@keyframes jvDotPulse{0%,100%{box-shadow:0 0 0 4px rgba(239,68,68,.26)}
+  50%{box-shadow:0 0 0 11px rgba(239,68,68,.04)}}
 /* settings */
 .cset{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:20px;
   background:rgba(1,2,14,.72);backdrop-filter:blur(6px);
@@ -4580,7 +4595,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b21</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b22</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7896,17 +7911,43 @@ var JV_MODEL='claude-opus-5';
 
 function jvPrefs(){
   try{ var d=JSON.parse(localStorage.getItem(JV_KEY)||'{}');
-       return{key:d.key||'', voice:d.voice!==false, wake:d.wake===true, name:d.name||''}; }
-  catch(e){ return{key:'',voice:true,wake:false,name:''}; }
+       return{key:d.key||'', voice:d.voice!==false, wake:d.wake===true, name:d.name||'',
+              elKey:d.elKey||'', elVoice:d.elVoice||EL_VOICE_DEFAULT}; }
+  catch(e){ return{key:'',voice:true,wake:false,name:'',elKey:'',elVoice:EL_VOICE_DEFAULT}; }
 }
 function jvSave(p){ try{ localStorage.setItem(JV_KEY,JSON.stringify(p)); }catch(e){} }
 function jvSetKey(el){ var p=jvPrefs(); p.key=(el.value||'').trim(); jvSave(p); jvRender(); }
 function jvToggleVoice(){ var p=jvPrefs(); p.voice=!p.voice; jvSave(p);
-  if(!p.voice)try{speechSynthesis.cancel();}catch(e){} jvRender(); }
+  if(!p.voice){ try{speechSynthesis.cancel();}catch(e){} elStop(); } jvRender(); }
 
-/* ── speaking ── */
-function jvSpeak(text){
-  if(!jvPrefs().voice)return;
+/* ══ THE VOICE ════════════════════════════════════════════════════════
+   speechSynthesis is whatever voice the operating system happens to ship —
+   on most machines a flat robotic one, and on Linux often none at all. So a
+   real voice can be plugged in: ElevenLabs, one HTTP call, an mp3 back.
+
+   Two things it will not do. It will not put a key in this file — the same
+   rule as the Claude key, and for the same reason: anyone who opens the page
+   reads it. And it will not go silent when the call fails. Every failure path
+   — no key, wrong key, no network, refused audio — falls back to the built-in
+   voice, so a broken key costs you the nicer voice and nothing else.
+
+   One correction to what was handed over: the value supplied was a key *ID*,
+   not a key. ElevenLabs answered the call with, verbatim, "API key ID used as
+   API key — only valid API keys can be used. API keys start with 'sk_' and
+   are shown when the key is created or rotated." The box below therefore
+   checks the prefix and says so rather than failing quietly at speaking time.
+   ══════════════════════════════════════════════════════════════════════ */
+var EL_VOICE_DEFAULT='HKFOb9iktHA85uKXydRT';
+var EL_MODEL='eleven_turbo_v2_5', EL_AUDIO=null, EL_URL='', EL_DEAD=false;
+
+function elKeyLooksRight(k){ return /^sk_/.test(String(k||'').trim()); }
+function elStop(){
+  try{ if(EL_AUDIO){ EL_AUDIO.pause(); EL_AUDIO.src=''; } }catch(e){}
+  if(EL_URL){ try{ URL.revokeObjectURL(EL_URL); }catch(e){} EL_URL=''; }
+  EL_AUDIO=null;
+}
+/* the built-in voice — the floor everything falls back to */
+function jvSpeakLocal(text){
   try{
     if(!window.speechSynthesis)return;
     speechSynthesis.cancel();
@@ -7918,6 +7959,102 @@ function jvSpeak(text){
     if(pick)u.voice=pick;
     speechSynthesis.speak(u);
   }catch(e){}
+}
+function jvSpeak(text,cb){
+  var P=jvPrefs();
+  if(!P.voice)return;
+  var clean=String(text).replace(/[*_`#]/g,'').trim();
+  if(!clean)return;
+  if(!elKeyLooksRight(P.elKey)||EL_DEAD){ jvSpeakLocal(clean); if(cb)cb(null); return; }
+  elSpeak(clean,P,function(err){
+    if(err){ jvSpeakLocal(clean); }
+    if(cb)cb(err);
+  });
+}
+function elSpeak(text,P,done){
+  try{ speechSynthesis.cancel(); }catch(e){}
+  elStop();
+  var vid=(P.elVoice||EL_VOICE_DEFAULT).trim();
+  var ctl=null, killed=false, fired=false, raw=done;
+  /* ONE ANSWER, ONCE. Both the timeout and the audio element can report, and
+     an early one followed by a late one would speak the line twice — a
+     fallback on top of a voice that had in fact started. */
+  done=function(err){ if(fired)return; fired=true; clearTimeout(t); try{raw(err);}catch(e){} };
+  try{ ctl=new AbortController(); }catch(e){}
+  /* a request that is accepted and never answered would leave it mute, so it
+     gets the same watchdog every other call in this page has */
+  var t=setTimeout(function(){ killed=true; try{ if(ctl)ctl.abort(); }catch(e){}
+    done('timeout'); },9000);
+  fetch('https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(vid),{
+    method:'POST',
+    headers:{'xi-api-key':P.elKey.trim(),'Content-Type':'application/json','Accept':'audio/mpeg'},
+    body:JSON.stringify({text:text,model_id:EL_MODEL,
+      voice_settings:{stability:0.45,similarity_boost:0.8,style:0.15,use_speaker_boost:true}}),
+    signal:ctl?ctl.signal:undefined
+  }).then(function(r){
+    if(!r.ok)return r.text().then(function(b){
+      var er=new Error(elWhy(r.status,b)); er.st=r.status; throw er; });
+    return r.blob();
+  }).then(function(b){
+    if(killed)return;
+    /* a byte floor here rejected a genuine short clip — a two-word answer is a
+       small file. Only a truly empty body is an error. */
+    if(!b||!b.size)throw new Error('empty reply from ElevenLabs');
+    EL_URL=URL.createObjectURL(b);
+    EL_AUDIO=new Audio(EL_URL);
+    EL_AUDIO.onplaying=function(){ done(null); };
+    EL_AUDIO.onerror=function(){ done('the audio would not play'); };
+    var pr=EL_AUDIO.play();
+    /* autoplay is refused until the tab has been interacted with, and a voice
+       assistant that says nothing on its first answer looks broken */
+    if(pr&&pr.catch)pr.catch(function(){ done('the browser blocked audio until you click the page once'); });
+  }).catch(function(e){
+    if(killed)return;
+    /* a bad key is not worth re-trying on every sentence — say it once, then
+       use the built-in voice for the rest of the session. Matching this on the
+       message text missed it: ElevenLabs puts "invalid_api_key" in a field of
+       its own and the message reads only "Invalid API key.", so every later
+       sentence went back to the network and waited again. The status code is
+       what actually says so. */
+    if(e.st===401||e.st===403){ EL_DEAD=true;
+      try{ jvPill('ElevenLabs refused the key — using the built-in voice. '+e.message,'warn'); }catch(x){} }
+    done(e.message||'failed');
+  });
+}
+function elWhy(st,body){
+  var m='';
+  try{ var j=JSON.parse(body); m=(j.detail&&(j.detail.message||j.detail))||j.message||''; }catch(e){}
+  if(typeof m!=='string')m=JSON.stringify(m);
+  if(st===401||st===400)return m||'the key was refused (HTTP '+st+')';
+  if(st===404)return 'no voice with that ID on this account (HTTP 404)';
+  if(st===429)return 'out of ElevenLabs credits or too many requests (HTTP 429)';
+  return m||('HTTP '+st);
+}
+/* Settings: the key, the voice ID, and a button that proves it out loud */
+function elSetKey(el){
+  var p=jvPrefs(); p.elKey=(el.value||'').trim(); jvSave(p); EL_DEAD=false;
+  try{ renderCelestialSettings(); }catch(e){}
+}
+function elSetVoice(el){
+  var p=jvPrefs(); p.elVoice=(el.value||'').trim()||EL_VOICE_DEFAULT; jvSave(p); EL_DEAD=false;
+}
+function elTest(){
+  var P=jvPrefs();
+  if(!P.voice){ jvPill('Speaking is switched off — turn it on first.','warn'); return; }
+  var line='Celestial here. Board is loaded and I am listening.';
+  if(!P.elKey){ jvPill('Built-in voice — no ElevenLabs key set.',''); jvSpeakLocal(line); return; }
+  if(!elKeyLooksRight(P.elKey)){
+    jvPill('That is not an API key. ElevenLabs keys begin with sk_ — the other value is the key ID, '
+      +'which it rejects. Using the built-in voice.','warn',true);
+    jvSpeakLocal(line); return;
+  }
+  EL_DEAD=false;
+  jvPill('Calling ElevenLabs…','hot',true);
+  elSpeak(line,P,function(err){
+    if(err){ jvPill('ElevenLabs: '+err+' — falling back to the built-in voice.','warn',true);
+             jvSpeakLocal(line); }
+    else jvPill('That was ElevenLabs.','said');
+  });
 }
 /* ── hearing ── */
 function jvCanHear(){
@@ -8317,7 +8454,7 @@ function jvToggle(on){
    http://localhost:8080/ instead. The panel says so when it sees a file:// URL
    rather than letting you wonder why nothing happens.
    ══════════════════════════════════════════════════════════════════════ */
-var JV_WAKE_ON=false, JV_WREC=null, JV_ARMED=false, JV_WANT=false, JV_PILLT=null;
+var JV_WAKE_ON=false, JV_WREC=null, JV_ARMED=false, JV_WANT=false, JV_PILLT=null, JV_STARTT=null;
 var JV_WAKE_WORDS=['celestial','celestal','sale still','celeste'];
 
 function jvIsFile(){ try{ return location.protocol==='file:'; }catch(e){ return false; } }
@@ -8332,8 +8469,9 @@ function jvPill(text,kind,hold){
   if(hold!==true)JV_PILLT=setTimeout(function(){ el.className='jvpill '+(kind||''); },5200);
 }
 function jvWakeStop(){
-  JV_WANT=false; JV_ARMED=false;
+  JV_WANT=false; JV_ARMED=false; clearTimeout(JV_STARTT);
   try{ if(JV_WREC)JV_WREC.abort(); }catch(e){}
+  jvDot();
   JV_WREC=null;
   var el=document.getElementById('jv_pill'); if(el)el.className='jvpill';
   jvRender();
@@ -8349,7 +8487,9 @@ function jvWakeStart(){
   try{
     JV_WREC=new SR();
     JV_WREC.lang='en-GB'; JV_WREC.continuous=true; JV_WREC.interimResults=false;
-    JV_WREC.onstart=function(){ JV_WAKE_ON=true; jvRender(); };
+    JV_WREC.onstart=function(){
+      JV_WAKE_ON=true; clearTimeout(JV_STARTT); jvDot(); jvRender();
+    };
     JV_WREC.onerror=function(e){
       if(e.error==='not-allowed'||e.error==='service-not-allowed'){
         JV_WANT=false; JV_WAKE_ON=false;
@@ -8362,7 +8502,7 @@ function jvWakeStart(){
        so a wake word that is not restarted simply stops working after a minute
        or two with no error and no sign it has died. */
     JV_WREC.onend=function(){
-      JV_WAKE_ON=false;
+      JV_WAKE_ON=false; jvDot();
       if(JV_WANT)setTimeout(function(){ if(JV_WANT)try{JV_WREC.start();}catch(e){} },350);
       jvRender();
     };
@@ -8373,13 +8513,36 @@ function jvWakeStart(){
       }
     };
     JV_WREC.start();
+    /* IT COULD FAIL SILENTLY, AND DID.
+       start() returns without throwing, onstart never fires, onerror never
+       fires, and the wake word is simply dead — which is exactly what "I said
+       hey Celestial and nothing happened" looks like from the outside. If
+       onstart has not arrived in three seconds, say so and say what to check,
+       rather than leaving a switch that reads On over something that is not
+       running. */
+    clearTimeout(JV_STARTT);
+    JV_STARTT=setTimeout(function(){
+      if(JV_WAKE_ON||!JV_WANT)return;
+      jvPill('Listening did not start. Chrome or Edge only, the page must be served over http '
+        +'(not opened as a file), and the microphone has to be allowed in the address bar.','warn',true);
+      jvRender();
+    },3000);
   }catch(e){ JV_WANT=false; jvPill('Could not start listening: '+e.message,'warn'); jvRender(); }
+}
+/* the one thing that has to be on screen: proof it is live */
+function jvDot(){
+  var d=document.getElementById('jv_dot');
+  if(!d){ d=document.createElement('div'); d.id='jv_dot';
+    d.title='Celestial is listening for its name — turn it off in Settings';
+    d.onclick=function(){ celestialSettings(); };
+    document.body.appendChild(d); }
+  d.className='jvdot'+((JV_WANT&&JV_WAKE_ON)?' on':'')+(JV_ARMED?' armed':'');
 }
 /* what came out of the microphone, and what to do with it */
 function jvHeard(text){
   var L=text.toLowerCase();
   if(JV_ARMED){
-    JV_ARMED=false;
+    JV_ARMED=false; jvDot();
     jvPill('“'+text+'”','hot');
     jvAnswerAloud(text);
     return;
@@ -8397,12 +8560,12 @@ function jvHeard(text){
   if(hit<0)return;                                    /* not for us — ignored */
   var rest=text.slice(hit+word.length).replace(/^[\s,.\-—]*/,'').trim();
   if(rest.length>2){ jvPill('“'+rest+'”','hot'); jvAnswerAloud(rest); return; }
-  JV_ARMED=true;
+  JV_ARMED=true; jvDot();
   jvPill('Listening…','hot',true);
   jvSpeak('Yes?');
   /* if nothing follows, go back to waiting rather than staying armed forever */
   setTimeout(function(){
-    if(JV_ARMED){ JV_ARMED=false; jvPill('Never mind.',''); }
+    if(JV_ARMED){ JV_ARMED=false; jvDot(); jvPill('Never mind.',''); }
   },9000);
 }
 /* answer without opening anything — the reply is spoken and shown in a pill */
@@ -8421,6 +8584,29 @@ function jvAnswerAloud(q){
   }
   jvPill('Thinking…','hot',true);
   jvClaude(q);
+}
+/* IT SHIPPED OFF AND SAID SO NOWHERE.
+   Deliberately off is the right default for a microphone, but the page then
+   looked exactly like a page with no voice in it — say the name, nothing
+   happens, and there is no way to find out why. Once, on the first load, it
+   says where the switch is. After that it never mentions it again. */
+var JV_SEEN_KEY='ca_jarvis_seen';
+function jvFirstRun(){
+  try{
+    if(localStorage.getItem(JV_SEEN_KEY))return;
+    localStorage.setItem(JV_SEEN_KEY,'1');
+  }catch(e){ return; }
+  setTimeout(function(){
+    if(!jvWakeSupported()){
+      jvPill(jvIsFile()
+        ? 'Voice is off: a page opened as a file cannot use the microphone. Serve the folder over http '
+          +'and it becomes available. Settings has the details.'
+        : 'Voice needs Chrome or Edge — this browser has no speech recognition. Everything else works.','',false);
+      return;
+    }
+    jvPill('Celestial can answer out loud — say “hey Celestial”. The microphone stays off until you '
+      +'switch the wake word on in Settings.','',false);
+  },3200);
 }
 function jvWakeSet(on){
   var p=jvPrefs(); p.wake=!!on; jvSave(p);
@@ -8474,6 +8660,26 @@ function renderCelestialSettings(){
        +'<button class="cset-t'+(P.voice?' on':'')+'" onclick="jvToggleVoice();renderCelestialSettings()">'
          +(P.voice?'On':'Off')+'</button>'
      +'</div>'
+     +'<div class="cset-row">'
+       +'<div><b>Which voice</b><s>'
+         +(elKeyLooksRight(P.elKey)
+            ? 'ElevenLabs, with the built-in voice as the fallback if a call fails.'
+            : 'The voice your operating system ships. Add an ElevenLabs key below for a real one.')
+         +'</s></div>'
+       +'<button class="cset-b" onclick="elTest()">Test voice</button>'
+     +'</div>'
+     +'<s class="cset-p">The ElevenLabs key first, then the voice ID below it.</s>'
+     +'<input class="cset-key" type="password" placeholder="ElevenLabs key, sk_… (optional)" '
+       +'value="'+escHtml(P.elKey)+'" onchange="elSetKey(this)">'
+     +'<input class="cset-key" type="text" placeholder="Voice ID" '
+       +'value="'+escHtml(P.elVoice)+'" onchange="elSetVoice(this)">'
+     +(P.elKey&&!elKeyLooksRight(P.elKey)
+        ? '<s class="cset-p warn"><b>That is the key ID, not the key.</b> ElevenLabs replies to it with '
+          +'&ldquo;API key ID used as API key&rdquo;. The usable key begins with <code>sk_</code> and is shown '
+          +'once, when you create or rotate it. Until it is pasted here the built-in voice is used.</s>'
+        : '<s class="cset-p">Voice ID <code>'+escHtml(P.elVoice)+'</code>. The key is stored in this browser '
+          +'on this machine, never in the file, and clearing the box removes it. Every failure — bad key, no '
+          +'credits, no network — falls back to the built-in voice rather than going silent.</s>')
      +'<div class="cset-row">'
        +'<div><b>The conversation</b><s>Read back what was said, or type instead of speaking.</s></div>'
        +'<button class="cset-b" onclick="celestialSettingsClose();jvToggle(true)">Open</button>'
@@ -13052,7 +13258,7 @@ try {
     try{ riskFabSync(); }catch(e){}
     try{ jvRender(); }catch(e){}
     /* a wake word that was switched on should still be on after a reload */
-    try{ if(jvPrefs().wake)jvWakeStart(); }catch(e){}
+    try{ jvDot(); if(jvPrefs().wake)jvWakeStart(); else jvFirstRun(); }catch(e){}
     try{ renderFng(); }catch(e){}
     fetchLivePrice(function(ok){
       if(ok){ runAI(); return; }
