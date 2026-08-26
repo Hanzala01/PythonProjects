@@ -1446,6 +1446,53 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes jvPulse{0%,100%{box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 5px rgba(239,68,68,.28)}
   50%{box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 12px rgba(239,68,68,.05)}}
 .jfab.hot{animation:jvPulse 1.5s var(--ease) infinite}
+/* the small notice that appears only when it has heard something */
+.jvpill{position:fixed;right:20px;bottom:88px;max-width:min(420px,72vw);z-index:62;
+  padding:11px 16px;border-radius:14px;font-size:11.5px;line-height:1.55;
+  border:1px solid var(--b2);background:rgba(9,5,26,.97);color:var(--t2);
+  box-shadow:0 16px 44px rgba(0,0,0,.55);
+  transform:translateY(10px);opacity:0;pointer-events:none;transition:.25s var(--ease)}
+.jvpill.show{transform:none;opacity:1}
+.jvpill.hot{border-color:var(--p2);color:var(--t1)}
+.jvpill.said{border-color:rgba(127,96,191,.55);color:var(--t1)}
+.jvpill.warn{border-color:rgba(245,158,11,.5);color:var(--warn)}
+/* settings */
+.cset{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:20px;
+  background:rgba(1,2,14,.72);backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:.22s var(--ease)}
+.cset.open{opacity:1;pointer-events:auto}
+.cset-w{width:min(560px,100%);max-height:86vh;overflow:auto;border-radius:20px;
+  border:1px solid var(--b2);background:rgba(9,5,26,.99);box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.cset-h{display:flex;align-items:center;justify-content:space-between;padding:17px 20px;
+  border-bottom:1px solid var(--b1);position:sticky;top:0;background:rgba(9,5,26,.99)}
+.cset-h b{font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--t1)}
+.cset-h span{cursor:pointer;font-size:22px;line-height:1;color:var(--t3)}
+.cset-h span:hover{color:var(--t1)}
+.cset-s{padding:17px 20px;border-bottom:1px solid var(--b1)}
+.cset-s>i{display:block;font-style:normal;font-size:9px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+.cset-row{display:flex;align-items:flex-start;gap:16px;padding:11px 0;border-top:1px solid rgba(43,21,91,.5)}
+.cset-row:first-of-type{border-top:none}
+.cset-row>div{flex:1;min-width:0}
+.cset-row b{display:block;font-size:12.5px;font-weight:700;color:var(--t1)}
+.cset-row s{display:block;text-decoration:none;font-size:10px;color:var(--t3);line-height:1.6;margin-top:3px}
+.cset-t{flex:none;min-width:56px;padding:7px 14px;border-radius:99px;cursor:pointer;font-size:11px;
+  font-weight:700;border:1px solid var(--b1);background:rgba(6,3,20,.8);color:var(--t3);
+  transition:.2s var(--ease)}
+.cset-t.on{background:rgba(34,197,94,.2);border-color:rgba(34,197,94,.5);color:var(--up)}
+.cset-t:disabled{opacity:.35;cursor:not-allowed}
+.cset-b{flex:none;padding:7px 14px;border-radius:99px;cursor:pointer;font-size:11px;font-weight:700;
+  border:1px solid var(--b2);background:rgba(127,96,191,.25);color:var(--t1)}
+.cset-warn{font-size:10px;color:var(--t3);line-height:1.65;margin-top:10px;padding:10px 13px;
+  border-radius:11px;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.06)}
+.cset-warn b{color:var(--warn)}
+.cset-warn code{font-family:ui-monospace,monospace;font-size:9.5px;color:var(--p3);
+  background:rgba(83,51,153,.25);padding:1px 5px;border-radius:4px}
+.cset-p{display:block;text-decoration:none;font-size:10px;color:var(--t3);line-height:1.7;margin-top:9px}
+.cset-p.warn{color:var(--warn)}
+.cset-key{width:100%;margin-top:11px;padding:9px 13px;font-size:12px;border-radius:10px;
+  border:1px solid var(--b1);background:rgba(6,3,20,.8);color:var(--t1)}
+.cset-key:focus{outline:none;border-color:var(--p2)}
 .jvp{position:fixed;right:20px;bottom:88px;width:352px;max-height:min(78vh,620px);z-index:60;
   display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:1px solid var(--b2);
   background:rgba(9,5,26,.97);box-shadow:0 20px 60px rgba(0,0,0,.6);
@@ -4512,7 +4559,7 @@ body{background:var(--bg0)}
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7M10 20a2.2 2.2 0 004 0"/></svg>Alerts</div>
     <div class="nav-item" onclick='goTab("bot",this)'><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M8 4h8"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/></svg>Bot</div>
-    <div class="nav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</div>
+    <div class="nav-item" onclick="celestialSettings()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</div>
     <div class="nav-item" onclick='goTab("reference",this)'><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v18H6a2 2 0 01-2-2zM19 17H6a2 2 0 000 4"/></svg>Reference</div>
   </nav>
   <div class="side-card rise" style="animation-delay:.1s;min-height:236px">
@@ -4521,7 +4568,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b15</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b16</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7818,8 +7865,8 @@ var JV_MODEL='claude-opus-5';
 
 function jvPrefs(){
   try{ var d=JSON.parse(localStorage.getItem(JV_KEY)||'{}');
-       return{key:d.key||'', voice:d.voice!==false, name:d.name||''}; }
-  catch(e){ return{key:'',voice:true,name:''}; }
+       return{key:d.key||'', voice:d.voice!==false, wake:d.wake===true, name:d.name||''}; }
+  catch(e){ return{key:'',voice:true,wake:false,name:''}; }
 }
 function jvSave(p){ try{ localStorage.setItem(JV_KEY,JSON.stringify(p)); }catch(e){} }
 function jvSetKey(el){ var p=jvPrefs(); p.key=(el.value||'').trim(); jvSave(p); jvRender(); }
@@ -8015,7 +8062,7 @@ function jvClaude(q){
              .map(function(b){return b.text;}).join(' ').trim();
     if(res.d.stop_reason==='refusal')txt=txt||'Claude declined to answer that one.';
     jvPush('bot',txt||'(no answer came back)');
-    jvRender(); jvSpeak(txt);
+    jvRender(); jvSpeak(txt); jvPill(txt||'(no answer came back)','said');
   }).catch(function(e){
     JV_BUSY=false;
     jvPush('sys','Could not reach Claude from the page: '+e.message
@@ -8044,21 +8091,215 @@ function jvToggle(on){
   if(JV_OPEN){ RISK_OPEN=false; try{riskDockSync();riskFabSync();}catch(e){} }
   jvRender();
 }
+/* ══ THE WAKE WORD ════════════════════════════════════════════════════
+   Say "Celestial" — or "hey Celestial" — and it starts, with nothing to press
+   and nothing sitting on the screen waiting to be pressed. Ask in the same
+   breath ("Celestial, what is the call") and it answers that; say the name
+   alone and it listens for the next thing you say.
+
+   Two things about this are worth saying plainly rather than burying, because
+   both are real costs and neither is obvious.
+
+   A wake word means the microphone is ON, all the time, for as long as the tab
+   is open. The browser's recognition is not local — Chrome streams what it
+   hears to Google's speech service to turn it into text. There is no way to
+   listen for one word without listening to everything, so this ships switched
+   OFF and turns on from one switch in Settings. Nothing was going to flip your
+   microphone on for you, even having been asked for it.
+
+   And it needs the page served over http, not opened from a file. Chrome
+   refuses microphone access to file:// pages, so double-clicking the .html
+   gives a permission error no matter what is toggled here. One line fixes it:
+   run `python3 -m http.server 8080` in the folder and open
+   http://localhost:8080/ instead. The panel says so when it sees a file:// URL
+   rather than letting you wonder why nothing happens.
+   ══════════════════════════════════════════════════════════════════════ */
+var JV_WAKE_ON=false, JV_WREC=null, JV_ARMED=false, JV_WANT=false, JV_PILLT=null;
+var JV_WAKE_WORDS=['celestial','celestal','sale still','celeste'];
+
+function jvIsFile(){ try{ return location.protocol==='file:'; }catch(e){ return false; } }
+function jvWakeSupported(){ return jvCanHear()&&!jvIsFile(); }
+
+function jvPill(text,kind,hold){
+  var el=document.getElementById('jv_pill');
+  if(!el){ el=document.createElement('div'); el.id='jv_pill'; document.body.appendChild(el); }
+  el.className='jvpill '+(kind||'')+' show';
+  el.textContent=text;
+  clearTimeout(JV_PILLT);
+  if(hold!==true)JV_PILLT=setTimeout(function(){ el.className='jvpill '+(kind||''); },5200);
+}
+function jvWakeStop(){
+  JV_WANT=false; JV_ARMED=false;
+  try{ if(JV_WREC)JV_WREC.abort(); }catch(e){}
+  JV_WREC=null;
+  var el=document.getElementById('jv_pill'); if(el)el.className='jvpill';
+  jvRender();
+}
+function jvWakeStart(){
+  if(!jvCanHear()){ jvPill('This browser cannot listen — Chrome or Edge only.','warn'); return; }
+  if(jvIsFile()){
+    jvPill('Opened as a file, so Chrome will not allow the microphone. Serve the folder over http and reopen.','warn',true);
+    return;
+  }
+  JV_WANT=true;
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  try{
+    JV_WREC=new SR();
+    JV_WREC.lang='en-GB'; JV_WREC.continuous=true; JV_WREC.interimResults=false;
+    JV_WREC.onstart=function(){ JV_WAKE_ON=true; jvRender(); };
+    JV_WREC.onerror=function(e){
+      if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+        JV_WANT=false; JV_WAKE_ON=false;
+        jvPill('Microphone permission was refused — allow it from the icon in the address bar.','warn',true);
+        var p=jvPrefs(); p.wake=false; jvSave(p);
+      }
+      jvRender();
+    };
+    /* Chrome ends a continuous session on its own after a stretch of silence,
+       so a wake word that is not restarted simply stops working after a minute
+       or two with no error and no sign it has died. */
+    JV_WREC.onend=function(){
+      JV_WAKE_ON=false;
+      if(JV_WANT)setTimeout(function(){ if(JV_WANT)try{JV_WREC.start();}catch(e){} },350);
+      jvRender();
+    };
+    JV_WREC.onresult=function(e){
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        if(!e.results[i].isFinal)continue;
+        jvHeard((e.results[i][0].transcript||'').trim());
+      }
+    };
+    JV_WREC.start();
+  }catch(e){ JV_WANT=false; jvPill('Could not start listening: '+e.message,'warn'); jvRender(); }
+}
+/* what came out of the microphone, and what to do with it */
+function jvHeard(text){
+  var L=text.toLowerCase();
+  if(JV_ARMED){
+    JV_ARMED=false;
+    jvPill('“'+text+'”','hot');
+    jvAnswerAloud(text);
+    return;
+  }
+  /* THE NAME HAS TO OPEN THE SENTENCE.
+     Matching it anywhere in the utterance meant "the celestial sphere is
+     interesting" woke it and sent "sphere is interesting" off as a question.
+     A wake word is only a wake word at the front — optionally after a hey or
+     an ok — so anything further in is somebody talking about the sky. */
+  var lead=L.replace(/^(hey|ok|okay|hi|yo)[\s,]+/,'');
+  var hit=-1, word='';
+  for(var i=0;i<JV_WAKE_WORDS.length;i++){
+    if(lead.indexOf(JV_WAKE_WORDS[i])===0){ word=JV_WAKE_WORDS[i]; hit=L.length-lead.length; break; }
+  }
+  if(hit<0)return;                                    /* not for us — ignored */
+  var rest=text.slice(hit+word.length).replace(/^[\s,.\-—]*/,'').trim();
+  if(rest.length>2){ jvPill('“'+rest+'”','hot'); jvAnswerAloud(rest); return; }
+  JV_ARMED=true;
+  jvPill('Listening…','hot',true);
+  jvSpeak('Yes?');
+  /* if nothing follows, go back to waiting rather than staying armed forever */
+  setTimeout(function(){
+    if(JV_ARMED){ JV_ARMED=false; jvPill('Never mind.',''); }
+  },9000);
+}
+/* answer without opening anything — the reply is spoken and shown in a pill */
+function jvAnswerAloud(q){
+  jvPush('me',q);
+  var a=null;
+  try{ a=jvLocal(q); }catch(e){ a=null; }
+  if(a!=null){
+    jvPush('bot',a); jvRender(); jvSpeak(a); jvPill(a,'said');
+    return;
+  }
+  if(!jvPrefs().key){
+    var m='That one is outside the board, and no Claude key is set.';
+    jvPush('sys',m); jvRender(); jvSpeak(m); jvPill(m,'warn');
+    return;
+  }
+  jvPill('Thinking…','hot',true);
+  jvClaude(q);
+}
+function jvWakeSet(on){
+  var p=jvPrefs(); p.wake=!!on; jvSave(p);
+  if(on)jvWakeStart(); else jvWakeStop();
+  try{ renderCelestialSettings(); }catch(e){}
+}
+/* ══ SETTINGS ═════════════════════════════════════════════════════════
+   The Settings item in the sidebar had no click handler on it at all — it had
+   been sitting there doing nothing. It opens this. */
+function celestialSettings(){
+  var el=document.getElementById('cset');
+  if(!el){ el=document.createElement('div'); el.id='cset';
+    el.onclick=function(e){ if(e.target===el)celestialSettingsClose(); };
+    document.body.appendChild(el); }
+  el.className='cset open';
+  renderCelestialSettings();
+}
+function celestialSettingsClose(){
+  var el=document.getElementById('cset'); if(el)el.className='cset';
+}
+function renderCelestialSettings(){
+  var el=document.getElementById('cset');
+  if(!el||el.className.indexOf('open')<0)return;
+  var P=jvPrefs();
+  var canWake=jvWakeSupported();
+  el.innerHTML='<div class="cset-w">'
+   +'<div class="cset-h"><b>Settings</b>'
+     +'<span onclick="celestialSettingsClose()">&times;</span></div>'
+
+   +'<div class="cset-s"><i>Celestial, by voice</i>'
+     +'<div class="cset-row">'
+       +'<div><b>Wake word</b><s>Say “Celestial” or “hey Celestial” and it starts. Ask in the same '
+         +'breath and it answers that; say the name on its own and it waits for your question.</s></div>'
+       +'<button class="cset-t'+(P.wake?' on':'')+'" '+(canWake?'':'disabled ')
+         +'onclick="jvWakeSet('+(P.wake?'false':'true')+')">'+(P.wake?'On':'Off')+'</button>'
+     +'</div>'
+     +(jvIsFile()
+        ? '<div class="cset-warn"><b>This page was opened as a file.</b> Chrome will not give the '
+          +'microphone to a <code>file://</code> page, so the wake word cannot start no matter what is '
+          +'switched on here. Run <code>python3 -m http.server 8080</code> in the folder and open '
+          +'<code>http://localhost:8080/</code> instead.</div>'
+        : !jvCanHear()
+          ? '<div class="cset-warn">This browser has no speech recognition. Chrome and Edge have it; '
+            +'Firefox and Safari do not. Typing works everywhere.</div>'
+          : '<div class="cset-warn"><b>A wake word means the microphone stays on</b> for as long as the '
+            +'tab is open, and the browser sends what it hears to Google&rsquo;s speech service to turn '
+            +'into text — there is no way to listen for one word without listening to everything. That '
+            +'is why it ships off and why nothing switched it on for you.</div>')
+     +'<div class="cset-row">'
+       +'<div><b>Speak the answers</b><s>Replies are read out loud. Turn this off to read them instead.</s></div>'
+       +'<button class="cset-t'+(P.voice?' on':'')+'" onclick="jvToggleVoice();renderCelestialSettings()">'
+         +(P.voice?'On':'Off')+'</button>'
+     +'</div>'
+     +'<div class="cset-row">'
+       +'<div><b>The conversation</b><s>Read back what was said, or type instead of speaking.</s></div>'
+       +'<button class="cset-b" onclick="celestialSettingsClose();jvToggle(true)">Open</button>'
+     +'</div>'
+   +'</div>'
+
+   +'<div class="cset-s"><i>Questions beyond the board</i>'
+     +'<s class="cset-p">Everything about this board — the call, the trend, the levels, the windows, '
+     +'the risk, the scan — is answered inside the page with no key and no network. A Claude key is '
+     +'only needed for anything outside that.</s>'
+     +'<input class="cset-key" type="password" placeholder="sk-ant-… (optional)" '
+       +'value="'+escHtml(P.key)+'" onchange="jvSetKey(this)">'
+     +'<s class="cset-p warn">A key written into a page like this can be read by anyone who opens the '
+     +'file. Anthropic&rsquo;s own guidance is that browser access is only reasonable for a personal tool '
+     +'with a key you can rotate. It is never saved into this file — it lives in this browser on this '
+     +'machine, and emptying the box clears it. Use one with a spend limit.</s>'
+     +'<s class="cset-p">Model: '+JV_MODEL+'.</s>'
+   +'</div>'
+  +'</div>';
+}
 function jvRender(){
   var el=document.getElementById('jv_panel');
   if(!el){ el=document.createElement('div'); el.id='jv_panel'; document.body.appendChild(el); }
   el.className='jvp'+(JV_OPEN?' open':'');
-  var fab=document.getElementById('jv_fab');
-  if(!fab){
-    fab=document.createElement('div'); fab.id='jv_fab';
-    fab.setAttribute('role','button'); fab.setAttribute('tabindex','0');
-    fab.onclick=function(){ jvToggle(); };
-    fab.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();jvToggle();} };
-    document.body.appendChild(fab);
-  }
-  fab.className='jfab'+(JV_OPEN?' open':'')+(JV_LISTENING?' hot':'');
-  fab.title=JV_OPEN?'Close Celestial':'Talk to Celestial';
-  fab.innerHTML=JV_OPEN?'<i>&times;</i>':'<svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+  /* NOTHING SITS ON THE SCREEN WAITING TO BE PRESSED.
+     There was a microphone button parked in the corner of every tab. With a
+     wake word there is nothing to press, so it is gone; the conversation panel
+     opens from Settings when you want to read it back or type. */
+  var old=document.getElementById('jv_fab'); if(old)old.remove();
   if(!JV_OPEN){ el.innerHTML=''; return; }
 
   var P=jvPrefs();
@@ -12607,6 +12848,8 @@ try {
     /* both round buttons belong to the window, not to one tab */
     try{ riskFabSync(); }catch(e){}
     try{ jvRender(); }catch(e){}
+    /* a wake word that was switched on should still be on after a reload */
+    try{ if(jvPrefs().wake)jvWakeStart(); }catch(e){}
     try{ renderFng(); }catch(e){}
     fetchLivePrice(function(ok){
       if(ok){ runAI(); return; }
