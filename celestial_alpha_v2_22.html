@@ -852,6 +852,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border-radius:22px;padding:20px 14px;backdrop-filter:blur(20px);box-shadow:0 18px 50px rgba(0,0,0,.55);flex:1;
   display:flex;flex-direction:column;overflow-y:auto}
 .side-brand{display:flex;align-items:center;gap:11px;padding:2px 8px 18px;border-bottom:1px solid var(--bd);margin-bottom:14px}
+.sb-orb .lg-a{stroke:#EDE6FF}
+.sb-orb .lg-b{stroke:#B49BE6}
+.sb-orb .lg-c{stroke:#553399}
 .sb-orb{width:36px;height:36px;flex-shrink:0}
 /* both words were the same size, the same weight and tracked out to .22em, so
    the stack read as one word broken across two lines by accident. The name is
@@ -1451,7 +1454,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* the small notice that appears only when it has heard something */
 .jvpill{position:fixed;right:20px;bottom:88px;max-width:min(420px,72vw);z-index:62;
   padding:11px 16px;border-radius:14px;font-size:11.5px;line-height:1.55;
-  border:1px solid var(--b2);background:rgba(9,5,26,.97);color:var(--t2);
+  border:1px solid var(--b2);background:#0A0620;color:var(--t2);
   box-shadow:0 16px 44px rgba(0,0,0,.55);
   transform:translateY(10px);opacity:0;pointer-events:none;transition:.25s var(--ease)}
 .jvpill.show{transform:none;opacity:1}
@@ -1464,9 +1467,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   opacity:0;pointer-events:none;transition:.22s var(--ease)}
 .cset.open{opacity:1;pointer-events:auto}
 .cset-w{width:min(560px,100%);max-height:86vh;overflow:auto;border-radius:20px;
-  border:1px solid var(--b2);background:rgba(9,5,26,.99);box-shadow:0 30px 80px rgba(0,0,0,.7)}
+  border:1px solid var(--b2);background:#0A0620;box-shadow:0 30px 80px rgba(0,0,0,.7)}
 .cset-h{display:flex;align-items:center;justify-content:space-between;padding:17px 20px;
-  border-bottom:1px solid var(--b1);position:sticky;top:0;background:rgba(9,5,26,.99)}
+  border-bottom:1px solid var(--b1);position:sticky;top:0;background:#0A0620}
 .cset-h b{font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--t1)}
 .cset-h span{cursor:pointer;font-size:22px;line-height:1;color:var(--t3)}
 .cset-h span:hover{color:var(--t1)}
@@ -1497,10 +1500,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cset-key:focus{outline:none;border-color:var(--p2)}
 .jvp{position:fixed;right:20px;bottom:88px;width:352px;max-height:min(78vh,620px);z-index:60;
   display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:1px solid var(--b2);
-  background:rgba(9,5,26,.97);box-shadow:0 20px 60px rgba(0,0,0,.6);
+  background:#0A0620;box-shadow:0 20px 60px rgba(0,0,0,.6);
   transform:translateY(14px);opacity:0;pointer-events:none;transition:.22s var(--ease)}
 .jvp.open{transform:none;opacity:1;pointer-events:auto}
-.jvp-h{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--b1);
+.jvp-h{display:flex;align-items:center;gap:10px;padding:13px 15px;background:#0A0620;border-bottom:1px solid var(--b1);
   flex:none}
 .jvp-h b{font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--t1)}
 .jvp-v{margin-left:auto;cursor:pointer;font-size:14px;opacity:.45;line-height:1}
@@ -1561,7 +1564,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* the dock */
 .rkd{position:fixed;right:20px;bottom:88px;width:322px;max-height:min(78vh,640px);z-index:60;
   overflow:auto;border-radius:16px;border:1px solid var(--b2);padding:14px 15px 15px;
-  background:rgba(9,5,26,.97);box-shadow:0 20px 60px rgba(0,0,0,.6);
+  background:#0A0620;box-shadow:0 20px 60px rgba(0,0,0,.6);
   transform:translateY(14px);opacity:0;pointer-events:none;transition:.22s var(--ease)}
 .rkd.open{transform:none;opacity:1;pointer-events:auto}
 .rkd-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -4536,28 +4539,37 @@ body{background:var(--bg0)}
 <aside class="side">
   <nav class="side-nav rise">
     <div class="side-brand">
-      <!-- THE MARK.
-           Two shapes, and that is the whole thing. A ring left open at the top,
-           and a rising stroke that comes up through the gap and out the other
-           side — the break in the circle is the point of it, and it is what
-           makes the shape read as one idea rather than a chart parked inside a
-           planet. The previous version had five elements in it (ring, disc,
-           line, star, dot) which at 36px turned into texture rather than a
-           mark; this survives being small because there is almost nothing in
-           it to lose.
+      <!-- THE MARK — the app's own dial, and nothing borrowed.
+           This board's centrepiece is a ring of planetary hours with a few of
+           them lit: that is what the timing engine draws, it is the thing this
+           app does that others do not, and it makes a mark nobody else has. So
+           the logo is that ring — twelve segments, three of them carrying the
+           hour, the brightest one at the top where the day starts.
 
-           It is drawn here from circles and straight lines. Basic geometry is
-           not anyone's property — what would be a problem is copying an
-           existing logo, and nothing here is taken from one. -->
+           Earlier passes put a chart line inside a circle here, which is the
+           most-drawn shape in the whole of finance and said nothing about what
+           is underneath. This says the one true thing: time, cut into pieces,
+           with some pieces better than others.
+
+           Arcs of a circle, drawn from scratch. Basic geometry belongs to
+           nobody; what would be a problem is copying somebody's logo, and
+           none of this is taken from one. -->
       <svg class="sb-orb" viewBox="0 0 40 40" role="img" aria-label="Celestial Alpha">
-        <defs><linearGradient id="logring" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stop-color="#533399"/><stop offset="1" stop-color="#D5C3F2"/></linearGradient></defs>
-        <!-- the ring, open where the stroke passes through -->
-        <path d="M27.9 8.6a14 14 0 1 1-11.4-1.9" fill="none" stroke="url(#logring)"
-              stroke-width="2.4" stroke-linecap="round"/>
-        <!-- the rise, breaking out at the top right -->
-        <path d="M12.6 26.4 20 19l4.2 4.2L32.6 6.8" fill="none" stroke="#EDE6FF"
-              stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <g fill="none" stroke-linecap="round" stroke-width="3.2" transform="rotate(-15 20 20)">
+        <path class="lg-a" d="M21.10 6.04A14.0 14.0 0 0 1 26.03 7.36"/>
+        <path class="lg-c" d="M27.93 8.46A14.0 14.0 0 0 1 31.54 12.07"/>
+        <path class="lg-c" d="M32.64 13.97A14.0 14.0 0 0 1 33.96 18.90"/>
+        <path class="lg-c" d="M33.96 21.10A14.0 14.0 0 0 1 32.64 26.03"/>
+        <path class="lg-b" d="M31.54 27.93A14.0 14.0 0 0 1 27.93 31.54"/>
+        <path class="lg-c" d="M26.03 32.64A14.0 14.0 0 0 1 21.10 33.96"/>
+        <path class="lg-c" d="M18.90 33.96A14.0 14.0 0 0 1 13.97 32.64"/>
+        <path class="lg-c" d="M12.07 31.54A14.0 14.0 0 0 1 8.46 27.93"/>
+        <path class="lg-b" d="M7.36 26.03A14.0 14.0 0 0 1 6.04 21.10"/>
+        <path class="lg-c" d="M6.04 18.90A14.0 14.0 0 0 1 7.36 13.97"/>
+        <path class="lg-c" d="M8.46 12.07A14.0 14.0 0 0 1 12.07 8.46"/>
+        <path class="lg-c" d="M13.97 7.36A14.0 14.0 0 0 1 18.90 6.04"/>
+        </g>
+        <circle cx="20" cy="20" r="2.7" fill="#D5C3F2"/>
       </svg>
       <div class="t">CELESTIAL<span>ALPHA</span></div>
     </div>
@@ -4579,7 +4591,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b18</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b19</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
