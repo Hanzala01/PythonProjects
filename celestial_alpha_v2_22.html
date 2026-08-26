@@ -4568,7 +4568,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b16</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-25 · b17</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7931,77 +7931,249 @@ function jvState(){
 }
 function jvMoney(v,dp){ return v==null?'—':(+v).toFixed(dp); }
 
-/* ── the local brain ── */
-function jvLocal(q){
-  var s=jvState(), L=q.toLowerCase();
-  var has=function(){ for(var i=0;i<arguments.length;i++) if(L.indexOf(arguments[i])>=0)return true; return false; };
+/* ── the local brain ─────────────────────────────────────────────────
+   Every question here is answered from live state with no network at all.
+   It started as six intents and answered "I don't recognise that" to most of
+   what anyone actually says out loud, so it is a table now rather than a chain
+   of ifs — each row is a matcher and an answer, and adding one is one line.
 
-  if(has('scan','anything to trade','any setup','setups','what should i trade')){
+   Roman-Urdu spellings sit alongside the English on every row, because the
+   spoken half of this is set to whatever language you pick in Settings and the
+   words that come back differ. "kya chal raha hai" and "what is going on" ask
+   the same thing and both land on the same row.
+   ══════════════════════════════════════════════════════════════════════ */
+function jvSay(n,dp){ return n==null?'—':(+n).toFixed(dp==null?2:dp); }
+/* did they name an instrument? */
+function jvAssetIn(L){
+  var names=(typeof ANA_PICKS!=='undefined'?ANA_PICKS:[]).concat(['XAUUSD','XAGUSD','BTC','ETH','NAS100','US500','SPX']);
+  var alias={'gold':'Gold','sona':'Gold','xau':'Gold','silver':'Silver','chandi':'Silver',
+    'bitcoin':'Bitcoin','btc':'Bitcoin','ethereum':'Ethereum','eth':'Ethereum',
+    'euro':'EURUSD','eurusd':'EURUSD','pound':'GBPUSD','gbpusd':'GBPUSD','cable':'GBPUSD',
+    'oil':'Oil','crude':'Oil','tel':'Oil','nasdaq':'Nasdaq','nas':'Nasdaq',
+    'sp500':'SPX500','s and p':'SPX500','spx':'SPX500','apple':'Apple','tesla':'Tesla','nvidia':'Nvidia'};
+  for(var k in alias)if(L.indexOf(k)>=0)return alias[k];
+  for(var i=0;i<names.length;i++)if(L.indexOf(String(names[i]).toLowerCase())>=0)return names[i];
+  return null;
+}
+function jvSwitchTo(name){
+  try{
+    document.getElementById('ai_asset_txt').value=name;
+    var ab=document.getElementById('ab_asset'); if(ab)ab.value=name;
+    fetchLivePrice(function(ok){ if(ok)runAI(); else renderAnalytics(); });
+  }catch(e){}
+}
+function jvLocal(q){
+  var s=jvState(), L=' '+q.toLowerCase().replace(/[?.!,]/g,' ')+' ';
+  var has=function(){ for(var i=0;i<arguments.length;i++) if(L.indexOf(arguments[i])>=0)return true; return false; };
+  var named=jvAssetIn(L);
+
+  /* ── stop talking, and say it again ──
+     Both of these were matching the word anywhere in the sentence, which meant
+     "what is the entry and stop" was answered with "Quiet." — the word `stop`
+     is a noun far more often than it is a command here. They only fire on a
+     short utterance that is essentially just the command. */
+  var words=q.trim().split(/\s+/).length;
+  if(words<=3&&has('stop','quiet','shut up','chup','bas ')){
+    try{speechSynthesis.cancel();}catch(e){}
+    return 'Quiet.';
+  }
+  if(words<=4&&has('again','repeat','phir se','dobara')){
+    for(var i=JV_LOG.length-1;i>=0;i--)if(JV_LOG[i].w==='bot')return JV_LOG[i].t;
+    return 'Nothing said yet.';
+  }
+  /* ── switch instrument, or ask about one by name ── */
+  if(named&&named.toLowerCase()!==String(s.asset).toLowerCase()
+     &&has('switch','change','look at','check','open','dekho','lagao','how is','how about',
+           'what about','kya chal','kia chal','whats going on','what is going on','kaisa')){
+    jvSwitchTo(named);
+    return 'Switching to '+named+'. Give it a moment to load, then ask again.';
+  }
+  /* ── what is going on ── the general opener ── */
+  if(has('going on','whats up','what is up','kya chal','kia chal','kaisa chal','situation',
+         'summary','brief me','overview','halat')){
+    var bits=[s.asset+' is at '+jvSay(s.price,s.dp)+'.'];
+    if(s.T)bits.push('Trend reads '+s.T.label.toLowerCase()
+      +(s.T.keyLevel!=null?', and it turns on a close past '+jvSay(s.T.keyLevel,s.dp):'')+'.');
+    if(s.S)bits.push(s.S.style
+      ? 'There is a '+s.S.style.toLowerCase()+' setup: '+(s.S.isBull?'buy':'sell')+' at '+jvSay(s.S.entry,s.dp)+'.'
+      : 'No setup — confidence '+s.S.conf+' per cent, under the threshold.');
+    if(s.win)bits.push('The next window is '+fmtT(s.win.start)+(s.win.live?', open now.':'.'));
+    if(s.fg&&s.fg.ok)bits.push('Fear and greed '+s.fg.v+'.');
+    return bits.join(' ');
+  }
+  /* ── price ── */
+  if(has('price','rate','bhao','kitne ka','how much is','trading at')&&!has('risk','position')){
+    if(named&&named.toLowerCase()!==String(s.asset).toLowerCase()){
+      var hit=SCAN.filter(function(x){return x.a.toLowerCase()===named.toLowerCase();})[0];
+      if(hit)return named+' was '+jvSay(hit.px,hit.dp)+' at the last scan.';
+      jvSwitchTo(named);
+      return 'Loading '+named+' — ask again in a moment.';
+    }
+    return s.price?(s.asset+' is '+jvSay(s.price,s.dp)+'.'):'No price loaded.';
+  }
+  /* ── today’s timing ── */
+  if(has('timing','time to trade','best time','kab trade','kab karu','waqt','today windows',
+         'aaj ki timing','trading hours','session')){
+    var W=[]; try{ W=timTodayWindows(s.st); }catch(e){}
+    if(!W.length)return 'No windows on the board for today.';
+    var ahead=W.filter(function(w){return !w.gone;});
+    var strong=W.filter(function(w){return w.best===2;}).length;
+    var head=W.length+' window'+(W.length===1?'':'s')+' today, '+strong+' of them strong, '
+      +(ahead.length?ahead.length+' still ahead. ':'all gone. ');
+    return head+(ahead.length
+      ? ahead.slice(0,3).map(function(w){
+          return fmtT(w.start)+' to '+fmtT(w.end%1440)+' as a '+w.kind.toLowerCase()
+            +(w.best===2?', strong':'');
+        }).join('; ')+'.'
+      : 'The next one opens after tomorrow’s sunrise.');
+  }
+  /* ── is today worth trading at all ── */
+  if(has('good day','worth trading','should i trade today','trade today','aaj trade','aaj din')){
+    var W2=[]; try{ W2=timTodayWindows(s.st); }catch(e){}
+    var strong2=W2.filter(function(w){return w.best===2&&!w.gone;}).length;
+    var setups=s.scan.length||(s.S&&s.S.style?1:0);
+    if(!setups&&!strong2)return 'Not much of a day. No setup clears the bar and no strong window is left. Sitting out is the answer.';
+    if(!setups)return 'There are '+strong2+' strong window'+(strong2===1?'':'s')+' left, but nothing clears the confidence bar, so there is nothing to place in them.';
+    return setups+' setup'+(setups===1?'':'s')+' and '+strong2+' strong window'
+      +(strong2===1?'':'s')+' left today. Worth watching.';
+  }
+  /* ── best day ahead ── */
+  if(has('best day','which day','kaunsa din','next best')){
+    var days=null;
+    try{ days=timBestDays(s.asset,s.st?s.st.vib:0,14).filter(function(d){return !d.weekend;})
+            .sort(function(x,y){return y.score-x.score;})[0]; }catch(e){}
+    if(!days)return 'No day ranking available.';
+    return 'The strongest of the next two weeks is '
+      +days.date.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long'})
+      +', scoring '+days.score+'.';
+  }
+  /* ── entry, stop, target, hold ── */
+  if(has('entry','stop','target','take profit','sl ','tp ','plan','kahan lagau','kitne par')){
+    if(!s.S||!s.S.style)return 'There is no setup to read out. Nothing clears the threshold.';
+    return (s.S.isBull?'Buy':'Sell')+' at '+jvSay(s.S.entry,s.dp)+', stop '+jvSay(s.S.sl,s.dp)
+      +', target '+jvSay(s.S.tp,s.dp)+'. That is '+s.S.rr+' to one.';
+  }
+  if(has('how long','hold','kab tak','horizon','kitni der')){
+    if(!s.S||!s.S.style)return 'Nothing to hold — there is no setup.';
+    var hz=null; try{ hz=timHorizon(timDate(),s.asset); }catch(e){}
+    return 'It is an '+s.S.style.toLowerCase()+'. '
+      +(hz?'The dated horizon is '+hz.label+', until '+hz.why+'.':'No horizon computed.');
+  }
+  /* ── the month’s budget ── */
+  if(has('how many trades','budget','quota','slots','left this month','kitni trade')){
+    var Q=null; try{ Q=quotaState(); }catch(e){}
+    if(!Q)return 'No trade budget loaded.';
+    return 'This month: '+Q.rows.map(function(r){
+      return r.left+' of '+r.cap+' '+r.style.toLowerCase()+' left';
+    }).join(', ')+'.';
+  }
+  /* ── how am I doing ── */
+  if(has('how am i doing','my trades','performance','p and l','pnl','profit','my results','kaisa kar')){
+    var J=(typeof JRNL!=='undefined'&&JRNL)?JRNL:[];
+    if(!J.length)return 'The journal is empty — no trades logged yet.';
+    var closed=J.filter(function(x){return x.r!=='open';});
+    var open=J.length-closed.length;
+    if(!closed.length)return J.length+' logged, '+open+' still open, none closed yet.';
+    var wins=closed.filter(function(x){return x.r==='win';}).length;
+    var net=closed.reduce(function(t,x){return t+(x.pnl||0);},0);
+    return closed.length+' closed, '+wins+' of them winners, net '
+      +(net>=0?'plus ':'minus ')+Math.abs(Math.round(net))+'.'+(open?' '+open+' still open.':'');
+  }
+  /* ── am I in anything ── */
+  if(has('am i in','open trade','positions','running trade','koi trade')){
+    var J2=(typeof JRNL!=='undefined'&&JRNL)?JRNL.filter(function(x){return x.r==='open';}):[];
+    if(!J2.length)return 'Nothing open.';
+    return J2.length+' open: '+J2.slice(0,3).map(function(x){
+      return String(x.dir).toUpperCase()+' '+x.a+' from '+x.en;
+    }).join(', ')+'.';
+  }
+  /* ── volume profile ── */
+  if(has('volume profile','poc','value area','vah','val','where is the volume','shelf','thin')){
+    var V=null; try{ V=vpBuild(window.HIST_ROWS,s.asset,VP_WIN,VP_BINS); }catch(e){}
+    if(!V||!V.ok)return 'No profile — '+(V?V.why:'no history loaded')+'.';
+    return 'Busiest price is '+jvSay(V.poc,s.dp)+'. The value area runs '+jvSay(V.val,s.dp)
+      +' to '+jvSay(V.vah,s.dp)+', holding '+Math.round(V.vaShare*100)+' per cent of the window. '
+      +(s.price>V.vah?'Price is above it.':s.price<V.val?'Price is below it.':'Price is inside it.');
+  }
+  /* ── news ── */
+  if(has('news','headline','khabar','what happened','any news')){
+    var n=document.querySelectorAll('#news_feed .nw-i, #news_feed .news-item');
+    if(!n.length)return 'No headlines loaded. Open Market Intelligence and they will pull in.';
+    var t=[]; for(var k=0;k<Math.min(3,n.length);k++)
+      t.push((n[k].textContent||'').replace(/\s+/g,' ').trim().slice(0,90));
+    return 'Top headlines: '+t.join('. ')+'.';
+  }
+  /* ── the clock ── */
+  if(has('what time','time is it','kitne baje','sunrise','sunset')){
+    var now=new Date();
+    var r=s.st?(' Sunrise is set to '+fmtT(s.st.srMin)+', and you are in hour '
+      +(s.st.live||'—')+' of 24.'):'';
+    return 'It is '+now.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'})+'.'+r;
+  }
+  /* ── the original six ── */
+  if(has('scan','any setup','setups','what should i trade','kya lu','kia lu')){
     if(!s.scan.length)
       return SCAN.length
-        ? 'Nothing clears the bar on any of the '+SCAN.length+' instruments scanned. Quiet days are the normal case — the thresholds fire on about one reading in eight.'
+        ? 'Nothing clears the bar on any of the '+SCAN.length+' instruments scanned. Quiet days are the normal case.'
         : 'Nothing has been scanned yet. Say "run the scan" and I will go through every instrument.';
     return s.scan.length+' setup'+(s.scan.length===1?'':'s')+': '
-      +s.scan.map(function(x){return (x.bull?'buy ':'sell ')+x.a+' at '+jvMoney(x.entry,x.dp)+', '+x.conf+' per cent';}).join('; ')+'.';
+      +s.scan.map(function(x){return (x.bull?'buy ':'sell ')+x.a+' at '+jvSay(x.entry,x.dp)+', '+x.conf+' per cent';}).join('; ')+'.';
   }
-  if(has('run the scan','start the scan','scan everything')){
+  if(has('run the scan','start the scan','scan everything','scan karo')){
     try{ scanRun(); }catch(e){}
     return 'Running the scan across every instrument. It takes a moment — each one needs its own daily history.';
   }
-  if(has('call','should i buy','should i sell','trade now','what do i do')){
+  if(has('call','should i buy','should i sell','trade now','what do i do','kya karu','kia karu','buy or sell')){
     if(!s.S) return 'No analysis has been run yet. Pick an asset and press Analyse.';
     if(!s.S.style)
-      return 'No trade on '+s.asset+'. Confidence is '+s.S.conf+' per cent, which is short of the threshold. '
-        +'Standing aside is the answer.';
+      return 'No trade on '+s.asset+'. Confidence is '+s.S.conf+' per cent, which is short of the threshold. Standing aside is the answer.';
     return (s.S.isBull?'Buy ':'Sell ')+s.asset+' as an '+s.S.style.toLowerCase()+'. '
-      +'Entry '+jvMoney(s.S.entry,s.dp)+', stop '+jvMoney(s.S.sl,s.dp)+', target '+jvMoney(s.S.tp,s.dp)
+      +'Entry '+jvSay(s.S.entry,s.dp)+', stop '+jvSay(s.S.sl,s.dp)+', target '+jvSay(s.S.tp,s.dp)
       +', reward to risk '+s.S.rr+' to one. Confidence '+s.S.conf+' per cent.';
   }
-  if(has('invalid','wrong','breaks','trend')){
+  if(has('invalid','wrong','breaks','trend','rujhan')){
     if(!s.T) return 'No trend reading yet.';
     if(s.T.keyLevel==null) return s.asset+' reads '+s.T.label.toLowerCase()+', but no level is being quoted against it.';
     return s.asset+' is '+s.T.label.toLowerCase()+' while it holds '+(s.T.dir==='bear'?'below ':'above ')
-      +jvMoney(s.T.keyLevel,s.dp)+'. It takes a daily close beyond that to turn it — not a wick.';
+      +jvSay(s.T.keyLevel,s.dp)+'. It takes a daily close beyond that to turn it — not a wick.';
   }
-  if(has('risk','how much','position size','lots')){
+  if(has('risk','how much should i','position size','lots','kitna risk')){
     if(!s.R) return 'The risk calculator has nothing to work from yet.';
     return 'The ladder allows '+s.R.pct+' per cent'
       +(s.R.amount!=null?', which is '+Math.round(s.R.amount)+' on your account':'')
       +(s.R.units!=null?', about '+s.R.units.toFixed(2)+' units at the current stop':'')
       +'. Five per cent is the ceiling and only opens above ninety.';
   }
-  if(has('window','timing','when','hour')){
+  if(has('window','next window','hour')){
     if(!s.win) return 'No window left today. The next one opens after tomorrow’s sunrise.';
     return 'The next window is '+fmtT(s.win.start)+' to '+fmtT(s.win.end%1440)+', '
       +(s.win.best===2?'a strong one':'a supporting one')+', trade it as a '+s.win.kind.toLowerCase()+'. '
       +(s.win.live?'It is open now.':'It opens in '+fmtIn(s.win.inMin)+'.');
   }
-  if(has('fear','greed','sentiment','mood')){
+  if(has('fear','greed','sentiment','mood','mahaul')){
     if(!s.fg||!s.fg.ok) return 'No fear and greed reading — '+(s.fg?s.fg.why:'no history loaded')+'.';
     return s.asset+' reads '+s.fg.v+' out of a hundred, which is '+fngBand(s.fg.v).w.toLowerCase()
       +'. That is price behaviour, not a survey of anyone’s mood.';
   }
   if(has('level','support','resistance','where is price')){
     if(!s.price) return 'No price loaded.';
-    /* anaLevelsNear wants the flat anchor LIST; anaAnchors returns an object
-       wrapping it, so passing the object found no anchors and this answered
-       "nothing near" while the level map on screen was full */
     var near=null;
     try{ near=anaLevelsNear((anaAnchors(s.price)||{}).list,s.price,dailySigma().v,2); }catch(e){}
     if(!near||(!near.up.length&&!near.dn.length))
-      return near&&near.why?near.why:'The level map has nothing near '+jvMoney(s.price,s.dp)+' yet.';
-    return 'Price is '+jvMoney(s.price,s.dp)+'. '
-      +(near.at?'It is sitting on a level at '+jvMoney(near.at.p,s.dp)+'. ':'')
-      +'Nearest above is '+(near.up[0]?jvMoney(near.up[0].p,s.dp):'not in range')
-      +', nearest below is '+(near.dn[0]?jvMoney(near.dn[0].p,s.dp):'not in range')+'.';
+      return near&&near.why?near.why:'The level map has nothing near '+jvSay(s.price,s.dp)+' yet.';
+    return 'Price is '+jvSay(s.price,s.dp)+'. '
+      +(near.at?'It is sitting on a level at '+jvSay(near.at.p,s.dp)+'. ':'')
+      +'Nearest above is '+(near.up[0]?jvSay(near.up[0].p,s.dp):'not in range')
+      +', nearest below is '+(near.dn[0]?jvSay(near.dn[0].p,s.dp):'not in range')+'.';
   }
-  if(has('hello','hi ','hey','are you there','jarvis')){
-    return 'Here. Ask me for the call, the levels, the next window, the risk, or say run the scan.';
+  if(has('hello','hi ','hey','are you there','salam','assalam')){
+    return 'Here. Ask what is going on, the call, the timing, the levels, the risk, or say run the scan.';
   }
-  if(has('what can you','help','commands')){
-    return 'Without a key I can answer anything on this board: the call, the trend and what would break it, '
-      +'the levels, the next trading window, the risk size, the fear and greed reading, and I can run the scan. '
-      +'Anything else needs a Claude key in the settings below.';
+  if(has('what can you','help','commands','kya kar sakt')){
+    return 'With no key at all: what is going on, the call, the trend and what breaks it, entry stop and '
+      +'target, how long to hold, the levels, the volume profile, today’s timing and the best day '
+      +'ahead, the risk size, the month’s budget, your open trades and how they have gone, fear and '
+      +'greed, the headlines, and I can run the scan or switch instrument. Anything else needs a key.';
   }
   return null;
 }
