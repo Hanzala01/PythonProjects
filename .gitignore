@@ -5,6 +5,13 @@ celestial.db-wal
 celestial.db-shm
 celestial-backup-*.json
 
+# Per-build copies handed to you for download (celestial_alpha_b35.html and
+# friends). Each one is a byte-identical duplicate of celestial_alpha_v2_22.html
+# at that commit, renamed only so an older copy in the Downloads folder cannot
+# be mistaken for the current one. The source file is tracked; the copies are
+# 2MB each and the history already holds every build.
+celestial_alpha_b*.html
+
 __pycache__/
 *.pyc
 .venv/
