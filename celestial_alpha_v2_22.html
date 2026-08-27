@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b39 — Precision in Timing</title>
+<title>Celestial Alpha b40 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2155,7 +2155,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .st-none{font-size:10.5px;color:var(--t3);padding:8px 0}
 @media(prefers-reduced-motion:reduce){.st-r,.st-n b{animation:none!important}}
 
-.conv-band{margin-bottom:10px}
+/* two cards side by side: the answer, and what is in the way of it */
+.conv-band{display:grid;grid-template-columns:1.35fr 1fr;gap:10px;margin-bottom:10px;
+  align-items:start}
+@media(max-width:1100px){.conv-band{grid-template-columns:1fr}}
+.noiz{padding:12px 15px;text-align:left}
+.nz-h{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk';font-size:10px;
+  font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.nz-h b{margin-left:auto;font-size:9.5px;letter-spacing:0;text-transform:none;color:var(--t2)}
+.nz-clean{font-size:11px;line-height:1.6;color:#8BEFC8}
+.nz-r{display:grid;grid-template-columns:14px 1fr;gap:7px;padding:6px 0;align-items:baseline;
+  border-top:1px solid var(--b1);animation:stIn .34s cubic-bezier(.22,1,.36,1) both}
+.nz-r:first-of-type{border-top:none}
+.nz-r i{font-style:normal;font-weight:800;text-align:center;font-size:12px;line-height:1.2}
+.nz-r.s2 i{color:#F87171}
+.nz-r.s1 i{color:#FBBF24}
+.nz-b{min-width:0}
+.nz-b b{display:block;font-size:11px;font-weight:700;color:var(--t1)}
+.nz-b s,.nz-b u,.nz-b em{display:block;text-decoration:none;font-style:normal;line-height:1.5}
+.nz-b s{font-size:10px;color:var(--t2);margin-top:2px}
+.nz-b u{font-size:9.5px;color:var(--t3);margin-top:3px}
+.nz-b em{font-size:9.5px;color:var(--t3);margin-top:2px;opacity:.82}
+@media(prefers-reduced-motion:reduce){.nz-r{animation:none!important}}
 .conv-band>.card{overflow:hidden}
 .cvg{margin:0;padding:12px 15px;text-align:left;
   background:linear-gradient(100deg,rgba(9,5,26,.5),rgba(9,5,26,0))}
@@ -5287,7 +5308,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b39</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b40</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -5348,6 +5369,8 @@ body{background:var(--bg0)}
        belongs above the row rather than tucked into a corner of it. -->
   <section class="conv-band rise" style="animation-delay:.10s">
     <div class="card" id="conv_slot"></div>
+    <!-- what is in the way of the answer above it -->
+    <div class="card" id="noise_slot"></div>
   </section>
 
   <!-- ══ CHART · TRADE SETUP · MARKET PULSE ══ -->
@@ -10950,6 +10973,130 @@ function tcFmt(v,dp){
   return isFinite(v)?(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp}):'—';
 }
 /* ══════════════════════════════════════════════════════════════════════
+   THE NOISE REPORT — what is degrading this read, named
+
+   Asked for directly: tell me what the noise is. Every panel in the app
+   reports what it found; none of them reported what was in the way. A
+   number computed off half its inputs looks identical on screen to one
+   computed off all of them, and that is the difference between a reading
+   and a guess.
+
+   Nothing here is a score. It is a list of things that are measurably
+   wrong or missing right now, worst first, each with what it costs and
+   what would fix it.
+   ══════════════════════════════════════════════════════════════════════ */
+function noiseReport(){
+  var C=window.CQE_LAST, out=[];
+  function add(sev,k,what,cost,fix){ out.push({sev:sev,k:k,what:what,cost:cost,fix:fix}); }
+  if(!C)return{items:[{sev:2,k:'No analysis',what:'Nothing has been run yet.',
+    cost:'There is no reading to assess.',fix:'Press Analyse.'}],clean:false};
+
+  /* ── volume, which two engines depend on ──────────────────────────── */
+  var vq=C.volumeFrom;
+  if(!vq){
+    /* required[] entries are written as the tail of "needs ..." — dropping
+       one in raw gave a sentence starting "usable volume — the series...".
+       Capitalised into a sentence of its own. */
+    var wyReq=(C.wyckoff&&C.wyckoff.required||[])[0]||'';
+    wyReq=wyReq.replace(/^usable volume\s*[—-]\s*/i,'');
+    wyReq=wyReq?wyReq.charAt(0).toUpperCase()+wyReq.slice(1):'';
+    add(2,'Volume unusable',
+      wyReq||'No usable volume series was delivered.',
+      'Wyckoff cannot read a phase, and the volume component of divergence is dropped — '
+        +'that is two of the five methods and a quarter of the warning score.',
+      'Attach a real traded-volume series. For spot metals the feed often reports a quote '
+        +'count, not contracts — the ETF that tracks the same underlying usually carries real tape.');
+  }
+
+  /* ── divergence coverage ──────────────────────────────────────────── */
+  var dv=C.divergence;
+  if(dv&&dv.coverage!=null&&dv.coverage<100){
+    var miss=(dv.missing||[]).map(function(m){return m.k;});
+    add(dv.coverage<60?2:1,'Divergence at '+dv.coverage+'% coverage',
+      'Missing: '+(miss.length?miss.join(', '):'some components')+'.',
+      dv.coverage<60
+        ? 'Below 60% the reversal chain treats divergence as unmeasured rather than absent, so a '
+          +'reversal cannot reach an active status however strong the rest is.'
+        : 'The score is renormalised over what did compute, so it is a narrower reading than it looks.',
+      'The dollar and yield series come from the cross-market fetch — it needs the data '
+        +'connection and enough request budget. Volume needs a real tape.');
+  }
+
+  /* ── core coverage ────────────────────────────────────────────────── */
+  if(C.core&&C.core.score==null&&C.core.withheld)
+    add(2,'Core score withheld',C.core.withheld,
+      'No single figure for the five methods is given, by design — one engine reporting is '
+        +'not a core score.','More history, or the missing engines’ inputs.');
+  else if(C.core&&C.core.coverage!=null&&C.core.coverage<100)
+    add(1,'Core at '+C.core.coverage+'% coverage',
+      'Missing: '+((C.core.missing||[]).join(', ')||'—')+'.',
+      'The score is the mean of what ran, so it carries fewer opinions than the number suggests.',
+      'Whatever those engines are missing — usually volume or bar count.');
+
+  /* ── repaired ticks ───────────────────────────────────────────────── */
+  var rep=(C.repaired&&C.repaired.length)||0;
+  if(rep)add(1,rep+' bad tick'+(rep===1?'':'s')+' repaired',
+    C.repaired.map(function(x){ return x.date+' '+x.field+' '+x.was+' → '+x.now
+      +' ('+x.atrAway.toFixed(1)+' ATR out)'; }).slice(0,3).join('; '),
+    'A single broken print sets swing highs and lows, which moves every level built off them.',
+    'Nothing to do — the repair is applied. Named so you can check it against your own chart.');
+
+  /* ── history depth ────────────────────────────────────────────────── */
+  if(C.bars!=null&&C.bars<260)
+    add(C.bars<150?2:1,'Only '+C.bars+' bars',
+      'The cycle list runs to 1095 days; a count longer than the history cannot be tested.',
+      'The longer cycles are silently unavailable, so the time engine is reading short.',
+      'Load more history for this asset.');
+
+  /* ── methods disagreeing, which is noise of a different kind ──────── */
+  var w=C.gates&&C.gates.which;
+  if(w&&w.agreement!=null&&w.agreement<0.4&&w.votes&&w.votes.length>1)
+    add(1,'The methods disagree',
+      w.votes.map(function(v){return v.k+' '+Math.round(v.v);}).join(', ')+'.',
+      'Direction confidence is '+(w.score!=null?w.score:'low')+' out of 100 — a split board, '
+        +'not a weak trend. They are different things and they were being reported the same way.',
+      'Nothing to fix. It is a reason to wait rather than a fault in the data.');
+  if(w&&w.discount)
+    add(1,'Direction discounted '+w.discount+'%',
+      (w.divergence!=null?w.divergence+' out of 100 of the evidence contradicts the chosen direction.':''),
+      'Raw direction score '+w.rawScore+' became '+w.score+'.',
+      'Nothing to fix — this is the discount working.');
+
+  /* ── data quality from the engine itself ──────────────────────────── */
+  var dq=C.dq;
+  if(dq&&dq.issues&&dq.issues.length)
+    dq.issues.slice(0,3).forEach(function(x){
+      add(1,'Data quality',String(x),'Reported by the bar checker.','See the note.'); });
+
+  out.sort(function(a,b){return b.sev-a.sev;});
+  return{items:out,clean:out.length===0,
+    bars:C.bars,asset:(typeof _lastAsset!=='undefined'&&_lastAsset)||''};
+}
+function noiseHtml(){
+  var N=noiseReport();
+  var h='<div class="noiz"><div class="nz-h">What is degrading this read'
+    +'<b>'+(N.clean?'nothing found':N.items.length+' item'+(N.items.length===1?'':'s'))+'</b></div>';
+  if(N.clean)
+    return h+'<div class="nz-clean">Every engine has its inputs and nothing was repaired. '
+      +'This is as clean as this asset gets.</div></div>';
+  N.items.forEach(function(it,i){
+    h+='<div class="nz-r s'+it.sev+'" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
+      +'<i>'+(it.sev===2?'!':'·')+'</i>'
+      +'<div class="nz-b"><b>'+escHtml(it.k)+'</b>'
+        +'<s>'+escHtml(it.what)+'</s>'
+        +'<u>Costs: '+escHtml(it.cost)+'</u>'
+        +'<em>Fix: '+escHtml(it.fix)+'</em>'
+      +'</div></div>';
+  });
+  return h+'</div>';
+}
+function noisePaint(){
+  var el=document.getElementById('noise_slot');
+  if(!el)return;
+  try{ el.innerHTML=noiseHtml(); }catch(e){ console.error('noise:',e); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    SELF TEST — the app checking its own claims where you can watch
 
    Every row states what it expected and what it got. A check that passes
@@ -13614,7 +13761,10 @@ function astroConfirmation(events,window,opt){
 /* ══ 11 · THE CONFIRMATION MATRIX ═════════════════════════════════════ */
 function confirmationMatrix(inp){
   var rows=[
-    {k:'Divergence',   ok:!!inp.divergence,   why:inp.divergenceWhy},
+    /* unmeasured is not the same as failed, and a matrix that renders both
+       as a cross tells the reader something untrue about the evidence */
+    {k:'Divergence',   ok:!!inp.divergence,   why:inp.divergenceWhy,
+     unmeasured:!!inp.divergenceUnmeasured},
     {k:'Price level',  ok:!!inp.priceLevel,   why:inp.priceWhy},
     {k:'Time cycle',   ok:!!inp.timeCycle,    why:inp.timeWhy},
     {k:'Structure',    ok:!!inp.structure,    why:inp.structureWhy},
@@ -13661,20 +13811,40 @@ function reversalHypothesis(inp){
       H.divergenceEvidence.push(n.indexOf(p.label)===0? n : (p.label+' — '+n));
     }
   });
-  H.steps.push({n:1,name:'Divergence',ok:haveDiv,
+  /* ══ A SCORE OF ZERO OFF HALF THE INPUTS IS NOT A FINDING ═══════════
+     divergenceScore renormalises over whatever computed, so with volume,
+     dollar and yields absent a 0 means "the two components that ran found
+     nothing" — not "nothing diverges". The chain was reading that 0 as a
+     measured absence and stopping, which is a conclusion drawn from half
+     the evidence and stated as though it were complete.
+
+     Under half coverage the step is UNMEASURED rather than failed, and it
+     no longer closes the chain on its own. */
+  var divCov=(div&&div.coverage!=null)?div.coverage:0;
+  var divMeasured=divCov>=60;
+  H.divergenceCoverage=divCov;
+  H.divergenceMeasured=divMeasured;
+  H.steps.push({n:1,name:'Divergence',ok:haveDiv,unmeasured:!divMeasured,
     why:haveDiv?'divergence score '+div.score+' of 100'
-       :'divergence score '+(div&&div.score!=null?div.score:'—')
-         +' — too little contradictory evidence to open a watch'});
-  if(!haveDiv){
-    H.stoppedAt=1;
-    /* the overlay still has to exist as an object even when the chain stops
-       here — every consumer reads .astro.status, and returning null made the
-       panel throw rather than print "no window to test against" */
-    H.astro=astroConfirmation(inp.astroEvents,null);
-    H.matrix=matrixFrom(H,inp,false);
-    return H;
-  }
-  H.status='REVERSAL WATCH';
+       :!divMeasured
+         ?'cannot be measured — only '+divCov+'% of its inputs are loaded'
+           +((div&&div.missing&&div.missing.length)
+              ?' (missing '+div.missing.map(function(m){return m.k;}).join(', ')+')':'')
+         :'divergence score '+(div&&div.score!=null?div.score:'—')
+           +' — too little contradictory evidence to open a watch'});
+
+  /* ══ THE CHAIN NO LONGER ABANDONS THE OTHER FIVE STEPS ══════════════
+     It used to return here. Everything below — the level, the cycle, the
+     structure, the stop and the target — was never computed, and the matrix
+     then printed "no cluster ahead" and "no anniversary inside tolerance"
+     for an engine holding fifteen clusters and twelve counts. That is
+     absence of evaluation reported as absence of evidence, and it is why a
+     reversal scenario never appeared at all.
+
+     Every step runs now. What divergence still controls is the STATUS: no
+     divergence, no watch. But the reader is shown the level, the window and
+     the risk that a reversal would use, labelled for what it is. */
+  if(haveDiv)H.status='REVERSAL WATCH';
 
   /* STEP 2 — an important price level, on the side the trend is travelling */
   var cl=(R.gann&&R.gann.clusters)||[];
@@ -13690,7 +13860,7 @@ function reversalHypothesis(inp){
     why:!zone?'no cluster on the side the move is travelling'
        :atLevel?'price is within 1.5 ATR of a '+zone.strength+'-method cluster'
        :'the nearest cluster is '+(Math.abs(zone.price-price)/R.atr).toFixed(2)+' ATR away — not there yet'});
-  if(atLevel)H.status='PRICE CONFIRMED';
+  if(haveDiv&&atLevel)H.status='PRICE CONFIRMED';
 
   /* STEP 3 — a live cycle window */
   var T=R.time||{hits:[],windows:[]};
@@ -13724,7 +13894,7 @@ function reversalHypothesis(inp){
     why:haveTime?tight.length+' anniversary inside tolerance, '+soon.length
         +' window(s) within 30 days'+((SQ&&SQ.live&&SQ.live.squared)?', and the leg has squared out':'')
        :'DIVERGENCE ONLY — NO TIME CONFIRMATION'});
-  if(atLevel&&haveTime)H.status='TIME CONFIRMED';
+  if(haveDiv&&atLevel&&haveTime)H.status='TIME CONFIRMED';
 
   /* STEP 4 — structure */
   var S=structuralConfirmation(R,side);
@@ -13733,7 +13903,7 @@ function reversalHypothesis(inp){
   H.steps.push({n:4,name:'Structure',ok:S.confirmed,
     why:S.confirmed?S.found.length+' independent structural readings agree'
        :'only '+S.found.length+' structural reading — two are required'});
-  if(atLevel&&haveTime&&S.confirmed)H.status='STRUCTURE CONFIRMED';
+  if(haveDiv&&atLevel&&haveTime&&S.confirmed)H.status='STRUCTURE CONFIRMED';
 
   /* quant extreme is reported on its own row of the matrix */
   var Q=R.quant||{};
@@ -13760,7 +13930,17 @@ function reversalHypothesis(inp){
     target = back?back.price:(side==='Short'?price-R.atr*3:price+R.atr*3);
     H.rr=Math.abs(target-entry)/Math.abs(entry-stop);
   }
+  /* THE REVERSAL DID NOT LOOK LIKE THE OTHER TWO HYPOTHESES.
+     Primary and Secondary carry .direction and .entryZone; this carried
+     .side and a bare .entry, so every panel that renders a hypothesis
+     uniformly showed the reversal with no direction and no entry. Same
+     shape now, with the original fields kept for existing readers. */
   H.entry=entry; H.stop=stop; H.target=target;
+  H.direction = side==='Short' ? 'Short' : 'Long';
+  if(entry!=null&&R.atr){
+    var halfz=R.atr*0.35;
+    H.entryZone={low:+(entry-halfz).toFixed(4), high:+(entry+halfz).toFixed(4), anchor:entry};
+  }
   var riskOk=H.rr!=null&&H.rr>=1.5;
   H.steps.push({n:5,name:'Astro (experimental)',ok:H.astro.confluence,
     why:H.astro.status,experimental:true});
@@ -13772,7 +13952,7 @@ function reversalHypothesis(inp){
   var allOk=haveDiv&&atLevel&&haveTime&&S.confirmed&&riskOk;
   if(allOk){
     H.status='ACTIVE';
-  }else if(atLevel&&haveTime&&S.confirmed){
+  }else if(haveDiv&&atLevel&&haveTime&&S.confirmed){
     H.status='CONDITIONAL';
   }
   H.trigger = zone
@@ -13788,13 +13968,20 @@ function reversalHypothesis(inp){
   H.matrix=matrixFrom(H,inp,qExtreme,zone,atLevel,haveTime,S.confirmed,riskOk,haveDiv);
   return H;
 
+  /* every "why" below now comes from a step that actually ran. The old
+     fallbacks — "no cluster ahead", "no anniversary inside tolerance" —
+     were printed after an early return that had evaluated neither. */
   function matrixFrom(HH,inp2,qx,zone2,atL,hT,sC,rOk,hD){
+    var dw = HH.divergenceEvidence[0]
+      || (HH.divergenceMeasured===false
+            ? 'not measurable — '+HH.divergenceCoverage+'% of its inputs are loaded'
+            : 'nothing contradicts price');
     return confirmationMatrix({
-      divergence:!!hD, divergenceWhy:HH.divergenceEvidence[0]||'below the watch threshold',
-      priceLevel:!!atL, priceWhy:HH.priceEvidence[0]||'no cluster ahead',
-      timeCycle:!!hT,  timeWhy:HH.timeEvidence[0]||'no anniversary inside tolerance',
-      structure:!!sC,  structureWhy:HH.structuralEvidence[0]||(HH.structuralMissing&&HH.structuralMissing[0])||'—',
-      quantExtreme:!!qx, quantWhy:HH.quantEvidence[0]||'—',
+      divergence:!!hD, divergenceWhy:dw, divergenceUnmeasured:(HH.divergenceMeasured===false),
+      priceLevel:!!atL, priceWhy:HH.priceEvidence[0]||'no cluster on the side a reversal would travel',
+      timeCycle:!!hT,  timeWhy:HH.timeEvidence[0]||'no count inside tolerance and no window within 30 days',
+      structure:!!sC,  structureWhy:HH.structuralEvidence[0]||(HH.structuralMissing&&HH.structuralMissing[0])||'no structural reading either way',
+      quantExtreme:!!qx, quantWhy:HH.quantEvidence[0]||'no z-score or ATR percentile computed',
       astro:!!(HH.astro&&HH.astro.confluence), astroWhy:HH.astro?HH.astro.status:'—',
       risk:!!rOk, riskWhy:HH.rr!=null?'reward to risk '+HH.rr.toFixed(2):'nothing to size'
     });
@@ -14966,6 +15153,7 @@ function renderCQE(){
       try{ var tc=document.getElementById('trade_slot');
            if(tc)tc.innerHTML=tradeCardHtml(); }catch(e){}
       try{ convergencePaint(); }catch(e){ console.error('convergence:',e); }
+      try{ noisePaint(); }catch(e){ console.error('noise:',e); }
       /* the bot parked this signal because the methods had not finished.
          They have now, so it gets its answer. */
       try{ if(typeof BOT!=='undefined'&&BOT&&BOT._deferred){
