@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b40 — Precision in Timing</title>
+<title>Celestial Alpha b41 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -5308,7 +5308,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b40</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b41</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -5359,18 +5359,6 @@ body{background:var(--bg0)}
       <div class="stat"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 4 5-8 4 5"/></svg></div><div class="sv"><div class="l">Profit Factor</div><div class="v" id="st_pf">0.00</div><div class="m">This Month</div></div></div>
       <div class="stat"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v18M6 8l6-5 6 5"/></svg></div><div class="sv"><div class="l">Expectancy</div><div class="v" id="st_exp">+0R</div><div class="m">This Month</div></div></div>
       <div class="stat"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M16 6a3 3 0 010 6M18 20a6 6 0 00-3-5"/></svg></div><div class="sv"><div class="l">Active Users</div><div class="v" id="st_usr">0</div><div class="m">Worldwide</div></div></div>
-  </section>
-
-  <!-- ══ RIGHT PRICE, RIGHT TIME ══
-       Its own full-width band rather than a strip inside the chart card.
-       .drow-a is a fixed 365px track, so anything added inside a card in it
-       overflows instead of growing — which is exactly what happened when
-       this was first placed there. It is also the headline answer, so it
-       belongs above the row rather than tucked into a corner of it. -->
-  <section class="conv-band rise" style="animation-delay:.10s">
-    <div class="card" id="conv_slot"></div>
-    <!-- what is in the way of the answer above it -->
-    <div class="card" id="noise_slot"></div>
   </section>
 
   <!-- ══ CHART · TRADE SETUP · MARKET PULSE ══ -->
@@ -15693,6 +15681,20 @@ function trendInvalidHtml(T,price,dp,asset){
       monthly budget and the sizing chip are all driven from it — so it is
       shown, further down, named as the older engine. */
    +'<div id="verdict_slot"><div class="cqv wait"><div class="cqv-t"><b>Reading the board…</b></div></div></div>'
+
+   /* THESE TWO BELONG HERE, NOT ON THE DASHBOARD.
+      They were put on the dashboard as the headline answer, which pushed a
+      screen that was finished and settled out of shape. The dashboard is
+      the glance; this tab is where the five methods report, and both of
+      these are five-method output — the convergence read joins the price,
+      time and hour engines, and the noise report lists what is missing from
+      them. */
+   /* filled inline like trade_slot, so the panel is correct the moment the
+      tab is built rather than only after the next engine run repaints it */
+   +'<section class="conv-band">'
+     +'<div class="card" id="conv_slot">'+convergenceHtml()+'</div>'
+     +'<div class="card" id="noise_slot">'+noiseHtml()+'</div>'
+   +'</section>'
 
    /* ══ TWO COLUMNS, PAIRED BY WHAT THEY ANSWER ══════════════════════
       Which way and When go together: one is direction, the other is timing,
