@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b31 — Precision in Timing</title>
+<title>Celestial Alpha b32 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1759,6 +1759,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border-radius:99px;padding:3px 9px}
 .whn-none{margin-top:12px;font-size:10.5px;color:var(--t3);line-height:1.7}
 .whn-f{margin-top:13px}
+.whn-sq{margin-top:12px;padding:10px 12px;border-radius:11px;border:1px solid var(--b1);
+  background:rgba(6,3,20,.5)}
+.whn-sq.on{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.06)}
+.whn-sq i{font-style:normal;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--t3)}
+.whn-sq b{display:block;font-family:'Space Grotesk';font-size:14px;font-weight:800;
+  color:var(--t1);margin:3px 0 3px}
+.whn-sq.on b{color:var(--up)}
+.whn-sq s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.55}
 /* the headline verdict */
 .cqv{border:1px solid var(--b2);border-radius:18px;padding:19px 22px;margin-bottom:6px;
   background:linear-gradient(135deg,rgba(20,12,48,.8),rgba(9,5,26,.6))}
@@ -1947,6 +1956,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .snm-c.ok b{color:var(--up)} .snm-c.warn b{color:var(--warn)} .snm-c.na b{color:var(--t3);font-size:12px}
 .snm-c s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.55}
 .snm-f{font-size:9.5px;color:var(--t3);line-height:1.7;margin-top:10px}
+/* the backtest */
+.bt-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+.bt-c{padding:10px 12px;border-radius:11px;border:1px solid var(--b1);background:rgba(6,3,20,.5)}
+.bt-c u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.bt-c b{display:block;font-family:'Space Grotesk';font-size:20px;font-weight:800;
+  color:var(--t1);margin:3px 0 4px;line-height:1}
+.bt-c.na b{color:var(--t3);font-size:14px}
+.bt-c s{display:block;text-decoration:none;font-size:9px;color:var(--t3);line-height:1.55}
 
 /* a short plain sentence wherever a number could be mistaken for advice */
 .aplain{font-size:10px;line-height:1.7;color:var(--t3);margin-top:10px}
@@ -4943,7 +4961,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b31</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b32</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -11260,6 +11278,155 @@ function gannTime(rows,pv,opt){
   return T;
 }
 
+/* ══ §7 · PRICE × TIME SQUARING ═══════════════════════════════════════
+   Gann's idea is that a move completes when the distance travelled and the
+   time taken come into proportion — price and time "square out". The idea
+   needs a scale before it can be arithmetic: 400 points and 40 days are only
+   equal if you have decided what one day of price is worth.
+
+   That scale is not guessed here and it is not a constant lifted from a book
+   written about 1930s wheat. It is measured from the instrument's own
+   history — the median daily true range over the loaded window — so a unit
+   of time is worth a unit of typical movement, in this market, now. The unit
+   is reported with every reading, because a squaring computed on a different
+   unit is a different reading and the number alone would hide that.
+
+   A swing squares when travelled ≈ elapsed × unit. The ratio is how far off
+   it is; 1.00 is exact, and the date it would reach 1.00 at its current pace
+   is the one worth writing down. */
+function priceTimeSquare(rows,pv,opt){
+  opt=opt||{};
+  var S={unit:null, swings:[], required:[], notes:[]};
+  if(!rows||rows.length<60){ S.required.push('at least 60 bars'); return S; }
+  if(!pv||pv.length<2){ S.required.push('at least two confirmed pivots'); return S; }
+
+  var trs=[]; for(var i=1;i<rows.length;i++){ var t=trueRange(rows,i); if(t!=null&&t>0)trs.push(t); }
+  if(trs.length<30){ S.required.push('enough true ranges to set the scale'); return S; }
+  var unit=med(trs);
+  S.unit=unit;
+  S.unitNote='one day of time is scaled to '+unit.toFixed(2)
+    +', the median daily true range over these '+rows.length+' bars';
+
+  var last=rows[rows.length-1], nowT=dayOf(last).getTime(), nowPx=num(last.close);
+  /* the last few completed swings, plus the leg still running */
+  var legs=[];
+  for(i=Math.max(1,pv.length-4);i<pv.length;i++){
+    legs.push({from:pv[i-1], to:pv[i], running:false});
+  }
+  if(pv.length)legs.push({from:pv[pv.length-1],
+    to:{px:nowPx,t:nowT,date:dayOf(last).toISOString().slice(0,10)}, running:true});
+
+  legs.forEach(function(L){
+    var travelled=Math.abs(L.to.px-L.from.px);
+    var days=Math.round((L.to.t-L.from.t)/86400000);
+    if(days<2)return;
+    var expected=days*unit;
+    var ratio=expected>0? travelled/expected : null;
+    if(ratio==null)return;
+    var rec={from:L.from.date, to:L.to.date, running:!!L.running,
+      travelled:travelled, days:days, expected:expected, ratio:ratio,
+      squared:Math.abs(ratio-1)<=(opt.tol||0.10)};
+    if(L.running&&ratio>0){
+      /* at this pace, when does the ratio reach 1? */
+      var pace=travelled/days;
+      if(pace>unit){
+        /* travelling faster than time — time has to catch up */
+        rec.daysToSquare=Math.round(travelled/unit)-days;
+      }else if(pace>0){
+        /* travelling slower — price has to catch up, so the date is when the
+           current pace would have covered the elapsed time's worth */
+        rec.daysToSquare=null;
+        rec.note='moving slower than the time unit, so it squares by price, not by date';
+      }
+      if(rec.daysToSquare!=null&&rec.daysToSquare>=0)
+        rec.squareDate=new Date(nowT+rec.daysToSquare*86400000).toISOString().slice(0,10);
+    }
+    S.swings.push(rec);
+  });
+  S.live=S.swings.filter(function(x){return x.running;})[0]||null;
+  S.anySquared=S.swings.some(function(x){return x.squared;});
+  if(!S.swings.length)S.notes.push('No swing long enough to measure.');
+  return S;
+}
+
+/* ══ §9 · WYCKOFF, THE REST OF THE VOCABULARY ═════════════════════════
+   The engine read springs, upthrusts and the two range phases. The framework
+   also asks for the four that describe a range breaking rather than holding,
+   and each is a measurable thing rather than a chart impression:
+
+     SIGN OF WEAKNESS   price closes below the range low on relative volume
+                        above 1.2 and a real result — effort that produced
+                        movement, downward
+     SIGN OF STRENGTH   the same, upward, through the range high
+     SPRING FAILURE     a spring that did not hold: took the low, closed back
+                        inside, and has since closed below it again
+     ACCUMULATION FAIL  a range in its lower third that broke down instead of
+                        up, which is the accumulation thesis being wrong
+
+   All four need volume, so all four are silent when volume is not usable —
+   they are not inferred from price alone. */
+function wyckoffSigns(rows,volRows,opt){
+  opt=opt||{};
+  var out={found:[], required:[], notes:[]};
+  var n=opt.rangeLen||30;
+  if(!rows||rows.length<n+6){ out.required.push('at least '+(n+6)+' bars'); return out; }
+  var src=volRows&&volRows.length?volRows:rows;
+  var vq=volumeQuality(src);
+  if(!vq.usable){ out.required.push('usable volume — '+vq.reason); return out; }
+
+  var vmap={}; for(var i=0;i<src.length;i++){ var k=dayOf(src[i]).toISOString().slice(0,10);
+    if(k)vmap[k]=num(src[i].volume); }
+  function vol(ix){ var k=dayOf(rows[ix]).toISOString().slice(0,10); return vmap[k]!=null?vmap[k]:null; }
+  function relVol(ix){
+    var h=[]; for(var j=Math.max(0,ix-20);j<ix;j++){ var v=vol(j); if(v!=null)h.push(v); }
+    var v0=vol(ix); if(v0==null||h.length<12)return null;
+    var m=mean(h); return m? v0/m : null;
+  }
+  var last=rows.length-1, a=atr(rows,14,last);
+  if(!a){ out.required.push('a computable ATR'); return out; }
+
+  /* the range that price has been in, excluding the bar being judged */
+  var hi=-Infinity, lo=Infinity;
+  for(i=last-n;i<last;i++){ var H=num(rows[i].high), L=num(rows[i].low);
+    if(H!=null&&H>hi)hi=H; if(L!=null&&L<lo)lo=L; }
+  var C=num(rows[last].close), O=num(rows[last].open);
+  var rv=relVol(last), result=Math.abs(C-O)/a;
+  var pos=(C-lo)/(hi-lo);
+
+  if(rv!=null&&rv>=1.2&&result>=0.5){
+    if(C<lo)out.found.push({k:'SIGN OF WEAKNESS',
+      w:'closed below the '+n+'-bar range low on relative volume '+rv.toFixed(2)
+        +' and a '+result.toFixed(2)+' ATR result', bear:true});
+    if(C>hi)out.found.push({k:'SIGN OF STRENGTH',
+      w:'closed above the '+n+'-bar range high on relative volume '+rv.toFixed(2)
+        +' and a '+result.toFixed(2)+' ATR result', bear:false});
+  }
+
+  /* a spring in the last ten bars that has since been closed back through */
+  for(i=Math.max(1,last-10);i<last;i++){
+    var Li=num(rows[i].low), Ci=num(rows[i].close);
+    var rHi=-Infinity, rLo=Infinity;
+    for(var j=Math.max(0,i-n);j<i;j++){ var hh=num(rows[j].high), ll=num(rows[j].low);
+      if(hh!=null&&hh>rHi)rHi=hh; if(ll!=null&&ll<rLo)rLo=ll; }
+    if(Li<rLo&&Ci>rLo&&C<rLo){
+      out.found.push({k:'SPRING FAILURE',
+        w:'the spring of '+dayOf(rows[i]).toISOString().slice(0,10)
+          +' took '+rLo.toFixed(2)+' and closed back inside, and price has since closed below it again',
+        bear:true});
+      break;
+    }
+  }
+
+  /* the accumulation thesis failing: low in the range, and it broke down */
+  if(pos<0.35&&C<lo&&rv!=null&&rv>=1.0)
+    out.found.push({k:'ACCUMULATION FAILURE',
+      w:'a range in its lower third broke downward rather than upward', bear:true});
+
+  out.relVol=rv; out.result=result; out.range={high:hi,low:lo};
+  if(!out.found.length)out.notes.push('The range is holding — none of the four break conditions is met.');
+  return out;
+}
+
 /* ══ ENGINE 5 — QUANT / SIGMA / VOLATILITY ════════════════════════════ */
 function quant(rows,opt){
   opt=opt||{};
@@ -11358,6 +11525,24 @@ function gates(ctx){
     direction: votes.length? (dir>15?'Bullish':dir<-15?'Bearish':'Neutral') : 'DATA REQUIRED',
     score: votes.length? Math.round(Math.min(100, netAbs*(agree==null?1:0.4+0.6*agree))) : null };
 
+  /* ══ §12 · DIVERGENCE REACHES THE GATES ═══════════════════════════
+     It was computed, shown, and then went nowhere — the framework says it
+     supports WHICH WAY and WHEN, and it was supporting neither. It does not
+     get a vote, because a warning is not a direction: what it does is
+     DISCOUNT the confidence of the direction the methods chose. Fifty points
+     of contradictory evidence halves it. The raw votes are untouched and the
+     discount is reported, so nothing is quietly reduced. */
+  if(ctx.divergence&&ctx.divergence.score!=null&&g.which.score!=null){
+    var dvs=ctx.divergence.score;
+    var keep=Math.max(0.4,1-dvs/100);
+    g.which.divergence=dvs;
+    g.which.rawScore=g.which.score;
+    g.which.score=Math.round(g.which.score*keep);
+    g.which.discount=Math.round((1-keep)*100);
+    if(dvs>=40)g.which.note='Direction confidence cut '+g.which.discount
+      +'% — '+dvs+' out of 100 of the evidence contradicts it.';
+  }
+
   /* GATE 2 — WHERE */
   var cl=ctx.clusters||[];
   g.where={ clusters:cl,
@@ -11365,8 +11550,15 @@ function gates(ctx){
     score: cl.length? Math.round(Math.min(100, cl[0].strength*22
              + Math.max(0,(1-(Math.abs(cl[0].price-ctx.price)/(ctx.atr||1))/4))*22 )) : 0 };
 
-  /* GATE 3 — WHEN */
+  /* GATE 3 — WHEN. Divergence sharpens timing rather than scoring it: a
+     cycle date with contradictory evidence around it is a date worth
+     watching, and one without is a date on a calendar. */
   g.when={ hits:T.hits, windows:T.windows, score:T.score };
+  if(ctx.divergence&&ctx.divergence.score!=null&&T.hits&&T.hits.length){
+    g.when.divergence=ctx.divergence.score;
+    g.when.sharpened=ctx.divergence.score>=20;
+    if(g.when.sharpened)g.when.score=Math.min(100,Math.round(T.score*1.15));
+  }
 
   /* GATE 4 — HOW MUCH is computed by the caller, which owns account size
      and contract specification. This gate is a veto and never a suggestion. */
@@ -11570,6 +11762,7 @@ function coreScore(parts){
 }
 
 root.CQE={ dataQuality:dataQuality, scrubTicks:scrubTicks,
+  priceTimeSquare:priceTimeSquare, wyckoffSigns:wyckoffSigns,
   projections:projections, riskGate:riskGate, hypotheses:hypotheses, volumeQuality:volumeQuality, pivots:pivots,
   wyckoff:wyckoff, elliott:elliott, gannPrice:gannPrice, gannTime:gannTime,
   quant:quant, momentum:momentum, clusterLevels:clusterLevels, gates:gates,
@@ -11730,14 +11923,46 @@ function volumeDivergence(rows,volRows,pv,opt){
     return w.length?mean(w):null;
   });
   var hist=vser.filter(function(x){return x!=null;});
+
+  /* THREE WAYS OF ASKING THE SAME QUESTION, AND THEY DISAGREE USEFULLY.
+     Raw participation is a level, and levels drift — a feed that adds
+     sources, an instrument that grows. Relative volume divides that out.
+     The z-score says how unusual it was against its own recent behaviour,
+     and the percentile says the same thing without assuming the
+     distribution is normal, which volume never is. A divergence that shows
+     up in all three is worth more than one that shows up in the level only. */
+  var relN=opt.relLen||20;
+  var rel=rows.map(function(_,ix){
+    if(ix<relN)return null;
+    var w=[]; for(var k=ix-relN;k<ix;k++) if(vser[k]!=null)w.push(vser[k]);
+    var m=w.length>=relN*0.6?mean(w):null;
+    return (m&&vser[ix]!=null)? vser[ix]/m : null;
+  });
+  var vz=rows.map(function(_,ix){
+    if(ix<relN)return null;
+    var w=[]; for(var k=ix-relN;k<ix;k++) if(vser[k]!=null)w.push(vser[k]);
+    if(w.length<relN*0.6||vser[ix]==null)return null;
+    var m=mean(w), sdv=sd(w);
+    return sdv? (vser[ix]-m)/sdv : null;
+  });
+  var vpct=rows.map(function(_,ix){
+    if(ix<relN||vser[ix]==null)return null;
+    var w=[]; for(var k=Math.max(0,ix-120);k<ix;k++) if(vser[k]!=null)w.push(vser[k]);
+    return w.length>=30? pctileOf(w,vser[ix]) : null;
+  });
   var last=rows.length-1, age=opt.maxAgeBars||40;
   var hi=pairPivots(pv,'H',age,last), lo=pairPivots(pv,'L',age,last);
-  var h=divergePair(hi,part,'participation');
-  if(h&&h.diverging&&h.priceHigher){ h.kind='BEARISH PARTICIPATION DIVERGENCE'; h.at='swing highs';
-    h.pctile1=pctileOf(hist,h.i1); h.pctile2=pctileOf(hist,h.i2); D.found.push(h); }
-  var l=divergePair(lo,part,'participation');
-  if(l&&l.diverging&&!l.priceHigher){ l.kind='BULLISH PARTICIPATION DIVERGENCE'; l.at='swing lows';
-    l.pctile1=pctileOf(hist,l.i1); l.pctile2=pctileOf(hist,l.i2); D.found.push(l); }
+  [['participation',part],['relative volume',rel],['volume z-score',vz],
+   ['volume percentile',vpct]].forEach(function(sr){
+    var h=divergePair(hi,sr[1],sr[0]);
+    if(h&&h.diverging&&h.priceHigher){ h.kind='BEARISH PARTICIPATION DIVERGENCE'; h.at='swing highs';
+      if(sr[0]==='participation'){ h.pctile1=pctileOf(hist,h.i1); h.pctile2=pctileOf(hist,h.i2); }
+      D.found.push(h); }
+    var l=divergePair(lo,sr[1],sr[0]);
+    if(l&&l.diverging&&!l.priceHigher){ l.kind='BULLISH PARTICIPATION DIVERGENCE'; l.at='swing lows';
+      if(sr[0]==='participation'){ l.pctile1=pctileOf(hist,l.i1); l.pctile2=pctileOf(hist,l.i2); }
+      D.found.push(l); }
+  });
   if(!D.found.length)D.notes.push('Participation moved with price at the last two pivots.');
   D.volumeFrom=opt.volumeFrom||null;
   D.score=D.found.length?Math.round(Math.min(100,mean(D.found.map(function(x){return x.strength;})))):0;
@@ -11751,9 +11976,18 @@ function volatilityDivergence(rows,pv,opt){
   if(!pv||pv.length<4){ D.required.push('at least 4 confirmed pivots'); return D; }
   if(rows.length<60){ D.required.push('at least 60 bars for volatility series'); return D; }
   var last=rows.length-1, age=opt.maxAgeBars||40;
-  var series=[['ATR(14)',atrSeries(rows,14)],
+  /* the percentile answers the question the level cannot: an ATR of 90 means
+     nothing until you know whether 90 is high or low for this instrument */
+  var atrS=atrSeries(rows,14);
+  var atrPct=atrS.map(function(v,ix){
+    if(v==null||ix<60)return null;
+    var w=[]; for(var k=Math.max(20,ix-120);k<ix;k++) if(atrS[k]!=null)w.push(atrS[k]);
+    return w.length>=30? pctileOf(w,v) : null;
+  });
+  var series=[['ATR(14)',atrS],
               ['realised vol',realisedVolSeries(rows,20)],
-              ['Bollinger width',bbWidthSeries(rows,20)]];
+              ['Bollinger width',bbWidthSeries(rows,20)],
+              ['volatility percentile',atrPct]];
   var hi=pairPivots(pv,'H',age,last), lo=pairPivots(pv,'L',age,last);
   series.forEach(function(s){
     var h=divergePair(hi,s[1],s[0]);
@@ -11905,6 +12139,15 @@ function structuralConfirmation(R,side){
   var W=R.wyckoff, E=R.elliott, Q=R.quant, G=R.gann;
   var wantShort=side==='Short';
 
+  /* §9's four break conditions, which describe a range failing rather than
+     holding, and are worth more than the phase label when they appear */
+  var SG=R.signs;
+  if(SG&&SG.found&&SG.found.length){
+    SG.found.forEach(function(f){
+      if(f.bear===wantShort)S.found.push({d:'Wyckoff',w:f.k.toLowerCase()+' — '+f.w});
+      else S.missing.push(f.k.toLowerCase()+' points the other way');
+    });
+  }
   /* Wyckoff — an upthrust argues a top, a spring argues a bottom */
   if(W&&W.score!=null){
     if(wantShort&&W.upthrust)S.found.push({d:'Wyckoff',w:'upthrust — took the range high and closed back inside, '
@@ -12091,8 +12334,22 @@ function reversalHypothesis(inp){
               :new Date(Date.now()+14*86400000).toISOString().slice(0,10);
     H.window={start:opens,end:closes};
   }
+  /* §7 — a leg that has squared out is a time reading in its own right */
+  var SQ=R.square;
+  if(SQ&&SQ.live){
+    if(SQ.live.squared){
+      H.timeEvidence.push('Price and time have squared on the running leg: '
+        +SQ.live.travelled.toFixed(2)+' travelled against '+SQ.live.days+' days at '
+        +SQ.unit.toFixed(2)+' a day, a ratio of '+SQ.live.ratio.toFixed(2));
+      haveTime=true;
+    }else if(SQ.live.squareDate){
+      H.timeEvidence.push('Price and time square on '+SQ.live.squareDate
+        +' at the current pace (ratio '+SQ.live.ratio.toFixed(2)+' now)');
+    }
+  }
   H.steps.push({n:3,name:'Time cycle',ok:haveTime,
-    why:haveTime?tight.length+' anniversary inside tolerance, '+soon.length+' window(s) within 30 days'
+    why:haveTime?tight.length+' anniversary inside tolerance, '+soon.length
+        +' window(s) within 30 days'+((SQ&&SQ.live&&SQ.live.squared)?', and the leg has squared out':'')
        :'DIVERGENCE ONLY — NO TIME CONFIRMATION'});
   if(atLevel&&haveTime)H.status='TIME CONFIRMED';
 
@@ -12306,7 +12563,19 @@ function cqeLoadVolume(asset,cb){
    so the series is negated before it is correlated. Getting that sign wrong
    would invert every reading. */
 var CQE_DOLLAR_TICKER='UUP';
-var CQE_YIELD_ETF={ '1Y':'SHY', '10Y':'IEF', '30Y':'TLT' };
+/* THE WHOLE CURVE, NOT ONE POINT ON IT.
+   Only the ten-year was ever fetched, which is one maturity standing in for
+   a curve — and the short end and the long end can move in opposite
+   directions, which is itself the information. Each has an ETF standing in
+   for it when the bridge is not running; the five-year has no clean single
+   fund, so it is served only when real yields are available and reported as
+   unavailable otherwise rather than approximated with something adjacent. */
+var CQE_YIELD_SET=[
+  {k:'DGS1', label:'1Y',  etf:'SHY'},
+  {k:'DGS5', label:'5Y',  etf:null},
+  {k:'DGS10',label:'10Y', etf:'IEF'},
+  {k:'DGS30',label:'30Y', etf:'TLT'}
+];
 var CQE_XM_CACHE={};
 
 function cqeLoadCross(cb){
@@ -12323,39 +12592,60 @@ function cqeLoadCross(cb){
     done();
   });
 
-  /* yields — real ones through the bridge, else the fund, negated */
-  var yc=CQE_XM_CACHE.yield;
-  if(yc&&Date.now()-yc.at<30*60*1000){ out.yield=yc.rows; out.yieldLabel=yc.label; done(); return; }
-  var cfg=(typeof syncCfg==='function')?syncCfg():null;
-  if(cfg&&cfg.url){
-    var t=setTimeout(function(){ t=null; yieldFallback(); },6000);
-    fetch(String(cfg.url).replace(/\/+$/,'')+'/fred/DGS10')
-      .then(function(r){ if(!r.ok)throw new Error('HTTP '+r.status); return r.json(); })
-      .then(function(j){
-        if(!t)return; clearTimeout(t); t=null;
-        var rows=(j.observations||[]).filter(function(o){return o.value!=null;})
-          .map(function(o){ return {t:Date.parse(o.date+'T00:00:00Z'), close:+o.value}; });
-        if(rows.length>60){ out.yield=rows; out.yieldLabel='US 10Y yield (FRED DGS10)';
-          CQE_XM_CACHE.yield={rows:rows,label:out.yieldLabel,at:Date.now()}; done(); }
-        else yieldFallback();
-      })
-      .catch(function(){ if(t){clearTimeout(t);t=null;} yieldFallback(); });
-  }else yieldFallback();
+  /* yields — the whole curve, real ones through the bridge where possible */
+  var yc=CQE_XM_CACHE.curve;
+  if(yc&&Date.now()-yc.at<30*60*1000){ out.curve=yc.curve;
+    out.yield=yc.curve['10Y']&&yc.curve['10Y'].rows; 
+    out.yieldLabel=yc.curve['10Y']&&yc.curve['10Y'].label; done(); return; }
 
-  function yieldFallback(){
-    polygonDaily(CQE_YIELD_ETF['10Y'],760,function(rows){
+  var curve={}, pending=CQE_YIELD_SET.length;
+  function oneDone(){
+    if(--pending>0)return;
+    out.curve=curve;
+    out.yield=curve['10Y']&&curve['10Y'].rows;
+    out.yieldLabel=curve['10Y']&&curve['10Y'].label;
+    CQE_XM_CACHE.curve={curve:curve,at:Date.now()};
+    done();
+  }
+  var cfg=(typeof syncCfg==='function')?syncCfg():null;
+  CQE_YIELD_SET.forEach(function(Y){
+    if(cfg&&cfg.url){
+      var t=setTimeout(function(){ t=null; etfFallback(Y); },7000);
+      fetch(String(cfg.url).replace(/\/+$/,'')+'/fred/'+Y.k)
+        .then(function(r){ if(!r.ok)throw new Error('HTTP '+r.status); return r.json(); })
+        .then(function(j){
+          if(!t)return; clearTimeout(t); t=null;
+          var rows=(j.observations||[]).filter(function(o){return o.value!=null;})
+            .map(function(o){ return {t:Date.parse(o.date+'T00:00:00Z'), close:+o.value}; });
+          if(rows.length>60){ curve[Y.label]={rows:rows,
+            label:'US '+Y.label+' yield (FRED '+Y.k+')', real:true}; oneDone(); }
+          else etfFallback(Y);
+        })
+        .catch(function(){ if(t){clearTimeout(t);t=null;} etfFallback(Y); });
+    }else etfFallback(Y);
+  });
+
+  function etfFallback(Y){
+    if(!Y.etf){
+      /* no single fund tracks this maturity cleanly, and picking an adjacent
+         one would report a five-year reading that is not one */
+      curve[Y.label]={rows:null,
+        label:'US '+Y.label+' yield — needs the bridge; no clean fund stands in for it',
+        real:false};
+      oneDone(); return;
+    }
+    polygonDaily(Y.etf,760,function(rows){
       if(rows&&rows.length>60){
         /* A BOND FUND'S PRICE IS THE INVERSE OF ITS YIELD.
            Correlating IEF's price against gold and calling it a yield
            correlation would report every sign backwards. Negated here, once,
            where it is visible. */
-        out.yield=rows.map(function(r){ return {t:r.t!=null?r.t:Date.parse(r.date),
-          close:-(+r.close)}; });
-        out.yieldLabel='10Y yield, inferred from IEF (bond fund price, negated — '
-          +'not a published yield)';
-        CQE_XM_CACHE.yield={rows:out.yield,label:out.yieldLabel,at:Date.now()};
-      }
-      done();
+        curve[Y.label]={rows:rows.map(function(r){ return {t:r.t!=null?r.t:Date.parse(r.date),
+            close:-(+r.close)}; }),
+          label:Y.label+' yield, inferred from '+Y.etf+' (fund price, negated — not a published yield)',
+          real:false};
+      }else curve[Y.label]={rows:null,label:Y.label+' yield unavailable',real:false};
+      oneDone();
     });
   }
 }
@@ -12378,15 +12668,17 @@ function cqeRun(rows,volRows,volName,price,opt){
   var Q=CQE.quant(R);
   var M=CQE.momentum(R);
   var PR=CQE.projections(R,price,pv,Q);
+  /* §7 and the rest of §9, which the time and structure gates both read */
+  var PT=CQE.priceTimeSquare(R,pv);
+  var WS=CQE.wyckoffSigns(R,vScrub?vScrub.rows:null);
   var core=CQE.coreScore({wyckoff:W.score,elliott:E.score,gannPrice:G.score,
                           gannTime:T.score,quant:Q.score});
-  var g=CQE.gates({wyckoff:W,elliott:E,gann:G,time:T,quant:Q,momentum:M,
-                   clusters:G.clusters,price:price,atr:a,trendScore:opt.trendScore});
-  /* the hand-set major level, if there is one, before any scenario is formed */
-  var MJ=null;
-  try{ MJ=mtlTrend((document.getElementById('ai_asset_txt')||{}).value||'',price); }catch(e){}
-  var H=CQE.hypotheses({price:price,atr:a,gates:g,wyckoff:W,elliott:E,time:T,
-                        projections:PR,coreScore:core,majorTrend:MJ});
+  /* GATES AND SCENARIOS BOTH MOVED BELOW THE DIVERGENCE.
+     §12 has divergence discounting the direction score, and the scenarios
+     are built from the gates — so computing either before the divergence
+     existed meant the hypotheses were formed from an undiscounted read and
+     the gate object they were handed was still null. Order matters here and
+     the comment is the only thing that will remember why. */
 
   /* ══ DIVERGENCE, THEN THE CONFIRMATION CHAIN ═══════════════════════
      Divergence never trades. It raises the amount of evidence standing
@@ -12406,11 +12698,39 @@ function cqeRun(rows,volRows,volName,price,opt){
     dollar:     opt.dollarRows? DV.cross(R,opt.dollarRows,pv,opt.dollarLabel||'Dollar',{}) : null,
     yields:     opt.yieldRows?  DV.cross(R,opt.yieldRows,pv,opt.yieldLabel||'10Y yield',{isLevel:true}) : null
   };
+  /* EVERY MATURITY, SO THE CURVE CAN DISAGREE WITH ITSELF.
+     The short end and the long end move for different reasons and can point
+     opposite ways; reading one and calling it "yields" hides exactly the
+     case worth seeing. The composite still scores the ten-year — one vote,
+     not four — and the rest are reported beside it. */
+  var curve=opt.yieldCurve||null, curveOut=null;
+  if(curve){
+    curveOut={};
+    Object.keys(curve).forEach(function(k){
+      var c=curve[k];
+      if(!c||!c.rows){ curveOut[k]={label:(c&&c.label)||k,
+        classification:'DATA REQUIRED', required:[(c&&c.label)||'not loaded']}; return; }
+      curveOut[k]=DV.cross(R,c.rows,pv,c.label,{isLevel:true});
+      curveOut[k].real=!!c.real;
+    });
+  }
   if(!dparts.dollar)dparts.dollar={score:null,required:['a dollar series — none loaded'],
     label:'Dollar',classification:'DATA REQUIRED',notes:[],correlations:{}};
   if(!dparts.yields)dparts.yields={score:null,required:['a treasury yield series — none loaded'],
     label:'Yield',classification:'DATA REQUIRED',notes:[],correlations:{}};
   var dscore=DV.score(dparts);
+
+  /* the gates are built here, not above, because §12 has divergence
+     discounting the direction score and it did not exist yet up there */
+  var g=CQE.gates({wyckoff:W,elliott:E,gann:G,time:T,quant:Q,momentum:M,
+               clusters:G.clusters,price:price,atr:a,trendScore:opt.trendScore,
+               divergence:dscore});
+
+  /* the hand-set major level, if there is one, before any scenario is formed */
+  var MJ=null;
+  try{ MJ=mtlTrend((document.getElementById('ai_asset_txt')||{}).value||'',price); }catch(e){}
+  var H=CQE.hypotheses({price:price,atr:a,gates:g,wyckoff:W,elliott:E,time:T,
+                        projections:PR,coreScore:core,majorTrend:MJ});
 
   /* the reversal takes the side against the leg that is still running */
   var side=(pv.length&&price>pv[pv.length-1].px)?'Short':'Long';
@@ -12420,13 +12740,15 @@ function cqeRun(rows,volRows,volName,price,opt){
        chain runs once with no events, and again with the events for whatever
        window it produced. Asking the ephemeris for a range that does not
        exist yet would be answering before the question. */
-    var first=CQE.confirm.reversal({engine:{atr:a,wyckoff:W,elliott:E,gann:G,time:T,quant:Q},
+    var first=CQE.confirm.reversal({engine:{atr:a,wyckoff:W,elliott:E,gann:G,time:T,quant:Q,
+      square:PT, signs:WS},
       price:price, divergence:dscore, parts:dparts, side:side, astroEvents:[]});
     var ev=first.window
       ? cqeAstroEvents(first.window.start,first.window.end,45).filter(cqeAstroSignificant)
       : [];
     var br=null; try{ br=cqeAstroBaseRate(); }catch(e2){}
-    rev=CQE.confirm.reversal({engine:{atr:a,wyckoff:W,elliott:E,gann:G,time:T,quant:Q},
+    rev=CQE.confirm.reversal({engine:{atr:a,wyckoff:W,elliott:E,gann:G,time:T,quant:Q,
+      square:PT, signs:WS},
       price:price, divergence:dscore, parts:dparts, side:side,
       astroEvents:ev, astroBaseRate:br});
   }catch(e){ console.error('reversal chain:',e); }
@@ -12450,8 +12772,9 @@ function cqeRun(rows,volRows,volName,price,opt){
 
   return {price:price, atr:a, bars:R.length, dq:CQE.dataQuality(R), repaired:scrub.repaired,
           pivots:pv, wyckoff:W, elliott:E, gann:G, time:T, quant:Q, momentum:M,
-          projections:PR, core:core, gates:g, hypotheses:H,
-          divergence:dscore, divergenceParts:dparts, reversal:rev, majorTrend:MJ,
+          projections:PR, core:core, gates:g, hypotheses:H, square:PT, signs:WS,
+          divergence:dscore, divergenceParts:dparts, yieldCurve:curveOut,
+          reversal:rev, majorTrend:MJ,
           volumeFrom:volName||null, required:[]};
 }
 
@@ -12916,6 +13239,172 @@ function cqeReachHtml(R,dp){
     +'A target further than 3σ in a few days is asking for something the record says is rare.</div>'
   +'</div>';
 }
+/* ══ §15 · THE BACKTEST, IN THE APP ═══════════════════════════════════
+   It existed as a script on my machine, which is the same as not existing.
+
+   THE ONE RULE THAT MAKES IT MEAN ANYTHING: at every bar the engine is
+   handed only bars up to and including that bar, and every other series is
+   sliced BY DATE rather than by index — a proxy on a different calendar
+   would otherwise leak a later print in through a mismatched offset. That is
+   the whole difference between a walk-forward and a chart with the answer
+   already on it.
+
+   Sample first, conclusions second. Divergence at this threshold fires on a
+   few per cent of bars, those cluster into a handful of episodes, and a
+   handful is not a sample. Below the minimum this reports DATA INSUFFICIENT
+   and quotes no hit rate, because a rate computed from two events is a
+   number with no information in it. */
+var CQE_BT={minEpisodes:30, forward:20, oosSplit:0.7, warmup:200};
+function cqeBacktest(rows,volRows,volName,opt){
+  opt=opt||{};
+  var cfg=Object.assign({},CQE_BT,opt);
+  var out={episodes:[], bars:0, watched:0, required:[], notes:[]};
+  if(!rows||rows.length<cfg.warmup+cfg.forward+20){
+    out.required.push('at least '+(cfg.warmup+cfg.forward+20)+' daily bars — '
+      +((rows&&rows.length)||0)+' loaded');
+    return out;
+  }
+  var R0=CQE.scrubTicks(rows).rows;
+  var V0=volRows?CQE.scrubTicks(volRows).rows:null;
+  var DV=CQE.divergence;
+  var hits=[];
+  for(var i=cfg.warmup;i<R0.length-cfg.forward;i++){
+    var hist=R0.slice(0,i+1), t=hist[hist.length-1].t!=null?+hist[hist.length-1].t
+      :Date.parse(hist[hist.length-1].date);
+    /* by date, never by index */
+    var vh=V0?V0.filter(function(r){ var rt=r.t!=null?+r.t:Date.parse(r.date); return rt<=t; }):null;
+    var pv=CQE.pivots(hist,{atrMult:2.0});
+    if(pv.length<4)continue;
+    var a=CQE.atr(hist,14); if(!a)continue;
+    var px=+hist[hist.length-1].close;
+    var parts={ momentum:DV.momentum(hist,pv),
+                volume:DV.volume(hist,vh,pv,{volumeFrom:volName||null}),
+                volatility:DV.volatility(hist,pv) };
+    var sc=DV.score(parts);
+    out.bars++;
+    if(sc.score==null||sc.score<20)continue;
+    out.watched++;
+    var eng={atr:a, wyckoff:CQE.wyckoff(hist,vh,{volumeFrom:volName||null}),
+             elliott:CQE.elliott(hist,pv), gann:CQE.gannPrice(hist,px,pv),
+             time:CQE.gannTime(hist,pv), quant:CQE.quant(hist),
+             square:CQE.priceTimeSquare(hist,pv), signs:CQE.wyckoffSigns(hist,vh)};
+    var side=(px>pv[pv.length-1].px)?'Short':'Long';
+    var H=CQE.confirm.reversal({engine:eng,price:px,divergence:sc,parts:parts,
+      side:side,astroEvents:[]});
+    hits.push({i:i, date:new Date(t).toISOString().slice(0,10), price:px, atr:a,
+      side:side, score:sc.score, status:H.status, grade:H.matrix.grade,
+      hits:H.matrix.hits, of:H.matrix.of,
+      steps:H.steps.filter(function(x){return !x.experimental;})
+        .map(function(x){return x.ok?1:0;}).join('')});
+  }
+  /* consecutive bars are one episode persisting, not twenty occurrences */
+  var eps=[];
+  hits.forEach(function(h){
+    var L=eps[eps.length-1];
+    if(L&&h.i-L.lastI<=5&&L.side===h.side){ L.lastI=h.i; L.bars++;
+      if(h.hits>L.hits)Object.assign(L,{status:h.status,grade:h.grade,hits:h.hits,steps:h.steps}); }
+    else eps.push(Object.assign({},h,{lastI:h.i,bars:1}));
+  });
+  /* forward outcome, measured with nothing the signal bar could not see */
+  eps.forEach(function(e){
+    var fwd=R0.slice(e.i+1,e.i+1+cfg.forward);
+    if(fwd.length<cfg.forward){ e.incomplete=true; return; }
+    var hi=Math.max.apply(null,fwd.map(function(r){return +r.high;}));
+    var lo=Math.min.apply(null,fwd.map(function(r){return +r.low;}));
+    var end=+fwd[fwd.length-1].close;
+    e.mfe=(e.side==='Short'?(e.price-lo):(hi-e.price))/e.atr;
+    e.mae=(e.side==='Short'?(hi-e.price):(e.price-lo))/e.atr;
+    e.net=(e.side==='Short'?(e.price-end):(end-e.price))/e.atr;
+    e.went=e.net>0;
+  });
+  out.episodes=eps;
+  var done=eps.filter(function(e){return !e.incomplete;});
+  out.complete=done.length;
+  function stat(list){
+    if(!list.length)return null;
+    var w=list.filter(function(e){return e.went;}).length;
+    return{ n:list.length, wentTheWay:w,
+      meanMFE:mean(list.map(function(e){return e.mfe;})),
+      meanMAE:mean(list.map(function(e){return e.mae;})),
+      meanNet:mean(list.map(function(e){return e.net;})) };
+  }
+  /* in sample and out of sample, split by time and not by shuffling */
+  var cut=Math.floor(done.length*cfg.oosSplit);
+  out.all=stat(done);
+  out.inSample=stat(done.slice(0,cut));
+  out.outOfSample=stat(done.slice(cut));
+  out.sufficient=done.length>=cfg.minEpisodes;
+  /* the caller prints the DATA INSUFFICIENT label itself, so the sentence
+     must not open with it too — it read "DATA INSUFFICIENTDATA INSUFFICIENT" */
+  if(!out.sufficient)out.verdict=done.length+' episode'
+    +(done.length===1?'':'s')+' had a full '+cfg.forward+'-session forward window. '
+    +cfg.minEpisodes+' is the minimum before a rate is quoted. What follows is a count, '
+    +'not a statistic, and no hit rate is given.';
+  else out.verdict='Measured over '+done.length+' episodes.';
+  out.config=cfg;
+  return out;
+  function mean(a){ return a.length?a.reduce(function(s,x){return s+x;},0)/a.length:null; }
+}
+function cqeRunBacktest(btn){
+  var slot=document.getElementById('bt_slot'); if(!slot)return;
+  var rows=window.HIST_ROWS;
+  if(!rows||!rows.length){ slot.innerHTML='<div class="cq-req">No history loaded.</div>'; return; }
+  var asset=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
+  if(btn){ btn.disabled=true; btn.textContent='Walking the history…'; }
+  slot.innerHTML='<div class="aplain">Running…</div>';
+  /* two frames so the button state and the notice actually paint before the
+     main thread is taken for several seconds */
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    var vp=cqeVolProxy(asset), cache=vp&&CQE_VOL_CACHE[vp];
+    var fresh=cache&&Date.now()-cache.at<30*60*1000;
+    var B=null, err=null;
+    try{ B=cqeBacktest(rows,fresh?cache.rows:null,fresh?vp:null); }
+    catch(e){ err=e.message; console.error('backtest:',e); }
+    var price=parseFloat((document.getElementById('ai_price')||{}).value)||+rows[rows.length-1].close;
+    slot.innerHTML=err?('<div class="cq-req"><b>The test failed</b>'+escHtml(err)+'</div>')
+                      :cqeBacktestHtml(B,price<10?4:2);
+    if(btn){ btn.disabled=false; btn.textContent='Run it again'; }
+  });});
+}
+function cqeBacktestHtml(B,dp){
+  if(!B)return '';
+  if(B.required&&B.required.length)
+    return '<div class="acard"><div class="cq-req"><b>DATA REQUIRED</b>'
+      +escHtml(B.required.join('; '))+'</div></div>';
+  var f=function(v){ return v==null?'—':(+v).toFixed(2); };
+  function block(title,st){
+    if(!st)return '<div class="bt-c na"><u>'+title+'</u><b>—</b><s>no episodes in this half</s></div>';
+    return '<div class="bt-c"><u>'+title+'</u><b>'+st.n+'</b>'
+      +'<s>'+st.wentTheWay+' went the way the reversal pointed · '
+      +'best excursion '+f(st.meanMFE)+' ATR · worst '+f(st.meanMAE)+' ATR · '
+      +'net '+f(st.meanNet)+' ATR</s></div>';
+  }
+  return '<div class="acard">'
+    +'<div class="act-say" style="margin:0 0 11px"><b>Tested on this instrument’s own history.</b> '
+    +'At every bar the engine saw only the bars before it, and every other series was cut by date '
+    +'— nothing from the future reached the signal.</div>'
+    +'<div class="bt-g">'
+      +'<div class="bt-c"><u>Bars walked</u><b>'+B.bars+'</b>'
+        +'<s>'+B.watched+' opened a watch · '
+        +(B.bars?(B.watched/B.bars*100).toFixed(1):'0')+'% of them</s></div>'
+      +block('Episodes, all',B.all)
+      +block('In sample',B.inSample)
+      +block('Out of sample',B.outOfSample)
+    +'</div>'
+    +'<div class="'+(B.sufficient?'aplain':'cq-req')+'" style="margin-top:11px">'
+      +(B.sufficient?'':'<b>DATA INSUFFICIENT</b>')+escHtml(B.verdict)+'</div>'
+    +(B.episodes.length?'<details class="amore"><summary>Every episode ('
+      +B.episodes.length+')</summary><div class="amore-b">'
+      +B.episodes.map(function(e){
+        return '<div>'+e.date+' · '+e.side+' · warning '+e.score
+          +' · '+e.hits+' of '+e.of+' confirmed · '+e.grade.toLowerCase()
+          +(e.incomplete?' · not enough forward data'
+            :' · best '+f(e.mfe)+' ATR, worst '+f(e.mae)+' ATR, net '+f(e.net)+' ATR'
+              +(e.went?' — went the reversal way':' — kept going'))
+          +'</div>'; }).join('')
+      +'</div></details>':'')
+  +'</div>';
+}
 /* run it and put it on the page */
 var CQE_FETCHING=false;
 function renderCQE(){
@@ -12970,7 +13459,8 @@ function renderCQE(){
     try{
       var R=cqeRun(rows,vr,vr?vn:null,price, xm?{
         dollarRows:xm.dollar, dollarLabel:xm.dollarLabel,
-        yieldRows:xm.yield,   yieldLabel:xm.yieldLabel}:{});
+        yieldRows:xm.yield,   yieldLabel:xm.yieldLabel,
+        yieldCurve:xm.curve}:{});
       CQE_LAST=R; window.CQE_LAST=R;
       slot.innerHTML=cqeHtml(R,asset,dp);
       /* the When gate quotes this engine's cycle counts, and it was drawn
@@ -13254,6 +13744,20 @@ function anaWhen(price,dp){
     +'<div class="whn-c"><u>Left today</u><b>'+ahead.length+'</b>'
       +'<s>'+ahead.filter(function(w){return w.best;}).length+' of them strong</s></div>'
   +'</div>';
+
+  /* §7 — price and time squaring, which is a time reading and belongs here */
+  var SQ=window.CQE_LAST&&window.CQE_LAST.square;
+  if(SQ&&SQ.live){
+    var L=SQ.live;
+    out+='<div class="whn-sq'+(L.squared?' on':'')+'">'
+      +'<i>Price × time</i>'
+      +'<b>'+(L.squared?'squared out'
+        :L.squareDate?('squares '+escHtml(L.squareDate))
+        :'ratio '+L.ratio.toFixed(2))+'</b>'
+      +'<s>'+L.travelled.toFixed(2)+' travelled in '+L.days+' days, against '
+      +SQ.unit.toFixed(2)+' a day — this instrument&rsquo;s own median daily range. '
+      +'Ratio '+L.ratio.toFixed(2)+', where 1.00 is exact.</s></div>';
+  }
 
   /* cycle anniversaries, from the measured time engine rather than a table */
   var T=window.CQE_LAST&&window.CQE_LAST.time;
@@ -13621,6 +14125,19 @@ function trendInvalidHtml(T,price,dp,asset){
    +act(7,'The working','Show me the raw numbers.',
         'Everything above, unrounded, plus the older single-number engine this board used to run '
         +'on. Two engines disagreeing is worth seeing rather than hiding.')
+   /* A FEW HUNDRED FULL ENGINE PASSES IS NOT SOMETHING TO DO ON PAGE LOAD.
+      Every bar of the walk runs the pivots, five engines and the whole
+      confirmation chain. On two years of daily bars that is several seconds
+      of blocked main thread — fine when it was asked for, unacceptable as a
+      thing that happens because you opened a tab. It runs on the button. */
+   +'<details class="sec"><summary><b>Does the reversal engine actually work?</b>'
+     +'<span>walk it forward over this instrument\u2019s own history</span></summary>'
+     +'<div style="padding-top:10px"><button class="btn btn-a btn-sm" onclick="cqeRunBacktest(this)">'
+       +'Run the walk-forward test</button>'
+       +'<div class="aplain">Every bar is judged using only the bars before it. Takes a few '
+       +'seconds and freezes the page while it runs.</div>'
+       +'<div id="bt_slot"></div></div>'
+   +'</details>'
    +'<details class="sec"><summary><b>The older single-number engine</b>'
      +'<span>what drove this board before the five engines, and still drives the journal and the budget</span></summary>'
 
