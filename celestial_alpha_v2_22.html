@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b36 — Precision in Timing</title>
+<title>Celestial Alpha b37 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -986,6 +986,88 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 </style>
 </head>
 <body>
+<!-- ══════════════════════════════════════════════════════════════════════
+     BOOT SCREEN
+
+     Inline, immediately after <body>, with its own <style> — so it paints on
+     the first frame rather than waiting for the 1.4MB script below it to be
+     parsed. Everything it draws is CSS; no image, no font, no script needed
+     to show it, which is what makes it appear instantly.
+
+     It is dismissed by bootDone(), which waits for window load AND a minimum
+     on-screen time so it reads as a deliberate opening rather than a flash,
+     and has a failsafe timer so a script error can never leave the app
+     sitting behind a curtain.
+     ══════════════════════════════════════════════════════════════════════ -->
+<style>
+#boot_screen{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:26px;
+  background:radial-gradient(120% 90% at 50% 42%,#120d2a 0%,#08061a 45%,#050508 100%);
+  transition:opacity .55s ease,visibility .55s}
+#boot_screen.gone{opacity:0;visibility:hidden;pointer-events:none}
+#boot_screen::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:radial-gradient(1px 1px at 20% 30%,#fff,transparent),
+             radial-gradient(1px 1px at 72% 18%,#cbb6ff,transparent),
+             radial-gradient(1px 1px at 38% 78%,#fff,transparent),
+             radial-gradient(1px 1px at 86% 64%,#b9a4ff,transparent),
+             radial-gradient(1px 1px at 12% 62%,#fff,transparent),
+             radial-gradient(1px 1px at 60% 88%,#e6dcff,transparent);
+  animation:bsTwinkle 4s ease-in-out infinite}
+@keyframes bsTwinkle{0%,100%{opacity:.28}50%{opacity:.65}}
+/* three rings, three speeds, one dot each — the orbit reads as motion even
+   before a single number has loaded */
+.bs-orbit{position:relative;width:132px;height:132px}
+.bs-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(167,139,250,.16)}
+.bs-ring:nth-child(2){inset:17px;border-color:rgba(167,139,250,.24)}
+.bs-ring:nth-child(3){inset:34px;border-color:rgba(167,139,250,.32)}
+.bs-ring i{position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;
+  border-radius:50%;background:#c4b1ff;box-shadow:0 0 10px 2px rgba(167,139,250,.75)}
+.bs-ring:nth-child(1){animation:bsSpin 7s linear infinite}
+.bs-ring:nth-child(2){animation:bsSpin 4.6s linear infinite reverse}
+.bs-ring:nth-child(3){animation:bsSpin 2.9s linear infinite}
+@keyframes bsSpin{to{transform:rotate(360deg)}}
+.bs-core{position:absolute;inset:52px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#a78bfa,#6d4bc4 60%,#3a2170);
+  box-shadow:0 0 26px rgba(139,92,246,.6);animation:bsBreathe 2.6s ease-in-out infinite}
+@keyframes bsBreathe{0%,100%{transform:scale(1);box-shadow:0 0 22px rgba(139,92,246,.45)}
+  50%{transform:scale(1.11);box-shadow:0 0 38px rgba(139,92,246,.75)}}
+.bs-word{position:relative;text-align:center}
+.bs-word b{display:block;font-family:'Space Grotesk',system-ui,sans-serif;font-size:19px;
+  font-weight:700;letter-spacing:.34em;text-indent:.34em;color:#efe9ff;
+  animation:bsUp .8s cubic-bezier(.22,1,.36,1) both}
+.bs-word s{display:block;margin-top:7px;text-decoration:none;font-family:system-ui,sans-serif;
+  font-size:9.5px;letter-spacing:.26em;text-indent:.26em;color:#8b7fb0;text-transform:uppercase;
+  animation:bsUp .8s .12s cubic-bezier(.22,1,.36,1) both}
+@keyframes bsUp{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.bs-bar{position:relative;width:212px;height:2px;border-radius:2px;
+  background:rgba(167,139,250,.14);overflow:hidden}
+.bs-bar i{position:absolute;inset:0;width:22%;border-radius:2px;
+  background:linear-gradient(90deg,#6d4bc4,#a78bfa,#e0d4ff);
+  transition:width .4s cubic-bezier(.4,0,.2,1)}
+.bs-bar::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  animation:bsSweep 1.5s linear infinite}
+@keyframes bsSweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.bs-step{position:relative;height:12px;font-family:system-ui,sans-serif;font-size:10px;
+  letter-spacing:.1em;color:#7d719f;text-align:center}
+.bs-step span{animation:bsFade .35s ease both}
+@keyframes bsFade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  #boot_screen::before,.bs-ring,.bs-core,.bs-bar::after,.bs-word b,.bs-word s,.bs-step span
+    {animation:none!important}
+}
+</style>
+<div id="boot_screen" role="status" aria-label="Loading Celestial Alpha">
+  <div class="bs-orbit">
+    <div class="bs-ring"><i></i></div>
+    <div class="bs-ring"><i></i></div>
+    <div class="bs-ring"><i></i></div>
+    <div class="bs-core"></div>
+  </div>
+  <div class="bs-word"><b>CELESTIAL</b><s>Precision in Timing</s></div>
+  <div class="bs-bar"><i id="bs_fill"></i></div>
+  <div class="bs-step" id="bs_step"><span>Starting the engines</span></div>
+</div>
 <style>
 /* chart card */
 .chart-shell{display:grid;grid-template-columns:.85fr 2.07fr 1fr 1fr;gap:16px;align-items:stretch}
@@ -2006,7 +2088,83 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .mn-exp{font-size:8.5px;color:var(--t3);opacity:.7;letter-spacing:.04em;
   margin-left:auto;white-space:nowrap}
 .mn-na{font-size:10px;color:var(--t3)}
-.mn-na{font-size:10px;color:var(--t3)}
+
+/* the signal gate block inside the trade card */
+/* the signal card centres its own text; the gate is a read-out, so it opts out */
+.sgate{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--b1);
+  text-align:left;background:rgba(9,5,26,.34);
+  animation:sgIn .34s cubic-bezier(.22,1,.36,1) both}
+@keyframes sgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sgate.ok{border-color:rgba(52,211,153,.32);background:rgba(52,211,153,.06)}
+.sgate.caut{border-color:rgba(251,191,36,.34);background:rgba(251,191,36,.07)}
+.sgate.wait{border-color:rgba(248,113,113,.36);background:rgba(248,113,113,.07)}
+.sgate.pend{border-color:rgba(148,163,184,.3)}
+.sg-h{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk';
+  font-size:11.5px;font-weight:800;letter-spacing:.02em;color:var(--t1)}
+.sg-h b{margin-left:auto;font-size:11px;font-variant-numeric:tabular-nums;color:var(--t2)}
+.sg-dot{width:7px;height:7px;border-radius:99px;background:var(--t3);flex:none}
+.sgate.ok .sg-dot{background:#34D399;animation:sgPulseG 2.4s infinite}
+.sgate.caut .sg-dot{background:#FBBF24}
+.sgate.wait .sg-dot{background:#F87171;animation:sgPulseR 1.5s infinite}
+.sgate.pend .sg-dot{background:#94A3B8;animation:sgBlink 1s infinite}
+@keyframes sgPulseG{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}
+  70%{box-shadow:0 0 0 6px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+@keyframes sgPulseR{0%{box-shadow:0 0 0 0 rgba(248,113,113,.6)}
+  70%{box-shadow:0 0 0 6px rgba(248,113,113,0)}100%{box-shadow:0 0 0 0 rgba(248,113,113,0)}}
+@keyframes sgBlink{0%,100%{opacity:1}50%{opacity:.25}}
+.sg-why{margin-top:5px;font-size:10.5px;line-height:1.55;color:var(--t2)}
+.sg-rows{margin-top:8px;display:grid;gap:3px}
+.sg-r{display:grid;grid-template-columns:14px 96px 1fr;gap:6px;align-items:baseline;font-size:10px}
+.sg-r i{font-style:normal;font-weight:800;text-align:center}
+.sg-r b{font-weight:700;color:var(--t2)}
+.sg-r s{text-decoration:none;color:var(--t3);line-height:1.45}
+.sg-r.yes i{color:#34D399}
+.sg-r.no i{color:#F87171}
+.sg-r.skip i{color:var(--t3)}
+.sg-r.skip b,.sg-r.skip s{opacity:.6}
+.sg-foot{margin-top:8px;padding-top:7px;border-top:1px solid var(--b1);
+  font-size:9px;letter-spacing:.03em;color:var(--t3)}
+/* a setup the gate is holding back */
+.sgc.held{border-color:rgba(248,113,113,.4)}
+.sgc.held .sgc-w{color:#F87171}
+.sgc-w em{display:block;font-style:normal;font-size:10px;font-weight:600;
+  letter-spacing:.02em;color:var(--t3);margin-top:3px}
+/* the same verdict inside the take dialog */
+.ts-warn{margin-top:9px;padding:9px 11px;border-radius:9px;font-size:10.5px;line-height:1.55;
+  border:1px solid rgba(248,113,113,.4);background:rgba(248,113,113,.08);color:var(--t2)}
+.ts-warn.caut{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+.ts-warn.pend{border-color:rgba(148,163,184,.32);background:rgba(148,163,184,.07)}
+.ts-warn b{color:var(--t1)}
+
+/* ══ BUTTON WORK STATES ══ */
+.btn-sp{width:11px;height:11px;flex:none;border-radius:50%;
+  border:1.6px solid rgba(255,255,255,.25);border-top-color:currentColor;
+  display:inline-block;margin-right:5px;animation:btnSpin .62s linear infinite}
+@keyframes btnSpin{to{transform:rotate(360deg)}}
+.btn.working{opacity:.82;cursor:progress}
+.btn.flash-ok{animation:btnOkF .9s ease}
+.btn.flash-bad{animation:btnBadF .9s ease}
+@keyframes btnOkF{0%{box-shadow:0 0 0 0 rgba(62,207,142,.55)}
+  60%{box-shadow:0 0 0 8px rgba(62,207,142,0)}100%{box-shadow:0 0 0 0 rgba(62,207,142,0)}}
+@keyframes btnBadF{0%{box-shadow:0 0 0 0 rgba(224,86,102,.55);transform:translateX(0)}
+  12%{transform:translateX(-3px)}26%{transform:translateX(3px)}40%{transform:translateX(-2px)}
+  55%{transform:translateX(0);box-shadow:0 0 0 8px rgba(224,86,102,0)}
+  100%{box-shadow:0 0 0 0 rgba(224,86,102,0)}}
+/* the sound toggle in the header */
+#sfx_btn{width:28px;height:28px;flex:none;border-radius:9px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;font-size:12px;line-height:1;
+  background:rgba(139,92,246,.14);border:1px solid rgba(157,77,255,.32);color:#c9b6ff;
+  transition:background .18s,color .18s,border-color .18s,transform .12s}
+#sfx_btn:hover{background:rgba(139,92,246,.26);transform:translateY(-1px)}
+#sfx_btn:active{transform:scale(.93)}
+#sfx_btn.off{background:rgba(255,255,255,.04);border-color:var(--bd);color:var(--tm)}
+/* toasts arrive and leave rather than appearing and vanishing */
+.notif{animation:ntIn .42s cubic-bezier(.22,1,.36,1) both,ntOut .4s 2.8s ease both}
+@keyframes ntIn{from{opacity:0;transform:translateX(26px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes ntOut{to{opacity:0;transform:translateX(26px) scale(.97)}}
+@media(prefers-reduced-motion:reduce){
+  .btn-sp,.btn.flash-ok,.btn.flash-bad,.notif,.sgate,.sgate .sg-dot{animation:none!important}
+}
 @media(max-width:760px){.mn-next{margin-left:0}.mn-say{width:100%}}
 
 /* a short plain sentence wherever a number could be mistaken for advice */
@@ -5012,6 +5170,10 @@ body{background:var(--bg0)}
               stroke-width="5.2" stroke-linecap="butt"/>
       </svg>
       <div class="t">CELESTIAL<span>ALPHA</span></div>
+      <!-- interface sounds. Muted state is remembered; the label is the state,
+           not the action, so it reads the same way the rest of the app does. -->
+      <button id="sfx_btn" type="button" onclick="sfxToggle()"
+              title="Interface sounds">♪</button>
     </div>
     <div class="nav-item on" onclick='goTab("dashboard",this)'><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Dashboard</div>
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
@@ -5031,7 +5193,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b36</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b37</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7766,6 +7928,152 @@ function startSideRotator(){
     ps[k].classList.add('on');
   },7000);
 }
+/* ══════════════════════════════════════════════════════════════════════
+   BOOT SCREEN CONTROL
+
+   The curtain comes down when the app is genuinely usable, not on a timer
+   alone — but it also cannot outstay a failure. Three things end it: the
+   window load event plus a minimum on-screen time, an explicit bootDone()
+   from the init block, or a failsafe. Whichever fires first wins, and the
+   failsafe means a thrown error during init can never leave someone
+   staring at a spinner over a working page.
+   ══════════════════════════════════════════════════════════════════════ */
+var BOOT_T0=Date.now(), BOOT_MIN=850, BOOT_MAX=4000, BOOT_OVER=false;
+/* NO FAKE STAGE LIST.
+   The first version stepped through "Loading the ephemeris", "Building the
+   levels", "Running the five methods" on a 260ms timer. The init block is
+   synchronous — all of that happens inside one frame — so the labels were
+   not reporting progress, they were a slideshow pretending to. Measured, the
+   screen went straight from the first label to "Ready" and the middle three
+   never appeared at all.
+
+   What is left is honest: an indeterminate sweep while work is happening,
+   because the duration genuinely is not known ahead of time, and a fill to
+   full at the moment it actually finishes. */
+function bootSay(txt){
+  var el=document.getElementById('bs_step');
+  if(el)el.innerHTML='<span>'+txt+'</span>';
+}
+function bootDone(){
+  if(BOOT_OVER)return; BOOT_OVER=true;
+  bootSay('Ready');
+  var bar=document.getElementById('bs_fill');
+  if(bar)bar.style.width='100%';
+  var wait=Math.max(0,BOOT_MIN-(Date.now()-BOOT_T0));
+  setTimeout(function(){
+    var s=document.getElementById('boot_screen');
+    if(!s)return;
+    s.classList.add('gone');
+    /* removed rather than left hidden: a fixed full-screen node still costs
+       a compositor layer on every scroll */
+    setTimeout(function(){ if(s.parentNode)s.parentNode.removeChild(s); },700);
+  },wait);
+}
+(function(){
+  setTimeout(bootDone,BOOT_MAX);              /* failsafe */
+  window.addEventListener('load',function(){ setTimeout(bootDone,120); });
+})();
+
+/* ══════════════════════════════════════════════════════════════════════
+   UI SOUND — tiny synthesised cues, no files
+
+   WebAudio oscillators rather than audio assets: nothing to download, and
+   nothing to add to a 2MB page. Every browser blocks audio until a gesture,
+   so the context is created lazily on the first real click and every call is
+   wrapped — a blocked or missing AudioContext must never break a button.
+   Off is remembered; the toggle sits in the header.
+   ══════════════════════════════════════════════════════════════════════ */
+var SFX_KEY='ca_sfx', _actx=null;
+function sfxOn(){ try{ return localStorage.getItem(SFX_KEY)!=='off'; }catch(e){ return false; } }
+function sfxToggle(){
+  var on=!sfxOn();
+  try{ localStorage.setItem(SFX_KEY,on?'on':'off'); }catch(e){}
+  sfxPaint();
+  if(on)sfx('ok');
+  notify('Interface sounds '+(on?'on':'off'),'info');
+}
+function sfxPaint(){
+  var b=document.getElementById('sfx_btn');
+  if(!b)return;
+  var on=sfxOn();
+  b.textContent=on?'♪':'×';
+  b.classList.toggle('off',!on);
+  b.title=on?'Interface sounds are on — click to mute':'Interface sounds are muted — click to unmute';
+}
+/* name → [frequency pairs, duration, gain, wave] */
+var SFX_TONES={
+  tap:  {f:[520,0],       d:0.045, g:0.030, w:'sine'},
+  ok:   {f:[660,990],     d:0.130, g:0.045, w:'sine'},
+  send: {f:[440,880],     d:0.110, g:0.042, w:'triangle'},
+  warn: {f:[400,300],     d:0.180, g:0.050, w:'sine'},
+  alert:{f:[880,1320],    d:0.200, g:0.055, w:'triangle'}
+};
+function sfx(name){
+  if(!sfxOn())return;
+  var T=SFX_TONES[name]; if(!T)return;
+  try{
+    var AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
+    if(!_actx)_actx=new AC();
+    if(_actx.state==='suspended')_actx.resume();
+    var t0=_actx.currentTime, o=_actx.createOscillator(), g=_actx.createGain();
+    o.type=T.w;
+    o.frequency.setValueAtTime(T.f[0],t0);
+    if(T.f[1])o.frequency.exponentialRampToValueAtTime(T.f[1],t0+T.d);
+    /* a click at the start and end of a tone is the envelope, not the tone —
+       ramp both ends or every cue sounds like a pop */
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(T.g,t0+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+T.d);
+    o.connect(g); g.connect(_actx.destination);
+    o.start(t0); o.stop(t0+T.d+0.02);
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   BUTTON WORK STATES
+
+   Any button that starts something asynchronous — an analysis, a send, a
+   connection test — went straight from clicked to nothing until the result
+   arrived. btnBusy marks it working, btnOk / btnFail resolve it, and both
+   restore the original label so a button cannot be left saying "Sending…".
+   ══════════════════════════════════════════════════════════════════════ */
+function btnBusy(el,label){
+  if(typeof el==='string')el=document.getElementById(el);
+  if(!el||el.classList.contains('working'))return null;
+  if(el.dataset.lbl==null)el.dataset.lbl=el.innerHTML;
+  el.classList.add('working'); el.disabled=true;
+  if(label)el.innerHTML='<i class="btn-sp"></i>'+escHtml(label);
+  else el.insertAdjacentHTML('afterbegin','<i class="btn-sp"></i>');
+  return el;
+}
+function btnRestore(el){
+  if(!el)return;
+  el.classList.remove('working'); el.disabled=false;
+  if(el.dataset.lbl!=null){ el.innerHTML=el.dataset.lbl; delete el.dataset.lbl; }
+}
+function btnOk(el,label){
+  if(typeof el==='string')el=document.getElementById(el);
+  if(!el)return;
+  var lbl=el.dataset.lbl;
+  btnRestore(el);
+  el.classList.remove('flash-bad'); void el.offsetWidth; el.classList.add('flash-ok');
+  if(label){ el.innerHTML='✓ '+escHtml(label); el.dataset.lbl=lbl;
+    setTimeout(function(){ if(el.dataset.lbl!=null){el.innerHTML=el.dataset.lbl;delete el.dataset.lbl;} },1400); }
+  setTimeout(function(){ el.classList.remove('flash-ok'); },900);
+  sfx('ok');
+}
+function btnFail(el,label){
+  if(typeof el==='string')el=document.getElementById(el);
+  if(!el)return;
+  var lbl=el.dataset.lbl;
+  btnRestore(el);
+  el.classList.remove('flash-ok'); void el.offsetWidth; el.classList.add('flash-bad');
+  if(label){ el.innerHTML='✕ '+escHtml(label); el.dataset.lbl=lbl;
+    setTimeout(function(){ if(el.dataset.lbl!=null){el.innerHTML=el.dataset.lbl;delete el.dataset.lbl;} },1800); }
+  setTimeout(function(){ el.classList.remove('flash-bad'); },900);
+  sfx('warn');
+}
+
 /* button ripple + nav pointer glow */
 function initMotion(){
   document.addEventListener('click',function(e){
@@ -7773,7 +8081,17 @@ function initMotion(){
     if(!b)return;
     b.classList.remove('rippling');void b.offsetWidth;b.classList.add('rippling');
     setTimeout(function(){b.classList.remove('rippling');},600);
+    /* the tap cue rides the same delegated listener rather than being wired
+       onto every button; a working button is already talking, so it stays
+       quiet and its own resolve sound plays instead */
+    if(!b.classList.contains('working'))sfx('tap');
   },true);
+  /* tabs and any pill or nav row get the same tap, one level quieter */
+  document.addEventListener('click',function(e){
+    if(e.target.closest('.btn'))return;
+    if(e.target.closest('.nav-item,.tab,.pill,.side-nav a,[onclick*="goTab"]'))sfx('tap');
+  },true);
+  sfxPaint();
   document.addEventListener('mousemove',function(e){
     var n=e.target.closest('.nav-item');
     if(!n)return;
@@ -7810,7 +8128,7 @@ function renderBroker(){
      +'<label>Bridge PIN<input id="brk_pin" type="password" value="'+escHtml(localStorage.getItem('ca_pin')||'')+'" placeholder="set in the bridge file"></label>'
     +'</div>'
     +'<div class="brk-row"><button class="btn btn-a btn-sm" onclick="brokerSave()">Save</button>'
-      +'<button class="btn btn-g btn-sm" onclick="brokerTest()">Test connection</button></div>'
+      +'<button class="btn btn-g btn-sm" onclick="brokerTest(this)">Test connection</button></div>'
     +'<div class="brk-state" id="brk_state">Not tested yet</div>'
     +'<div class="brk-note"><b>How this works.</b> Your broker credentials live in '
       +'<code>celestial_bridge.py</code> on your own machine — never in this page, which anyone '
@@ -7829,19 +8147,22 @@ function brokerState(msg,kind){
   var e=document.getElementById('brk_state');
   if(e){e.className='brk-state '+(kind||'');e.textContent=msg;}
 }
-function brokerTest(){
+function brokerTest(btn){
   brokerState('Contacting bridge…','');
+  var B=btnBusy(btn,'Testing');
   var pin=encodeURIComponent(localStorage.getItem('ca_pin')||'');
   fetch(bridgeURL()+'/status?pin='+pin)
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d&&d.error){brokerState('Bridge reachable but rejected the PIN','bad');return;}
+      if(d&&d.error){brokerState('Bridge reachable but rejected the PIN','bad');btnFail(B);return;}
       var acct=d&&(d.account||d.login);
       brokerState('Connected'+(acct?' — account '+acct:'')+(d&&d.balance!=null?' · balance '+d.balance:''),'good');
       notify('Bridge connected','bull');
+      btnOk(B,'Connected');
     })
     .catch(function(){
       brokerState('No response — start celestial_bridge.py on this machine, then retry','bad');
+      btnFail(B,'No response');
     });
 }
 
@@ -8686,22 +9007,24 @@ function elSetKey(el){
 function elSetVoice(el){
   var p=jvPrefs(); p.elVoice=(el.value||'').trim()||EL_VOICE_DEFAULT; jvSave(p); EL_DEAD=false;
 }
-function elTest(){
+function elTest(btn){
   var P=jvPrefs();
-  if(!P.voice){ jvPill('Speaking is switched off — turn it on first.','warn'); return; }
+  if(!P.voice){ jvPill('Speaking is switched off — turn it on first.','warn'); btnFail(btn); return; }
   var line='Celestial here. Board is loaded and I am listening.';
-  if(!P.elKey){ jvPill('Built-in voice — no ElevenLabs key set.',''); jvSpeakLocal(line); return; }
+  if(!P.elKey){ jvPill('Built-in voice — no ElevenLabs key set.',''); jvSpeakLocal(line);
+                btnOk(btn); return; }
   if(!elKeyLooksRight(P.elKey)){
     jvPill('That is not an API key. ElevenLabs keys begin with sk_ — the other value is the key ID, '
       +'which it rejects. Using the built-in voice.','warn',true);
-    jvSpeakLocal(line); return;
+    jvSpeakLocal(line); btnFail(btn); return;
   }
   EL_DEAD=false;
   jvPill('Calling ElevenLabs…','hot',true);
+  var B=btnBusy(btn,'Calling');
   elSpeak(line,P,function(err){
     if(err){ jvPill('ElevenLabs: '+err+' — falling back to the built-in voice.','warn',true);
-             jvSpeakLocal(line); }
-    else jvPill('That was ElevenLabs.','said');
+             jvSpeakLocal(line); btnFail(B); }
+    else { jvPill('That was ElevenLabs.','said'); btnOk(B); }
   });
 }
 /* ── hearing ── */
@@ -9361,9 +9684,13 @@ function syncPull(cb){
     syncPush(function(){ syncPaint(); if(cb)cb(null,changed); });
   });
 }
-function syncNow(){ SYNC.msg=''; syncPull(function(err,n){
-  SYNC.msg=err?'':(n?n+' '+(n===1?'thing':'things')+' came down':'already up to date');
-  syncPaint(); }); }
+function syncNow(btn){ SYNC.msg='';
+  var B=btnBusy(btn,'Syncing');
+  syncPull(function(err,n){
+    SYNC.msg=err?'':(n?n+' '+(n===1?'thing':'things')+' came down':'already up to date');
+    syncPaint();
+    if(err)btnFail(B); else btnOk(B,n?n+' down':'Up to date');
+  }); }
 
 /* THE DATA CHANGED UNDER THE PAGE, SO THE PAGE HAS TO BE TOLD.
    A pull rewrites localStorage, but JRNL and the approval list are already
@@ -9583,7 +9910,7 @@ function renderCelestialSettings(){
             ? 'ElevenLabs, with the built-in voice as the fallback if a call fails.'
             : 'The voice your operating system ships. Add an ElevenLabs key below for a real one.')
          +'</s></div>'
-       +'<button class="cset-b" onclick="elTest()">Test voice</button>'
+       +'<button class="cset-b" onclick="elTest(this)">Test voice</button>'
      +'</div>'
      +'<s class="cset-p">The ElevenLabs key first, then the voice ID below it.</s>'
      +'<input class="cset-key" type="password" placeholder="ElevenLabs key, sk_… (optional)" '
@@ -9609,7 +9936,7 @@ function renderCelestialSettings(){
             +'<div><b>Signed in</b><s>The journal, your major levels, risk settings, timing alerts, '
               +'approvals and the bot configuration are kept on the server and pulled back on every '
               +'device you sign in on.</s></div>'
-            +'<button class="cset-b" onclick="syncNow()">Sync now</button>'
+            +'<button class="cset-b" onclick="syncNow(this)">Sync now</button>'
           +'</div>'
           +'<div class="cset-btns">'
             +'<button class="cset-b ghost" onclick="syncSignOut()">Sign out</button>'
@@ -9715,7 +10042,7 @@ function anaBar(asset,price,dp){
      +'above to turn bullish" value="'+(mtlGet(asset)!=null?mtlGet(asset):'')+'" '
      +'onchange="mtlApply(this)"></label>'
    +'<button class="btn btn-g btn-sm" onclick="anaLive()">⟲ Live</button>'
-   +'<button class="btn btn-a btn-sm" onclick="anaRun()">Analyse</button></div>'
+   +'<button class="btn btn-a btn-sm" onclick="anaRun(this)">Analyse</button></div>'
    +'<div class="ab-picks">'+ANA_PICKS.map(function(a){
        return '<button class="ab-pick'+(a.toLowerCase()===String(asset).toLowerCase()?' on':'')+'" onclick="anaPick(\''+a+'\')">'+a+'</button>';
      }).join('')+'</div></div>';
@@ -10483,6 +10810,179 @@ function tcBeLevel(S){
 function tcFmt(v,dp){
   return isFinite(v)?(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp}):'—';
 }
+/* ══════════════════════════════════════════════════════════════════════
+   THE SIGNAL GATE — where the five methods finally reach the trade
+
+   Two engines were running on one screen and only one of them could issue a
+   trade. buildSignal() ran first, off Square-of-9 levels, sigma bands,
+   planet degrees and a four-factor trend; CQE — Wyckoff, Elliott, the Gann
+   price and time engines, the statistics, and the whole divergence and
+   confirmation chain — ran AFTERWARDS and received the finished signal as an
+   input. The trade card asked CQE for a scenario only in the branch where
+   the old engine had nothing to say. Whenever a setup DID qualify, the
+   branch was skipped and none of it was consulted.
+
+   So a setup could be issued while the reversal card two columns over had
+   already collected three of its six confirmations for a turn the other
+   way. That is the one case the whole confirmation chain exists to catch.
+
+   This gate closes that. It runs the SAME six continuation checks the board
+   runs, for the direction the signal actually chose, reads the reversal
+   matrix, the WHICH gate and the divergence score, and returns a verdict
+   the card, the share message, the approval queue and the bot all obey.
+
+   It cannot invent a trade — buildSignal still decides that. It can only
+   hold one back, which is what the evidence is for.
+   ══════════════════════════════════════════════════════════════════════ */
+function sigGate(S){
+  if(!S||!S.style)return{state:'na'};
+  var long=!!S.isBull, C=window.CQE_LAST;
+
+  /* CQE finishes after the cross-market fetches, so for the first moment
+     after an analysis there is genuinely nothing to ask. That is reported as
+     pending rather than as a pass — an unanswered check is not a passed one. */
+  if(!C||!C.gates){
+    return{state:'pending',long:long,headline:'Confirming',
+      why:'The five methods are still running — Wyckoff, Elliott, the Gann price '
+         +'and time engines and the statistics. Nothing here is confirmed yet.'};
+  }
+
+  var G={state:'clear',long:long,headline:'Confirmed',rows:[],hits:null,of:null,
+         grade:null,waitFor:null,notes:[],core:null,which:null,div:null};
+
+  /* ── the six continuation checks, run for THIS trade's direction ───── */
+  var rr=(S.entry!=null&&S.sl!=null&&S.tp!=null&&Math.abs(S.entry-S.sl)>1e-9)
+    ? Math.abs(S.tp-S.entry)/Math.abs(S.entry-S.sl) : null;
+  try{
+    var ctx={price:C.price,atr:C.atr,gates:C.gates,wyckoff:C.wyckoff,elliott:C.elliott,
+             time:C.time,momentum:C.momentum,signs:C.signs,gann:C.gann,
+             majorTrend:C.majorTrend,divergence:C.divergence};
+    var cg=CQE.continuationGrade(CQE.continuationConfirm(ctx,long),rr);
+    G.rows=cg.rows; G.hits=cg.hits; G.of=cg.of; G.grade=cg.grade;
+  }catch(e){ console.error('sigGate continuation:',e); }
+
+  /* ── the core score and the direction gate, as they stand ─────────── */
+  if(C.core)G.core={score:C.core.score,coverage:C.core.coverage,withheld:C.core.withheld};
+  if(C.gates.which)G.which={direction:C.gates.which.direction,score:C.gates.which.score,
+    agreement:C.gates.which.agreement,discount:C.gates.which.discount};
+
+  /* ── divergence, and which side of this trade it is on ────────────────
+     The score is unsigned: it measures evidence against the leg price is
+     currently running, not against the trade. The reversal takes the side
+     opposite that leg, so if the reversal's side matches this trade, the
+     contradictory evidence is arguing FOR it. Reading the number without
+     that test would call the same 60 a warning on a short and a warning on
+     a long, which cannot both be true. */
+  var revSide=C.reversal&&C.reversal.side?String(C.reversal.side):null;
+  if(C.divergence&&C.divergence.score!=null){
+    var supports=revSide? (/Long/i.test(revSide)===long) : null;
+    G.div={score:C.divergence.score,coverage:C.divergence.coverage,
+           supports:supports,
+           missing:(C.divergence.missing||[]).map(function(m){return m.k;})};
+  }
+
+  /* ══ RULE 1 — A REVERSAL BUILDING THE OTHER WAY ═══════════════════════
+     This is the rule the chain was built for. Three of six independent
+     confirmations already collected for a turn against this trade is not a
+     nuance to note underneath — it is a reason not to be in yet. */
+  var rev=C.reversal;
+  if(rev&&rev.matrix&&rev.matrix.hits>=3){
+    var revLong=/Long/i.test(rev.side||'');
+    if(revLong!==long){
+      G.state='wait'; G.headline='Wait — reversal building against this';
+      G.waitFor=(revLong?'An upward':'A downward')+' reversal has '+rev.matrix.hits
+        +' of '+rev.matrix.of+' confirmations already ('+String(rev.matrix.grade).toLowerCase()
+        +'). Let it fire or fail before taking this.'
+        +(rev.trigger?' It fires on '+rev.trigger+'.':'');
+      G.rev={hits:rev.matrix.hits,of:rev.matrix.of,grade:rev.matrix.grade,side:rev.side};
+      return G;
+    }
+    /* pointing the same way is confluence, not a conflict */
+    G.notes.push('The reversal chain is building the same way — '+rev.matrix.hits+' of '
+      +rev.matrix.of+' confirmations for a '+String(rev.side).toLowerCase()+'.');
+    G.rev={hits:rev.matrix.hits,of:rev.matrix.of,grade:rev.matrix.grade,side:rev.side,agrees:true};
+  }
+
+  /* ══ RULE 2 — NOTHING CONFIRMS IT ═════════════════════════════════════
+     LOW CONFIRMATION means fewer than half of the countable checks passed.
+     A setup with a good level and nothing else agreeing is a level, not a
+     trade. */
+  if(G.grade==='LOW CONFIRMATION'){
+    G.state='wait'; G.headline='Wait — nothing confirms it';
+    var failed=(G.rows||[]).filter(function(r){return !r.ok&&!r.skip;})
+                           .map(function(r){return r.k.toLowerCase();});
+    G.waitFor='Only '+G.hits+' of '+G.of+' checks pass'
+      +(failed.length?'. Failing: '+failed.join(', '):'')+'.';
+    return G;
+  }
+
+  /* ══ RULE 3 — THE METHODS POINT THE OTHER WAY ═════════════════════════
+     The WHICH gate is the five methods voting on direction, already
+     discounted by divergence. Opposing this trade with real conviction is
+     worth stopping for; opposing it weakly is worth saying out loud. */
+  if(G.which&&G.which.score!=null&&G.which.direction!=='Neutral'
+     &&G.which.direction!=='DATA REQUIRED'){
+    var wBull=G.which.direction==='Bullish';
+    if(wBull!==long){
+      if(G.which.score>=40){
+        G.state='wait'; G.headline='Wait — the methods disagree';
+        G.waitFor='The five methods read '+G.which.direction.toLowerCase()+' at '
+          +G.which.score+' out of 100, which is against this trade.';
+        return G;
+      }
+      G.state='caution';
+      G.notes.push('The five methods lean '+G.which.direction.toLowerCase()
+        +' ('+G.which.score+'/100) — mildly against this trade.');
+    }
+  }
+
+  /* ══ RULE 4 — CONTRADICTORY EVIDENCE ON THE WRONG SIDE ════════════════ */
+  if(G.div&&G.div.supports===false&&G.div.score>=40){
+    G.state='caution';
+    G.notes.push('Divergence '+G.div.score+'/100 is arguing against the direction '
+      +'price is running, and this trade is with it. Size down.');
+  }else if(G.div&&G.div.supports===true&&G.div.score>=40){
+    G.notes.push('Divergence '+G.div.score+'/100 supports this direction.');
+  }
+
+  if(G.state==='caution')G.headline='Confirmed — with a caveat';
+  else if(G.grade==='STRONG CONFLUENCE')G.headline='Confirmed — strong confluence';
+  return G;
+}
+
+/* the gate's own block inside the trade card */
+function sigGateHtml(G,dp){
+  if(!G||G.state==='na')return '';
+  if(G.state==='pending'){
+    return '<div class="sgate pend"><div class="sg-h">'
+      +'<span class="sg-dot"></span>'+escHtml(G.headline)+'</div>'
+      +'<div class="sg-why">'+escHtml(G.why)+'</div></div>';
+  }
+  var cls=G.state==='wait'?'wait':G.state==='caution'?'caut':'ok';
+  var h='<div class="sgate '+cls+'">';
+  h+='<div class="sg-h"><span class="sg-dot"></span>'+escHtml(G.headline)
+    +(G.hits!=null?'<b>'+G.hits+' / '+G.of+'</b>':'')+'</div>';
+  if(G.waitFor)h+='<div class="sg-why">'+escHtml(G.waitFor)+'</div>';
+  G.notes.forEach(function(n){ h+='<div class="sg-why">'+escHtml(n)+'</div>'; });
+  if(G.rows&&G.rows.length){
+    h+='<div class="sg-rows">';
+    G.rows.forEach(function(r){
+      var m=r.skip?'skip':r.ok?'yes':'no';
+      h+='<div class="sg-r '+m+'"><i>'+(r.skip?'–':r.ok?'✓':'✕')+'</i>'
+        +'<b>'+escHtml(r.k)+'</b><s>'+escHtml(r.why||'')+'</s></div>';
+    });
+    h+='</div>';
+  }
+  var foot=[];
+  if(G.core&&G.core.score!=null)foot.push('core '+G.core.score+'/100 at '+G.core.coverage+'% coverage');
+  else if(G.core&&G.core.withheld)foot.push(G.core.withheld);
+  if(G.div&&G.div.score!=null)foot.push('divergence '+G.div.score+'/100'
+    +(G.div.coverage!=null?' ('+G.div.coverage+'% of its inputs loaded)':''));
+  if(G.which&&G.which.discount)foot.push('direction cut '+G.which.discount+'% by divergence');
+  if(foot.length)h+='<div class="sg-foot">'+escHtml(foot.join(' · '))+'</div>';
+  return h+'</div>';
+}
+
 function tradeCardHtml(){
   var S=window._lastSig, asset=(document.getElementById('ai_asset_txt')||{}).value||_lastAsset||'—';
   var px=parseFloat((document.getElementById('ai_price')||{}).value)||_lastPrice||0;
@@ -10522,8 +11022,14 @@ function tradeCardHtml(){
   var hold=S.style==='Swing'?'Give it room and time. Can sit for a few days.'
          :S.style==='Intraday'?'One session. Out before the close if it has not moved.'
          :'Fast. In and out inside the hour.';
-  return '<div class="sgc '+(buy?'buy':'sell')+'">'
-   +'<div class="sgc-w">'+(buy?'BUY':'SELL')+'</div>'
+  /* THE FIVE METHODS GET A SAY BEFORE THIS IS OFFERED AS A TRADE.
+     Until now this line was reached and the card was drawn; CQE was asked
+     nothing. The gate runs the same six checks the board runs, for this
+     direction, and can hold the setup back. */
+  var GT=sigGate(S), held=(GT.state==='wait');
+  return '<div class="sgc '+(held?'held':(buy?'buy':'sell'))+'">'
+   +'<div class="sgc-w">'+(held?'WAIT':(buy?'BUY':'SELL'))
+     +(held?'<em>'+(buy?'buy':'sell')+' setup, not yet confirmed</em>':'')+'</div>'
    +'<div class="sgc-tags"><span>'+escHtml(S.style)+'</span><span class="on">'
      +escHtml(String(asset).toUpperCase())+'</span></div>'
    +'<div class="sgc-sub">'+escHtml(hold)+'</div>'
@@ -10537,9 +11043,12 @@ function tradeCardHtml(){
    +'</div>'
    +'<div class="sgc-foot">1 : '+S.rr+' · confidence '+S.conf+'%'
      +(S.counter?' · counter-trend, size down':'')+'</div>'
+   +sigGateHtml(GT,dp)
    /* the decision belongs on the setup itself, where it is read */
    +'<div class="sgc-act">'
-     +'<button class="btn btn-a btn-sm" onclick="openTakeSignal()">Take it</button>'
+     +(held
+       ? '<button class="btn btn-w btn-sm" onclick="openTakeSignal()">Take it anyway</button>'
+       : '<button class="btn btn-a btn-sm" onclick="openTakeSignal()">Take it</button>')
      +'<button class="btn btn-g btn-sm" onclick="sgcQueue()">Send for approval</button>'
      +'<span class="sgc-q">'+escHtml(sgcSlots(S.style))+'</span>'
    +'</div>'
@@ -12070,6 +12579,13 @@ root.CQE={ dataQuality:dataQuality, scrubTicks:scrubTicks,
   projections:projections, riskGate:riskGate, hypotheses:hypotheses, volumeQuality:volumeQuality, pivots:pivots,
   wyckoff:wyckoff, elliott:elliott, gannPrice:gannPrice, gannTime:gannTime,
   quant:quant, momentum:momentum, clusterLevels:clusterLevels, gates:gates,
+  /* THESE TWO WERE PRIVATE AND THAT IS WHY THE TRADE COULD NOT SEE THEM.
+     continuationConfirm is the six-check chain for a trend-continuation
+     trade — the mirror of the reversal chain — and it existed only inside
+     hypotheses(). The trade card had no way to ask it whether the setup it
+     was about to issue had anything confirming it. Exported so the signal
+     gate can run the same checks the board runs. */
+  continuationConfirm:continuationConfirm, continuationGrade:continuationGrade,
   coreScore:coreScore, atr:atr, trueRange:trueRange, sq9Levels:sq9Levels,
   gannEighths:gannEighths, nearestFib:nearestFib, FIB_SET:FIB_SET, CYCLES:CYCLES };
 
@@ -13896,6 +14412,11 @@ function renderCQE(){
            if(v)v.innerHTML=cqeVerdictHtml(R,price,dp,asset); }catch(e){}
       try{ var tc=document.getElementById('trade_slot');
            if(tc)tc.innerHTML=tradeCardHtml(); }catch(e){}
+      /* the bot parked this signal because the methods had not finished.
+         They have now, so it gets its answer. */
+      try{ if(typeof BOT!=='undefined'&&BOT&&BOT._deferred){
+             var d=BOT._deferred; BOT._deferred=null;
+             botConsider(d.sig,d.asset,d.trend); } }catch(e){ console.error('bot rerun:',e); }
       try{ var xs=document.getElementById('cross_slot');
            if(xs)xs.innerHTML=cqeCrossHtml(R,dp); }catch(e){}
       try{ var rs=document.getElementById('reach_slot');
@@ -14711,14 +15232,27 @@ function anaJump(n){
     a.classList.toggle('on',ix===n-1);
   });
 }
-function anaRun(){
+function anaRun(btn){
   var a=document.getElementById('ab_asset'), pz=document.getElementById('ab_price');
   if(a&&a.value)document.getElementById('ai_asset_txt').value=a.value;
   if(pz&&pz.value)document.getElementById('ai_price').value=pz.value;
   var rk=document.getElementById('ab_risk');
   if(rk&&rk.value)document.getElementById('ai_risk').value=rk.value;
-  try{ if(!document.getElementById('ai_price').value){ fetchLivePrice(function(ok){if(ok)runAI();renderAnalytics();}); return; } }catch(e){}
-  runAI(); renderAnalytics();
+  /* an analysis fetches a price, runs six engines and redraws the board. It
+     took long enough to look like nothing had happened, so the button says
+     what it is doing and is released on every exit path below. */
+  var B=btnBusy(btn,'Analysing');
+  var fin=function(ok){ if(!B)return; if(ok===false)btnFail(B); else btnOk(B); };
+  try{
+    if(!document.getElementById('ai_price').value){
+      fetchLivePrice(function(ok){
+        try{ if(ok)runAI(); renderAnalytics(); fin(ok); }
+        catch(e){ console.error('anaRun:',e); fin(false); } });
+      return;
+    }
+  }catch(e){}
+  try{ runAI(); renderAnalytics(); fin(true); }
+  catch(e){ console.error('anaRun:',e); fin(false); }
 }
 /* ══════════════════════════════════════
    TIMING v3 — one screen that answers "can I trade right now, and if not, when?"
@@ -16235,6 +16769,23 @@ function botConsider(sig,assetName,trend){
   if(sig.conf<BOT.minConf){return;}
   /* the bot only takes with-trend swings; counter-trend is intraday/scalp only */
   if(sig.counter&&sig.style==='Swing'){botStatus('Skipped — counter-trend swing','warn');return;}
+  /* ══ THE BOT ASKS THE FIVE METHODS BEFORE IT SENDS ANYTHING ══════════
+     botConsider is called from runAI, which is before CQE has finished, so
+     the honest answer at that moment is "not yet" rather than "no objection".
+     The signal is parked and reconsidered when the methods land; without
+     that it would sit deferred forever and the bot would never trade. */
+  var BG=sigGate(sig);
+  if(BG.state==='pending'){
+    BOT._deferred={sig:sig,asset:assetName,trend:trend};
+    botStatus('Holding — waiting for the five methods to finish','warn');
+    return;
+  }
+  BOT._deferred=null;
+  if(BG.state==='wait'){
+    botStatus('Skipped — '+BG.headline.replace(/^Wait — /,'')
+      +(BG.waitFor?'. '+BG.waitFor:''),'warn');
+    return;
+  }
   var riskAmt=+(bal*BOT.riskPct/100).toFixed(2);
   var slDist=Math.abs(sig.entry-sig.sl);
   if(!(slDist>0)){botStatus('Skipped — no valid stop distance','warn');return;}
@@ -17026,7 +17577,23 @@ function openTakeSignal(){
     +'<div class="br"><span class="dim">Entry</span><span class="fw6">$'+sig.entry+'</span></div>'
     +'<div class="br"><span class="cg">Take Profit</span><span class="fw6">$'+sig.tp+'</span></div>'
     +'<div class="br"><span class="cr">Stop Loss</span><span class="fw6">$'+sig.sl+'</span></div>'
-    +'<div class="br"><span class="dim">R:R</span><span class="cb fw6">'+sig.rr+'\u00d7</span></div>';
+    +'<div class="br"><span class="dim">R:R</span><span class="cb fw6">'+sig.rr+'\u00d7</span></div>'
+    /* THE GATE FOLLOWS THE SETUP INTO THE TAKE DIALOG.
+       Holding it back on the card and then saying nothing here would mean
+       the one screen where money is committed is the one screen that does
+       not mention the evidence against it. It does not block \u2014 overriding
+       is the trader's call \u2014 it states what is unresolved. */
+    +(function(){
+       var G=sigGate(sig);
+       if(!G||G.state==='clear'||G.state==='na')return '';
+       if(G.state==='pending')
+         return '<div class="ts-warn pend">The five methods have not finished. '
+           +'Nothing about this setup is confirmed yet.</div>';
+       var t=G.waitFor||G.notes.join(' ');
+       return '<div class="ts-warn'+(G.state==='wait'?'':' caut')+'"><b>'
+         +escHtml(G.headline)+'</b>'+(t?' '+escHtml(t):'')
+         +(G.hits!=null?' ('+G.hits+' of '+G.of+' checks pass.)':'')+'</div>';
+     })();
   var bal=parseFloat(document.getElementById('port_cur').value)||parseFloat(document.getElementById('port_start').value)||0;
   document.getElementById('ts_riskpct').value='1';
   document.getElementById('ts_riskamt').value=bal>0?(bal*0.01).toFixed(2):'';
@@ -17168,6 +17735,9 @@ function notify(msg,type){
   var icon=type==='bull'?'\u2b06\ufe0f':type==='bear'?'\u2b07\ufe0f':'\u2139\ufe0f';
   el.innerHTML='<div class="notif-icon">'+icon+'</div><div class="notif-body"><div class="notif-msg">'+msg+'</div></div>';
   document.body.appendChild(el);
+  /* a toast that says a direction is worth hearing; a plain info toast is not,
+     or every keystroke that reports something starts chirping */
+  if(type==='bull'||type==='bear')sfx('alert');
   setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},3200);
 }
 
@@ -23234,10 +23804,29 @@ function shareLines(kind){
       return L.join('\n');
     }
     if(S&&S.style){
-      push((S.isBull?'BUY':'SELL')+'  ·  '+S.style+'  ·  '+S.conf+'% confidence');
+      var G=sigGate(S);
+      push((G.state==='wait'?'WAIT — '+(S.isBull?'buy':'sell')+' setup, not confirmed'
+                            :(S.isBull?'BUY':'SELL'))
+           +'  ·  '+S.style+'  ·  '+S.conf+'% confidence');
       push('Entry '+S.entry.toFixed(dp)+'   Stop '+S.sl.toFixed(dp)+'   Target '+S.tp.toFixed(dp));
       push('Risk:reward '+S.rr+'R  ·  risking $'+S.risk+' to make $'+S.profit);
       if(S.counter)push('Note: counter-trend — size down');
+      /* the confirmation travels with the setup — a message that quotes the
+         entry and omits what is arguing against it is the same problem the
+         gate was built to fix, just in a different medium */
+      if(G.hits!=null)push('Confirmation: '+G.hits+' of '+G.of+' checks — '
+        +String(G.grade||'').toLowerCase());
+      if(G.state==='pending')push('Five methods still running — not confirmed yet.');
+      if(G.waitFor)push('Holding: '+G.waitFor);
+      G.notes.forEach(function(n){push('Note: '+n);});
+      /* A SCORE OF ZERO IS NOT EVIDENCE AGAINST ANYTHING.
+         Printing "0/100 — against this direction" reads as a warning when
+         what it means is that nothing contradicts price at all. The stance
+         is only worth naming once there is something to take a side. */
+      if(G.div&&G.div.score!=null)push('Divergence '+G.div.score+'/100 — '
+        +(G.div.score<20?'nothing is contradicting price'
+         :G.div.supports===true?'supports this direction'
+         :G.div.supports===false?'against this direction':'side not determined'));
     }else{
       push('No setup right now'+(S&&S.reason?' — '+S.reason:'')+'.');
     }
@@ -25056,6 +25645,9 @@ setTimeout(loadSparklines,9000);
 try{dashCalendar();dashTiming();dashMember();}catch(e){}
 try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
+/* the curtain comes down once the init block has actually finished, rather
+   than on the load event alone — this line is the last thing that runs */
+try{bootDone();}catch(e){console.error('boot:',e);}
 /* refresh live tickers every 60s (Finnhub free = 60 calls/min) */
 setInterval(loadTickers,60000);
 /* nav active */
