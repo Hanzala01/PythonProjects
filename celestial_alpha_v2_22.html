@@ -8,9 +8,28 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b34 — Precision in Timing</title>
+<title>Celestial Alpha b35 — Precision in Timing</title>
+<!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
+     A plain <link rel="stylesheet"> blocks rendering: the browser will not
+     paint until it has fetched and parsed it. Measured on this file, that one
+     line was the difference between 739ms and 13,241ms to first paint — the
+     parsing and running of a 1.4MB script is 647ms of it, and everything else
+     was a round trip to Google before anything appeared at all.
+
+     It loads asynchronously now. media="print" makes it non-blocking, and the
+     onload flips it to "all" the moment it arrives, so the page paints
+     immediately in the fallback stack and upgrades to the webfont without a
+     reflow anyone would notice. The <noscript> keeps it working with scripts
+     off, and preconnect still warms the connection.
+
+     This also fixes it for a page opened from file://, where the cross-origin
+     stylesheet can hang for a long time before the browser gives up. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
+<noscript><link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"></noscript>
 <style>
 /* ═══ LEGACY ENGINE CSS (base layer — v2 CSS below overrides shared classes) ═══ */
 
@@ -4989,7 +5008,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b34</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b35</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -12649,14 +12668,33 @@ function cqeAstroSignificant(ev){
   }
   return false;
 }
-/* the base rate, so a tick can be read against how often it is possible */
+/* ══ THE BASE RATE IS A CONSTANT AND WAS BEING RECOMPUTED EVERY RUN ═══
+   It walks 365 days of ephemeris to count how often a significant sky event
+   occurs, and profiling put it at 660ms — which was 660 of the 662ms the
+   whole five-engine pass took. Everything else together came to two.
+
+   The answer depends on one thing, the year, and it does not change while
+   you are looking at it. Computed once, kept in memory for the session and
+   in storage across reloads, so the second load of the day pays nothing. */
+var CQE_BR_KEY='ca_astro_baserate', CQE_BR_MEM={};
 function cqeAstroBaseRate(year){
   year=year||new Date().getUTCFullYear();
+  if(CQE_BR_MEM[year])return CQE_BR_MEM[year];
+  try{
+    var st=JSON.parse(localStorage.getItem(CQE_BR_KEY)||'{}');
+    if(st&&st[year]&&st[year].days!=null){ CQE_BR_MEM[year]=st[year]; return st[year]; }
+  }catch(e){}
   var all=cqeAstroEvents(year+'-01-01',year+'-12-31',400);
   var keep=all.filter(cqeAstroSignificant);
   var days={}; keep.forEach(function(e){ days[e.date]=1; });
-  return { events:keep.length, days:Object.keys(days).length,
-           of:365, pct:Math.round(Object.keys(days).length/365*100) };
+  var out={ events:keep.length, days:Object.keys(days).length,
+            of:365, pct:Math.round(Object.keys(days).length/365*100) };
+  CQE_BR_MEM[year]=out;
+  try{
+    var st2=JSON.parse(localStorage.getItem(CQE_BR_KEY)||'{}');
+    st2[year]=out; localStorage.setItem(CQE_BR_KEY,JSON.stringify(st2));
+  }catch(e){}
+  return out;
 }
 function cqeAstroEvents(startISO,endISO,cap){
   var out=[];
@@ -12765,6 +12803,10 @@ function cqeLoadCross(cb){
   /* dollar — always the ETF, always labelled */
   var dc=CQE_XM_CACHE.dollar;
   if(dc&&Date.now()-dc.at<30*60*1000){ out.dollar=dc.rows; out.dollarLabel=dc.label; done(); }
+  else if(typeof polyBudget==='function'&&polyBudget()<2){
+    /* the dollar is context too; the asset's own bars come first */
+    out.dollarDeferred=true; done();
+  }
   else polygonDaily(CQE_DOLLAR_TICKER,760,function(rows){
     if(rows&&rows.length>60){ out.dollar=rows;
       out.dollarLabel='Dollar (UUP — tracks the index; the index itself is licensed)';
@@ -12778,6 +12820,20 @@ function cqeLoadCross(cb){
     out.yield=yc.curve['10Y']&&yc.curve['10Y'].rows; 
     out.yieldLabel=yc.curve['10Y']&&yc.curve['10Y'].label; done(); return; }
 
+  /* ══ THE CONTEXT MUST NOT EAT THE BUDGET THE ASSET NEEDS ═════════
+     Polygon's free tier allows five calls a minute. Loading the whole curve
+     eagerly costs three of them — SHY, IEF, TLT — on top of the dollar and
+     the asset's own bars and its volume proxy. Measured: opening Analytics
+     once made four calls and left the budget at zero, so the next asset
+     switch waited out a rate limit. Context had crowded out the thing being
+     analysed.
+
+     Only the ten-year is fetched eagerly, because that is the one the
+     composite scores. The rest are context and they wait for spare budget:
+     each is skipped when fewer than two calls are left, and picked up on a
+     later pass. Where the bridge is running none of this applies — FRED is
+     not rate limited and all four come down at once. */
+  var EAGER={'10Y':true};
   var curve={}, pending=CQE_YIELD_SET.length;
   function oneDone(){
     if(--pending>0)return;
@@ -12806,6 +12862,12 @@ function cqeLoadCross(cb){
   });
 
   function etfFallback(Y){
+    if(!EAGER[Y.label]&&typeof polyBudget==='function'&&polyBudget()<2){
+      curve[Y.label]={rows:null, deferred:true,
+        label:'US '+Y.label+' yield — not loaded yet, the minute\u2019s API budget was needed '
+          +'for the asset itself'};
+      oneDone(); return;
+    }
     if(!Y.etf){
       /* no single fund tracks this maturity cleanly, and picking an adjacent
          one would report a five-year reading that is not one */
@@ -13755,6 +13817,19 @@ function renderCQE(){
         var cur=(document.getElementById('ai_asset_txt')||{}).value||'Gold';
         if(cur!==asset)return;
         paint(xm);
+        /* ANYTHING SKIPPED FOR BUDGET COMES BACK, IT IS NOT LOST.
+           A deferred series that is never retried is the same as a broken
+           one from the reader's side. The budget window is a minute, so it
+           tries again just after it has refilled — once, and only for what
+           is actually missing. */
+        var missing=(!xm.dollar)||(xm.curve&&Object.keys(xm.curve).some(function(k){
+          return xm.curve[k]&&xm.curve[k].deferred; }));
+        if(!missing)return;
+        setTimeout(function(){
+          if(((document.getElementById('ai_asset_txt')||{}).value||'Gold')!==asset)return;
+          CQE_XM_CACHE.curve=null; CQE_XM_CACHE.dollar=CQE_XM_CACHE.dollar||null;
+          cqeLoadCross(function(x2){ if(x2)paint(x2); });
+        },62000);
       });
     },1500);
   });
