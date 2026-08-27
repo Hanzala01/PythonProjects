@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b35 — Precision in Timing</title>
+<title>Celestial Alpha b36 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -1985,6 +1985,29 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   color:var(--t1);margin:3px 0 4px;line-height:1}
 .bt-c.na b{color:var(--t3);font-size:14px}
 .bt-c s{display:block;text-decoration:none;font-size:9px;color:var(--t3);line-height:1.55}
+/* the Moon strip, directly above the chart */
+.mnstrip{padding:8px 14px;border-bottom:1px solid var(--b1);
+  background:linear-gradient(90deg,rgba(127,96,191,.10),rgba(9,5,26,0))}
+.mn-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;min-height:17px}
+.mn-row2{margin-top:3px}
+.mn-sym{font-size:17px;color:var(--p3);line-height:1}
+.mn-main{display:flex;align-items:baseline;gap:7px}
+.mn-main b{font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--t1)}
+.mn-main i{font-style:normal;font-family:'Space Grotesk';font-size:12px;font-weight:700;
+  color:var(--p3);font-variant-numeric:tabular-nums}
+.mn-tag{font-size:9px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:99px;
+  border:1px solid var(--b1);color:var(--t2)}
+.mn-tag.el-fire{color:#F97316;border-color:rgba(249,115,22,.4)}
+.mn-tag.el-earth{color:#84CC16;border-color:rgba(132,204,22,.4)}
+.mn-tag.el-air{color:#38BDF8;border-color:rgba(56,189,248,.4)}
+.mn-tag.el-water{color:#818CF8;border-color:rgba(129,140,248,.4)}
+.mn-say{font-size:10px;color:var(--t3);line-height:1.4}
+.mn-next{font-size:10px;color:var(--t3);margin-left:auto;white-space:nowrap}
+.mn-exp{font-size:8.5px;color:var(--t3);opacity:.7;letter-spacing:.04em;
+  margin-left:auto;white-space:nowrap}
+.mn-na{font-size:10px;color:var(--t3)}
+.mn-na{font-size:10px;color:var(--t3)}
+@media(max-width:760px){.mn-next{margin-left:0}.mn-say{width:100%}}
 
 /* a short plain sentence wherever a number could be mistaken for advice */
 .aplain{font-size:10px;line-height:1.7;color:var(--t3);margin-top:10px}
@@ -5008,7 +5031,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b35</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b36</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -5064,6 +5087,8 @@ body{background:var(--bg0)}
   <!-- ══ CHART · TRADE SETUP · MARKET PULSE ══ -->
   <section class="drow-a rise" style="animation-delay:.12s">
     <div class="card chart-card">
+      <!-- where the Moon is, directly above the chart, filled by moonStripPaint -->
+      <div id="moon_strip"></div>
       <div class="ch-bar">
         <span class="pill on">&#9889; <b id="ch_asset">XAU/USD</b></span>
         <span class="pill">4H &#9662;</span>
@@ -6298,6 +6323,86 @@ var BODY_LABEL={sun:'Core Cycle',moon:'Micro Cycle',mercury:'Signal Cycle',venus
 var ZONE_NAME={Aries:'Ignition',Taurus:'Foundation',Gemini:'Flow',Cancer:'Depth',Leo:'Peak',Virgo:'Precision',Libra:'Balance',Scorpio:'Intensity',Sagittarius:'Expansion',Capricorn:'Structure',Aquarius:'Innovation',Pisces:'Dissolution'};
 function dz(sign){return ZONE_NAME[sign]||sign;}
 function hasCycleAlign(l){return l.reasons.some(function(r){return r.indexOf(' exact')>=0||r.indexOf(' close')>=0;});}
+/* ══ THE MOON, ABOVE THE CHART ════════════════════════════════════════
+   Sign, element, quality and degree — the four things asked for, and each
+   one is arithmetic on a single number rather than a lookup:
+
+     sign     = floor(longitude / 30)
+     degree   = longitude − sign × 30
+     element  = sign index mod 4   (fire, earth, air, water, repeating)
+     quality  = sign index mod 3   (cardinal, fixed, mutable, repeating)
+
+   The two moduli are why the zodiac is built the way it is: every element
+   contains one of each quality and no combination repeats. Nothing here is
+   a table anyone could have got wrong.
+
+   It also reports whether the Moon is applying to the next sign — it moves
+   about 13° a day, so "late in a sign" is a real and short-lived state, and
+   the hours until it changes are worth more than the sign name alone.
+
+   THIS IS AN OVERLAY AND IT IS LABELLED AS ONE. It is not in the core score,
+   it is not in the divergence score, and it decides nothing. */
+var MOON_ELEM=['Fire','Earth','Air','Water'];
+var MOON_QUAL=['Cardinal','Fixed','Mutable'];
+var MOON_ELEM_SAY={Fire:'quick and impulsive',Earth:'slow and stubborn',
+                   Air:'restless, changes its mind',Water:'moody, follows the crowd'};
+var MOON_QUAL_SAY={Cardinal:'starts things',Fixed:'holds a level',Mutable:'turns easily'};
+function moonNow(date){
+  date=date||new Date();
+  var eph=null; try{ eph=getEphemeris(date); }catch(e){ return null; }
+  if(!eph||!eph.moon)return null;
+  var S=signOf(eph.moon.lon);
+  var elem=MOON_ELEM[S.idx%4], qual=MOON_QUAL[S.idx%3];
+  /* hours to the next sign, from the Moon's own measured rate rather than
+     the 13.2°/day average — it runs between about 11 and 15 */
+  var rate=null; try{ rate=lonRate('moon',date); }catch(e){}
+  var left=30-S.deg;
+  var hrs=(rate&&rate>0)? Math.round(left/rate*24) : null;
+  return{ sign:S.sign, sym:S.sym, idx:S.idx, deg:S.deg,
+          element:elem, quality:qual,
+          elementSay:MOON_ELEM_SAY[elem], qualitySay:MOON_QUAL_SAY[qual],
+          degreesLeft:left, hoursToNextSign:hrs,
+          nextSign:SIGNS[(S.idx+1)%12], ratePerDay:rate };
+}
+function moonStripHtml(){
+  var M=moonNow();
+  if(!M)return '<div class="mnstrip"><span class="mn-na">Moon position unavailable</span></div>';
+  var d=Math.floor(M.deg), m=Math.round((M.deg-d)*60);
+  if(m===60){ d+=1; m=0; }
+  /* two deliberate rows. one row overflowed to three ragged lines on a 1280
+     screen, where the chart card is only about 600px wide. row one is the
+     position, row two is what it means in plain words. */
+  return '<div class="mnstrip">'
+    +'<div class="mn-row">'
+      +'<span class="mn-sym">'+M.sym+'</span>'
+      +'<span class="mn-main"><b>Moon in '+escHtml(M.sign)+'</b>'
+        +'<i>'+d+'&deg; '+(m<10?'0':'')+m+'&prime;</i></span>'
+      +'<span class="mn-tag el-'+M.element.toLowerCase()+'">'+M.element+'</span>'
+      +'<span class="mn-tag">'+M.quality+'</span>'
+      +(M.hoursToNextSign!=null
+        ? '<span class="mn-next">enters '+escHtml(M.nextSign)+' in '
+          +(M.hoursToNextSign>=24
+            ? Math.round(M.hoursToNextSign/24*10)/10+' days'
+            : M.hoursToNextSign+'h')+'</span>'
+        : '')
+    +'</div>'
+    +'<div class="mn-row mn-row2">'
+      +'<span class="mn-say">'+escHtml(M.elementSay)+' &middot; '+escHtml(M.qualitySay)+'</span>'
+      +'<span class="mn-exp">overlay &middot; not in any score</span>'
+    +'</div>'
+  +'</div>';
+}
+var _mnTimer=null;
+function moonStripPaint(){
+  var el=document.getElementById('moon_strip'); if(!el)return;
+  try{ el.innerHTML=moonStripHtml(); }catch(e){ console.error('moon strip:',e); }
+  /* the Moon moves about half a degree an hour, so a quarter-hour repaint is
+     the slowest cadence at which the displayed minutes stay true */
+  if(!_mnTimer)_mnTimer=setInterval(function(){
+    try{ var e2=document.getElementById('moon_strip');
+         if(e2)e2.innerHTML=moonStripHtml(); }catch(e){}
+  },15*60*1000);
+}
 function signOf(lon){var i=Math.floor(rev(lon)/30);return{idx:i,sign:SIGNS[i],sym:SIGN_SYM[i],deg:rev(lon)-i*30};}
 
 var EPH_CACHE=null,EPH_TIME=0;
@@ -17682,6 +17787,7 @@ try {
     try{ jvRender(); }catch(e){}
     /* a wake word that was switched on should still be on after a reload */
     try{ jvDot(); if(jvPrefs().wake)jvWakeStart(); else jvFirstRun(); }catch(e){}
+    try{ moonStripPaint(); }catch(e){ console.error('moon strip:',e); }
     /* if this browser is signed in, the server's copy is the one that counts */
     try{ syncBoot(); }catch(e){ console.error('sync:',e); }
     try{ renderFng(); }catch(e){}
