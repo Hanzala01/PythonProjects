@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b32 — Precision in Timing</title>
+<title>Celestial Alpha b33 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1832,6 +1832,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border:1px solid var(--b1);color:var(--t3)}
 .cfm-steps em.y{border-color:rgba(34,197,94,.45);color:var(--up)}
 .cfm-steps em.stop{border-color:rgba(245,158,11,.5);color:var(--warn)}
+.cfm-steps em.skip{opacity:.45;border-style:dashed}
 
 /* ══ TWO COLUMNS, AND EVERYTHING SMALLER ══════════════════════════════
    The tab ran to nearly eight thousand pixels in one column. Half of that
@@ -1995,8 +1996,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    stops being pushed down by a list the reader may not be reading. */
 /* the profile shares its row with the wheel and the reach box now, so it is
    sized to sit beside them rather than to dominate the column */
-.vp-hist{max-height:300px}
-.vp-levels{max-height:250px;overflow-y:auto}
+/* smaller again: at the previous size the level values were too small to
+   read, so the height was being spent on a picture rather than on numbers */
+.vp-hist{max-height:210px}
+.vp-levels{max-height:190px;overflow-y:auto;font-size:10px}
+.vp-levels b{font-size:11px}
 .lv-map{max-height:340px;overflow-y:auto}
 .vp-levels::-webkit-scrollbar,.lv-map::-webkit-scrollbar{width:6px}
 .vp-levels::-webkit-scrollbar-thumb,.lv-map::-webkit-scrollbar-thumb{
@@ -4961,7 +4965,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b32</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b33</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7029,11 +7033,52 @@ function priceToGannDeg(price){var root=Math.sqrt(price);return((root%2)/2)*360;
    did not take the trade. */
 var TRADE_QUOTA={Swing:4,Intraday:12,Scalp:18};
 function quotaMonth(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+/* ══ THE BUDGET IS RECONCILED AGAINST THE JOURNAL ═════════════════════
+   An earlier build spent a slot while the engine was FORMING a setup rather
+   than when one was taken, so simply looking at four assets emptied the
+   month. That was fixed at the source — only confirmTakeSignal spends now —
+   but the fix could not undo what the old build had already written, and the
+   stored list survived it. The board opened reading "Swing 4 of 4, Intraday
+   12 of 12" for someone who had not taken a single trade, and the only way
+   out was a reset button nobody should have needed to find.
+
+   So the list is no longer trusted on its own. The journal is the record of
+   trades actually taken; if it holds fewer trades this month than the budget
+   claims, the budget is wrong and is trimmed to match. A slot can only exist
+   behind a trade that exists. */
+function quotaJournalCount(style,month){
+  var n=0;
+  try{
+    var J=window.JRNL||[];
+    for(var i=0;i<J.length;i++){
+      var r=J[i];
+      if(!r||!r.d||String(r.d).slice(0,7)!==month)continue;
+      if(String(r.t||'').toLowerCase()===String(style).toLowerCase())n++;
+    }
+  }catch(e){ return null; }
+  return n;
+}
 function quotaLoad(){
   var L=null;
   try{L=JSON.parse(localStorage.getItem('ca_quota')||'null');}catch(e){L=null;}
-  if(!L||L.month!==quotaMonth())L={month:quotaMonth(),used:{Swing:[],Intraday:[],Scalp:[]}};
+  var m=quotaMonth();
+  if(!L||L.month!==m)L={month:m,used:{Swing:[],Intraday:[],Scalp:[]}};
   ['Swing','Intraday','Scalp'].forEach(function(k){if(!L.used[k])L.used[k]=[];});
+
+  var changed=false;
+  ['Swing','Intraday','Scalp'].forEach(function(k){
+    var real=quotaJournalCount(k,m);
+    if(real==null)return;                       /* journal not loaded yet */
+    if(L.used[k].length>real){
+      L.used[k]=L.used[k].slice(0,real);
+      changed=true;
+    }
+  });
+  if(changed){
+    quotaSave(L);
+    try{ console.info('Trade budget trimmed to match the journal — '
+      +'slots were held for trades that were never taken.'); }catch(e){}
+  }
   return L;
 }
 function quotaSave(L){try{localStorage.setItem('ca_quota',JSON.stringify(L));}catch(e){}}
@@ -11565,6 +11610,99 @@ function gates(ctx){
   return g;
 }
 
+/* ══ CONTINUATION CONFIRMATION ════════════════════════════════════════
+   A fair question was put to this engine: which confirmation does it use —
+   the reversal's, or something for a trend-continuation trade? The honest
+   answer was that only the reversal had one. The primary and secondary
+   carried an activation price and nothing else, so a continuation trade got
+   a trigger but never had to prove anything.
+
+   It cannot borrow the reversal's chain. That chain is built to catch a turn
+   — divergence, a cycle date, an exhaustion structure — and a continuation
+   wants the opposite of most of it: the trend intact, the structure agreeing
+   with the direction, momentum still in it, and NO divergence, because
+   contradictory evidence is the argument against carrying on. Six checks,
+   the mirror of the other six:
+
+     TREND      the major level, where one is set, agrees with the direction
+     STRUCTURE  Wyckoff reads markup for a long, markdown for a short — or a
+                sign of strength/weakness the same way
+     MOMENTUM   still pushing, measured in ATR rather than by eye
+     ROOM       a level ahead to actually travel to
+     CLEAN      divergence below 20 — nothing is contradicting price
+     RISK       reward to risk at 1.5 or better
+
+   The last one is the same veto it always was, and the grade is counted the
+   same way, so the two kinds of trade are read on one scale. */
+function continuationConfirm(ctx,long){
+  var rows=[], R=ctx, W=ctx.wyckoff, M=ctx.momentum, g=ctx.gates;
+
+  var MJ=ctx.majorTrend;
+  /* A CHECK THAT CANNOT BE RUN IS NOT A CHECK THAT FAILED.
+     With no major level typed in this came back false and dragged the grade
+     down, which reads as "the trend disagrees" when the truth is that nobody
+     has said what the trend is. It is excluded from the count instead, the
+     same way the experimental astro row is on the reversal side, and the
+     card says the level is missing rather than implying a verdict. */
+  var trendOk = MJ&&MJ.dir ? ((MJ.dir==='bull')===long) : null;
+  rows.push({k:'Trend', ok:trendOk===true, skip:(trendOk===null),
+    why: MJ&&MJ.dir
+      ? (trendOk?'the major level at '+MJ.level+' agrees with this direction'
+                :'the major level at '+MJ.level+' points the other way — this is counter-trend')
+      : 'no major level set — type one into Major Level above and this becomes a real check'});
+
+  var wOk=false, wWhy='Wyckoff has no reading';
+  if(W&&W.score!=null){
+    var wantUp=long;
+    if((W.state==='Markup')===wantUp&&(W.state==='Markup'||W.state==='Markdown')){
+      wOk=true; wWhy='Wyckoff reads '+W.state.toLowerCase()+', which is this direction';
+    }else wWhy='Wyckoff reads '+W.state.toLowerCase()+', which is not this direction';
+  }
+  var SG=ctx.signs;
+  if(!wOk&&SG&&SG.found)SG.found.forEach(function(f){
+    if(f.bear!==long){ wOk=true; wWhy=f.k.toLowerCase()+' — '+f.w; }
+  });
+  rows.push({k:'Structure', ok:wOk, why:wWhy});
+
+  var mOk=false, mWhy='no momentum reading';
+  if(M&&M.momATR!=null){
+    mOk=(M.momATR>0)===long&&Math.abs(M.momATR)>=1;
+    mWhy=(M.momATR>0?'+':'')+M.momATR.toFixed(2)+' ATR over ten sessions'
+      +(mOk?'':' — either flat or against this direction');
+  }
+  rows.push({k:'Momentum', ok:mOk, why:mWhy});
+
+  var cl=(g&&g.where&&g.where.clusters)||(ctx.gann&&ctx.gann.clusters)||[];
+  var ahead=long? cl.filter(function(c){return c.price>ctx.price;})
+                : cl.filter(function(c){return c.price<ctx.price;});
+  rows.push({k:'Room ahead', ok:ahead.length>0,
+    why: ahead.length? ahead.length+' level'+(ahead.length===1?'':'s')+' to travel to, nearest '
+        +ahead.sort(function(a,b){return Math.abs(a.price-ctx.price)-Math.abs(b.price-ctx.price);})[0]
+          .price.toFixed(2)
+      : 'no measured level in front of it — nothing to aim at'});
+
+  var dv=ctx.divergence&&ctx.divergence.score;
+  rows.push({k:'Nothing against it', ok:(dv!=null&&dv<20),
+    why: dv==null? 'divergence not computed'
+      : dv<20? 'warning score '+dv+' — nothing is contradicting price'
+      : 'warning score '+dv+' — evidence is building against this direction'});
+
+  return rows;
+}
+function continuationGrade(rows,rr){
+  var all=rows.slice();
+  all.push({k:'Risk', ok:(rr!=null&&rr>=1.5),
+    why: rr==null? 'nothing to size' : 'reward to risk '+rr.toFixed(2)
+      +(rr>=1.5?'':' — below the 1.5 floor, so this cannot be taken')});
+  var counted=all.filter(function(r){return !r.skip;});
+  var hits=counted.filter(function(r){return r.ok;}).length;
+  return{ rows:all, hits:hits, of:counted.length,
+    grade: hits>=counted.length-1?'STRONG CONFLUENCE'
+         : hits>=Math.ceil(counted.length/2)?'MODERATE CONFIRMATION' : 'LOW CONFIRMATION',
+    note:'A continuation is confirmed by the trend holding and nothing arguing with it — '
+        +'which is the opposite of what confirms a reversal.' };
+}
+
 /* ══ SECTION 17 — THREE CONDITIONAL HYPOTHESES ════════════════════════
    Not a direction. Three scenarios, each with the condition that turns it
    on and the condition that kills it, so the engine can be wrong in a way
@@ -11650,8 +11788,14 @@ function hypotheses(ctx){
       if(long&&tgt.price>ctx.majorCap&&price<ctx.majorCap){ capped=ctx.majorCap; }
       if(!long&&tgt.price<ctx.majorCap&&price>ctx.majorCap){ capped=ctx.majorCap; }
     }
+    var pStop = entryZone? (long? entryZone.price-a*1.0 : entryZone.price+a*1.0)
+                        : (long? price-a*1.5 : price+a*1.5);
+    var pTgt  = capped!=null? capped : (tgt? tgt.price : (proj?proj.median:null));
+    var pAnch = entryZone? entryZone.price : price;
+    var pRR   = (pTgt!=null)? Math.abs(pTgt-pAnch)/Math.abs(pAnch-pStop) : null;
     out.push({
       rank:1, kind:'Primary', direction:long?'Long':'Short',
+      confirm: continuationGrade(continuationConfirm(ctx,long),pRR),
       counterTrend:ctx.counterTrend||null, majorCap:capped,
       entryZone: entryZone? {low:Math.min(entryZone.price,price), high:Math.max(entryZone.price,price),
                              anchor:entryZone.price} : {low:price,high:price,anchor:price,note:'no cluster between price and the next level — entry is at market'},
@@ -11671,7 +11815,14 @@ function hypotheses(ctx){
   }
 
   /* ── 2. SECONDARY — continuation to the level beyond the first ── */
-  var long2=dir!=='Bearish';
+  /* NEUTRAL WAS DEFAULTING TO LONG.
+     `dir!=='Bearish'` is true for Bearish's absence, which includes Neutral —
+     so on every reading where the methods cancelled out, the continuation
+     scenario came back a buy. That is a bias with no measurement behind it.
+     With no direction from the gates, the leg still running decides. */
+  var long2 = dir==='Bullish' ? true
+            : dir==='Bearish' ? false
+            : (ctx.legUp!=null ? ctx.legUp : true);
   var far=long2? above[1]||above[0] : below[1]||below[0];
   if(far){
     out.push({
@@ -11679,6 +11830,8 @@ function hypotheses(ctx){
       entryZone:{low:price-a*0.5, high:price+a*0.5, anchor:price},
       target:far.price,
       stop: long2? price-a*2 : price+a*2,
+      confirm: continuationGrade(continuationConfirm(ctx,long2),
+        far?Math.abs(far.price-price)/Math.abs(price-(long2?price-a*2:price+a*2)):null),
       counterTrend:(ctx.counterTrend&&((dir==='Bullish')===long2))?ctx.counterTrend:null,
       supporting: evidence(long2).supporting.concat(
         ['Projection agreement: '+((long2?P.upSummary:P.downSummary)||{}).agreement]),
@@ -12730,7 +12883,10 @@ function cqeRun(rows,volRows,volName,price,opt){
   var MJ=null;
   try{ MJ=mtlTrend((document.getElementById('ai_asset_txt')||{}).value||'',price); }catch(e){}
   var H=CQE.hypotheses({price:price,atr:a,gates:g,wyckoff:W,elliott:E,time:T,
-                        projections:PR,coreScore:core,majorTrend:MJ});
+                        projections:PR,coreScore:core,majorTrend:MJ,
+                        legUp:(pv.length? price>pv[pv.length-1].px : null),
+                        divergence:dscore, signs:WS, square:PT, momentum:M,
+                        wyckoff:W, gann:G});
 
   /* the reversal takes the side against the leg that is still running */
   var side=(pv.length&&price>pv[pv.length-1].px)?'Short':'Long';
@@ -12999,8 +13155,19 @@ function cqeHypHtml(h,dp){
       +'<b>Starts when:</b> '+escHtml(h.activation)
       +(h.waitForReversal?'<br><b style="color:var(--warn)">Hold off:</b> '
         +escHtml(h.waitForReversal):'')+'</div>'
+    +(h.confirm?'<div class="cfm-h" style="margin:9px 0 6px"><i>confirmation</i>'
+        +'<b class="'+(h.confirm.grade==='STRONG CONFLUENCE'?'strong'
+          :h.confirm.grade==='MODERATE CONFIRMATION'?'mod':'low')+'">'
+        +h.confirm.hits+' of '+h.confirm.of+'</b></div>'
+      +'<div class="cfm-steps">'+h.confirm.rows.map(function(r){
+          return '<em class="'+(r.skip?'skip':r.ok?'y':'')+'" title="'+escHtml(r.why||'')+'">'
+            +escHtml(r.k)+(r.skip?' —':'')+'</em>'; }).join('')+'</div>':'')
     +'<details class="amore"><summary>Why, and what says otherwise</summary>'
       +'<div class="amore-b">'
+        +(h.confirm?h.confirm.rows.map(function(r){
+            return '<div class="'+(r.ok?'':'con')+'"><b>'+escHtml(r.k)+'</b> — '
+              +escHtml(r.why||'')+'</div>'; }).join('')
+          +'<div style="margin:8px 0;color:var(--t3)">'+escHtml(h.confirm.note)+'</div>':'')
         +h.supporting.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
         +(h.contradicting||[]).map(function(x){return '<div class="con">'+escHtml(x)+'</div>';}).join('')
         +'<div style="margin-top:8px;color:var(--t2)"><b>Wrong if:</b> '+escHtml(h.invalidation)+'</div>'
@@ -13405,6 +13572,70 @@ function cqeBacktestHtml(B,dp){
       +'</div></details>':'')
   +'</div>';
 }
+/* ══ WHEN A SETUP FORMS, SAY SO ═══════════════════════════════════════
+   The engine would work out a scenario and leave it on a tab. If you were
+   not looking at that tab you did not know, and a setup you find out about
+   two days later is not a setup.
+
+   It announces once per setup and not once per redraw — the board redraws on
+   every price tick, and a voice that reads out the same trade forty times an
+   hour is worse than silence. The identity of a setup is its asset, its
+   direction and its entry rounded to the tick, so a genuine change announces
+   and a repaint does not.
+
+   Nothing here places anything. It tells you, and then it asks. */
+var CQE_TOLD_KEY='ca_told_setups';
+function cqeToldLoad(){
+  try{ var d=JSON.parse(localStorage.getItem(CQE_TOLD_KEY)||'{}');
+       return (d&&d.day===new Date().toISOString().slice(0,10))?d:{day:new Date().toISOString().slice(0,10),ids:[]}; }
+  catch(e){ return {day:new Date().toISOString().slice(0,10),ids:[]}; }
+}
+function cqeToldSave(d){ try{ localStorage.setItem(CQE_TOLD_KEY,JSON.stringify(d)); }catch(e){} }
+function cqeSetupId(asset,h,dp){
+  return String(asset)+'|'+(h.direction||h.side||'')+'|'
+    +(h.entryZone&&h.entryZone.anchor!=null?(+h.entryZone.anchor).toFixed(dp):'-');
+}
+function cqeAnnounce(R,asset,dp){
+  if(!R||!R.hypotheses||!R.hypotheses.length)return;
+  var h=R.hypotheses[0];
+  if(!h||h.kind==='Reversal'||!h.entryZone)return;
+  /* only worth telling someone about if it survived its own checks */
+  if(!h.confirm||h.confirm.hits<4)return;
+  var id=cqeSetupId(asset,h,dp);
+  var told=cqeToldLoad();
+  if(told.ids.indexOf(id)>=0)return;
+  told.ids.push(id); if(told.ids.length>40)told.ids.shift();
+  cqeToldSave(told);
+
+  var long=/Long/i.test(h.direction||'');
+  var ct=h.counterTrend;
+  var line=(ct?(long?'Relief rally':'Bounce lower'):(long?'Buy':'Sell'))+' setup on '+asset
+    +' — '+(+h.entryZone.low).toFixed(dp)+' to '+(+h.entryZone.high).toFixed(dp)
+    +', out at '+(+h.stop).toFixed(dp)+', '+h.confirm.hits+' of '+h.confirm.of+' confirmed.';
+  try{ notify(line,'success'); }catch(e){}
+  try{
+    /* Jarvis speaks it only if speaking is already switched on — this is not
+       the place to start making noise at someone who turned it off */
+    if(typeof jvPrefs==='function'&&jvPrefs().voice&&typeof jvSpeak==='function'){
+      jvSpeak((ct?'A counter-trend ':'A ')+(long?'buy':'sell')+' setup has formed on '+asset
+        +'. Entry '+(+h.entryZone.anchor).toFixed(dp)+', stop '+(+h.stop).toFixed(dp)
+        +'. '+h.confirm.hits+' of '+h.confirm.of+' checks confirmed. It is waiting for your approval.');
+    }
+  }catch(e){}
+  /* and it goes to the approvals queue, because the framework's whole point
+     is that nothing is placed without a decision */
+  try{
+    /* apprQueue, not apprAdd — and it keys on asset|side|style|entry, so the
+       same setup arriving twice is one decision rather than two rows */
+    if(typeof apprQueue==='function'){
+      apprQueue({source:'engine', asset:asset, side:long?'BUY':'SELL',
+        style:ct?'Counter-trend':'Continuation',
+        entry:+h.entryZone.anchor, sl:+h.stop, tp:h.target!=null?+h.target:null,
+        conf:h.confirm.hits+' of '+h.confirm.of+' · '+h.confirm.grade.toLowerCase(),
+        note:h.activation});
+    }
+  }catch(e){ console.error('approval:',e); }
+}
 /* run it and put it on the page */
 var CQE_FETCHING=false;
 function renderCQE(){
@@ -13479,6 +13710,7 @@ function renderCQE(){
       try{ var zs=document.getElementById('zones_slot');
            if(zs)zs.innerHTML=anaZones(price,dp); }catch(e){}
       try{ senMacroPaint(); }catch(e){}
+      try{ cqeAnnounce(R,asset,dp); }catch(e){ console.error('announce:',e); }
     }catch(e){
       slot.innerHTML='<div class="cq"><div class="cq-req"><b>The engine failed</b>'
         +escHtml(e.message)+'</div></div>';
@@ -14122,9 +14354,8 @@ function trendInvalidHtml(T,price,dp,asset){
 
    +'</section></div>'
    /* ─── THE WORKING ───────────────────────────────────────────────── */
-   +act(7,'The working','Show me the raw numbers.',
-        'Everything above, unrounded, plus the older single-number engine this board used to run '
-        +'on. Two engines disagreeing is worth seeing rather than hiding.')
+   +act(7,'The working','Raw numbers.',
+        'For when you want to check something. Nothing here is needed to use the board.')
    /* A FEW HUNDRED FULL ENGINE PASSES IS NOT SOMETHING TO DO ON PAGE LOAD.
       Every bar of the walk runs the pivots, five engines and the whole
       confirmation chain. On two years of daily bars that is several seconds
@@ -23990,14 +24221,18 @@ function qvPlain(R){
     c:val?'var(--green)':'var(--mid)'});
 
   /* the one line that changes behaviour */
+  /* ONE SHORT LINE, NOT THREE CLAUSES.
+     These ran to two and three sentences each and said the same thing twice
+     — the reading, then the advice, then a caveat on the advice. The reading
+     is already on screen above them. What is left is the instruction. */
   var act;
-  if(!isFinite(z))act='Load daily history for this asset and the reading will fill in.';
-  else if(z>=2)act='Moves are outsized right now. Same risk in dollars means a wider stop and a smaller position — do not size as if this were a normal week.';
-  else if(z<=-1&&isFinite(ver)&&ver<0.75)act='Quiet and tightening. Stops can be tighter, but breakouts from a squeeze fail often — wait for the close beyond the level, not the poke.';
-  else if(z<=-1)act='Quiet tape. Targets should be nearer than usual; do not expect a normal-sized run.';
-  else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd>2)act='Price is running without the crowd behind it. Treat breakouts with suspicion and take profit earlier.';
-  else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd<-2)act='Heavy trade, small movement. Someone is absorbing — the level being defended matters more than the candle.';
-  else act='Nothing unusual in how far it moves or how busy it is. Size normally and let the level and the trend make the decision.';
+  if(!isFinite(z))act='Load daily history and this fills in.';
+  else if(z>=2)act='Moving harder than usual — wider stop, smaller size.';
+  else if(z<=-1&&isFinite(ver)&&ver<0.75)act='Quiet and tightening. Wait for the close beyond the level, not the poke.';
+  else if(z<=-1)act='Quiet. Take nearer targets.';
+  else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd>2)act='Running without the crowd. Bank profit earlier.';
+  else if(R.hasVolume&&isFinite(R.vvd)&&R.vvd<-2)act='Heavy trade, small move — someone is absorbing. Watch the level, not the candle.';
+  else act='Nothing unusual. Size normally.';
   return{lines:L,action:act,regime:R.regime};
 }
 /* the rolling 20-day volatility, drawn small, with today marked. A percentile
@@ -24136,11 +24371,11 @@ function qvAnalyticsHtml(){
 
   /* the regime, as a headline anyone can act on */
   var regHow={
-    1:'Ranges are small. Take nearer targets and do not expect a big run.',
-    2:'The price is being held in a tight area while a lot changes hands. The level being defended matters more than the candle.',
-    3:'Ranges are wide and the crowd is in. Full size is fine, but give the stop room.',
-    4:'The price is travelling without backing. Treat breakouts with suspicion and bank profit earlier.',
-    0:'Only the movement half can be measured for this instrument.'
+    1:'Small ranges — nearer targets.',
+    2:'Held tight on heavy trade. Watch the level, not the candle.',
+    3:'Wide ranges, crowd is in. Full size, but give the stop room.',
+    4:'Travelling without backing. Bank profit earlier.',
+    0:'Only the movement half is measurable here.'
   };
   out+='<div class="qv-reg r'+R.regime.id+'">'
     +'<div class="qv-rl"><b>'+escHtml(R.regime.name)+'</b>'
