@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b33 — Precision in Timing</title>
+<title>Celestial Alpha b34 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1996,11 +1996,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    stops being pushed down by a list the reader may not be reading. */
 /* the profile shares its row with the wheel and the reach box now, so it is
    sized to sit beside them rather than to dominate the column */
-/* smaller again: at the previous size the level values were too small to
-   read, so the height was being spent on a picture rather than on numbers */
-.vp-hist{max-height:210px}
-.vp-levels{max-height:190px;overflow-y:auto;font-size:10px}
-.vp-levels b{font-size:11px}
+/* ══ THE PROFILE STOPPED FITTING WHEN THE PAGE WENT TO TWO COLUMNS ════
+   Its own layout is a two-column grid — histogram beside the level list —
+   and it was written when it had the full width. In a 500px column the
+   histogram takes its 180px minimum and the level rows, which are a fixed
+   104 + 84 + 1fr, no longer fit in what is left. That is the left-and-right
+   scroll. Then capping the height to shorten it added a second scroll going
+   up and down, so reading one number meant scrolling in two directions
+   inside a panel inside a page.
+
+   Both scrolls are gone. It stacks: a short histogram, then the levels
+   underneath in rows that cannot overflow because nothing in them is a
+   fixed width any more. */
+.vp-body{grid-template-columns:1fr!important;gap:12px!important}
+.vp-hist{max-height:none}
+.vp-row{height:6px}
+.vp-levels{max-height:none;overflow:visible;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  display:grid;gap:8px}
+.vp-l{grid-template-columns:1fr auto!important;gap:4px 10px!important;padding-bottom:6px}
+.vp-l i{grid-column:1;font-size:8px}
+.vp-l b{grid-column:2;grid-row:1;font-size:13px}
+.vp-l u{grid-column:1/-1;font-size:9px}
+.vp-l s{font-size:9px;line-height:1.5}
 .lv-map{max-height:340px;overflow-y:auto}
 .vp-levels::-webkit-scrollbar,.lv-map::-webkit-scrollbar{width:6px}
 .vp-levels::-webkit-scrollbar-thumb,.lv-map::-webkit-scrollbar-thumb{
@@ -2889,9 +2906,16 @@ body{background:
   background:rgba(255,255,255,.02);margin-bottom:8px}
 .qv-m>b{display:block;font-size:12px;font-weight:700;color:var(--tw);margin-bottom:7px}
 .qv-m p{font-size:10.5px;color:var(--muted);line-height:1.6;margin:7px 0 0}
-.qv-fx{font-family:'Space Grotesk','Cambria Math',serif;font-size:12.5px;color:#c9b6ff;
+/* FORMULAS WRAP NOW INSTEAD OF SCROLLING SIDEWAYS.
+   white-space:nowrap with overflow-x:auto was written when this page had the
+   full width and every formula was short. In a two-column reference the long
+   ones — the cycle list, the Square-of-9 degrees — ran off the right edge and
+   the only way to read the end of a line was to scroll a box inside a column
+   inside a page. A formula is a line of text; it can break. */
+.qv-fx{font-family:'Space Grotesk','Cambria Math',serif;font-size:12px;color:#c9b6ff;
   padding:9px 12px;border-radius:9px;background:rgba(139,92,246,.09);
-  border:1px solid rgba(157,77,255,.22);overflow-x:auto;white-space:nowrap}
+  border:1px solid rgba(157,77,255,.22);
+  white-space:normal;overflow-wrap:anywhere;line-height:1.75}
 .qv-fx sub{font-size:.72em}
 .qv-lim{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
 .qv-lim>div{padding:10px 12px;border-radius:12px;border:1px dashed var(--rim);background:rgba(255,255,255,.015)}
@@ -4965,7 +4989,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b33</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b34</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -10573,7 +10597,10 @@ function vbMount(){
    measure of where the activity was, which is what a profile is for, but it
    is not contracts and the panel does not call it that.
    ══════════════════════════════════════════════════════════════════════ */
-var VP_WIN=90, VP_BINS=46, VP_VA=0.70;
+/* 46 buckets was a tall picture. At 28 the shelves and gaps read the same —
+   the profile is about where the business sat, not about resolution — and it
+   fits a column without being cut off. */
+var VP_WIN=90, VP_BINS=28, VP_VA=0.70;
 /* what the numbers in the volume field actually are, for this instrument */
 /* ══════════════════════════════════════════════════════════════════════
    CQE — CELESTIAL QUANTITATIVE ENGINE
@@ -13916,16 +13943,15 @@ function vpHtml(price,dp,sig){
       +'<u>'+escHtml(vpAway(p,price,dp,sig))+'</u><s>'+what+'</s></div>';
   };
   var levels='<div class="vp-levels">'
-    +lvl('POC',P.poc,'the busiest price in the window — price keeps returning to it','poc')
-    +lvl('Value area high',P.vah,'the top of the band holding '+Math.round(P.vaShare*100)
-        +'% of the window. Above it the market is no longer agreeing on price','vah')
-    +lvl('Value area low',P.val,'the bottom of that same band. Below it, the same in reverse','val')
+    +lvl('POC',P.poc,'busiest price — it keeps coming back here','poc')
+    +lvl('Value area high',P.vah,'top of the band holding '+Math.round(P.vaShare*100)
+        +'% — above it, price is no longer agreed','vah')
+    +lvl('Value area low',P.val,'bottom of that band. Below it, the same in reverse','val')
     +P.hvn.map(function(x){
-        return lvl('Heavy shelf',x.p,'a second heavy area — price slows here and it tends to hold','hvn');
+        return lvl('Heavy shelf',x.p,'a second heavy area — price slows and tends to hold','hvn');
       }).join('')
     +P.lvn.map(function(x){
-        return lvl('Thin gap',x.p,'almost nothing traded here, so price crosses it quickly '
-          +'with little to lean on','lvn');
+        return lvl('Thin gap',x.p,'almost nothing traded here — price crosses it fast','lvn');
       }).join('')
     +'</div>';
 
@@ -13938,12 +13964,19 @@ function vpHtml(price,dp,sig){
      +'<span class="k-hvn">heavy shelf</span><span class="k-lvn">thin gap</span>'
      +(priceIx>=0?'<span class="k-now">price now</span>':'')
    +'</div>'
-   +'<div class="vp-note"><b>'+escHtml(K.word)+'</b> over the last '+P.bars+' sessions. '
-     +escHtml(K.note)+'</div>'
-   +'<div class="vp-warn">Built from <b>daily</b> bars, so each session is spread evenly across '
-     +'its own high-to-low range. A real profile is built from intraday prints and knows where '
-     +'inside the day the business happened; this does not. It places the shelves and the gaps '
-     +'roughly — do not read it to the tick.</div>'
+   /* TWO CAVEAT PARAGRAPHS ON EVERY LOAD, EVERY ASSET.
+      Both matter and neither changes: what the volume field really is, and
+      that a profile from daily bars is approximate. They are one line and a
+      disclosure now, so the numbers above them are what the panel is mostly
+      made of. */
+   +'<div class="vp-note"><b>'+escHtml(K.word)+'</b>, '+P.bars+' sessions — approximate, '
+     +'not to the tick.</div>'
+   +'<details class="amore"><summary>What this is built from</summary><div class="amore-b">'
+     +'<div>'+escHtml(K.note)+'</div>'
+     +'<div>Built from daily bars, so each session is spread evenly across its own high-to-low '
+     +'range. A real profile is built from intraday prints and knows where inside the day the '
+     +'business happened; this does not. It places the shelves and the gaps roughly.</div>'
+   +'</div></details>'
   +'</div>';
 }
 /* ══ GATE 3 · WHEN, ON THIS TAB ═══════════════════════════════════════
@@ -24565,7 +24598,145 @@ function qvReferenceHtml(){
   }else{
     out+=qvEmpty('Run an analysis on the Analytics tab — the statistical tables for that asset appear here.');
   }
+  out+=cqeReferenceHtml();
   return out+'</div>';
+}
+
+/* ══ THE FIVE ENGINES, WRITTEN DOWN ═══════════════════════════════════
+   This page documented the older quantitative engine and nothing else, so
+   every method added since — the five engines, divergence, the confirmation
+   chains — was running with no statement anywhere of what it computes. A
+   method you cannot check is a method you have to take on trust, which is
+   the opposite of what this page is for.
+
+   Each entry is the formula and the one thing that would otherwise be
+   assumed about it. Where a choice was calibrated rather than chosen, the
+   measurement that set it is quoted. */
+function cqeReferenceHtml(){
+  var o='<div class="qv-hd" style="margin-top:22px"><b>The five engines</b>'
+    +'<span>what each one computes, and where its constants came from</span></div>';
+
+  o+='<div class="qv-m"><b>Pivots — the ATR zigzag</b>'
+    +qvFormula('a swing confirms when price retraces k \u00d7 ATR(14) from the running extreme, '
+      +'k = 2.0, and at least 3 bars have passed')
+    +'<p>Everything downstream counts from these, so a three-bar fractal was not enough — '
+    +'a quiet week would manufacture waves. The running high and the running low are tracked '
+    +'separately until the first leg is known; tracking one extreme made direction fail to '
+    +'initialise and returned zero pivots on any window under about 180 bars.</p></div>';
+
+  o+='<div class="qv-m"><b>Engine 1 · Wyckoff</b>'
+    +qvFormula('Relative volume = V<sub>t</sub> / mean(V, 20)<br>'
+      +'Price result = |C − O| / ATR(14)<br>'
+      +'Effort / result = relative volume ÷ price result')
+    +'<p>A spring is a bar whose low breaks the 30-bar range low and whose close returns inside '
+    +'it; an upthrust is the mirror. Penetration and recovery are both reported in ATR. Four '
+    +'further conditions describe a range breaking rather than holding — sign of weakness, sign '
+    +'of strength, spring failure, accumulation failure — each needing relative volume above 1.2 '
+    +'and a result of at least 0.5 ATR.</p>'
+    +'<p>All of it needs traded volume. Spot metals and FX have none, so where a volume field is '
+    +'a quote count this engine returns DATA REQUIRED rather than a number.</p></div>';
+
+  o+='<div class="qv-m"><b>Engine 2 · Elliott</b>'
+    +qvFormula('W2 &lt; W1 · W3 not the shortest of W1, W3, W5 · W4 outside W1 territory')
+    +'<p>Those three are hard and a count breaking one is discarded, not adjusted. Overlap of W4 '
+    +'into W1 is permitted in a diagonal, so an overlapping count is relabelled rather than '
+    +'thrown away — though leading and ending cannot be told apart at a single degree, and the '
+    +'card says so. W5 failing to exceed W3 is flagged as possible truncation, never used as a '
+    +'rule. Fibonacci ratios (W2/W1, W3/W1, W4/W3, W5/W1, W5/W3) score conformity within 10% and '
+    +'gate nothing.</p></div>';
+
+  o+='<div class="qv-m"><b>Engine 3 · Gann price and the clusters</b>'
+    +qvFormula('level(n) = low + (n/8) × range, n = 0…8, plus 1/3 and 2/3<br>'
+      +'Square of 9: P = ( √anchor ± k·degrees/180 )², degrees ∈ {45, 90, 120, 135, 180, 225, 270, 315, 360}')
+    +'<p>Eighths are drawn on two swings — the dominant swing of the loaded window and the most '
+    +'recent completed one — because a grid on the last small swing sits where price has already '
+    +'left. Square-of-9 levels are bounded to within 6 ATR of price: an unbounded generator '
+    +'produces a level every few dollars and means nothing.</p>'
+    +'<p>A cluster is where levels from <em>independent</em> methods land within a third of an ATR '
+    +'of one another. Its strength is the number of distinct methods, not the number of levels — '
+    +'two Gann eighths beside each other are one method twice.</p></div>';
+
+  o+='<div class="qv-m"><b>Engine 4 · Gann time, and price × time</b>'
+    +qvFormula('cycles tested: 30, 45, 49, 60, 90, 120, 144, 180, 225, 256, 270, 315, 360, '
+      +'365, 547, 730, 1095 days<br>'
+      +'tolerance = min(12, max(2, round(cycle × 0.06)))')
+    +'<p>Counted forward from every confirmed pivot. The tolerance scales with the cycle, so a '
+    +'360-day count is not held to the same day-accuracy as a 30-day one. The output is a window '
+    +'with a start and an end date, never a single date.</p>'
+    +qvFormula('squaring ratio = distance travelled ÷ ( days elapsed × unit )<br>'
+      +'unit = median daily true range over the loaded window')
+    +'<p>Price and time square when that ratio reaches 1. The unit is measured from this '
+    +'instrument\u2019s own history rather than taken from a constant, and it is printed with every '
+    +'reading — the same swing on a different unit is a different number.</p></div>';
+
+  o+='<div class="qv-m"><b>Engine 5 · Quant</b>'
+    +qvFormula('σ from log returns, bands at 1σ, 2σ, 3σ and 4σ<br>'
+      +'band = P × exp( μ ± kσ )')
+    +'<p>The observed frequency of each band is printed beside what a normal distribution says it '
+    +'should be. On two years of gold the 4σ band was crossed on 0.65% of days against a normal '
+    +'expectation of 0.0063% — about a hundred times more often. That gap is the reason the '
+    +'empirical percentile is shown at all.</p></div>';
+
+  o+='<div class="qv-hd" style="margin-top:22px"><b>Divergence and confirmation</b>'
+    +'<span>a warning, and what it takes to act on one</span></div>';
+
+  o+='<div class="qv-m"><b>Divergence score</b>'
+    +qvFormula('momentum 30% · participation 25% · volatility 20% · dollar 15% · yields 10%<br>'
+      +'renormalised over whichever components could be computed')
+    +'<p>Measured between the last two <em>confirmed</em> pivots of the same kind. Momentum uses '
+    +'ROC(10) and RSI(14); participation uses the level, the relative volume, the z-score and the '
+    +'percentile; volatility uses ATR, realised volatility, Bollinger width and the ATR '
+    +'percentile. A missing component is named, not scored zero — scoring it zero would be a '
+    +'claim that nothing diverges.</p>'
+    +'<p>The score counts contradictory evidence against the current direction. It is not a '
+    +'probability of reversal and it never opens a trade.</p></div>';
+
+  o+='<div class="qv-m"><b>Cross-market stability</b>'
+    +qvFormula('rolling correlation at 20, 50 and 100 sessions<br>'
+      +'usable only if |average| ≥ 0.30, spread ≤ 0.60, and all three share a sign')
+    +'<p>The gold–dollar inverse is a tendency, not a law, and it has broken for months at a '
+    +'time. Where the three lengths disagree the answer is CORRELATION UNSTABLE and nothing is '
+    +'read from it. Yields are levels, so their change is a difference rather than a log return; '
+    +'where a bond fund stands in for a yield its price is negated first, because a fund\u2019s price '
+    +'moves opposite to its yield.</p></div>';
+
+  o+='<div class="qv-m"><b>Reversal — six steps, in order</b>'
+    +qvFormula('divergence → price level → time cycle → structure → astro → risk')
+    +'<p>The first that fails is where it stops and it is named. ACTIVE requires every counted '
+    +'step; structure requires two independent readings, not one. The astro row is shown and '
+    +'excluded from the grade — an unvalidated overlay must not be able to lift a measured one — '
+    +'and the base rate of the events it tests against is printed beside the tick.</p></div>';
+
+  o+='<div class="qv-m"><b>Continuation — the mirror of it</b>'
+    +qvFormula('trend · structure · momentum · room ahead · NO divergence · risk')
+    +'<p>A continuation cannot borrow the reversal\u2019s chain: that one is built to catch a turn, '
+    +'and a continuation wants the opposite of most of it — the trend intact and nothing arguing '
+    +'with price. A check that cannot be run, such as the trend with no major level set, is '
+    +'excluded from the count rather than counted as a failure.</p></div>';
+
+  o+='<div class="qv-m"><b>Core score</b>'
+    +qvFormula('(Wyckoff + Elliott + Gann price + Gann time + Quant) ÷ 5, equally weighted')
+    +'<p>Renormalised over whichever engines computed, and withheld entirely below 60% coverage: '
+    +'a figure from one engine printed in the same place and the same size as one backed by all '
+    +'five would be misleading. Astrology and numerology are not terms in this sum. They were — '
+    +'the older confidence figure carried a cycle-bias term at 25% and a planetary-hour term at '
+    +'10% — and they are now shown beside the score at zero weight.</p></div>';
+
+  o+='<div class="qv-m"><b>What the data is allowed to be</b>'
+    +qvFormula('a wick more than 8 ATR outside the neighbouring closes is a bad print')
+    +'<p>Repaired by clamping to the bar\u2019s own body, not by deleting the bar, which would put a '
+    +'hole in every time count. Real Polygon XAU/USD carries 2025-11-23 with a low of 1964.99 '
+    +'while that bar opened at 4063.84 and every neighbour traded between 4022 and 4144; left in, '
+    +'it set the dominant swing low and moved the entire Gann grid. The obvious test — any wick '
+    +'more than 8% from its own close — also deletes 2026-01-30, where gold fell from 5437 to '
+    +'4884 for real. A crash is not a bad tick, so the comparison is against the neighbours.</p>'
+    +'<p>Volume is refused where it is a quote count, where the series steps by 3× or more '
+    +'(a feed adding sources, not participation), or where weekend sessions carry under 35% of '
+    +'weekday activity. Where an instrument has no tape, volume is borrowed from a fund that '
+    +'does — gold from GLD, correlation 0.9274 on daily log returns over 498 shared sessions — '
+    +'and the substitution is named wherever it appears.</p></div>';
+
+  return o;
 }
 
 function renderCycleCountdown(){
