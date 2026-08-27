@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b38 — Precision in Timing</title>
+<title>Celestial Alpha b39 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2118,6 +2118,43 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .sk-none{font-size:10px;color:var(--t3)}
 
 /* ══ RIGHT PRICE, RIGHT TIME ══ */
+/* ══ SELF TEST ══ */
+.st-act{display:flex;align-items:center;gap:11px;margin-top:11px;flex-wrap:wrap}
+.st-note{font-size:9.5px;color:var(--t3)}
+.st-run{display:flex;align-items:center;gap:8px;padding:14px;font-size:11px;color:var(--t2)}
+.st-sum{padding:9px 12px;border-radius:9px;font-size:11px;color:var(--t2);margin-bottom:11px}
+.st-sum b{font-family:'Space Grotesk';font-size:13px;color:var(--t1)}
+.st-sum.ok{background:rgba(52,211,153,.09);border:1px solid rgba(52,211,153,.3)}
+.st-sum.bad{background:rgba(248,113,113,.09);border:1px solid rgba(248,113,113,.34)}
+.st-g{margin-bottom:13px}
+.st-gh{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
+.st-r{display:grid;grid-template-columns:15px 1fr;gap:7px;padding:5px 0;
+  align-items:baseline;animation:stIn .34s cubic-bezier(.22,1,.36,1) both}
+@keyframes stIn{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
+.st-r i{font-style:normal;font-weight:800;text-align:center;font-size:11px}
+.st-r.yes i{color:#34D399}
+.st-r.no i{color:#F87171}
+.st-b{min-width:0}
+.st-b b{display:block;font-size:11px;font-weight:700;color:var(--t1)}
+.st-b s{display:block;text-decoration:none;font-size:10px;line-height:1.5;color:var(--t3);margin-top:2px}
+.st-b u{display:inline-block;text-decoration:none;margin-top:3px;padding:2px 7px;border-radius:5px;
+  font-size:9px;font-variant-numeric:tabular-nums;background:rgba(255,255,255,.04);
+  border:1px solid var(--b1);color:var(--t2)}
+.st-r.no .st-b u{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.34);color:#FCA5A5}
+.st-meas{font-size:10px;color:var(--t3);margin-bottom:8px}
+.st-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:760px){.st-nums{grid-template-columns:1fr}}
+.st-n{padding:9px 11px;border-radius:9px;border:1px solid var(--b1);background:rgba(255,255,255,.02)}
+.st-n i{display:block;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.st-n b{display:block;font-family:'Space Grotesk';font-size:19px;font-weight:800;color:var(--t1);
+  margin:3px 0 1px;font-variant-numeric:tabular-nums;animation:stPop .45s cubic-bezier(.22,1,.36,1) both}
+@keyframes stPop{from{opacity:0;transform:scale(.9) translateY(4px)}to{opacity:1;transform:none}}
+.st-n s{display:block;text-decoration:none;font-size:9px;color:var(--t3)}
+.st-note2{margin-top:9px;font-size:9.5px;line-height:1.6;color:var(--t3)}
+.st-none{font-size:10.5px;color:var(--t3);padding:8px 0}
+@media(prefers-reduced-motion:reduce){.st-r,.st-n b{animation:none!important}}
+
 .conv-band{margin-bottom:10px}
 .conv-band>.card{overflow:hidden}
 .cvg{margin:0;padding:12px 15px;text-align:left;
@@ -5250,7 +5287,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b38</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b39</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -6308,6 +6345,41 @@ body{background:var(--bg0)}
 
 
       <div class="pane hidden" id="pane_reference">
+        <!-- ══════════════════════════════════════════════════════════════
+             VERIFY THIS YOURSELF
+
+             A fair question was put to this app: how does anyone check that
+             what it claims is true? Nobody buying it is going to read the
+             source, and taking the author's word is not verification.
+
+             So it checks itself, in front of you, and shows the working.
+             Three kinds of check, weakest claim to strongest:
+
+               ARITHMETIC   known answers you can redo on a calculator. The
+                            expected value is printed beside what the engine
+                            returned, so a wrong one is visible, not hidden
+                            behind a green tick.
+               MEASURED     the base rates are re-derived live by walking
+                            whatever history is loaded — your asset, your
+                            bars, computed in your browser. If the numbers
+                            printed on the convergence panel are wrong, this
+                            is where they disagree.
+               COVERAGE     which engines actually produced a number and
+                            which could not, with the reason.
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><div class="dot" style="background:var(--p3)"></div>Verify this yourself</div>
+            <div class="cs">the app re-derives its own numbers in front of you — known answers you can redo on a calculator, and the base rates measured live on your data</div>
+          </div>
+          <div class="cb">
+            <div id="selftest_out"><div class="qv-empty">Press Run to check every claim.</div></div>
+            <div class="st-act">
+              <button class="btn btn-a btn-sm" onclick="selfTestRun(this)">Run the checks</button>
+              <span class="st-note">Nothing leaves your browser. Every figure below is computed here, now.</span>
+            </div>
+          </div>
+        </div>
         <div class="card">
           <div class="ch">
             <div class="ct"><div class="dot" style="background:var(--amber)"></div>Data sources — live health check</div>
@@ -10877,6 +10949,237 @@ function tcBeLevel(S){
 function tcFmt(v,dp){
   return isFinite(v)?(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp}):'—';
 }
+/* ══════════════════════════════════════════════════════════════════════
+   SELF TEST — the app checking its own claims where you can watch
+
+   Every row states what it expected and what it got. A check that passes
+   because the expectation was written to match the output is worthless, so
+   the arithmetic group uses values that can be redone by hand: square roots
+   of round numbers, a true range off four printed prices, a sign boundary
+   at a whole degree. The working is on the row.
+
+   The measured group re-derives the convergence base rates by walking the
+   loaded history — the same walk that produced the figures on the panel,
+   run again on whatever asset is open. If those figures are wrong, this is
+   where they will disagree with themselves.
+   ══════════════════════════════════════════════════════════════════════ */
+function stNear(a,b,tol){ return a!=null&&b!=null&&Math.abs(a-b)<=(tol==null?1e-9:tol); }
+function stFmt(v){
+  if(v==null)return '—';
+  if(typeof v==='number')return (Math.round(v*1e6)/1e6).toString();
+  return String(v);
+}
+function selfTestArithmetic(){
+  var R=[];
+  function row(k,expect,got,work,tol){
+    R.push({k:k,expect:expect,got:got,work:work,
+            ok:(typeof expect==='number'&&typeof got==='number')
+                ? stNear(expect,got,tol) : String(expect)===String(got)});
+  }
+
+  /* ── true range: four printed prices, one max ─────────────────────── */
+  try{
+    var rows=[{open:100,high:110,low:90,close:100},
+              {open:106,high:115,low:105,close:112}];
+    row('True range','15','15'===String(CQE.trueRange(rows,1))?'15':String(CQE.trueRange(rows,1)),
+      'Bar 2 high 115, low 105, previous close 100. TR = max(115−105, |115−100|, |105−100|) '
+      +'= max(10, 15, 5) = 15');
+  }catch(e){ row('True range','15','threw: '+e.message,''); }
+
+  /* ── ATR over three known bars ────────────────────────────────────── */
+  try{
+    var r2=[{open:10,high:12,low:8,close:10},
+            {open:10,high:14,low:10,close:13},   /* TR = max(4, 4, 0) = 4 */
+            {open:13,high:15,low:11,close:12}];  /* TR = max(4, 2, 2) = 4 */
+    row('ATR over 2 bars',4,CQE.atr(r2,2),
+      'True ranges of the last two bars are 4 and 4. Their mean is 4.',1e-9);
+  }catch(e){ row('ATR over 2 bars',4,'threw: '+e.message,''); }
+
+  /* ── Square of 9, the whole point of the price engine ─────────────── */
+  try{
+    var s9=CQE.sq9Levels(100,100,1,{maxATR:1e9});
+    var up90=s9.filter(function(l){return l.deg===90;})[0];
+    var dn90=s9.filter(function(l){return l.deg===-90;})[0];
+    var up180=s9.filter(function(l){return l.deg===180;})[0];
+    row('Square of 9 · +90°',110.25,up90?up90.price:null,
+      'Anchor 100. √100 = 10. Ninety degrees is 90/180 = 0.5 of a step. '
+      +'(10 + 0.5)² = 10.5² = 110.25',1e-9);
+    row('Square of 9 · −90°',90.25,dn90?dn90.price:null,
+      '(10 − 0.5)² = 9.5² = 90.25',1e-9);
+    row('Square of 9 · +180°',121,up180?up180.price:null,
+      'One hundred and eighty degrees is a full step. (10 + 1)² = 11² = 121',1e-9);
+  }catch(e){ row('Square of 9','110.25','threw: '+e.message,''); }
+
+  /* ── zodiac arithmetic, checkable against any ephemeris ───────────── */
+  try{
+    row('Longitude 0° → sign','Aries 0',signOf(0).sign+' '+Math.round(signOf(0).deg),
+      'Each sign is 30°. Zero is the start of the first, Aries.');
+    row('Longitude 45° → sign','Taurus 15',signOf(45).sign+' '+Math.round(signOf(45).deg),
+      '45 − 30 = 15, so 15° of the second sign, Taurus.');
+    row('Longitude 359° → sign','Pisces 29',signOf(359).sign+' '+Math.round(signOf(359).deg),
+      '359 / 30 = 11 remainder 29 — 29° of the twelfth sign, Pisces.');
+  }catch(e){ row('Zodiac arithmetic','Aries 0','threw: '+e.message,''); }
+
+  /* ── element and quality, which the Moon strip prints ─────────────── */
+  try{
+    var i=SIGNS.indexOf('Aquarius');
+    row('Aquarius element','Air',MOON_ELEM[i%4],
+      'Aquarius is sign 11, index '+i+'. '+i+' mod 4 = '+(i%4)+' → the third element, Air.');
+    row('Aquarius quality','Fixed',MOON_QUAL[i%3],
+      i+' mod 3 = '+(i%3)+' → the second quality, Fixed.');
+    var j=SIGNS.indexOf('Aries');
+    row('Aries element','Fire',MOON_ELEM[j%4],'Aries is index '+j+'. '+j+' mod 4 = 0 → Fire.');
+  }catch(e){ row('Element and quality','Air','threw: '+e.message,''); }
+
+  /* ── RSI has a known ceiling ──────────────────────────────────────── */
+  try{
+    var up=[]; for(var k=0;k<40;k++)up.push({open:100+k,high:100+k+1,low:100+k-1,close:100+k+1});
+    var rs=CQE.divergence.rsiSeries(up,14);
+    var last=rs&&rs.length?rs[rs.length-1]:null;
+    row('RSI of an unbroken rise',100,last==null?null:Math.round(last),
+      'Wilder RSI is 100 when no down move exists in the window. Forty rising bars.',0.6);
+  }catch(e){ row('RSI of an unbroken rise',100,'threw: '+e.message,''); }
+
+  return R;
+}
+
+/* re-derive the convergence base rates on whatever history is loaded */
+function selfTestMeasured(onStep){
+  var all=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS.slice():[];
+  if(all.length<300)
+    return{n:0,note:'Needs about 300 daily bars to walk. '+all.length+' loaded — '
+      +'run an analysis on an asset with more history and press Run again.'};
+  var PRICE_ATR=0.10, PRICE_STRENGTH=3, DAY_RATIO=0.10, DAY_DISTINCT=4;
+  /* THE STEP DECIDES WHETHER THIS AGREES WITH ITSELF.
+     At sixty sample points XAU came back 14.8% against the 19.3% the dense
+     calibration walk produced on the same asset — pure sampling noise, but
+     a reader comparing the two sees the panel contradicting the checker.
+     A hundred and sixty points closes the gap and still runs in seconds. */
+  var n=0,pOk=0,dOk=0,both=0, step=Math.max(2,Math.round((all.length-260)/160));
+  for(var i=260;i<all.length;i+=step){
+    var rows=all.slice(0,i+1), px=+rows[rows.length-1].close;
+    var R; try{ R=cqeRun(rows,null,null,px,{}); }catch(e){ continue; }
+    if(!(R.atr>0))continue;
+    n++;
+    var cl=((R.gann&&R.gann.clusters)||[]).filter(function(c){return c.strength>=PRICE_STRENGTH;})
+      .map(function(c){return Math.abs(c.price-px)/R.atr;}).sort(function(a,b){return a-b;});
+    var P=cl.length>0&&cl[0]<=PRICE_ATR;
+    var hits=(R.time&&R.time.hits)||[];
+    var tight=hits.filter(function(h){return h.tolerance>0&&h.error/h.tolerance<=DAY_RATIO;});
+    var seen={}; tight.forEach(function(h){ seen[h.fromDate]=1; });
+    var D=Object.keys(seen).length>=DAY_DISTINCT;
+    if(P)pOk++; if(D)dOk++; if(P&&D)both++;
+    if(onStep)onStep(n);
+  }
+  if(!n)return{n:0,note:'The walk produced no usable bar.'};
+  return{n:n,
+    price:+(pOk/n*100).toFixed(1), day:+(dOk/n*100).toFixed(1),
+    both:+(both/n*100).toFixed(1),
+    asset:(typeof _lastAsset!=='undefined'&&_lastAsset)||'the loaded asset',
+    bars:all.length};
+}
+
+function selfTestCoverage(){
+  var C=window.CQE_LAST;
+  if(!C)return[{k:'Engines',ok:false,why:'No analysis has been run yet — press Analyse first.'}];
+  var out=[];
+  function e(k,v,why){ out.push({k:k,ok:v,why:why}); }
+  e('Wyckoff', C.wyckoff&&C.wyckoff.score!=null,
+    C.wyckoff&&C.wyckoff.score!=null?'reads '+(C.wyckoff.state||'a phase')
+      :'no reading — '+((C.wyckoff&&C.wyckoff.required||[])[0]||'not computed'));
+  e('Elliott', !!(C.elliott&&C.elliott.best),
+    C.elliott&&C.elliott.best?'a count with score '+C.elliott.score
+      :'no valid count — '+((C.elliott&&C.elliott.required||[])[0]||'not computed'));
+  e('Gann price', !!(C.gann&&C.gann.clusters&&C.gann.clusters.length),
+    C.gann&&C.gann.clusters?C.gann.clusters.length+' clusters where 2+ methods agree':'none');
+  e('Gann time', !!(C.time&&C.time.score!=null),
+    C.time&&C.time.score!=null?C.time.hits.length+' counts land today, score '+C.time.score:'none');
+  /* the field is sigmaBands. Checking C.quant.sigma made this row print a
+     dash next to a description of the thing working — caught by this very
+     panel on its first run. */
+  e('Statistics', !!(C.quant&&C.quant.sigmaBands&&C.quant.score!=null),
+    C.quant&&C.quant.sigmaBands
+      ? 'sigma bands and percentiles over '+C.quant.n+' returns, score '+C.quant.score
+      : 'not computed — '+((C.quant&&C.quant.required||[])[0]||'no reason given'));
+  e('Core score', !!(C.core&&C.core.score!=null),
+    C.core&&C.core.score!=null?C.core.score+'/100 at '+C.core.coverage+'% coverage'
+      :(C.core&&C.core.withheld)||'withheld');
+  var dv=C.divergence;
+  e('Divergence', !!(dv&&dv.score!=null),
+    dv&&dv.score!=null?dv.score+'/100 at '+dv.coverage+'% of its inputs'
+      +((dv.missing||[]).length?' — missing '+dv.missing.map(function(m){return m.k;}).join(', '):'')
+      :'not computed');
+  /* repaired is the list of repairs, so this printed "[object Object] bad
+     ticks repaired". It is the count that was wanted, and each repair names
+     the bar it fixed. */
+  var rep=(C.repaired&&C.repaired.length)||0;
+  e('Bars used', C.bars>0, C.bars+' daily bars'
+    +(rep? ', '+rep+' bad tick'+(rep===1?'':'s')+' repaired ('
+        +C.repaired.map(function(x){return x.date;}).slice(0,3).join(', ')+')' : ''));
+  return out;
+}
+
+function selfTestRun(btn){
+  var host=document.getElementById('selftest_out');
+  if(!host)return;
+  var B=btnBusy(btn,'Checking');
+  host.innerHTML='<div class="st-run"><i class="btn-sp"></i>Running…</div>';
+  /* let the busy state paint before the synchronous walk blocks the thread */
+  setTimeout(function(){
+    var A=[],M=null,V=[];
+    try{ A=selfTestArithmetic(); }catch(e){ console.error('selftest arith:',e); }
+    try{ M=selfTestMeasured(); }catch(e){ console.error('selftest measured:',e); }
+    try{ V=selfTestCoverage(); }catch(e){ console.error('selftest coverage:',e); }
+    var pass=A.filter(function(r){return r.ok;}).length;
+    var h='';
+
+    h+='<div class="st-sum '+(pass===A.length?'ok':'bad')+'">'
+      +'<b>'+pass+' of '+A.length+'</b> arithmetic checks pass'
+      +(pass===A.length?'' : ' — the failures are listed below with what was expected')+'</div>';
+
+    h+='<div class="st-g"><div class="st-gh">Redo these on a calculator</div>';
+    A.forEach(function(r,i){
+      h+='<div class="st-r '+(r.ok?'yes':'no')+'" style="animation-delay:'+(i*0.045).toFixed(2)+'s">'
+        +'<i>'+(r.ok?'✓':'✕')+'</i>'
+        +'<div class="st-b"><b>'+escHtml(r.k)+'</b>'
+          +'<s>'+escHtml(r.work||'')+'</s>'
+          +'<u>expected '+escHtml(stFmt(r.expect))+' · got '+escHtml(stFmt(r.got))+'</u>'
+        +'</div></div>';
+    });
+    h+='</div>';
+
+    h+='<div class="st-g"><div class="st-gh">Base rates, re-measured on your data</div>';
+    if(!M||!M.n){
+      h+='<div class="st-none">'+escHtml((M&&M.note)||'Could not run.')+'</div>';
+    }else{
+      h+='<div class="st-meas">Walked '+M.n+' points across '+M.bars+' bars of '
+        +escHtml(String(M.asset).toUpperCase())+', using only the bars available at each step — '
+        +'no figure below can see a bar that had not printed yet.</div>'
+       +'<div class="st-nums">'
+        +'<div class="st-n"><i>Price leg fires</i><b>'+M.price+'%</b><s>panel says 17–24%</s></div>'
+        +'<div class="st-n"><i>Day leg fires</i><b>'+M.day+'%</b><s>panel says 6–18%</s></div>'
+        +'<div class="st-n"><i>Both together</i><b>'+M.both+'%</b><s>panel says about 1 in 40</s></div>'
+       +'</div>'
+       +'<div class="st-note2">These are computed from the history in front of you, not read from '
+        +'a stored figure. One asset will not land exactly on a range measured across three — '
+        +'what matters is that it is the same order, and that the panel is not claiming '
+        +'something rarer than this.</div>';
+    }
+    h+='</div>';
+
+    h+='<div class="st-g"><div class="st-gh">What actually computed</div>';
+    V.forEach(function(r,i){
+      h+='<div class="st-r '+(r.ok?'yes':'no')+'" style="animation-delay:'+(i*0.045).toFixed(2)+'s">'
+        +'<i>'+(r.ok?'✓':'–')+'</i><div class="st-b"><b>'+escHtml(r.k)+'</b>'
+        +'<s>'+escHtml(r.why||'')+'</s></div></div>';
+    });
+    h+='</div>';
+
+    host.innerHTML=h;
+    if(pass===A.length)btnOk(B,'All pass'); else btnFail(B,pass+'/'+A.length);
+  },60);
+}
+
 /* ══════════════════════════════════════════════════════════════════════
    RIGHT PRICE, RIGHT TIME — the convergence read
 
