@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b29 — Precision in Timing</title>
+<title>Celestial Alpha b30 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1908,6 +1908,59 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* a short plain sentence wherever a number could be mistaken for advice */
 .aplain{font-size:10px;line-height:1.7;color:var(--t3);margin-top:10px}
 .aplain b{color:var(--t2);font-weight:600}
+
+/* ══ REFERENCE AND PORTFOLIO, IN COLUMNS ══════════════════════════════
+   A reference page is a list of self-contained blocks, which is exactly what
+   CSS columns are for: nineteen hundred pixels of formula cards become half
+   that, in the same reading order, with no change to any of them. break-
+   inside keeps a formula and its explanation together — a card split across
+   a column boundary would be worse than the scrolling it saved. */
+@media(min-width:1000px){
+  .qv-ref{column-count:2;column-gap:16px}
+  .qv-ref>.qv-m,.qv-ref>.qv-hd{break-inside:avoid;-webkit-column-break-inside:avoid;
+    page-break-inside:avoid}
+  .qv-ref>.qv-hd{column-span:all}
+  /* the vibration reference is the same shape — self-contained blocks in a
+     body div the markup calls .cbd, not .vb-body as first guessed */
+  .vb-card .cbd{column-count:2;column-gap:16px}
+  .vb-card .cbd>*{break-inside:avoid;-webkit-column-break-inside:avoid}
+}
+/* ══ LONG LISTS SCROLL THEMSELVES, NOT THE PAGE ═══════════════════════
+   A volume profile is a list of every price bucket and a level map is a list
+   of every level — both are complete by design and neither needs to be
+   complete on screen at once. At 965 and 547 pixels they were the two
+   tallest things on the tab, and everything below them paid for it. Capped
+   with their own scrollbar: nothing is removed, and the rest of the page
+   stops being pushed down by a list the reader may not be reading. */
+.vp-levels{max-height:330px;overflow-y:auto}
+.lv-map{max-height:340px;overflow-y:auto}
+.vp-levels::-webkit-scrollbar,.lv-map::-webkit-scrollbar{width:6px}
+.vp-levels::-webkit-scrollbar-thumb,.lv-map::-webkit-scrollbar-thumb{
+  background:rgba(127,96,191,.35);border-radius:99px}
+
+/* ══ PORTFOLIO PAIRS UP ═══════════════════════════════════════════════
+   Ten cards in one column, most of them shorter than the space beside them.
+   The pane becomes a two-column grid; the three that genuinely need the
+   width — the equity chart and calendar, the trade log, the history table —
+   are marked to span both, and the rest pair off around them. Below 1000px
+   it is a single column again, unchanged. */
+@media(min-width:1000px){
+  /* :not(.hidden) is not decoration. An id selector outranks .hidden, so
+     `#pane_portfolio{display:grid}` would have un-hidden this pane on every
+     other tab the moment the rule that hides it lost the cascade. It happens
+     to win today; relying on that is how a layout tweak becomes a bug. */
+  /* THE !important THREE THOUSAND LINES DOWN.
+     `.pane.on{display:flex!important}` at line 3615 beats any specificity,
+     so the grid was written, matched, and silently lost — the pane stayed a
+     flex column and the cards stayed stacked. Matching !important is the
+     only way past it; the alternative is unpicking a declaration eight other
+     panes depend on. :not(.hidden) still guards the pane from being shown on
+     other tabs, which an id selector would otherwise do. */
+  #pane_portfolio:not(.hidden){display:grid!important;grid-template-columns:1fr 1fr;
+    gap:12px;align-items:start}
+  #pane_portfolio>*{min-width:0;margin-bottom:0!important}
+  #pane_portfolio>.pf-wide{grid-column:1/-1}
+}
 .scn-none{font-size:11px;color:var(--t2);line-height:1.65;padding:13px 15px;border-radius:12px;
   border:1px solid var(--b1);background:rgba(11,6,40,.5)}
 .scn-near{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px}
@@ -4844,7 +4897,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b29</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b30</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -5655,7 +5708,7 @@ body{background:var(--bg0)}
         </div>
 
         <!-- ROW 2: Equity + Calendar -->
-        <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:10px">
+        <div class="pf-wide" style="display:grid;grid-template-columns:1fr 1.6fr;gap:10px">
           <!-- Net Cumulative P&L -->
           <div style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r3);padding:14px">
             <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Net Cumulative P&amp;L</div>
@@ -5732,7 +5785,7 @@ body{background:var(--bg0)}
         </div>
 
         <!-- ADD TRADE FORM -->
-        <div style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r2);padding:14px">
+        <div class="pf-wide" style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r2);padding:14px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
             <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Log Trade</div>
             <div style="display:flex;gap:6px">
@@ -5772,7 +5825,7 @@ body{background:var(--bg0)}
         </div>
 
         <!-- TRADE TABLE -->
-        <div style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r2);overflow:hidden">
+        <div class="pf-wide" style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r2);overflow:hidden">
           <div style="padding:10px 14px;border-bottom:1px solid var(--rim);display:flex;align-items:center;justify-content:space-between">
             <div style="font-size:11px;font-weight:700;color:var(--text)">Trade History</div>
             <div style="display:flex;gap:6px;align-items:center">
@@ -12333,7 +12386,10 @@ function cqeDivHtml(R,dp){
   });
   h+='</div>';
   if(found.length){
-    h+='<details class="amore" open><summary>What exactly stopped agreeing</summary>'
+    /* 388px of evidence, open by default, above the three scenarios most
+       readers came for. The heading already says how many there are. */
+    h+='<details class="amore"><summary>What exactly stopped agreeing ('
+      +found.length+')</summary>'
       +'<div class="amore-b">'+found.map(function(x){
         return '<div class="con">'+escHtml(x)+'</div>'; }).join('')+'</div></details>';
   }
@@ -13234,7 +13290,21 @@ function trendInvalidHtml(T,price,dp,asset){
         'A level is only worth watching when several unrelated methods land on the same one. '
         +'Those are marked. The rest of this map is context: where price sits in its recent '
         +'range, and which prices it has reacted to before.')
+   /* ══ THE MAP, IN TWO COLUMNS AND IN ORDER OF USE ═════════════════
+      Nineteen hundred pixels in one column, and the two panels a reader
+      actually acts on — the ladder and the zones — were separated by two
+      that are reference material. They pair now: what price is doing beside
+      where it is allowed to do it, then the wheel beside the profile.
+
+      The Gann rungs go behind a disclosure. They are a complete grid of
+      every rung above and below, which is the right thing to have and the
+      wrong thing to scroll past on the way to something else. */
+   +'<div class="a2"><section>'
    +anaLadder(pts,price,lo,hi,dp,S,dir)
+   +'</section><section>'
+   +anaZones(price,dp)
+   +'</section></div>'
+   +'<div class="a2"><section>'
    /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
       / Markdown" — Wyckoff's own vocabulary — from sqrt(price) mod 2. That is
       a property of the price's digits: 4654 gives one phase and 4655 another,
@@ -13242,9 +13312,11 @@ function trendInvalidHtml(T,price,dp,asset){
       real Wyckoff engine now, at the top of this tab, so the labels are gone.
       The wheel position it also drew is kept, without the phase words. */
    +anaWheel(price,dp)
-   +anaZones(price,dp)
-   +anaRungs(price,dp)
+   +'</section><section>'
    +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
+   +'</section></div>'
+   +'<details class="amore"><summary>Every Gann rung above and below</summary>'
+     +'<div style="margin-top:9px">'+anaRungs(price,dp)+'</div></details>'
 
    /* ─── 4 · how much, and act ────────────────────────────────────── */
 
@@ -14624,10 +14696,18 @@ function renderTiming(){
    /* Everything below the plan is background. It was all open at once, which is
       why the tab read as a wall — the answer and the reasoning had the same
       weight on the page. The reasoning is one click away now. */
-   +'<details class="sec pin" open><summary><b>Why this day and this hour</b>'
+   /* ══ TWO THOUSAND PIXELS NOBODY ASKED FOR ═════════════════════════
+      Both of these shipped forced open, and between them they were half the
+      height of this tab. The second one's own subtitle says "for anyone who
+      wants to check it" — which is exactly the description of something that
+      should be closed until someone wants to. Neither is hidden: the summary
+      still names what is inside, and one click still opens it. What has
+      stopped is scrolling past fourteen hundred pixels of planet positions
+      to reach the windows underneath them. */
+   +'<details class="sec pin"><summary><b>Why this day and this hour</b>'
      +'<span>the weekday&rsquo;s ruling cycle, the sky on it, and how the next two weeks rank</span></summary>'
      +timDayCard(st)+timBestPanel(st)+'</details>'
-   +'<details class="sec pin" open><summary><b>Planet positions and aspects</b>'
+   +'<details class="sec pin"><summary><b>Planet positions and aspects</b>'
      +'<span>where everything is right now, for anyone who wants to check it</span></summary>'
      +timExtras()+'</details>'
    +'<details class="sec pin" open><summary><b>Reference tools</b><span>the complete toolkit and every calendar in one place</span></summary>'
@@ -19947,12 +20027,19 @@ function fngFullHtml(rows){
              +'<b>'+pt.v+'</b>'
              +'<s>'+escHtml(fngPartWords(pt.k,pt.v))+'</s></div>';
          }).join('')+'</div>'
-       +'<div class="fng-why">Each part is ranked against '+escHtml(asset)+'&rsquo;s own last '
-         +A.win+' sessions, out of '+A.bars+' bars loaded, then weighted into the number on the '
-         +'dial. That is why the scale reads the same on Gold as it does on Bitcoin.</div>'
-       +'<div class="fng-warn">This is <b>computed here</b> from price behaviour — it is not CNN&rsquo;s '
-         +'index, not alternative.me&rsquo;s, and not a survey of what anyone is saying. Price behaviour '
-         +'is a proxy for mood, not a measurement of it.</div>'
+       /* THE CAVEAT MATTERS AND DID NOT NEED TO BE THIS LOUD.
+          Two paragraphs of explanation sat under the dial on every load,
+          repeating on every asset. The one line that changes a reading —
+          that this is computed from price, not a survey — stays visible;
+          the rest is one click away. */
+       +'<div class="fng-warn">Computed here from price behaviour — not CNN&rsquo;s index, '
+         +'not alternative.me&rsquo;s, and not a survey. Price is a proxy for mood, not a '
+         +'measurement of it.</div>'
+       +'<details class="amore"><summary>How the number is built</summary>'
+         +'<div class="amore-b"><div>Each part is ranked against '+escHtml(asset)
+         +'&rsquo;s own last '+A.win+' sessions, out of '+A.bars+' bars loaded, then weighted '
+         +'into the number on the dial. That is why the scale reads the same on Gold as it '
+         +'does on Bitcoin.</div></div></details>'
      +'</div>'
    +'</div>'
    +tape
