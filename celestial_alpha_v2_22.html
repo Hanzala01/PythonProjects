@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b30 — Precision in Timing</title>
+<title>Celestial Alpha b31 — Precision in Timing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1904,6 +1904,49 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hc-w{font-size:10px;line-height:1.6;color:var(--t2);padding-top:9px;
   border-top:1px solid rgba(43,21,91,.5)}
 .hc-w b{color:var(--t1);font-weight:700}
+.hc.hc-counter{border-color:rgba(245,158,11,.4)}
+.hc.hc-counter .hc-t b{color:var(--warn)}
+.hc-t em{font-style:normal;font-size:8.5px;color:var(--warn);margin-left:auto}
+.hc-ct{font-size:9.5px;line-height:1.6;color:var(--warn);background:rgba(245,158,11,.07);
+  border:1px solid rgba(245,158,11,.22);border-radius:9px;padding:7px 9px;margin-bottom:9px}
+/* cross-market and reach */
+.xm-r{display:grid;grid-template-columns:74px 1fr;gap:3px 10px;padding:9px 0;
+  border-top:1px solid rgba(43,21,91,.45)}
+.xm-r:first-of-type{border-top:none}
+.xm-r u{grid-row:span 2;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);padding-top:2px}
+.xm-r b{font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--t1)}
+.xm-r.ok b{color:var(--up)} .xm-r.warn b{color:var(--warn)} .xm-r.na b{color:var(--t3)}
+.xm-r s{text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.5}
+.rc-r,.rc-h{display:grid;grid-template-columns:34px 1fr 1fr;gap:2px 10px;padding:7px 0;
+  border-top:1px solid rgba(43,21,91,.45)}
+.rc-h{border-top:none;padding-bottom:2px}
+.rc-h b{font-size:8.5px!important;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3)!important;font-weight:700!important}
+.rc-r u{text-decoration:none;font-family:'Space Grotesk';font-size:11px;font-weight:800;
+  color:var(--t3)}
+.rc-r b{font-family:'Space Grotesk';font-size:13px;font-weight:800}
+.rc-r b.up{color:var(--up)} .rc-r b.dn{color:var(--dn)}
+.rc-r s{grid-column:1/-1;text-decoration:none;font-size:9px;color:var(--t3);line-height:1.4}
+.zn.cl{border-color:rgba(127,96,191,.5)}
+.zn-why{font-size:9px;color:var(--t3);line-height:1.5;margin-top:7px;padding-top:6px;
+  border-top:1px solid rgba(43,21,91,.45)}
+.zn.cl .zn-why{color:var(--p3)}
+/* sentiment · the dollar and the curve */
+.snm{border:1px solid var(--b1);border-radius:15px;padding:14px 16px;margin-bottom:12px;
+  background:linear-gradient(180deg,rgba(15,9,38,.55),rgba(9,5,26,.4))}
+.snm-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+.snm-h b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1)}
+.snm-h span{font-size:10px;color:var(--t3)}
+.snm-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px}
+.snm-c{padding:11px 13px;border-radius:12px;border:1px solid var(--b1);background:rgba(6,3,20,.5)}
+.snm-c u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.snm-c b{display:block;font-family:'Space Grotesk';font-size:20px;font-weight:800;
+  color:var(--t1);margin:3px 0 4px;line-height:1}
+.snm-c.ok b{color:var(--up)} .snm-c.warn b{color:var(--warn)} .snm-c.na b{color:var(--t3);font-size:12px}
+.snm-c s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.55}
+.snm-f{font-size:9.5px;color:var(--t3);line-height:1.7;margin-top:10px}
 
 /* a short plain sentence wherever a number could be mistaken for advice */
 .aplain{font-size:10px;line-height:1.7;color:var(--t3);margin-top:10px}
@@ -1932,7 +1975,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    tallest things on the tab, and everything below them paid for it. Capped
    with their own scrollbar: nothing is removed, and the rest of the page
    stops being pushed down by a list the reader may not be reading. */
-.vp-levels{max-height:330px;overflow-y:auto}
+/* the profile shares its row with the wheel and the reach box now, so it is
+   sized to sit beside them rather than to dominate the column */
+.vp-hist{max-height:300px}
+.vp-levels{max-height:250px;overflow-y:auto}
 .lv-map{max-height:340px;overflow-y:auto}
 .vp-levels::-webkit-scrollbar,.lv-map::-webkit-scrollbar{width:6px}
 .vp-levels::-webkit-scrollbar-thumb,.lv-map::-webkit-scrollbar-thumb{
@@ -4897,7 +4943,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b30</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-26 · b31</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -9495,17 +9541,65 @@ function zoneBand(base){
   return{base:base,root:r,bounce:(base+bn)/2,rejection:(base+rj)/2};
 }
 var BUY_DEGS=[135,180], SELL_DEGS=[180,225,254,270];
+/* ══ THE ZONES USE BOTH METHODS, AND SAY WHICH ONE THEY CAME FROM ═════
+   These were built entirely from _lastLevels — the older engine's aligned
+   levels, which score a Gann degree, a sigma distance and a planetary
+   alignment together. That is one method's opinion.
+
+   The five-method engine produces something stronger for exactly this
+   question: a price cluster, where several INDEPENDENT methods — a Gann
+   eighth, a Fibonacci retracement, a Square-of-9 harmonic, a prior swing —
+   land within a third of an ATR of each other. Where such a cluster exists
+   on the relevant side it is used, and the card names the methods that
+   agreed. Where it does not, the older level is used and labelled as such.
+   Neither is discarded; the stronger evidence simply goes first. */
 function anaZones(price,dp){
   var lv=window._lastLevels||[];
-  if(!lv.length)return '';
+  var C=window.CQE_LAST, cl=(C&&C.gann&&C.gann.clusters)||[];
+  var atr=(C&&C.atr)||null;
+  var clAbove=cl.filter(function(c){return c.price>price;}).sort(function(a,b){return a.price-b.price;});
+  var clBelow=cl.filter(function(c){return c.price<price;}).sort(function(a,b){return b.price-a.price;});
+  if(!lv.length&&!cl.length)return '';
   var above=lv.filter(function(l){return l.price>price;}).sort(function(a,b){return a.price-b.price;});
   var below=lv.filter(function(l){return l.price<price;}).sort(function(a,b){return b.price-a.price;});
-  function pick(pool,degs){
+  function pick(pool,degs,clus){
+    /* a cluster of independent methods outranks one method's score */
+    if(clus&&clus.length&&clus[0].strength>=3)
+      return{cluster:clus[0], lvl:null, byDeg:false};
     var m=pool.filter(function(l){return degs.indexOf(l.modDeg||(l.deg%360))>=0;});
-    return{lvl:(m.length?m:pool)[0], byDeg:m.length>0};
+    return{lvl:(m.length?m:pool)[0], byDeg:m.length>0, cluster:(clus&&clus[0])||null};
   }
-  var sell=pick(above,SELL_DEGS), buy=pick(below,BUY_DEGS);
+  var sell=pick(above,SELL_DEGS,clAbove), buy=pick(below,BUY_DEGS,clBelow);
   function card(sel,kind){
+    /* the cluster form: a band an ATR-third wide around where they agreed */
+    if(sel.cluster&&!sel.lvl){
+      var c=sel.cluster, w=(atr||c.price*0.002)*0.35;
+      var d2=(c.price-price)/price*100;
+      var sellSide=kind==='sell';
+      var nMeth=c.methods.length;
+      return '<div class="zn '+kind+' cl">'
+        +'<div class="zn-h"><span class="ab-cap">'+(sellSide?'Sell zone — resistance':'Buy zone — support')+'</span>'
+          +'<span class="zn-deg">'+nMeth+(nMeth===1?' method':' methods')+'</span></div>'
+        /* REJECTION IS ALWAYS THE UPPER EDGE, ON BOTH SIDES.
+           Written first as if the labels flipped with the side, which printed
+           the buy zone upside down against every other card on the board —
+           bounce above base, rejection below it. The band reads top to bottom
+           the same way everywhere: the top edge is where a push through gets
+           rejected, the bottom is where it bounces. */
+        +'<div class="zn-band">'
+          +'<div class="zn-row"><span class="k">Rejection</span><b>'
+            +(c.price+w).toFixed(dp)+'</b></div>'
+          +'<div class="zn-mid"><span class="k">Base</span><b>'+c.price.toFixed(dp)+'</b></div>'
+          +'<div class="zn-row"><span class="k">Bounce</span><b>'
+            +(c.price-w).toFixed(dp)+'</b></div>'
+        +'</div>'
+        +'<div class="zn-meta"><span>'+(d2>=0?'+':'')+d2.toFixed(2)+'% away</span>'
+          +(atr?'<span>'+(Math.abs(c.price-price)/atr).toFixed(2)+' ATR</span>':'')
+          +'<span class="sc">agreed</span></div>'
+        +'<div class="zn-why">'+escHtml(c.methods.join(' · '))+'</div>'
+        +'<div class="zn-rule">Close beyond the band = real break. Wick in and back = sweep — fade it.</div>'
+        +'</div>';
+    }
     if(!sel.lvl)return '<div class="zn '+kind+'"><div class="ab-cap">'+(kind==='sell'?'Sell zone':'Buy zone')
       +'</div><div class="ab-none">No level on this side yet</div></div>';
     var l=sel.lvl, b=zoneBand(l.price);
@@ -9522,6 +9616,7 @@ function anaZones(price,dp){
       +'<div class="zn-meta"><span>'+(dist>=0?'+':'')+dist.toFixed(2)+'% away</span>'
         +'<span>'+l.sigma+'σ</span><span>width '+width.toFixed(dp)+'</span>'
         +'<span class="sc">'+l.score+'pt</span></div>'
+      +'<div class="zn-why">one method — Gann degree, sigma distance and alignment scored together</div>'
       +'<div class="zn-rule">Close beyond the band = real break. Wick in and back = sweep — fade it.</div>'
       +'</div>';
   }
@@ -11293,6 +11388,34 @@ function hypotheses(ctx){
   var out=[], price=ctx.price, a=ctx.atr, g=ctx.gates,
       W=ctx.wyckoff, E=ctx.elliott, T=ctx.time, P=ctx.projections;
   var dir=g.which.direction;
+
+  /* ══ THE MAJOR LEVEL OUTRANKS EVERY METHOD BELOW IT ═══════════════
+     A retail screen looks at gold rising and says buy. The whole point of
+     working from a major level is that it does not: with XAU under 5240 on
+     the daily, the larger trend is bearish and everything up to that line is
+     a relief rally, not a reversal of it. The five methods measure the leg
+     in front of them and were happily calling it "Buy" — technically the
+     right read of the wrong timeframe.
+
+     So a hand-set major level is not one vote among several. It sets the
+     direction the scenarios are allowed to take, and anything against it is
+     labelled for what it is — a counter-trend rally with the level as its
+     ceiling, never a target beyond it. Nothing here invents a level: with
+     none typed in, this does nothing at all. */
+  var MJ=ctx.majorTrend||null;
+  if(MJ&&MJ.dir){
+    var mjBull=MJ.dir==='bull';
+    if((dir==='Bullish')!==mjBull&&dir!=='Neutral'){
+      ctx.counterTrend={major:MJ.level, majorDir:MJ.label,
+        note:'The larger trend is '+MJ.label.toLowerCase()+' while price stays '
+          +(mjBull?'above':'below')+' '+MJ.level+'. This move goes the other way, '
+          +'so it is a rally inside that trend rather than a turn of it — and it '
+          +'stays one until a daily close '+(mjBull?'below ':'above ')+MJ.level+'.'};
+    }
+    /* the level itself caps the counter-trend move */
+    ctx.majorCap=MJ.level;
+    ctx.majorDir=MJ.label;
+  }
   var cl=(g.where.clusters||[]);
   var above=cl.filter(function(c){return c.price>price;}).sort(function(x,y){return x.price-y.price;});
   var below=cl.filter(function(c){return c.price<price;}).sort(function(x,y){return y.price-x.price;});
@@ -11329,11 +11452,18 @@ function hypotheses(ctx){
     var entryZone=long?(below[0]||null):(above[0]||null);
     var tgt=long?(above[0]||null):(below[0]||null);
     var proj=long?P.upSummary:P.downSummary;
+    /* a target beyond the major level is not a target — it is the level */
+    var capped=null;
+    if(ctx.majorCap!=null&&tgt){
+      if(long&&tgt.price>ctx.majorCap&&price<ctx.majorCap){ capped=ctx.majorCap; }
+      if(!long&&tgt.price<ctx.majorCap&&price>ctx.majorCap){ capped=ctx.majorCap; }
+    }
     out.push({
       rank:1, kind:'Primary', direction:long?'Long':'Short',
+      counterTrend:ctx.counterTrend||null, majorCap:capped,
       entryZone: entryZone? {low:Math.min(entryZone.price,price), high:Math.max(entryZone.price,price),
                              anchor:entryZone.price} : {low:price,high:price,anchor:price,note:'no cluster between price and the next level — entry is at market'},
-      target: tgt? tgt.price : (proj?proj.median:null),
+      target: capped!=null? capped : (tgt? tgt.price : (proj?proj.median:null)),
       stop: entryZone? (long? entryZone.price-a*1.0 : entryZone.price+a*1.0)
                      : (long? price-a*1.5 : price+a*1.5),
       supporting: evidence(long).supporting,
@@ -11357,6 +11487,7 @@ function hypotheses(ctx){
       entryZone:{low:price-a*0.5, high:price+a*0.5, anchor:price},
       target:far.price,
       stop: long2? price-a*2 : price+a*2,
+      counterTrend:(ctx.counterTrend&&((dir==='Bullish')===long2))?ctx.counterTrend:null,
       supporting: evidence(long2).supporting.concat(
         ['Projection agreement: '+((long2?P.upSummary:P.downSummary)||{}).agreement]),
       contradicting: evidence(long2).contradicting,
@@ -12251,8 +12382,11 @@ function cqeRun(rows,volRows,volName,price,opt){
                           gannTime:T.score,quant:Q.score});
   var g=CQE.gates({wyckoff:W,elliott:E,gann:G,time:T,quant:Q,momentum:M,
                    clusters:G.clusters,price:price,atr:a,trendScore:opt.trendScore});
+  /* the hand-set major level, if there is one, before any scenario is formed */
+  var MJ=null;
+  try{ MJ=mtlTrend((document.getElementById('ai_asset_txt')||{}).value||'',price); }catch(e){}
   var H=CQE.hypotheses({price:price,atr:a,gates:g,wyckoff:W,elliott:E,time:T,
-                        projections:PR,coreScore:core});
+                        projections:PR,coreScore:core,majorTrend:MJ});
 
   /* ══ DIVERGENCE, THEN THE CONFIRMATION CHAIN ═══════════════════════
      Divergence never trades. It raises the amount of evidence standing
@@ -12298,10 +12432,26 @@ function cqeRun(rows,volRows,volName,price,opt){
   }catch(e){ console.error('reversal chain:',e); }
   if(rev)H[2]=Object.assign({rank:3,kind:'Reversal'},rev);
 
+  /* A REVERSAL BUILDING AGAINST YOU IS A REASON NOT TO ENTER YET.
+     The three scenarios were independent, so the board could offer a long
+     while the reversal card two columns over had already collected the
+     divergence, the level and the cycle for a short. Whichever of those is
+     right, taking the long in front of it is the worst of both. The primary
+     is told to hold off, and told what it is waiting to see resolve. */
+  if(rev&&rev.matrix&&rev.matrix.hits>=3&&H[0]&&H[0].kind!=='Reversal'){
+    var revLong=/Long/i.test(rev.side||'');
+    var priLong=/Long/i.test(H[0].direction||'');
+    if(revLong!==priLong){
+      H[0].waitForReversal='a reversal the other way has '+rev.matrix.hits+' of '
+        +rev.matrix.of+' confirmations already ('+rev.matrix.grade.toLowerCase()
+        +'). Wait for it to fail or fire before taking this.';
+    }
+  }
+
   return {price:price, atr:a, bars:R.length, dq:CQE.dataQuality(R), repaired:scrub.repaired,
           pivots:pv, wyckoff:W, elliott:E, gann:G, time:T, quant:Q, momentum:M,
           projections:PR, core:core, gates:g, hypotheses:H,
-          divergence:dscore, divergenceParts:dparts, reversal:rev,
+          divergence:dscore, divergenceParts:dparts, reversal:rev, majorTrend:MJ,
           volumeFrom:volName||null, required:[]};
 }
 
@@ -12496,17 +12646,36 @@ function cqeHypHtml(h,dp){
   var rr=(h.target!=null&&h.stop!=null&&h.entryZone)
     ? Math.abs(h.target-h.entryZone.anchor)/Math.abs(h.entryZone.anchor-h.stop) : null;
   var long=/Long/i.test(h.direction||'');
-  return '<div class="hc'+(h.rank===1?' pri':'')+'">'
+  /* A COUNTER-TREND RALLY IS NOT A BUY, AND SAYING SO IS THE POINT.
+     With price under the major level the larger trend is down; a long into
+     that is a relief rally with a ceiling, and calling it "Buy" in the same
+     type as a with-trend entry is exactly the retail read this board exists
+     to be better than. It is named, the ceiling is shown, and the card says
+     which trend it is inside. */
+  var ct=h.counterTrend;
+  /* NOT `ct`. That class already exists in this app as a card title and is
+     display:flex — adding it here turned the whole scenario card into a flex
+     ROW, so its five stacked blocks were laid out side by side in 60-pixel
+     strips of vertical text. A two-letter modifier on a shared stylesheet is
+     a collision waiting to happen; this one is namespaced. */
+  return '<div class="hc'+(h.rank===1?' pri':'')+(ct?' hc-counter':'')+'">'
     +'<div class="hc-t"><u>'+h.rank+' · '+escHtml(h.kind.toLowerCase())+'</u>'
-      +'<b class="'+(long?'up':'dn')+'">'+escHtml(long?'Buy':'Sell')+'</b></div>'
+      +'<b class="'+(long?'up':'dn')+'">'
+        +escHtml(ct?(long?'Relief rally':'Bounce lower'):(long?'Buy':'Sell'))+'</b>'
+      +(ct?'<em>inside a '+escHtml(ct.majorDir.toLowerCase())+' trend</em>':'')+'</div>'
     +'<div class="hc-n">'
       +'<div><i>buy between</i>'+f(h.entryZone.low)+'–'+f(h.entryZone.high)+'</div>'
       +'<div><i>R : R</i>'+(rr?rr.toFixed(2):'—')+'</div>'
       +'<div class="dn"><i>get out at</i>'+f(h.stop)+'</div>'
       +'<div class="up"><i>aiming for</i>'+f(h.target)+'</div>'
     +'</div>'
+    +(ct?'<div class="hc-ct">'+escHtml(ct.note)+'</div>':'')
+    +(h.majorCap!=null?'<div class="hc-ct">Target held at the major level, '
+      +(+h.majorCap).toFixed(dp)+' — nothing past it counts until a daily close beyond it.</div>':'')
     +'<div class="hc-w">'+escHtml(hypWord(h))+'<br>'
-      +'<b>Starts when:</b> '+escHtml(h.activation)+'</div>'
+      +'<b>Starts when:</b> '+escHtml(h.activation)
+      +(h.waitForReversal?'<br><b style="color:var(--warn)">Hold off:</b> '
+        +escHtml(h.waitForReversal):'')+'</div>'
     +'<details class="amore"><summary>Why, and what says otherwise</summary>'
       +'<div class="amore-b">'
         +h.supporting.map(function(x){return '<div>'+escHtml(x)+'</div>';}).join('')
@@ -12676,6 +12845,77 @@ function cqeVerdictHtml(R,price,dp,asset){
       +'and that step can only ever say no.</div>'
   +'</div>';
 }
+/* ══ TWO BOXES FOR THE SPACE THAT WAS EMPTY ═══════════════════════════
+   Pairing sections into two columns left one of them ending early, and half
+   a screen of nothing under it. Empty space is not restful when the reader
+   has to scroll past it; it is just scrolling. Both boxes below hold things
+   that were already computed and had nowhere to be shown, and both hold two
+   readings that only mean something together.
+
+   CROSS-MARKET. Gold against the dollar and gold against yields — neither
+   number is worth anything alone, and the pair is the whole point: when the
+   two disagree about what the dollar is doing to gold, that is information.
+   It also puts the correlation stability where it can be read, so a number
+   built on a relationship that has stopped holding says so on its face.
+
+   REACH. The sigma bands say how far a normal day, week and month can carry
+   price from here; the projections say where several methods independently
+   think it is going. Side by side they answer "is that target even a normal
+   distance away", which neither answers alone. */
+function cqeCrossHtml(R,dp){
+  var P=R.divergenceParts; if(!P)return '';
+  function row(part,label,what){
+    if(!part||part.classification==='DATA REQUIRED'||(part.required&&part.required.length))
+      return '<div class="xm-r na"><u>'+label+'</u><b>not loaded</b>'
+        +'<s>'+escHtml((part&&part.required&&part.required[0])||'no series')+'</s></div>';
+    var unstable=/UNSTABLE/.test(part.classification||'');
+    var cls=unstable?'na':(part.classification==='DIVERGING'?'warn':'ok');
+    var word=unstable?'too unstable to use'
+      :part.classification==='DIVERGING'?'not behaving as usual'
+      :'behaving as usual';
+    var c=part.average;
+    return '<div class="xm-r '+cls+'"><u>'+label+'</u><b>'+escHtml(word)+'</b>'
+      +'<s>'+escHtml(what)+(c!=null?' · correlation '+c.toFixed(2)
+        +(unstable?', and the 20, 50 and 100-session readings disagree':', steady across 20, 50 and 100 sessions'):'')
+      +'</s></div>';
+  }
+  return '<div class="acard xm">'
+    +'<div class="act-say" style="margin:0 0 10px"><b>What the rest of the market is doing.</b> '
+    +'Gold usually moves against the dollar and against yields. When it stops, that is worth '
+    +'knowing — and when the relationship itself is unstable, no reading is taken from it at all.</div>'
+    +row(P.dollar,'Dollar','a stronger dollar usually presses gold down')
+    +row(P.yields,'Yields','higher yields usually make gold less attractive')
+    +'<div class="aplain">Neither is a signal. They are context for the direction above, and '
+    +'they feed the warning score, not the five methods.</div>'
+  +'</div>';
+}
+function cqeReachHtml(R,dp){
+  var Q=R.quant, PR=R.projections;
+  if(!Q||Q.sd==null)return '';
+  var f=function(v){ return (v==null||!isFinite(v))?'—':(+v).toFixed(dp); };
+  var px=R.price;
+  var b=Q.sigmaBands||{};
+  var up=PR&&PR.upSummary, dn=PR&&PR.downSummary;
+  function band(k,words){
+    var x=b[k]; if(!x)return '';
+    return '<div class="rc-r"><u>'+k+'</u>'
+      +'<b class="dn">'+f(x.down)+'</b><b class="up">'+f(x.up)+'</b>'
+      +'<s>'+escHtml(words)+'</s></div>';
+  }
+  return '<div class="acard rc">'
+    +'<div class="act-say" style="margin:0 0 10px"><b>How far it can reach.</b> '
+    +'A normal day moves price this much. Anything inside these bands is ordinary; '
+    +'outside them is not, and is rare for a reason.</div>'
+    +'<div class="rc-h"><u></u><b class="dn">down</b><b class="up">up</b><s></s></div>'
+    +band('1σ','two days in three end inside this')
+    +band('2σ','about nineteen days in twenty')
+    +band('3σ','roughly one day in sixty here — a normal curve says one in 370')
+    +'<div class="aplain"><b>Where the methods think it goes.</b> '
+    +'Up around '+f(up&&up.median)+' ('+((up&&up.agreement)||'—').toLowerCase()+' agreement), '
+    +'down around '+f(dn&&dn.median)+' ('+((dn&&dn.agreement)||'—').toLowerCase()+' agreement). '
+    +'A target further than 3σ in a few days is asking for something the record says is rare.</div>'
+  +'</div>';
+}
 /* run it and put it on the page */
 var CQE_FETCHING=false;
 function renderCQE(){
@@ -12741,6 +12981,14 @@ function renderCQE(){
            if(v)v.innerHTML=cqeVerdictHtml(R,price,dp,asset); }catch(e){}
       try{ var tc=document.getElementById('trade_slot');
            if(tc)tc.innerHTML=tradeCardHtml(); }catch(e){}
+      try{ var xs=document.getElementById('cross_slot');
+           if(xs)xs.innerHTML=cqeCrossHtml(R,dp); }catch(e){}
+      try{ var rs=document.getElementById('reach_slot');
+           if(rs)rs.innerHTML=cqeReachHtml(R,dp); }catch(e){}
+      /* the zones prefer a cluster, which does not exist until now */
+      try{ var zs=document.getElementById('zones_slot');
+           if(zs)zs.innerHTML=anaZones(price,dp); }catch(e){}
+      try{ senMacroPaint(); }catch(e){}
     }catch(e){
       slot.innerHTML='<div class="cq"><div class="cq-req"><b>The engine failed</b>'
         +escHtml(e.message)+'</div></div>';
@@ -13282,6 +13530,8 @@ function trendInvalidHtml(T,price,dp,asset){
       tolerance" on a day with twelve of them. It renders into its own slot
       and is repainted the moment the engines finish. */
    +'<div id="when_slot">'+anaWhen(price,dp)+'</div>'
+   /* the column ended here and left half a screen of nothing under it */
+   +'<div id="cross_slot"></div>'
 
    +'</section></div>'
 
@@ -13302,7 +13552,7 @@ function trendInvalidHtml(T,price,dp,asset){
    +'<div class="a2"><section>'
    +anaLadder(pts,price,lo,hi,dp,S,dir)
    +'</section><section>'
-   +anaZones(price,dp)
+   +'<div id="zones_slot">'+anaZones(price,dp)+'</div>'
    +'</section></div>'
    +'<div class="a2"><section>'
    /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
@@ -13312,6 +13562,8 @@ function trendInvalidHtml(T,price,dp,asset){
       real Wyckoff engine now, at the top of this tab, so the labels are gone.
       The wheel position it also drew is kept, without the phase words. */
    +anaWheel(price,dp)
+   /* the wheel is a third the height of the profile beside it */
+   +'<div id="reach_slot"></div>'
    +'</section><section>'
    +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
    +'</section></div>'
@@ -17423,6 +17675,7 @@ function goTab(name,btn){
   }
   if(name==='sentiment'){
     renderSentiment();
+    try{ senMacroPaint(); }catch(e){}
     /* the previous prints arrive asynchronously; repaint once they have */
     econLoadAll(function(){try{renderSentiment();}catch(e){}});
   }
@@ -19379,6 +19632,65 @@ function senTick(){
   if(senRisk(ev).lv!==_senLevel||ms<=0)renderSentimentV3();
 }
 
+/* ══ THE DOLLAR AND THE CURVE, ON THE SENTIMENT PAGE ══════════════════
+   This page reported scheduled releases and three bias engines and said
+   nothing about the two prices that actually move gold between them. Both
+   are already fetched for the divergence engine; this shows them, with the
+   one thing that decides whether either is worth reading — whether the
+   relationship has been stable enough to lean on. */
+function senMacroHtml(){
+  var C=window.CQE_LAST, P=C&&C.divergenceParts;
+  if(!P)return '';
+  function cell(part,label,plain){
+    if(!part||(part.required&&part.required.length))
+      return '<div class="snm-c na"><u>'+label+'</u><b>not loaded</b><s>'
+        +escHtml((part&&part.required&&part.required[0])||'no series')+'</s></div>';
+    var unstable=/UNSTABLE/.test(part.classification||'');
+    var div=part.classification==='DIVERGING';
+    var c=part.average;
+    return '<div class="snm-c '+(unstable?'na':div?'warn':'ok')+'"><u>'+label+'</u>'
+      +'<b>'+(c==null?'—':c.toFixed(2))+'</b>'
+      +'<s>'+escHtml(unstable
+          ? 'the 20, 50 and 100-session readings disagree, so nothing is read from it'
+          : (div?'not behaving as usual right now':'behaving as usual')+' · '+plain)
+      +'</s></div>';
+  }
+  return '<div class="snm">'
+    +'<div class="snm-h"><b>The dollar and the curve</b>'
+      +'<span>correlation with this asset, measured over 20, 50 and 100 sessions</span></div>'
+    +'<div class="snm-g">'
+      +cell(P.dollar,'Dollar','a negative number means they move opposite')
+      +cell(P.yields,'10Y yield','a negative number means higher yields press it down')
+    +'</div>'
+    +'<div class="snm-f">These are context, not signals. A correlation is a description of '
+    +'what has been happening, not a rule about what happens next — and when the three '
+    +'lengths disagree the honest answer is that there is nothing to read.</div>'
+  +'</div>';
+}
+function senMacroPaint(){
+  /* THE SLOT WAS BEING WIPED BY A SECOND innerHTML ON THE SAME HOST.
+     This page assigns host.innerHTML twice — once for the hero and again
+     further down for the body — so a div placed in the first assignment is
+     gone by the time anything can fill it. Creating the node here, and
+     re-attaching it if it has been removed, makes this independent of which
+     of those assignments ran last. */
+  var host=document.getElementById('sen_new'); if(!host)return;
+  var el=document.getElementById('sen_macro');
+  if(!el||!host.contains(el)){
+    el=document.createElement('div'); el.id='sen_macro';
+    host.insertBefore(el,host.firstChild);
+  }
+  var html='';
+  try{ html=senMacroHtml(); }catch(e){}
+  if(!html){
+    /* the analytics engines have not run yet, so there is nothing to show —
+       say which button produces it rather than leaving a blank */
+    html='<div class="snm"><div class="snm-h"><b>The dollar and the curve</b></div>'
+      +'<div class="snm-f">Open Analytics once so the cross-market series load, '
+      +'and the correlations appear here.</div></div>';
+  }
+  el.innerHTML=html;
+}
 function renderSentimentV3(){
   var host=document.getElementById('sen_new');
   if(!host)return;
@@ -19436,8 +19748,12 @@ function renderSentimentV3(){
   }).join('');
 
   host.className='sn';
+  /* the dollar and the curve belong on the sentiment page, not only inside
+     the analytics divergence panel — they are what moves this asset, and
+     they arrive asynchronously, so they get a slot and fill in */
   host.innerHTML=
-   '<div class="sn-hero2 '+risk.lv+'">'
+   '<div id="sen_macro"></div>'
+   +'<div class="sn-hero2 '+risk.lv+'">'
     +'<div class="sn-h2top">'
       +'<span class="sn-pill" style="color:'+risk.col+';border-color:'+risk.col+'">'+risk.word+'</span>'
       +'<div class="sn-h2t"><b id="sn_nh_title">'+escHtml(next?next.t:'Nothing scheduled')+'</b>'
@@ -19661,6 +19977,7 @@ function dashCalendar(){
     out+='<div class="'+cls+'" title="'+(pnl!=null?(pnl>=0?'+':'')+pnl.toFixed(2):'no trades')+'">'+d+'</div>';
   }
   host.innerHTML=out+'</div>';
+  try{ senMacroPaint(); }catch(e){}
 }
 function dashAiLine(){
   var e=document.getElementById('ai_insight');
