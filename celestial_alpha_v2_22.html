@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b47 — Precision in Timing</title>
+<title>Celestial Alpha b48 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2498,31 +2498,42 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   margin-top:3px;line-height:1.5}
 @media(prefers-reduced-motion:reduce){.lm-b,.lm-p,.lm-m,.cy-row{animation:none!important}}
 
-/* THE SAME RIGID PAIR, THE SAME VOID.
-   The answer card is short and the noise list is long, so a fixed two-column
-   grid left half a screen of black under the left one. It packs like every
-   other window block now. */
-.conv-band{column-count:2;column-gap:10px;margin-bottom:10px}
-@media(max-width:1100px){.conv-band{column-count:1}}
-.conv-band>.card{break-inside:avoid;-webkit-column-break-inside:avoid;
-  display:inline-block;width:100%;margin:0 0 10px}
+/* COLUMN-COUNT WITH TWO UNSPLITTABLE ITEMS IS WORSE THAN A GRID.
+   The pair was a rigid grid and left black under the shorter card, so it was
+   changed to column-count:2. That is worse: both cards carry break-inside
+   avoid, neither can be split to balance, and the browser stacked BOTH into
+   column one — measured, the band was 743px tall filling 50% of its width,
+   with the entire right half black. That is the void in the screenshots.
+
+   Back to a grid, and the real fix is on the other side: the noise card was
+   740px because every item printed four lines. Its detail now opens on
+   click, so the two cards are a similar height and there is nothing to
+   leave black. */
+.conv-band{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;
+  align-items:start}
+@media(max-width:1100px){.conv-band{grid-template-columns:1fr}}
 .noiz{padding:12px 15px;text-align:left}
 .nz-h{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk';font-size:10px;
   font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
 .nz-h b{margin-left:auto;font-size:9.5px;letter-spacing:0;text-transform:none;color:var(--t2)}
 .nz-clean{font-size:11px;line-height:1.6;color:#8BEFC8}
-.nz-r{display:grid;grid-template-columns:14px 1fr;gap:7px;padding:6px 0;align-items:baseline;
-  border-top:1px solid var(--b1);animation:stIn .34s cubic-bezier(.22,1,.36,1) both}
+.nz-r{border-top:1px solid var(--b1);animation:stIn .34s cubic-bezier(.22,1,.36,1) both}
 .nz-r:first-of-type{border-top:none}
+.nz-r>summary{display:grid;grid-template-columns:14px 1fr;gap:7px;padding:6px 0;
+  align-items:baseline;cursor:pointer;list-style:none}
+.nz-r>summary::-webkit-details-marker{display:none}
+.nz-r>summary:hover b{color:var(--p3)}
 .nz-r i{font-style:normal;font-weight:800;text-align:center;font-size:12px;line-height:1.2}
 .nz-r.s2 i{color:#F87171}
 .nz-r.s1 i{color:#FBBF24}
-.nz-b{min-width:0}
-.nz-b b{display:block;font-size:11px;font-weight:700;color:var(--t1)}
-.nz-b s,.nz-b u,.nz-b em{display:block;text-decoration:none;font-style:normal;line-height:1.5}
-.nz-b s{font-size:10px;color:var(--t2);margin-top:2px}
-.nz-b u{font-size:9.5px;color:var(--t3);margin-top:3px}
-.nz-b em{font-size:9.5px;color:var(--t3);margin-top:2px;opacity:.82}
+.nz-r b{display:block;font-size:11px;font-weight:700;color:var(--t1);transition:color .15s}
+.nz-r s{display:block;text-decoration:none;font-size:10px;color:var(--t2);
+  margin-top:2px;line-height:1.5}
+.nz-r>summary>b,.nz-r>summary>s{grid-column:2}
+.nz-d{padding:0 0 8px 21px}
+.nz-d u,.nz-d em{display:block;text-decoration:none;font-style:normal;font-size:9.5px;
+  line-height:1.55;color:var(--t3)}
+.nz-d em{margin-top:2px;opacity:.82}
 @media(prefers-reduced-motion:reduce){.nz-r{animation:none!important}}
 .conv-band>.card{overflow:hidden}
 .cvg{margin:0;padding:12px 15px;text-align:left;
@@ -5655,7 +5666,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b47</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b48</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -12150,13 +12161,14 @@ function noiseHtml(){
     return h+'<div class="nz-clean">Every engine has its inputs and nothing was repaired. '
       +'This is as clean as this asset gets.</div></div>';
   N.items.forEach(function(it,i){
-    h+='<div class="nz-r s'+it.sev+'" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
-      +'<i>'+(it.sev===2?'!':'·')+'</i>'
-      +'<div class="nz-b"><b>'+escHtml(it.k)+'</b>'
-        +'<s>'+escHtml(it.what)+'</s>'
-        +'<u>Costs: '+escHtml(it.cost)+'</u>'
-        +'<em>Fix: '+escHtml(it.fix)+'</em>'
-      +'</div></div>';
+    /* four lines an item, five items, 740px of card. The headline and the
+       one-line finding stay; what it costs and what fixes it open on click. */
+    h+='<details class="nz-r s'+it.sev+'" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
+      +'<summary><i>'+(it.sev===2?'!':'\u00b7')+'</i>'
+        +'<b>'+escHtml(it.k)+'</b><s>'+escHtml(it.what)+'</s></summary>'
+      +'<div class="nz-d"><u>Costs: '+escHtml(it.cost)+'</u>'
+        +'<em>Fix: '+escHtml(it.fix)+'</em></div>'
+    +'</details>';
   });
   return h+'</div>';
 }
@@ -12482,15 +12494,35 @@ function winsPack(root){
        laid out, and the pack then runs on the recorded numbers. */
     var h={}, i=0;
     kids.forEach(function(k){ k.dataset.pkI=(i); h[i]=k.offsetHeight; i++; });
+    /* a window promoted to full width on the last pass would measure wider
+       and stay promoted, so the flag is cleared before deciding again */
+    kids.forEach(function(k){ if(!k.dataset.wideFixed)k.classList.remove('wide'); });
     [].slice.call(g.querySelectorAll(':scope > .wins-col')).forEach(function(c){ c.remove(); });
     g.classList.remove('has-wide');
     if(narrow){ kids.forEach(function(k){ g.appendChild(k); }); return; }
     var wide=kids.filter(function(k){ return k.classList.contains('wide'); });
     var norm=kids.filter(function(k){ return !k.classList.contains('wide'); });
     if(norm.length){
+      /* A LONE TALL WINDOW LEAVES A COLUMN OF BLACK BESIDE IT.
+         Two blocks packed 400 against 72 and 72 against 341 — one full
+         window against a pair of collapsed title bars. The pack is correct
+         and the result still reads as a hole, because there is nothing to
+         put next to it. So the tall one goes full width and the rest pack
+         underneath: about thirty pixels taller per block, and no void. */
+      var tallest=null, tallH=0, sumH=0;
+      norm.forEach(function(k){ var kh=h[+k.dataset.pkI]||0;
+        sumH+=kh; if(kh>tallH){ tallH=kh; tallest=k; } });
+      if(norm.length>1&&tallH>(sumH-tallH)*2){
+        tallest.classList.add('wide');
+        g.classList.add('has-wide');
+        g.appendChild(tallest);
+        norm=norm.filter(function(k){ return k!==tallest; });
+      }
       var a=document.createElement('div'), b=document.createElement('div');
       a.className='wins-col'; b.className='wins-col';
-      g.appendChild(a); g.appendChild(b);
+      /* the spanned window is appended first so it sits above the columns */
+      g.insertBefore(a,null); g.insertBefore(b,null);
+      if(tallest&&tallest.classList.contains('wide'))g.insertBefore(tallest,a);
       var ha=0, hb=0;
       norm.forEach(function(k){
         var kh=(h[+k.dataset.pkI]||0)+10;
@@ -12508,7 +12540,7 @@ function win(id,title,body,opt){
   opt=opt||{};
   var shut=winIsShut(id,opt.shut);
   return '<div class="win'+(shut?' shut':'')+(opt.wide?' wide':'')+(opt.tone?' t-'+opt.tone:'')+'" '
-    +'data-w="'+escHtml(id)+'">'
+    +'data-w="'+escHtml(id)+'"'+(opt.fixed?' data-wide-fixed="1"':'')+'>'
     +'<div class="win-h" onclick="winToggle(\''+escHtml(id)+'\',this)">'
       +'<span class="win-dot"></span>'
       +'<b>'+escHtml(title)+'</b>'
@@ -17184,7 +17216,7 @@ function trendInvalidHtml(T,price,dp,asset){
         'The same five methods across every other instrument, ranked by how much their evidence '
         +'agrees. Worth a look after this asset, not instead of it.')
    +'<div class="wins">'
-   +win('scan','Every other instrument','<div class="scn" id="scan_body"></div>',{wide:true})
+   +win('scan','Every other instrument','<div class="scn" id="scan_body"></div>',{wide:true,fixed:true})
    +'</div>'
    /* ─── THE WORKING ───────────────────────────────────────────────── */
    +act(7,'The working','Raw numbers.',
