@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b52 — Precision in Timing</title>
+<title>Celestial Alpha b53 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2257,9 +2257,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    going to whichever column is currently shortest. That is a greedy bin
    pack: it reads in order, it balances to within one window's height, and
    headings stay outside as ordinary full-width blocks. */
-.wins{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.wins{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap}
 .wins-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px}
-@media(max-width:900px){.wins{display:block}.wins-col{display:block}}
+/* the explanation rail: fixed and narrow, the panels take what is left */
+/* THE RAIL WAS THE THIRD LAYOUT I TRIED AND THE WORST OF THE THREE.
+   Fixed at 268px with the panels in the remainder, the two panel columns
+   became narrow enough to wrap their contents and the tab went from 8,385px
+   to 9,627px. Measured, not guessed. The explanation is a full-width caption
+   above its section — short, two lines, and never a column peer. */
+.wins.has-say>.win.say{flex:0 0 100%;order:-1}
+.wins.has-say>.win.say .win-b{padding:8px 12px}
+.wins.has-say>.win.say p{font-size:11px;line-height:1.6}
+@media(max-width:900px){.wins{display:block}.wins-col{display:block}
+  .wins.has-say>.win.say{margin-bottom:10px}}
 .win{width:100%;margin:0;
   border-radius:13px;border:1px solid var(--b1);overflow:hidden;
   background:linear-gradient(168deg,rgba(24,18,48,.62),rgba(9,6,22,.78));
@@ -2428,6 +2438,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:900px){.fn-r{grid-template-columns:34px 16px 78px 1fr;row-gap:2px}
   .fn-g,.fn-a{display:none}}
 @media(prefers-reduced-motion:reduce){.hz-r,.fn-r,.hz-tag.fired,.al-dot.on{animation:none!important}}
+
+/* the explanation, as a panel that packs beside what it explains */
+.win.say{border-color:rgba(157,77,255,.2);
+  background:linear-gradient(160deg,rgba(139,92,246,.09),rgba(9,5,26,.4))}
+.win.say .win-b{padding:12px 14px}
+.win.say p{margin:0;font-size:11.5px;line-height:1.7;color:var(--t2)}
+.win.say p b{color:var(--t1)}
 
 /* ══ THE MAJOR LEVEL STACK ══ */
 .mstack{margin-top:2px}
@@ -5739,7 +5756,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b52</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b53</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -12827,8 +12844,17 @@ function winsPack(root){
     [].slice.call(g.querySelectorAll(':scope > .wins-col')).forEach(function(c){ c.remove(); });
     g.classList.remove('has-wide');
     if(narrow){ kids.forEach(function(k){ g.appendChild(k); }); return; }
-    var wide=kids.filter(function(k){ return k.classList.contains('wide'); });
-    var norm=kids.filter(function(k){ return !k.classList.contains('wide'); });
+    /* THE EXPLANATION IS A RAIL, NOT A COLUMN PEER.
+       Making it an ordinary item to pack was worse: a 100px paragraph
+       against a 500px panel balances to a 400px hole, and the imbalance went
+       from 354px to 1,059px. It is a fixed narrow rail on the left with the
+       panels in the space that is left — which is also how it reads, the
+       words beside the thing rather than above it. */
+    var say=kids.filter(function(k){ return k.classList.contains('say'); })[0]||null;
+    var wide=kids.filter(function(k){ return !k.classList.contains('say')&&k.classList.contains('wide'); });
+    var norm=kids.filter(function(k){ return !k.classList.contains('say')&&!k.classList.contains('wide'); });
+    if(say){ g.classList.add('has-say'); g.appendChild(say); }
+    else g.classList.remove('has-say');
     if(norm.length){
       /* A LONE TALL WINDOW LEAVES A COLUMN OF BLACK BESIDE IT.
          Two blocks packed 400 against 72 and 72 against 341 — one full
@@ -12852,6 +12878,9 @@ function winsPack(root){
       /* checked AFTER the promotion, because promoting the tall one can leave
          exactly one behind — and one window in a two-column split is half a
          block of blank by definition */
+      /* the caption is its own full-width row above, so a lone panel under it
+         should be full width too — leaving it in one column of two put the
+         panel's whole height into the imbalance, 3,450px across the tab */
       if(norm.length===1){
         norm[0].classList.add('wide');
         g.classList.add('has-wide');
@@ -17347,10 +17376,23 @@ function trendInvalidHtml(T,price,dp,asset){
      "Where" and "When" are precise and mean nothing to someone who has just
      opened the page. The question stays as the subtitle and a plain sentence
      goes under it, so a section explains itself before any number appears. */
-  var act=function(n,title,question,say){
+  /* ══ THE EXPLAINER MOVES INSIDE THE BLOCK ════════════════════════════
+     Two things were wrong at once. The explanation sat above the panels as
+     a loose paragraph, so it was read before the thing it explains and then
+     had to be remembered; and a section holding a single panel packed into
+     one column with the other left blank, which the last build "fixed" by
+     stretching the panel full width — turning the whole tab into one 8,694px
+     column and undoing the two-column layout entirely.
+
+     One change solves both. The words become a panel and join the block, so
+     every section has at least two items to pack, and the explanation sits
+     BESIDE the thing it explains instead of above it. */
+  var act=function(n,title,question){
     return '<div class="act-h" id="act'+n+'"><span class="act-n">'+n+'</span>'
-      +'<div><b class="act-t">'+title+'</b><i class="act-q">'+question+'</i></div></div>'
-      +(say?'<div class="act-say">'+say+'</div>':'');
+      +'<div><b class="act-t">'+title+'</b><i class="act-q">'+question+'</i></div></div>';
+  };
+  var says=function(txt){
+    return '<div class="win say"><div class="win-b"><p>'+txt+'</p></div></div>';
   };
   /* ══ THE ORDER OF THIS TAB ════════════════════════════════════════
      It used to open with a scan of twelve other instruments, then a verdict,
@@ -17442,33 +17484,36 @@ function trendInvalidHtml(T,price,dp,asset){
       been demoted to a footnote and was still taking room.
       ══════════════════════════════════════════════════════════════════ */
 
-   +act(1,'The bias','What is today leaning?',
-        'The first thing to know about any instrument: which side has the upper hand today. '
+   +act(1,'The bias','What is today leaning?')
+           +'<div class="wins">'
++says('The first thing to know about any instrument: which side has the upper hand today. '
         +'50 means the methods cancel out and there is nothing to lean on.')
-   +'<div class="wins">'
    +win('lean','The day\u2019s lean','<div id="vb_slot"></div>')
    +'</div>'
 
-   +act(2,'The setup','What is forming right now?',
-        'The trade the board is actually offering, with the price that starts it, the price '
+   +act(2,'The setup','What is forming right now?')
+           +'<div class="wins">'
++says('The trade the board is actually offering, with the price that starts it, the price '
         +'that ends the argument, and what has to confirm before it is live.')
-   +'<div class="wins">'
    +win('trade','The setup on the table',
         '<div id="trade_slot">'+tradeCardHtml()+'</div>'+shareBar('setup'))
-   +win('open','Positions already on',openTradesHtml())
+   /* an empty window is a header and a blank body — worse than no window */
+   +(function(){ var o=''; try{ o=openTradesHtml()||''; }catch(e){}
+      return o.replace(/<[^>]+>/g,'').trim()
+        ? win('open','Positions already on',o) : ''; })()
    +'</div>'
 
-   +act(3,'Fear and greed','How is price behaving?',
-        'Measured from what price has done, not from what anyone is saying about it.')
-   +'<div class="wins">'
+   +act(3,'Fear and greed','How is price behaving?')
+           +'<div class="wins">'
++says('Measured from what price has done, not from what anyone is saying about it.')
    +win('fng','Fear and greed','<div id="ana_fng"></div>')
    +'</div>'
 
-   +act(4,'Trend, price and time','How many of them agree?',
-        'The five methods read the same chart and score it separately. What matters is not any '
+   +act(4,'Trend, price and time','How many of them agree?')
+           +'<div class="wins">'
++says('The five methods read the same chart and score it separately. What matters is not any '
         +'one score but how many of them point the same way — agreement is the number, and it '
         +'is measured rather than asserted.')
-   +'<div class="wins">'
    +win('reads','What each method reads',
         '<div class="ab-reads">'+reads.map(function(r){
           return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
@@ -17487,82 +17532,82 @@ function trendInvalidHtml(T,price,dp,asset){
         +'</div>',{tag:'alerts'})
    +'</div>'
 
-   +act(5,'The scenarios','What could happen, and what would prove it wrong?',
-        'Three ways this can go. Each names the price that starts it and the price that kills '
+   +act(5,'The scenarios','What could happen, and what would prove it wrong?')
+   +'<div class="wins">'
+   +says('Three ways this can go. Each names the price that starts it and the price that kills '
         +'it, so being wrong is something you see coming rather than find out about afterwards.')
-   +'<div id="cqe_slot"></div>'
+   +win('scen','The three scenarios','<div id="cqe_slot"></div>')
+   +'</div>'
 
-   +act(6,'The major level','The one line everything hangs off',
-        'Not the extreme — the SECOND high and the SECOND low. The extreme is where price '
+   +act(6,'The major level','The one line everything hangs off')
+           +'<div class="wins">'
++says('Not the extreme — the SECOND high and the SECOND low. The extreme is where price '
         +'already failed; the second one is where it was defended, and it is what has to break '
         +'before the extreme is even in play. Underneath it: the volume shelf nearest to it, '
         +'the sigma band it sits in, the wave it belongs to, and what would confirm it.')
-   +'<div class="wins">'
    +win('major','The second high and the second low',majorStackHtml(price,dp))
-   +win('ladder','The trade ladder',anaLadder(pts,price,lo,hi,dp,S,dir))
+   +win('ladder','The trade ladder',anaLadder(pts,price,lo,hi,dp,S,dir),{shut:true})
    +'</div>'
 
-   +act(7,'The zones','Where to buy and where to sell',
-        'A level is only worth watching when several unrelated methods land on the same one. '
+   +act(7,'The zones','Where to buy and where to sell')
+           +'<div class="wins">'
++says('A level is only worth watching when several unrelated methods land on the same one. '
         +'Those are the zones; the rest of the map is context.')
-   +'<div class="wins">'
    +win('zones','Buy and sell zones','<div id="zones_slot">'+anaZones(price,dp)+'</div>')
    +win('lmap','Every level the methods agree on',
-        '<div id="lmap_slot">'+cqeLevelMap(dp)+'</div>')
+        '<div id="lmap_slot">'+cqeLevelMap(dp)+'</div>',{shut:true})
    +'</div>'
 
-   +act(8,'The degree','Where in the cycle is it?',
-        'The square-root wheel turns 360 degrees over a full cycle. Where price sits on it says '
+   +act(8,'The degree','Where in the cycle is it?')
+           +'<div class="wins">'
++says('The square-root wheel turns 360 degrees over a full cycle. Where price sits on it says '
         +'how far through the move it is.')
-   +'<div class="wins">'
    +win('wheel','The degree wheel',anaWheel(price,dp))
-   +win('reach','How far it can reach','<div id="reach_slot"></div>')
+   +win('reach','How far it can reach','<div id="reach_slot"></div>',{shut:true})
    +'</div>'
 
-   +act(9,'The volume','Where the trading actually happened',
-        'Price spends most of its time where the most has already traded. The busiest shelf is '
+   +act(9,'The volume','Where the trading actually happened')
+           +'<div class="wins">'
++says('Price spends most of its time where the most has already traded. The busiest shelf is '
         +'where it keeps coming back to.')
-   +'<div class="wins">'
    +win('vprof','Where the volume traded',
         vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})()))
    +'</div>'
 
-   +act(10,'Behaviour, and where price meets time',
-        'What kind of market is this, and when do the two square?',
-        'The fan is the one calculation that names a price AND a date before either arrives. '
+   +act(10,'Behaviour, and where price meets time','What kind of market is this, and when do the two square?')
+           +'<div class="wins">'
++says('The fan is the one calculation that names a price AND a date before either arrives. '
         +'The cycle windows are the dates counted forward from real turning points.')
-   +'<div class="wins">'
    +win('fan','The fan \u2014 where price and time square',
         '<div id="fan_slot">'+cqeFanHtml(dp)+'</div>',{tag:'scalp'})
    +win('cyc','The cycle windows ahead','<div id="cyc_slot">'+cqeCycleLine()+'</div>')
-   +win('cross','Elsewhere in the market','<div id="cross_slot"></div>')
+   +win('cross','Elsewhere in the market','<div id="cross_slot"></div>',{shut:true})
    +'</div>'
    +'<details class="amore"><summary>Every Gann rung above and below</summary>'
      +'<div style="margin-top:9px">'+anaRungs(price,dp)+'</div></details>'
 
-   +act(11,'How much','What size, and what is left this month?',
-        'The only section that can say no. It sizes the position from the stop distance and '
+   +act(11,'How much','What size, and what is left this month?')
+           +'<div class="wins">'
++says('The only section that can say no. It sizes the position from the stop distance and '
         +'refuses anything the risk rules do not allow, however good the setup above looks.')
-   +'<div class="wins">'
    +win('risk','What size is allowed',riskChipHtml(S,conf,price,dp,asset),{tag:'veto'})
    +win('qvr','The risk check',qvRiskHtml(S,window._lastQV,price),{shut:true})
    +win('quota','What is left this month',quotaHtml(),{shut:true})
    +'</div>'
 
-   +act(12,'Elsewhere','Anything else setting up?',
-        'The same methods across every other instrument, ranked by which is closest to firing. '
+   +act(12,'Elsewhere','Anything else setting up?')
+           +'<div class="wins">'
++says('The same methods across every other instrument, ranked by which is closest to firing. '
         +'Worth a look after this asset, not instead of it.')
-   +'<div class="wins">'
    +win('scan','Every other instrument','<div class="scn" id="scan_body"></div>',{wide:true,fixed:true})
    +'</div>'
 
    /* the whole board, said back in sentences */
-   +act(13,'In plain words','All of the above, without the jargon',
-        'If you read nothing else on this tab, read this.')
-   +'<div id="plain_slot">'+plainWordsHtml(price,dp,asset)+'</div>'
+   +act(13,'In plain words','All of the above, without the jargon')
+        +'<div id="plain_slot">'+plainWordsHtml(price,dp,asset)+'</div>'
 
-   +act(14,'The working','Raw numbers.',
-        'For when you want to check something. Nothing here is needed to use the board.')
+   +act(14,'The working','Raw numbers.')
+        +says('For when you want to check something. Nothing here is needed to use the board.')
    /* A FEW HUNDRED FULL ENGINE PASSES IS NOT SOMETHING TO DO ON PAGE LOAD.
       Every bar of the walk runs the pivots, five engines and the whole
       confirmation chain. On two years of daily bars that is several seconds
