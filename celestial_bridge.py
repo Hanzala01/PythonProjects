@@ -377,6 +377,64 @@ _FRED_CACHE: dict[str, tuple[float, list]] = {}
 FRED_TTL = 6 * 3600
 
 
+# ── ECONOMIC CALENDAR ────────────────────────────────────────────────────
+# ForexFactory publishes its week as JSON, free and without a key. The page
+# cannot read it directly: the response carries no Access-Control-Allow-Origin
+# header, so a browser refuses it, and every public CORS relay tried against
+# it is down or rate-limited — allorigins and codetabs both answer 522,
+# cors.sh answers 429. Measured, not assumed.
+#
+# This machine has no such restriction. The bridge fetches it, caches it for
+# an hour, and serves it back with the page's own origin allowed — which is
+# the whole reason the bridge exists.
+CAL_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+_CAL_CACHE: tuple[float, list] | None = None
+CAL_TTL = 3600
+
+
+# The page is often opened straight from the filesystem, where the browser
+# sends Origin: null. That is not in ORIGINS and must not be — the data
+# endpoints below hold the journal and the trade history, and allowing a null
+# origin would let any sandboxed frame on any site read them.
+#
+# This endpoint is different: it serves a public calendar that anyone can
+# fetch from ForexFactory directly. It carries its own allow-all header so a
+# file:// page can read it, and nothing else here does.
+def _public(payload: dict) -> JSONResponse:
+    return JSONResponse(payload, headers={"Access-Control-Allow-Origin": "*"})
+
+
+@app.options("/calendar")
+def calendar_preflight():
+    return _public({"ok": True})
+
+
+@app.get("/calendar")
+def calendar():
+    global _CAL_CACHE
+    now = time.time()
+    if _CAL_CACHE and now - _CAL_CACHE[0] < CAL_TTL:
+        return _public({"source": "forexfactory", "cached": True, "events": _CAL_CACHE[1]})
+    import json as _json
+    import urllib.request
+
+    req = urllib.request.Request(CAL_URL, headers={"User-Agent": "celestial-bridge"})
+    try:
+        with urllib.request.urlopen(req, timeout=25) as f:
+            rows = _json.loads(f.read().decode("utf-8", "replace"))
+    except Exception as e:                      # noqa: BLE001
+        # a stale week beats no week — say how old it is rather than failing
+        if _CAL_CACHE:
+            return _public({"source": "forexfactory", "cached": True, "stale": True,
+                            "age_minutes": int((now - _CAL_CACHE[0]) / 60),
+                            "events": _CAL_CACHE[1]})
+        raise HTTPException(502, f"calendar unreachable: {e}")
+    if not isinstance(rows, list):
+        raise HTTPException(502, "calendar returned something that is not a list of events")
+    _CAL_CACHE = (now, rows)
+    return _public({"source": "forexfactory", "cached": False, "events": rows})
+
+
 @app.get("/fred/{series_id}")
 def fred(series_id: str, start: str = "2020-01-01"):
     if series_id not in FRED_SERIES:

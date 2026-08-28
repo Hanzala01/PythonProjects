@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b53 — Precision in Timing</title>
+<title>Celestial Alpha b54 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -5756,7 +5756,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b53</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b54</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -21031,7 +21031,11 @@ function renderReports(){
 
 /* ══ COMMUNITY — Chat/Login/Approval (from community.html) ══ */
 function addEmo(e){var i=document.getElementById('msg_in');i.value+=e;i.focus();}
-function bridgeURL(){return (localStorage.getItem('ca_bridge')||'http://127.0.0.1:7823').replace(/\/+$/,'');}
+/* THE DEFAULT PORT DID NOT MATCH THE BRIDGE.
+   The page looked for 7823; celestial_bridge.py listens on 8770. Anyone who
+   had not typed the URL in by hand was pointing at nothing, which is a
+   second reason the calendar never filled in. */
+function bridgeURL(){return (localStorage.getItem('ca_bridge')||'http://127.0.0.1:8770').replace(/\/+$/,'');}
 function checkInvite(k){
   k=(k||'').trim().toUpperCase();
   var m=k.match(/^CA-([0-9A-Z]+)-([0-9A-Z]{4})-([0-9A-Z]{4})$/);
@@ -22031,12 +22035,32 @@ function ffFetch(cb){
   if(cached){ FF_CACHE=cached.rows;
     FF_STATE={at:cached.at,src:(cached.src||'feed')+', cached',err:null,n:cached.rows.length};
     cb(cached.rows); return; }
-  var urls=[{u:FF_URL,n:'direct'}].concat(PSX_RELAYS.map(function(f,i){
+  /* ══ THE BRIDGE FIRST, BECAUSE NOTHING ELSE ACTUALLY WORKS ═══════
+     Measured against the live feed rather than assumed:
+
+       direct                      200, but NO Access-Control-Allow-Origin,
+                                   so a browser at file:// refuses to read it
+       api.allorigins.win          522
+       api.codetabs.com            522
+       proxy.cors.sh               429
+
+     All four routes fail, which is why the calendar kept coming back empty
+     however many times the parsing was fixed. The local bridge has no such
+     restriction — it fetches the week, caches it for an hour and serves it
+     back with this page's origin allowed, which is what the bridge is for.
+     The public routes stay behind it for anyone not running the bridge. */
+  var urls=[];
+  try{ urls.push({u:bridgeURL()+'/calendar',n:'bridge',bridge:true}); }catch(e){}
+  urls=urls.concat([{u:FF_URL,n:'direct'}]).concat(PSX_RELAYS.map(function(f,i){
     return {u:f(FF_URL),n:['cors.sh','allorigins','codetabs'][i]}; }));
   var i=0, tried=[];
   (function attempt(){
     if(i>=urls.length){
-      FF_STATE={at:null,src:null,err:'every route failed ('+tried.join(', ')+')',n:0};
+      FF_STATE={at:null,src:null,n:0,
+        err:'every route failed ('+tried.join(', ')+'). The feed sends no '
+          +'cross-origin header and the public relays are down, so the only '
+          +'reliable route is the local bridge — start celestial_bridge.py '
+          +'and this fills in.'};
       cb(null); return;
     }
     var step=urls[i++];
@@ -22045,6 +22069,8 @@ function ffFetch(cb){
       return r.json();
     }).then(function(d){
       if(!d)return;
+      /* the bridge wraps the rows; every other route returns them bare */
+      if(d&&!Array.isArray(d)&&Array.isArray(d.events))d=d.events;
       if(!Array.isArray(d)||!d.length){ tried.push(step.n+' empty'); attempt(); return; }
       FF_CACHE=d; ffSaveCache(d,step.n);
       FF_STATE={at:Date.now(),src:step.n,err:null,n:d.length};
