@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b50 — Precision in Timing</title>
+<title>Celestial Alpha b51 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2428,6 +2428,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:900px){.fn-r{grid-template-columns:34px 16px 78px 1fr;row-gap:2px}
   .fn-g,.fn-a{display:none}}
 @media(prefers-reduced-motion:reduce){.hz-r,.fn-r,.hz-tag.fired,.al-dot.on{animation:none!important}}
+
+/* the currency tag and impact dot, the way a calendar reads */
+.evc-cur{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.06em;
+  padding:1px 6px;border-radius:4px;margin-right:6px;vertical-align:middle;
+  background:rgba(255,255,255,.06);border:1px solid var(--b1);color:var(--t2)}
+.evc-cur.usd{background:rgba(139,92,246,.18);border-color:rgba(157,77,255,.34);color:var(--p3)}
+.evc-imp{display:inline-block;width:6px;height:6px;border-radius:2px;margin-right:6px;
+  vertical-align:middle;background:var(--t3)}
+.evc-imp.ihigh{background:#F87171}
+.evc-imp.imedium{background:#FBBF24}
+.evc-imp.ilow{background:#64748B}
+.evc-nums{display:flex;gap:14px;margin-top:6px}
+.evc-nums span{font-size:10px;color:var(--t1);font-variant-numeric:tabular-nums}
+.evc-nums i{display:block;font-style:normal;font-size:8px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3)}
 
 /* the measured bias, on the release card */
 .evb{display:flex;flex-wrap:wrap;gap:7px;align-items:stretch;margin-top:9px;padding-top:9px;
@@ -5683,7 +5698,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b50</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b51</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -21489,6 +21504,9 @@ function goTab(name,btn){
     try{buildSolarCal();buildEphTable();buildEphEv();}catch(e){console.error('timing panels:',e);}
   }
   if(name==='sentiment'){
+    /* the feed first — the board is built from buildEconEvents and that has
+       to see the rows before it draws, or the first paint is the rule set */
+    try{ ffFetch(function(){ try{ renderSentiment(); }catch(e){} }); }catch(e){}
     renderSentiment();
     try{ senMacroPaint(); }catch(e){}
     /* the previous prints arrive asynchronously; repaint once they have */
@@ -21661,7 +21679,21 @@ function buildEconEvents(){
       fc:'—',impact:'High'});
   });
 
-  /* what a rule cannot produce, the reader supplies */
+  /* ══ THE FEED WINS WHERE IT REACHES ══════════════════════════════
+     Its rows are dated instants from the source everyone reads, so a
+     rule-derived guess for the same release is strictly worse. The rules
+     stay for the weeks the feed does not cover — it publishes one week —
+     and any rule row inside the feed's own span is dropped so payrolls does
+     not appear twice with two different times. */
+  var feed=[];
+  try{ feed=ffEvents(); }catch(e){}
+  if(feed.length){
+    var lo=Math.min.apply(null,feed.map(function(e){return +e.d;}));
+    var hi=Math.max.apply(null,feed.map(function(e){return +e.d;}));
+    out=out.filter(function(e){ return +e.d<lo||+e.d>hi; });
+    out=out.concat(feed);
+  }
+  /* what neither a rule nor the feed produces, the reader supplies */
   try{ out=out.concat(myEvEvents()); }catch(e){}
   out=out.filter(function(e){return e.d>now;}).sort(function(a,b){return a.d-b.d;});
   /* the previous print comes from the live macro chain, never from a literal */
@@ -21671,6 +21703,103 @@ function buildEconEvents(){
   });
   return out;
 }
+/* ══════════════════════════════════════════════════════════════════════
+   THE REAL CALENDAR — a feed, at last
+
+   Everything before this derived four US releases from rules and could not
+   produce a Fed speaker, a benchmark revision or a symposium at all, because
+   no rule generates them. The answer was always a feed; I had checked one
+   provider, found its key out of quota, and stopped looking. That was the
+   mistake, and it cost several rounds.
+
+   ForexFactory publishes its own week as JSON, free and without a key:
+
+       https://nfs.faireconomy.media/ff_calendar_thisweek.json
+
+   Checked against the calendar that was screenshotted, it carries exactly
+   the rows that were missing, with the same numbers:
+
+       USD  2026-08-28T10:00-04:00  High  Fed Chairman Warsh Speaks
+       USD  2026-08-28T10:00-04:00  High  Prelim Benchmark Payrolls Revision
+                                          previous -911K
+       All  2026-08-28T12:15-04:00  High  Jackson Hole Symposium
+       CAD  2026-08-28T08:30-04:00  High  GDP m/m   forecast 0.2%  prev 0.3%
+
+   Seventy-two events across ten currencies with impact, forecast and
+   previous on each. The timestamps carry their own UTC offset, so there is
+   no timezone arithmetic to get wrong — the string is an instant.
+
+   Fetched direct, then through the relay chain if the browser refuses the
+   cross-origin read, and cached for the day so the week still shows when
+   the network is not there. The rule-derived rows stay as a fallback and
+   say so, rather than disappearing if the feed is unreachable.
+   ══════════════════════════════════════════════════════════════════════ */
+var FF_URL='https://nfs.faireconomy.media/ff_calendar_thisweek.json';
+var FF_KEY='ca_ff_cal', FF_CACHE=null, FF_STATE={at:null,src:null,err:null,n:0};
+function ffLoadCache(){
+  try{
+    var raw=localStorage.getItem(FF_KEY); if(!raw)return null;
+    var o=JSON.parse(raw);
+    if(!o||!o.at||!Array.isArray(o.rows))return null;
+    /* a week's calendar is worth keeping for a day, not longer — the actuals
+       fill in through the day and a stale copy would show blanks as facts */
+    if(Date.now()-o.at>18*3600*1000)return null;
+    return o;
+  }catch(e){ return null; }
+}
+function ffSaveCache(rows,src){
+  try{ localStorage.setItem(FF_KEY,JSON.stringify({at:Date.now(),rows:rows,src:src})); }catch(e){}
+}
+function ffFetch(cb){
+  var cached=ffLoadCache();
+  if(cached){ FF_CACHE=cached.rows;
+    FF_STATE={at:cached.at,src:(cached.src||'feed')+', cached',err:null,n:cached.rows.length};
+    cb(cached.rows); return; }
+  var urls=[{u:FF_URL,n:'direct'}].concat(PSX_RELAYS.map(function(f,i){
+    return {u:f(FF_URL),n:['cors.sh','allorigins','codetabs'][i]}; }));
+  var i=0, tried=[];
+  (function attempt(){
+    if(i>=urls.length){
+      FF_STATE={at:null,src:null,err:'every route failed ('+tried.join(', ')+')',n:0};
+      cb(null); return;
+    }
+    var step=urls[i++];
+    fetch(step.u).then(function(r){
+      if(!r.ok){ tried.push(step.n+' '+r.status); attempt(); return null; }
+      return r.json();
+    }).then(function(d){
+      if(!d)return;
+      if(!Array.isArray(d)||!d.length){ tried.push(step.n+' empty'); attempt(); return; }
+      FF_CACHE=d; ffSaveCache(d,step.n);
+      FF_STATE={at:Date.now(),src:step.n,err:null,n:d.length};
+      cb(d);
+    }).catch(function(){ tried.push(step.n+' blocked'); attempt(); });
+  })();
+}
+/* the feed's rows in the shape the rest of this page already speaks */
+function ffEvents(){
+  if(!FF_CACHE)return [];
+  var out=[];
+  FF_CACHE.forEach(function(r){
+    if(!r||!r.date||!r.title)return;
+    var d=new Date(r.date);          /* carries its own offset — no arithmetic */
+    if(isNaN(d))return;
+    out.push({t:r.title, d:d, prec:'feed', impact:r.impact||'Low',
+      country:(r.country||'').toUpperCase(),
+      fc:r.forecast||'—', pvFeed:r.previous||'',
+      note:'From the ForexFactory weekly feed.',
+      feed:true});
+  });
+  return out;
+}
+function ffWhen(){
+  if(FF_STATE.err)return 'feed unreachable — '+FF_STATE.err;
+  if(!FF_STATE.at)return 'feed not loaded yet';
+  var mins=Math.round((Date.now()-FF_STATE.at)/60000);
+  return FF_STATE.n+' events from the feed ('+FF_STATE.src+')'
+    +(mins<2?', just now':', '+mins+' min ago');
+}
+
 /* ══════════════════════════════════════════════════════════════════════
    EVENTS YOU ENTER YOURSELF
 
@@ -21842,10 +21971,11 @@ function econBiasChip(e){
       : 'Entered by hand. No history to measure, so nothing is claimed about which way it goes.')
     +'</div>';
   /* only payrolls has a rule that reconstructs its own past dates */
+  /* one short line, because it appears on most cards. The full reasoning is
+     under the measured panel below, once, rather than eight times. */
   if(!/payroll/i.test(e.t||''))
-    return '<div class="evb none">No measured bias: '+escHtml(e.t)+' has no day-of-month rule, '
-      +'so its past release dates cannot be reconstructed from the calendar and there is nothing '
-      +'honest to measure against.</div>';
+    return '<div class="evb none">No measured bias — this one has no rule that rebuilds its past '
+      +'dates, so there is nothing to measure against.</div>';
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
   var asset=((typeof _lastAsset!=='undefined'&&_lastAsset)||'the asset').toUpperCase();
   var A=rows.length>60? econStudy(rows,econFirstFridays(rows)) : {n:0,why:'no history loaded'};
@@ -21957,7 +22087,8 @@ function econPrecLabel(e){
   return e&&e.prec==='scheduled'?'scheduled'
        : e&&e.prec==='rule'?'by rule'
        : e&&e.prec==='window'?'estimated window'
-       : e&&e.prec==='yours'?'yours':'';
+       : e&&e.prec==='yours'?'yours'
+       : e&&e.prec==='feed'?'from the feed':'';
 }
 function fmtCountdown(ms){
   if(ms<0)ms=0;
@@ -23517,7 +23648,35 @@ var SEN_WHAT={
   'CPI (Inflation)':'Inflation print. Hotter than forecast kills rate-cut hopes → gold and stocks sell off, dollar bid.',
   'Federal Funds Rate':'Fed rate decision. The statement and the press conference move price far more than the number itself.'
 };
-function senWhat(t){ return SEN_WHAT[(t||'').replace(/ \(est\.\)$/,'')] || 'High-impact scheduled release — expect a spread widening and a stop sweep around the print.'; }
+/* THE FALLBACK CALLED EVERYTHING A HIGH-IMPACT RELEASE.
+   With the feed attached the calendar carries speeches, symposiums, bank
+   holidays and low-impact prints, and every one of them was described as a
+   high-impact release with a print to trade around. A speech has no print,
+   a holiday has no release, and the feed already states the impact — so the
+   line is built from what the row actually is. */
+function senWhat(t,e){
+  var known=SEN_WHAT[(t||'').replace(/ \(est\.\)$/,'')];
+  if(known)return known;
+  var s=String(t||''), imp=String((e&&e.impact)||'').toLowerCase();
+  if(/speaks|speech|testimony|remarks/i.test(s))
+    return 'A speech, not a data release. There is no number to react to — the wording is what '
+      +'moves price, and it can move it at any point during the remarks.';
+  if(/symposium|summit|meetings|conference/i.test(s))
+    return 'A gathering, not a release. Headlines come out of it at no fixed minute, so the risk '
+      +'is spread across the day rather than concentrated on one instant.';
+  if(/bank holiday|holiday/i.test(s))
+    return 'A market holiday. Thinner books and wider spreads; levels break more easily on less '
+      +'volume and mean less when they do.';
+  if(/revision|revised/i.test(s))
+    return 'A revision to a number already published. It usually matters less than the original, '
+      +'except when the revision is large enough to change the story.';
+  if(imp==='low')
+    return 'Low impact on the calendar. Worth knowing it is there; not usually worth changing a '
+      +'plan for.';
+  if(imp==='medium')
+    return 'Medium impact. Expect a spread widening around the print rather than a new trend.';
+  return 'Scheduled release — expect a spread widening and a stop sweep around the print.';
+}
 
 /* the verdict — one of four states, driven by minutes to the next release */
 function senRisk(next){
@@ -23879,12 +24038,23 @@ function renderSentimentV3(){
   }
 
   /* ── the next four releases, each with what it actually moves ── */
-  var cards=evs.slice(0,4).map(function(e,i){
+  var cards=evs.slice(0,8).map(function(e,i){
     var days=Math.ceil((e.d-new Date())/86400000);
     return '<div class="sn-evc" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
       +'<div class="cd">'+(days<=0?'today':'in '+days+'d')+'</div>'
       +'<div class="n">'+escHtml(e.t)+'</div>'
-      +'<div class="w">'+econWhen(e)+' · '+econPrecLabel(e)+' · '+e.impact+' impact</div>'
+      +'<div class="w">'
+        +(e.country?'<span class="evc-cur '+(e.country==='USD'?'usd':'')+'">'
+            +escHtml(e.country)+'</span>':'')
+        +'<span class="evc-imp i'+String(e.impact||'').toLowerCase()+'"></span>'
+        +econWhen(e)+' · '+econPrecLabel(e)+' · '+e.impact+' impact</div>'
+      /* the feed carries a forecast and the last print on the row itself,
+         which is the pair a reader actually compares */
+      +((e.fc&&e.fc!=='—')||e.pvFeed
+        ? '<div class="evc-nums">'
+          +(e.fc&&e.fc!=='—'?'<span><i>Forecast</i>'+escHtml(e.fc)+'</span>':'')
+          +(e.pvFeed?'<span><i>Previous</i>'+escHtml(e.pvFeed)+'</span>':'')
+        +'</div>' : '')
       /* senWhat matches four known releases and falls through to a generic
          line about a print. A symposium has no print, and a speaker is not a
          release, so a hand-entered event says what it is instead. */
@@ -23892,7 +24062,7 @@ function renderSentimentV3(){
           ? (e.affects? 'Entered by you, watching '+e.affects+'.'
                       : 'Entered by you.')
             +' Nothing here is derived from a feed.'
-          : senWhat(e.t))+'</div>'
+          : senWhat(e.t,e))+'</div>'
       +econBiasChip(e)+'</div>';
   }).join('');
 
@@ -23926,7 +24096,7 @@ function renderSentimentV3(){
      +'this screen a chart cannot see coming.</div>'
    +'<div class="sn-sech"><b>Next 10 days</b><span>red = a release lands that day</span></div>'
    +'<div class="sn-week">'+week+'</div>'
-   +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
+   +'<div class="sn-sech"><b>What is coming</b><span>'+escHtml(ffWhen())+'</span></div>'
    +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
    /* MEASURED IMPACT AND HAND-ENTERED EVENTS WERE BEING DRAWN INTO A HIDDEN NODE.
       Both were appended to #econ_cal, which lives inside #sen_legacy — a
