@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b43 — Precision in Timing</title>
+<title>Celestial Alpha b44 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -1067,6 +1067,22 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div class="bs-word"><b>CELESTIAL</b><s>Precision in Timing</s></div>
   <div class="bs-bar"><i id="bs_fill"></i></div>
   <div class="bs-step" id="bs_step"><span>Starting the engines</span></div>
+</div>
+<!-- the command palette. Markup lives here so one keystroke can reach it
+     from any tab without a builder having run first. -->
+<div id="cmdk" class="hidden" role="dialog" aria-label="Command palette">
+  <div class="cmd-box">
+    <div class="cmd-top">
+      <span class="cmd-ic">&#8984;</span>
+      <input id="cmd_in" type="text" autocomplete="off" spellcheck="false"
+             placeholder="Jump to a tab, an asset, or an action&hellip;"
+             oninput="cmdRender()" onkeydown="cmdKey(event)">
+      <span class="cmd-esc">esc</span>
+    </div>
+    <div id="cmd_list" class="cmd-list"></div>
+    <div class="cmd-foot"><b>&uarr;&darr;</b> move <b>&crarr;</b> run <b>esc</b> close
+      <span>&#8984;K or / anywhere</span></div>
+  </div>
 </div>
 <style>
 /* chart card */
@@ -2154,6 +2170,64 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .st-note2{margin-top:9px;font-size:9.5px;line-height:1.6;color:var(--t3)}
 .st-none{font-size:10.5px;color:var(--t3);padding:8px 0}
 @media(prefers-reduced-motion:reduce){.st-r,.st-n b{animation:none!important}}
+
+/* ══ COMMAND PALETTE ══ */
+#cmdk{position:fixed;inset:0;z-index:99998;display:flex;align-items:flex-start;
+  justify-content:center;padding:12vh 20px 20px;
+  background:rgba(4,3,12,.62);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  animation:cmdFade .16s ease both}
+#cmdk.hidden{display:none}
+@keyframes cmdFade{from{opacity:0}to{opacity:1}}
+.cmd-box{width:min(620px,100%);border-radius:16px;overflow:hidden;
+  background:linear-gradient(180deg,#16112e,#0c0920);
+  border:1px solid rgba(157,77,255,.34);
+  box-shadow:0 30px 90px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.03) inset;
+  animation:cmdPop .26s cubic-bezier(.22,1,.36,1) both}
+@keyframes cmdPop{from{opacity:0;transform:translateY(-14px) scale(.975)}to{opacity:1;transform:none}}
+.cmd-top{display:flex;align-items:center;gap:10px;padding:14px 16px;
+  border-bottom:1px solid rgba(157,77,255,.18)}
+.cmd-ic{font-size:14px;color:var(--p3);opacity:.8;flex:none}
+/* the global input:focus rule three thousand lines up carries !important on
+   its border and shadow, so a plain override left the palette's field
+   wearing a form box. Matched here rather than weakened there. */
+#cmd_in,#cmd_in:focus{flex:1;min-width:0;width:auto;background:none!important;
+  border:none!important;outline:none!important;box-shadow:none!important;padding:0;
+  color:var(--t1);font-family:inherit;font-size:14px;letter-spacing:.01em}
+#cmd_in::placeholder{color:var(--t3);opacity:.72}
+.cmd-esc{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);
+  border:1px solid var(--b1);border-radius:5px;padding:2px 6px;flex:none}
+.cmd-list{max-height:46vh;overflow-y:auto;padding:6px}
+.cmd-r{display:grid;grid-template-columns:74px 1fr auto;gap:10px;align-items:baseline;
+  padding:9px 11px;border-radius:9px;cursor:pointer;
+  animation:cmdIn .22s cubic-bezier(.22,1,.36,1) both}
+@keyframes cmdIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.cmd-r:hover{background:rgba(139,92,246,.12)}
+.cmd-r.on{background:linear-gradient(90deg,rgba(139,92,246,.26),rgba(139,92,246,.08));
+  box-shadow:inset 2px 0 0 var(--p3)}
+.cmd-g{font-size:8.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.cmd-k{font-size:12.5px;font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmd-h{font-size:9.5px;color:var(--t3);white-space:nowrap}
+.cmd-none{padding:20px 12px;text-align:center;font-size:11px;color:var(--t3)}
+.cmd-foot{display:flex;align-items:center;gap:7px;padding:9px 14px;font-size:9px;color:var(--t3);
+  border-top:1px solid rgba(157,77,255,.14)}
+.cmd-foot b{font-weight:700;color:var(--t2);border:1px solid var(--b1);border-radius:4px;
+  padding:1px 5px;font-size:8.5px}
+.cmd-foot span{margin-left:auto;opacity:.75}
+
+/* ══ SKELETONS ══ */
+.skel{padding:4px 0}
+.sk-lbl{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--t3);margin-bottom:9px}
+.sk-l{height:9px;border-radius:5px;margin-bottom:7px;
+  background:linear-gradient(90deg,rgba(255,255,255,.045) 25%,rgba(157,77,255,.16) 37%,rgba(255,255,255,.045) 63%);
+  background-size:400% 100%;animation:skShine 1.5s ease-in-out infinite}
+@keyframes skShine{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ══ STAGGERED REVEAL ══ */
+@keyframes revIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  #cmdk,.cmd-box,.cmd-r,.sk-l{animation:none!important}
+  .pane>*{animation:none!important}
+}
 
 .hz{display:grid;gap:6px}
 .hz-r{display:grid;grid-template-columns:118px 62px 1fr;gap:9px;align-items:start;
@@ -5429,7 +5503,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b43</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b44</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -8345,6 +8419,202 @@ function btnFail(el,label){
   sfx('warn');
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   COMMAND PALETTE — ⌘K
+
+   Eight tabs, a dozen assets and thirty-odd actions, and the only way to any
+   of them was to find it with a mouse. One keystroke, type three letters,
+   press enter. It is the thing that most separates an app that feels current
+   from one that does not, and on a board this dense it is not decoration —
+   it is the fastest path to every screen in it.
+
+   Matching is subsequence, not substring: "rpt" finds "Right price, right
+   time" the way an editor's file finder does. Score favours matches on word
+   boundaries and earlier positions, so the obvious answer sorts first.
+   ══════════════════════════════════════════════════════════════════════ */
+var CMDK_OPEN=false, CMD_SEL=0, CMD_HITS=[];
+function cmdItems(){
+  var L=[];
+  function add(g,k,hint,run){ L.push({g:g,k:k,hint:hint,run:run}); }
+
+  [['dashboard','Dashboard'],['analytics','Analytics'],['timing','Timing Engine'],
+   ['sentiment','Market Intelligence'],['portfolio','Portfolio'],['fundamentals','The Books'],
+   ['bot','Bot'],['announcements','Community'],['reference','Reference']]
+  .forEach(function(t){
+    add('Go to',t[1],'tab',function(){
+      goTab(t[0],document.querySelector('.nav-item[onclick*="'+t[0]+'"]')); });
+  });
+
+  try{
+    (TIM_PICKS||[]).forEach(function(a){
+      add('Asset',a,'analyse this',function(){
+        var el=document.getElementById('ai_asset_txt'); if(el)el.value=a;
+        var ab=document.getElementById('ab_asset'); if(ab)ab.value=a;
+        try{ setTimAsset(a); }catch(e){}
+        goTab('analytics',document.querySelector('.nav-item[onclick*="analytics"]'));
+        try{ anaRun(); }catch(e){}
+      });
+    });
+  }catch(e){}
+
+  add('Run','Analyse now','re-run every engine',function(){
+    goTab('analytics',document.querySelector('.nav-item[onclick*="analytics"]'));
+    try{ anaRun(); }catch(e){} });
+  add('Run','Verify this yourself','the self-test',function(){
+    goTab('reference',document.querySelector('.nav-item[onclick*="reference"]'));
+    setTimeout(function(){ try{ selfTestRun(document.querySelector('[onclick^="selfTestRun"]')); }catch(e){} },250); });
+  add('Run','Share the setup','copy the trade card',function(){ try{ openShare(); }catch(e){} });
+  add('Run','Take the setup','open the sizing dialog',function(){ try{ openTakeSignal(); }catch(e){} });
+
+  add('Toggle','Interface sounds','on or off',function(){ try{ sfxToggle(); }catch(e){} });
+  add('Toggle','Alerts on','tell me when a horizon fires',function(){ try{ alertsEnable(); }catch(e){} });
+  add('Toggle','Alerts off','stop telling me',function(){ try{ alertsOff(); }catch(e){} });
+  add('Toggle','Settings','keys, voice, sync',function(){ try{ celestialSettings(); }catch(e){} });
+  return L;
+}
+/* subsequence match with a score, the way a file finder works */
+function cmdScore(hay,needle){
+  if(!needle)return 0;
+  var h=hay.toLowerCase(), n=needle.toLowerCase();
+  var hi=0, score=0, streak=0;
+  for(var i=0;i<n.length;i++){
+    var c=n[i], at=h.indexOf(c,hi);
+    if(at<0)return -1;
+    /* a match at the start of a word is worth more than one inside it */
+    var boundary=(at===0)||/[\s\-—·]/.test(h[at-1]);
+    score += boundary?9:4;
+    score += (at===hi)?(streak+=3):(streak=0);
+    score -= Math.min(6,at-hi)*0.4;
+    hi=at+1;
+  }
+  return score - h.length*0.05;
+}
+function cmdRender(){
+  var q=(document.getElementById('cmd_in')||{}).value||'';
+  var items=cmdItems();
+  /* SCORING THE WHOLE ROW PUT THE GROUP LABEL IN THE WAY.
+     Matching "Go to Timing Engine" as one string means every tab shares the
+     leading "Go to", so "tmg" scored Market Intelligence above Timing
+     Engine — the t came from "to" in both, and Market won on a word-start m.
+     The name is what is being searched for; the group and the hint are
+     tie-breakers, at a fifth of the weight. */
+  CMD_HITS = q.trim()
+    ? items.map(function(it){
+        var n=q.trim();
+        var kn=cmdScore(it.k,n);
+        var alt=Math.max(cmdScore(it.g+' '+it.k,n),cmdScore(it.k+' '+it.hint,n));
+        var sc = kn>=0 ? kn+12 : (alt>=0 ? alt*0.2 : -1);
+        return {it:it,s:sc};
+      })
+           .filter(function(x){ return x.s>=0; })
+           .sort(function(a,b){ return b.s-a.s; })
+           .slice(0,10).map(function(x){ return x.it; })
+    : items.slice(0,10);
+  if(CMD_SEL>=CMD_HITS.length)CMD_SEL=Math.max(0,CMD_HITS.length-1);
+  var host=document.getElementById('cmd_list');
+  if(!host)return;
+  host.innerHTML = CMD_HITS.length
+    ? CMD_HITS.map(function(it,i){
+        return '<div class="cmd-r'+(i===CMD_SEL?' on':'')+'" data-i="'+i+'" '
+          +'style="animation-delay:'+(i*0.022).toFixed(3)+'s">'
+          +'<span class="cmd-g">'+escHtml(it.g)+'</span>'
+          +'<span class="cmd-k">'+escHtml(it.k)+'</span>'
+          +'<span class="cmd-h">'+escHtml(it.hint)+'</span></div>';
+      }).join('')
+    : '<div class="cmd-none">Nothing matches “'+escHtml(q)+'”.</div>';
+}
+function cmdOpen(){
+  if(CMDK_OPEN)return;
+  CMDK_OPEN=true; CMD_SEL=0;
+  var w=document.getElementById('cmdk');
+  if(!w)return;
+  w.classList.remove('hidden');
+  var i=document.getElementById('cmd_in');
+  if(i){ i.value=''; i.focus(); }
+  cmdRender(); sfx('tap');
+}
+function cmdClose(){
+  CMDK_OPEN=false;
+  var w=document.getElementById('cmdk');
+  if(w)w.classList.add('hidden');
+}
+function cmdRun(i){
+  var it=CMD_HITS[i==null?CMD_SEL:i];
+  if(!it)return;
+  cmdClose();
+  sfx('ok');
+  try{ it.run(); }catch(e){ console.error('command:',e); }
+}
+function cmdKey(e){
+  if(e.key==='ArrowDown'){ e.preventDefault(); CMD_SEL=Math.min(CMD_HITS.length-1,CMD_SEL+1); cmdRender(); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); CMD_SEL=Math.max(0,CMD_SEL-1); cmdRender(); }
+  else if(e.key==='Enter'){ e.preventDefault(); cmdRun(); }
+  else if(e.key==='Escape'){ e.preventDefault(); cmdClose(); }
+}
+
+/* ══ SKELETONS — the honest kind ═══════════════════════════════════════
+   A shimmer that pretends to be the content is a lie about how much is
+   coming. These are sized to the block they stand in and say what is being
+   waited for, so the wait is informative rather than merely decorated. */
+function skeleton(lines,label){
+  var h='<div class="skel">';
+  if(label)h+='<div class="sk-lbl"><i class="btn-sp"></i>'+escHtml(label)+'</div>';
+  for(var i=0;i<(lines||3);i++)
+    h+='<div class="sk-l" style="width:'+(96-i*13)+'%;animation-delay:'+(i*0.11).toFixed(2)+'s"></div>';
+  return h+'</div>';
+}
+
+/* ══ COUNTING NUMBERS ══════════════════════════════════════════════════
+   rollNumbers flashed a class and the digits changed in one frame. A value
+   that counts to its new figure reads as the number having moved, which is
+   what actually happened. Only for values that are numbers; a word is set
+   directly rather than animated through nonsense. */
+function countUp(el,to,dp,suffix,prefix){
+  if(!el)return;
+  var from=parseFloat(String(el.dataset.numFrom||el.textContent||'0').replace(/[^0-9.\-]/g,''));
+  if(!isFinite(from))from=0;
+  if(!isFinite(to)){ el.textContent=to; return; }
+  el.dataset.numFrom=to;
+  var t0=null, dur=520;
+  function step(ts){
+    if(t0==null)t0=ts;
+    var k=Math.min(1,(ts-t0)/dur);
+    /* ease-out cubic: fast first, settles rather than stopping dead */
+    var e=1-Math.pow(1-k,3);
+    var v=from+(to-from)*e;
+    el.textContent=(prefix||'')+(dp!=null?v.toFixed(dp):Math.round(v).toLocaleString())+(suffix||'');
+    if(k<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+/* walk a container and animate any number that changed since last paint */
+function countUpAll(root){
+  (root||document).querySelectorAll('[data-count]').forEach(function(el){
+    var to=parseFloat(el.getAttribute('data-count'));
+    if(!isFinite(to))return;
+    if(el.dataset.numFrom!=null&&+el.dataset.numFrom===to)return;
+    countUp(el,to,el.getAttribute('data-dp')!=null?+el.getAttribute('data-dp'):null,
+            el.getAttribute('data-suffix')||'',el.getAttribute('data-prefix')||'');
+  });
+}
+
+/* ══ STAGGERED REVEAL ══════════════════════════════════════════════════
+   Every card in a pane appeared at once. Giving them a few milliseconds
+   between makes the eye travel down the screen in the order the page wants
+   to be read, which is the whole reason the order was chosen. */
+function revealPane(name){
+  var pane=document.getElementById('pane_'+name);
+  if(!pane)return;
+  var kids=pane.querySelectorAll(':scope > .card, :scope > section, :scope > .a2, :scope > details');
+  var i=0;
+  kids.forEach(function(el){
+    if(i>14)return;                      /* past the fold nobody sees the stagger */
+    el.style.animation='none'; void el.offsetWidth;
+    el.style.animation='revIn .42s cubic-bezier(.22,1,.36,1) '+(i*0.045).toFixed(3)+'s both';
+    i++;
+  });
+}
+
 /* button ripple + nav pointer glow */
 function initMotion(){
   document.addEventListener('click',function(e){
@@ -8363,6 +8633,24 @@ function initMotion(){
     if(e.target.closest('.nav-item,.tab,.pill,.side-nav a,[onclick*="goTab"]'))sfx('tap');
   },true);
   sfxPaint();
+  /* the shortcut. Cmd on a Mac, Ctrl elsewhere, and "/" as the second key
+     because half the web has trained people to expect it. Both are ignored
+     while a field has focus, or typing a slash into the price box would
+     open a palette instead of a slash. */
+  document.addEventListener('keydown',function(e){
+    var tag=(e.target&&e.target.tagName||'').toLowerCase();
+    var typing=(tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable);
+    if((e.key==='k'||e.key==='K')&&(e.metaKey||e.ctrlKey)){
+      e.preventDefault(); CMDK_OPEN?cmdClose():cmdOpen(); return; }
+    if(e.key==='/'&&!typing&&!CMDK_OPEN){ e.preventDefault(); cmdOpen(); return; }
+    if(e.key==='Escape'&&CMDK_OPEN)cmdClose();
+  });
+  var cl=document.getElementById('cmd_list');
+  if(cl)cl.addEventListener('click',function(e){
+    var r=e.target.closest('.cmd-r'); if(r)cmdRun(+r.dataset.i);
+  });
+  var ov=document.getElementById('cmdk');
+  if(ov)ov.addEventListener('click',function(e){ if(e.target===ov)cmdClose(); });
   document.addEventListener('mousemove',function(e){
     var n=e.target.closest('.nav-item');
     if(!n)return;
@@ -16431,7 +16719,7 @@ function trendInvalidHtml(T,price,dp,asset){
       no way to know which one to believe. It still runs — the journal, the
       monthly budget and the sizing chip are all driven from it — so it is
       shown, further down, named as the older engine. */
-   +'<div id="verdict_slot"><div class="cqv wait"><div class="cqv-t"><b>Reading the board…</b></div></div></div>'
+   +'<div id="verdict_slot"><div class="cqv wait">'+skeleton(3,'Reading the board — five methods running')+'</div></div>'
 
    /* THESE TWO BELONG HERE, NOT ON THE DASHBOARD.
       They were put on the dashboard as the headline answer, which pushed a
@@ -20782,6 +21070,7 @@ function goTab(name,btn){
   });
   document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
+  try{ revealPane(name); }catch(e){}
   if(name==='reference')loadRefFrames();
   /* These builders populate static panels that would otherwise stay empty. */
   if(name==='timing'){
