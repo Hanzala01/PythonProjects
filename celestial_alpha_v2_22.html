@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b46 — Precision in Timing</title>
+<title>Celestial Alpha b47 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2300,6 +2300,54 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .win.t-warn{border-color:rgba(251,191,36,.3)}
 .win.t-bad{border-color:rgba(248,113,113,.32)}
 @media(prefers-reduced-motion:reduce){.win{animation:none!important}.win-x{transition:none}}
+
+/* ══ THE ECONOMIC CALENDAR'S NEW HALVES ══ */
+.ec-split{margin-top:12px;padding-top:12px;border-top:1px solid var(--b1)}
+.ec-mine{font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  padding:1px 6px;border-radius:99px;vertical-align:middle;
+  background:rgba(139,92,246,.16);border:1px solid rgba(157,77,255,.3);color:var(--p3)}
+.ecm-h{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk';font-size:10px;
+  font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.ecm-h b{margin-left:auto;font-size:9px;letter-spacing:0;text-transform:none;color:var(--t2)}
+.ecm-l{font-size:11.5px;line-height:1.6;color:var(--t1);margin-bottom:9px}
+.ecm-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}
+.ecm-side{padding:9px 11px;border-radius:10px;border:1px solid var(--b1);
+  background:linear-gradient(150deg,rgba(139,92,246,.08),rgba(9,5,26,.4))}
+.ecm-side i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3)}
+.ecm-side b{display:block;font-family:'Space Grotesk';font-size:19px;font-weight:800;
+  color:var(--t1);margin:3px 0 1px;font-variant-numeric:tabular-nums;
+  animation:stPop .45s cubic-bezier(.22,1,.36,1) both}
+.ecm-side s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3)}
+.ecm-rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:7px}
+.ecm-r{padding:8px 10px;border-radius:9px;border:1px solid var(--b1);background:rgba(255,255,255,.02)}
+.ecm-r i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--t3)}
+.ecm-r b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--t1);
+  margin-top:3px;font-variant-numeric:tabular-nums;
+  animation:stPop .45s cubic-bezier(.22,1,.36,1) both}
+.ecm-note{margin-top:8px;font-size:10px;line-height:1.6;color:var(--t2)}
+.ecm-last{margin-top:6px;font-size:9px;color:var(--t3);font-variant-numeric:tabular-nums}
+.ecm-why{margin-top:9px;padding-top:8px;border-top:1px solid var(--b1);
+  font-size:9px;line-height:1.65;color:var(--t3)}
+.ecm-na{font-size:10.5px;line-height:1.6;color:var(--t3);padding:4px 0}
+/* the hand-entry form */
+.myev-f{display:grid;grid-template-columns:1.6fr 1fr .8fr .8fr 1.1fr auto;gap:6px;align-items:center}
+@media(max-width:1000px){.myev-f{grid-template-columns:1fr 1fr}}
+.myev-f input,.myev-f select{font-size:11px;padding:6px 8px}
+.myev-l{margin-top:9px;display:grid;gap:3px}
+.myev-r{display:grid;grid-template-columns:1fr 116px 62px 96px 20px;gap:7px;align-items:baseline;
+  padding:6px 8px;border-radius:7px;background:rgba(255,255,255,.02);font-size:10px;
+  animation:stIn .3s cubic-bezier(.22,1,.36,1) both}
+@media(max-width:1000px){.myev-r{grid-template-columns:1fr auto}.myev-r em,.myev-r s{display:none}}
+.myev-r b{font-weight:700;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.myev-r i{font-style:normal;color:var(--t2);font-variant-numeric:tabular-nums}
+.myev-r em{font-style:normal;font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--t3)}
+.myev-r s{text-decoration:none;font-size:9px;color:var(--p3);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.myev-x{background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1;
+  padding:0;transition:color .15s}
+.myev-x:hover{color:#F87171}
 
 /* ══ THE WEEK GRID ══ */
 .wkgrid{margin-top:4px;border-radius:11px;border:1px solid var(--b1);
@@ -5607,7 +5655,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b46</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b47</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -21516,6 +21564,8 @@ function buildEconEvents(){
       fc:'—',impact:'High'});
   });
 
+  /* what a rule cannot produce, the reader supplies */
+  try{ out=out.concat(myEvEvents()); }catch(e){}
   out=out.filter(function(e){return e.d>now;}).sort(function(a,b){return a.d-b.d;});
   /* the previous print comes from the live macro chain, never from a literal */
   out.forEach(function(e){
@@ -21524,6 +21574,232 @@ function buildEconEvents(){
   });
   return out;
 }
+/* ══════════════════════════════════════════════════════════════════════
+   EVENTS YOU ENTER YOURSELF
+
+   The calendar here derives four things from rules: payrolls, CPI, PPI and
+   the published FOMC dates. That is everything a rule can honestly produce
+   and it is nowhere near a real diary — a Jackson Hole symposium, a Fed
+   chair speaking, a benchmark payrolls revision have no rule at all, and
+   none of them appear.
+
+   The right fix is a live calendar feed. FMP publishes one and its key is
+   already wired here, but every endpoint on that key currently answers
+   "Limit Reach", including ones the app already depends on — so the feed
+   cannot be relied on, and inventing dates to fill the gap is exactly what
+   this calendar was rebuilt to stop doing.
+
+   So they are entered by hand, kept in local storage, synced with the rest,
+   and marked "yours" so nothing typed in is ever mistaken for something
+   derived or fetched.
+   ══════════════════════════════════════════════════════════════════════ */
+var MYEV_KEY='ca_events';
+function myEvLoad(){
+  try{ var a=JSON.parse(localStorage.getItem(MYEV_KEY)||'[]'); return Array.isArray(a)?a:[]; }
+  catch(e){ return []; }
+}
+function myEvSave(a){ try{ localStorage.setItem(MYEV_KEY,JSON.stringify(a)); }catch(e){} }
+function myEvAdd(){
+  var t=(document.getElementById('ev_t')||{}).value||'';
+  var d=(document.getElementById('ev_d')||{}).value||'';
+  var tm=(document.getElementById('ev_tm')||{}).value||'';
+  var im=(document.getElementById('ev_i')||{}).value||'High';
+  var af=(document.getElementById('ev_a')||{}).value||'';
+  t=t.trim();
+  if(!t||!d){ notify('A title and a date are needed','info'); return; }
+  var A=myEvLoad();
+  A.push({t:t,d:d,tm:tm||'00:00',i:im,a:af.trim(),id:Date.now()});
+  myEvSave(A);
+  ['ev_t','ev_a'].forEach(function(id){ var e=document.getElementById(id); if(e)e.value=''; });
+  try{ renderEconCal(); }catch(e){}
+  notify('Added — '+t,'info');
+}
+function myEvDel(id){
+  myEvSave(myEvLoad().filter(function(x){ return String(x.id)!==String(id); }));
+  try{ renderEconCal(); }catch(e){}
+}
+/* merged into the calendar as real rows, tagged so their origin is obvious */
+function myEvEvents(){
+  var now=new Date();
+  return myEvLoad().map(function(x){
+    var p=(x.d||'').split('-'), tm=(x.tm||'00:00').split(':');
+    var d=new Date(+p[0],(+p[1]||1)-1,+p[2]||1,+tm[0]||0,+tm[1]||0,0,0);
+    return{t:x.t,d:d,prec:'yours',note:'Entered by you.'+(x.a?' Watching: '+x.a:''),
+           fc:'—',impact:x.i||'High',mine:true,id:x.id,affects:x.a||''};
+  }).filter(function(e){ return !isNaN(e.d)&&e.d>now; });
+}
+function myEvHtml(){
+  var A=myEvLoad().slice().sort(function(a,b){ return (a.d+a.tm)<(b.d+b.tm)?-1:1; });
+  var h='<div class="myev">'
+    +'<div class="myev-f">'
+      +'<input id="ev_t" type="text" placeholder="Fed Chair speaks, Jackson Hole&hellip;">'
+      +'<input id="ev_d" type="date">'
+      +'<input id="ev_tm" type="time">'
+      +'<select id="ev_i"><option>High</option><option>Medium</option><option>Low</option></select>'
+      +'<input id="ev_a" type="text" placeholder="affects: XAU, DXY">'
+      +'<button class="btn btn-a btn-sm" onclick="myEvAdd()">Add</button>'
+    +'</div>';
+  h+=A.length
+    ? '<div class="myev-l">'+A.map(function(x){
+        return '<div class="myev-r"><b>'+escHtml(x.t)+'</b>'
+          +'<i>'+escHtml(x.d)+(x.tm&&x.tm!=='00:00'?' '+escHtml(x.tm):'')+'</i>'
+          +'<em>'+escHtml(x.i||'')+'</em>'
+          +(x.a?'<s>'+escHtml(x.a)+'</s>':'<s></s>')
+          +'<button class="myev-x" onclick="myEvDel('+x.id+')" title="remove">&times;</button>'
+        +'</div>'; }).join('')+'</div>'
+    : '<div class="ecm-na">Nothing added. A live calendar feed would fill this automatically; '
+      +'the one wired here is out of quota, so anything it cannot derive from a rule goes in by hand.</div>';
+  return h+'</div>';
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   WHAT THE NEWS ACTUALLY DID — an event study, not a table of opinions
+
+   Asked for: which asset moves on this release, and which way. Every app
+   answers that with a lookup table — "NFP beat = dollar up = gold down" —
+   which is an assertion nobody has checked and which is wrong often enough
+   to lose money on.
+
+   This measures instead. Take the release dates the rule actually produces,
+   find those bars in the loaded history, and report what the asset did:
+   how big the move was in ATR, how often it went each way, and over how
+   many events. If the sample is small it says so rather than dressing three
+   observations up as a tendency.
+
+   ONLY WHERE THE DATE IS DERIVABLE. Non-Farm Payrolls is the first Friday
+   of the month — a real published rule that holds historically, so its past
+   dates can be reconstructed exactly. CPI and PPI have no day-of-month rule
+   at all; their historical dates cannot be derived, so they are not studied
+   and the panel says why rather than studying the wrong days. FOMC is
+   studied only over the meeting dates actually published here.
+   ══════════════════════════════════════════════════════════════════════ */
+function econFirstFridays(rows){
+  var out={}, seen={};
+  rows.forEach(function(r){
+    var d=r.t!=null?new Date(+r.t):new Date(r.date||r.time);
+    if(isNaN(d))return;
+    var key=d.getUTCFullYear()+'-'+d.getUTCMonth();
+    if(seen[key])return;
+    if(d.getUTCDay()===5){ seen[key]=1; out[d.toISOString().slice(0,10)]=1; }
+  });
+  return out;
+}
+/* the move on the event bar, measured in ATR so it means the same on any
+   instrument, plus the follow-through on the next bar */
+function econStudy(rows,dateSet){
+  if(!rows||rows.length<40)return{n:0,why:'needs at least 40 bars'};
+  var a=null; try{ a=CQE.atr(rows,14); }catch(e){}
+  if(!(a>0))return{n:0,why:'no ATR to scale the move against'};
+  var hits=[];
+  for(var i=1;i<rows.length;i++){
+    var d=rows[i].t!=null?new Date(+rows[i].t):new Date(rows[i].date||rows[i].time);
+    if(isNaN(d))continue;
+    var k=d.toISOString().slice(0,10);
+    if(!dateSet[k])continue;
+    var o=+rows[i].open, c=+rows[i].close, h=+rows[i].high, l=+rows[i].low;
+    if(!isFinite(o)||!isFinite(c))continue;
+    var nxt=(i+1<rows.length)?(+rows[i+1].close-c)/a:null;
+    hits.push({date:k, day:(c-o)/a, range:(h-l)/a, next:nxt});
+  }
+  if(!hits.length)return{n:0,why:'no release date falls inside the loaded history'};
+  function med(arr){ var s=arr.slice().sort(function(x,y){return x-y;});
+    var m=s.length>>1; return s.length%2?s[m]:(s[m-1]+s[m])/2; }
+  var days=hits.map(function(x){return x.day;});
+  var up=days.filter(function(v){return v>0;}).length;
+  var ranges=hits.map(function(x){return x.range;});
+  var nexts=hits.filter(function(x){return x.next!=null;}).map(function(x){return x.next;});
+  /* the ordinary day, for comparison — an event day that moves like every
+     other day is not an event as far as this instrument is concerned */
+  var allR=[];
+  for(var j=1;j<rows.length;j++){
+    var hh=+rows[j].high, ll=+rows[j].low;
+    if(isFinite(hh)&&isFinite(ll))allR.push((hh-ll)/a);
+  }
+  return{
+    n:hits.length,
+    medDay:med(days), medRange:med(ranges), medNormalRange:med(allR),
+    upPct:Math.round(up/hits.length*100),
+    medNext:nexts.length?med(nexts):null,
+    bigger:med(ranges)/med(allR),
+    last:hits.slice(-3).reverse()
+  };
+}
+/* one line a reader can act on, or an honest refusal */
+function econImpactHtml(){
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
+  var asset=((typeof _lastAsset!=='undefined'&&_lastAsset)||'this asset').toUpperCase();
+  if(rows.length<60)
+    return '<div class="ecm-na">Load an asset with daily history and this measures what it '
+      +'actually did on past releases.</div>';
+  var ff=econFirstFridays(rows);
+  var S=econStudy(rows,ff);
+  /* THE DOLLAR IS THE HALF THAT ACTUALLY MOVES.
+     Asked for explicitly: the bias on the dollar as well as on the metal.
+     They are not the same answer and putting them side by side is the point
+     — measured over 25 payrolls days the dollar proxy closed up on 68% of
+     them at a median +0.23 ATR, while spot gold was a 48% coin flip. A
+     table that called payrolls "gold-bearish" would have been wrong about
+     the metal and would have missed the leg that was actually tradeable. */
+  var D=null, dLabel='';
+  try{
+    var dc=CQE_XM_CACHE&&CQE_XM_CACHE.dollar;
+    if(dc&&dc.rows&&dc.rows.length>60){ D=econStudy(dc.rows,econFirstFridays(dc.rows));
+      dLabel=String(dc.label||'Dollar').split('(')[0].trim(); }
+  }catch(e){}
+  var h='<div class="ecm">';
+  h+='<div class="ecm-h">What payrolls day has done to '+escHtml(asset)
+    +'<b>'+(S.n?S.n+' events':'no sample')+'</b></div>';
+  if(D&&D.n){
+    var dDir=D.medDay>0.05?'up':D.medDay<-0.05?'down':'nowhere';
+    h+='<div class="ecm-pair">'
+      +'<div class="ecm-side"><i>'+escHtml(asset)+'</i>'
+        +'<b>'+(S.n?(S.medDay>=0?'+':'')+S.medDay.toFixed(2)+' ATR':'—')+'</b>'
+        +'<s>'+(S.n?S.upPct+'% closed higher':'no sample')+'</s></div>'
+      +'<div class="ecm-side"><i>'+escHtml(dLabel||'Dollar')+'</i>'
+        +'<b>'+(D.medDay>=0?'+':'')+D.medDay.toFixed(2)+' ATR</b>'
+        +'<s>'+D.upPct+'% closed higher</s></div>'
+    +'</div>'
+    +'<div class="ecm-l">The dollar has gone '+dDir+' on payrolls day, a median of '
+      +(D.medDay>=0?'+':'')+D.medDay.toFixed(2)+' ATR across '+D.n+' of them, closing higher '
+      +D.upPct+'% of the time'+(D.bigger>=1.15?' and ranging '+D.bigger.toFixed(2)
+      +' times a normal day':'')+'.</div>';
+  }
+  if(!S.n){
+    h+='<div class="ecm-na">'+escHtml(S.why)+'.</div>';
+  }else{
+    var dir=S.medDay>0.05?'up':S.medDay<-0.05?'down':'nowhere';
+    h+='<div class="ecm-l">On the first Friday of the month '+escHtml(asset)+' has closed '
+      +escHtml(dir)+' from its open, a median of '+(S.medDay>=0?'+':'')+S.medDay.toFixed(2)
+      +' ATR, and finished higher on '+S.upPct+'% of them.</div>';
+    h+='<div class="ecm-rows">'
+      +'<div class="ecm-r"><i>Median move</i><b>'+(S.medDay>=0?'+':'')+S.medDay.toFixed(2)+' ATR</b></div>'
+      +'<div class="ecm-r"><i>Closed higher</i><b>'+S.upPct+'%</b></div>'
+      +'<div class="ecm-r"><i>Range vs a normal day</i><b>'+S.bigger.toFixed(2)+'×</b></div>'
+      +(S.medNext!=null?'<div class="ecm-r"><i>Next day</i><b>'
+        +(S.medNext>=0?'+':'')+S.medNext.toFixed(2)+' ATR</b></div>':'')
+      +'</div>';
+    /* a coin flip is the honest reading of 50%, and a sample under ten is not
+       a tendency however clean the median looks */
+    var weak=(S.upPct>=40&&S.upPct<=60)||S.n<10;
+    h+='<div class="ecm-note">'
+      +(S.n<10?'Only '+S.n+' events in the loaded history — too few to lean on. ':'')
+      +(S.upPct>=40&&S.upPct<=60?'The direction is a coin flip on this sample; the range is the '
+        +'part worth knowing. ':'')
+      +(S.bigger>=1.2?'The day does range '+S.bigger.toFixed(2)+' times a normal one, so the '
+        +'stop has to be sized for it.':'The day does not range more than a normal one on this '
+        +'instrument, which is itself worth knowing.')
+      +'</div>';
+    if(S.last&&S.last.length)
+      h+='<div class="ecm-last">Last: '+S.last.map(function(x){
+        return x.date+' '+(x.day>=0?'+':'')+x.day.toFixed(2)+' ATR'; }).join(' &middot; ')+'</div>';
+  }
+  h+='<div class="ecm-why">Measured on the bars actually loaded, not asserted. '
+    +'Only payrolls is studied: the first Friday is a real published rule, so its past dates can '
+    +'be reconstructed. CPI and PPI have no day-of-month rule, so their historical dates cannot '
+    +'be derived and studying the wrong days would be worse than saying nothing.</div>';
+  return h+'</div>';
+}
+
 /* how the date should be spoken, given how it was obtained */
 function econWhen(e){
   if(!e)return '—';
@@ -21535,7 +21811,8 @@ function econWhen(e){
 function econPrecLabel(e){
   return e&&e.prec==='scheduled'?'scheduled'
        : e&&e.prec==='rule'?'by rule'
-       : e&&e.prec==='window'?'estimated window':'';
+       : e&&e.prec==='window'?'estimated window'
+       : e&&e.prec==='yours'?'yours':'';
 }
 function fmtCountdown(ms){
   if(ms<0)ms=0;
@@ -23043,10 +23320,18 @@ function renderSentiment(){
       var tc=e.impact==='High'?'tr':e.impact==='Medium'?'ta':'td';
       var days=Math.ceil((e.d-new Date())/86400000);
       return '<div class="br" style="align-items:center;padding:11px 0">'
-        +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--tw);font-weight:600;margin-bottom:3px">'+e.t+'</div>'
-        +'<div style="font-size:10px;color:var(--tm)">'+econWhen(e)+' · '+econPrecLabel(e)+' · in '+(days<=0?'today':days+'d')+'</div></div>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--tw);font-weight:600;margin-bottom:3px">'+escHtml(e.t)
+          +(e.mine?' <span class="ec-mine">yours</span>':'')+'</div>'
+        +'<div style="font-size:10px;color:var(--tm)">'+econWhen(e)+' · '+econPrecLabel(e)+' · in '+(days<=0?'today':days+'d')
+          +(e.affects?' · watching '+escHtml(e.affects):'')+'</div></div>'
         +'<span class="tag '+tc+'" style="margin-left:10px;flex-shrink:0">'+e.impact+'</span></div>';
     }).join('');
+    /* the two questions the list itself could not answer: what did this
+       actually do last time, and where do the events a rule cannot reach go */
+    cal.insertAdjacentHTML('beforeend',
+      '<div class="ec-split">'+econImpactHtml()+'</div>'
+      +'<div class="ec-split"><div class="ecm-h">Events you add yourself'
+        +'<b>no feed available</b></div>'+myEvHtml()+'</div>');
   }
   /* market mood from astro bias engine */
   try{
