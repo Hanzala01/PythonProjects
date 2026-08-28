@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b44 — Precision in Timing</title>
+<title>Celestial Alpha b45 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2228,6 +2228,34 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   #cmdk,.cmd-box,.cmd-r,.sk-l{animation:none!important}
   .pane>*{animation:none!important}
 }
+
+/* ══ THE WEEK GRID ══ */
+.wkgrid{margin-top:4px;border-radius:11px;border:1px solid var(--b1);
+  background:rgba(9,5,26,.32);padding:9px 11px;overflow:hidden}
+.wk-head,.wk-row{display:grid;grid-template-columns:42px 1fr 24px;gap:8px;align-items:center}
+.wk-head{height:14px;margin-bottom:4px}
+.wk-head .wk-cells{position:relative;height:100%}
+.wk-head span[style]{position:absolute;top:0;font-size:8px;color:var(--t3);transform:translateX(-50%)}
+.wk-head .wk-d,.wk-head .wk-n{font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.wk-row{height:17px}
+.wk-row.today .wk-d{color:var(--p3);font-weight:800}
+.wk-d{font-size:9px;color:var(--t3);letter-spacing:.03em}
+.wk-n{font-size:9px;color:var(--t3);text-align:right;font-variant-numeric:tabular-nums}
+.wk-cells{display:grid;grid-template-columns:repeat(24,1fr);gap:1.5px;height:11px}
+.wk-c{border-radius:2px;background:rgba(255,255,255,.045);
+  animation:wkIn .3s cubic-bezier(.22,1,.36,1) both;transition:transform .12s}
+@keyframes wkIn{from{opacity:0;transform:scaleY(.3)}to{opacity:1;transform:none}}
+.wk-c:hover{transform:scaleY(1.5)}
+.wk-c.n{background:rgba(255,255,255,.025)}
+.wk-c.r1{background:rgba(52,211,153,.32)}
+.wk-c.r2{background:rgba(52,211,153,.78);box-shadow:0 0 5px rgba(52,211,153,.4)}
+.wk-c.live{outline:1.5px solid #E9DEFC;outline-offset:1px}
+.wk-note{margin-top:7px;font-size:9px;line-height:1.6;color:var(--t3)}
+
+/* the scanner's new rows */
+.scn-n.fan i,.scn-n.cvg i{color:var(--p3)}
+.scn-n.fan.hot,.scn-n.cvg.hot{color:#34D399}
+.scn-n.fan.hot i,.scn-n.cvg.hot i{color:#34D399}
 
 .hz{display:grid;gap:6px}
 .hz-r{display:grid;grid-template-columns:118px 62px 1fr;gap:9px;align-items:start;
@@ -5503,7 +5531,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b44</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b45</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -9296,7 +9324,23 @@ function scanOne(name,cb){
       }catch(e){ C=null; }
       var H=C&&C.hypotheses&&C.hypotheses[0];
       var rev=C&&C.hypotheses&&C.hypotheses[2];
+      /* THE SCAN WAS RUNNING THE OLD HALF OF THE ENGINE ONLY.
+         The fan, the convergence read and the reversal chain were all built
+         after this function and none of them reached it, so the one screen
+         whose whole purpose is "which instrument is closest to something"
+         could not see the two readings that answer it. */
+      var fan=C&&C.fan, fanNear=fan&&fan.lines&&fan.lines[0]||null;
+      var cvg=null; try{ cvg=convergence(C); }catch(e){}
       cb({a:name,px:px,conf:sig?sig.conf:0,style:sig?sig.style:null,
+          fanRatio:fanNear?fanNear.ratio:null,
+          fanPrice:fanNear?fanNear.lineNow:null,
+          fanATR:fanNear?fanNear.gapATR:null,
+          fanTouch:!!(fan&&fan.touching&&fan.touching.length),
+          fanMeetIn:fanNear?fanNear.meetInBars:null,
+          fanMeetPx:fanNear?fanNear.meetPrice:null,
+          cvgHits:cvg&&cvg.hits!=null?cvg.hits:null,
+          cvgState:cvg?cvg.state:null,
+          cvgLine:cvg?cvg.line:null,
           bull:sig?sig.isBull:null,entry:sig?sig.entry:null,sl:sig?sig.sl:null,
           tp:sig?sig.tp:null,rr:sig?sig.rr:null,trend:tr?tr.label:'—',
           dp:px<10?4:2,
@@ -9344,8 +9388,21 @@ function scanRender(){
      one of them has something to show: which way, from where, to where, and
      what would prove it wrong. The core score orders them. A bar is still
      drawn on each card so a 70 does not read like a 40. */
+  /* RANKED BY HOW CLOSE IT IS, NOT BY HOW GOOD IT LOOKS.
+     The core score orders instruments by the strength of the case. That is
+     the wrong question for a watchlist: what a reader wants first is the one
+     about to do something. A fan touch outranks everything, then the
+     convergence count, then proximity to a line, then the core. */
+  function rank(x){
+    var r=0;
+    if(x.fanTouch)r+=1000;
+    r+=(x.cvgHits||0)*120;
+    if(x.fanATR!=null)r+=Math.max(0,60-Math.min(60,x.fanATR*20));
+    r+=(x.core||0)*0.5;
+    return r;
+  }
   var ok=SCAN.filter(function(x){return !x.err&&x.hyp;})
-             .sort(function(a,b){return (b.core||0)-(a.core||0);});
+             .sort(function(a,b){return rank(b)-rank(a);});
   var thin=SCAN.filter(function(x){return !x.err&&!x.hyp;});
   var bad=SCAN.filter(function(x){return x.err;});
   var watch=ok.filter(function(x){return x.revWatch;});
@@ -9357,7 +9414,7 @@ function scanRender(){
           :'Nothing scanned yet'))+'</b>'
       +'<span>'+escHtml(SCAN_BUSY?SCAN_AT:(SCAN.length
           ?'as of '+SCAN_AT+(watch.length?' · '+watch.length+' with a reversal window open':'')
-          :'five engines on every instrument — ranked by the measured case'))+'</span>'
+          :'every engine on every instrument — ranked by which is closest to firing'))+'</span>'
       +'<button class="btn btn-a btn-sm" '+(SCAN_BUSY?'disabled':'')+' onclick="scanRun()">'
         +(SCAN.length?'Scan again':'Scan every instrument')+'</button>'
     +'</div>'
@@ -9374,7 +9431,17 @@ function scanRender(){
             +'<div class="scn-n"><i>Stop</i>'+(x.hyp.stop!=null?x.hyp.stop.toFixed(x.dp):'—')+'</div>'
             +'<div class="scn-n"><i>Target</i>'+(x.hyp.tgt!=null?x.hyp.tgt.toFixed(x.dp):'—')+'</div>'
             +'<div class="scn-n"><i>R : R</i>'+(rr?rr.toFixed(2):'—')+'</div>'
+            +(x.fanATR!=null
+              ? '<div class="scn-n fan'+(x.fanTouch?' hot':'')+'"><i>Fan '+escHtml(x.fanRatio||'')+'</i>'
+                +x.fanPrice.toFixed(x.dp)+' · '+x.fanATR.toFixed(2)+' ATR'
+                +(x.fanMeetIn!=null?' · meets in '+x.fanMeetIn+'b':'')+'</div>'
+              : '')
+            +(x.cvgHits!=null
+              ? '<div class="scn-n cvg'+(x.cvgHits>=2?' hot':'')+'"><i>Price · day · hour</i>'
+                +x.cvgHits+' of 3</div>'
+              : '')
             +'<div class="scn-tags">'
+              +(x.fanTouch?'<em class="rev">squaring now</em>':'')
               +(x.wyck&&x.wyck!=='DATA REQUIRED'?'<em>'+escHtml(x.wyck)+'</em>':'<em class="na">no volume</em>')
               +(x.split?'<em class="warn">methods disagree</em>':'')
               +(x.hyp.con?'<em class="warn">'+x.hyp.con+' against</em>':'')
@@ -12227,8 +12294,10 @@ function selfTestRun(btn){
    Two of three is the interesting case and it is named rather than rounded
    up to a yes.
    ══════════════════════════════════════════════════════════════════════ */
-function convergence(){
-  var C=window.CQE_LAST;
+/* takes an engine result so the scanner can ask it per instrument; falls back
+   to the live board when called with nothing, which is every existing caller */
+function convergence(Cin){
+  var C=Cin||window.CQE_LAST;
   if(!C||!C.gann)return{state:'na',
     why:'The five methods have not finished. Nothing can be joined yet.'};
   var price=C.price, atr=C.atr;
@@ -17474,6 +17543,61 @@ function timHoursFor(di,srMin,vib){
   }
   return hours;
 }
+/* ══════════════════════════════════════════════════════════════════════
+   THE WEEK GRID — every window in the next seven days, at once
+
+   The tab answers "is this hour any good" and "which day ahead is best" in
+   two separate places, and a reader planning a week has to hold fourteen
+   day-cards and twenty-four hour-slots in their head to see the shape. It
+   is a grid: seven rows of twenty-four, shaded by whether that hour carries
+   the asset's cycle number. Blocks of lit hours are what you actually sit
+   down for, and in a grid they are visible as blocks rather than as a list
+   of times.
+
+   Nothing new is computed. timHoursFor already answers this for one day;
+   this calls it seven times.
+   ══════════════════════════════════════════════════════════════════════ */
+function timWeekGrid(){
+  var st=null; try{ st=timState(); }catch(e){}
+  if(!st||st.srMin==null)
+    return '<div class="lm-na">Set a sunrise time and the week fills in.</div>';
+  var asset=timAsset(), vib=st.vib;
+  var base=timDate();
+  base=new Date(base.getFullYear(),base.getMonth(),base.getDate(),12,0,0,0);
+  var DAYN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var rows='', best=null;
+  for(var i=0;i<7;i++){
+    var d=new Date(base.getTime()); d.setDate(d.getDate()+i);
+    var di=d.getDay();
+    var hrs=timHoursFor(di,st.srMin,vib);
+    var lit=hrs.filter(function(x){return x.rank>0;}).length;
+    var strong=hrs.filter(function(x){return x.rank===2;}).length;
+    if(!best||strong>best.strong)best={d:d,strong:strong,i:i};
+    var cells=hrs.map(function(x,j){
+      var live=(i===0&&st.live===x.h);
+      return '<div class="wk-c r'+x.rank+(live?' live':'')+(x.night?' n':'')+'" '
+        +'style="animation-delay:'+((i*24+j)*0.004).toFixed(3)+'s" '
+        +'title="'+escHtml(DAYN[di]+' · hour '+x.h+' · '+x.name+' · '+fmtT(x.start)+'–'+fmtT(x.end)
+          +' · '+(x.rank===2?'carries #'+vib:x.rank===1?'supports #'+vib:'not this cycle'))+'"></div>';
+    }).join('');
+    rows+='<div class="wk-row'+(i===0?' today':'')+'">'
+      +'<span class="wk-d">'+(i===0?'today':DAYN[di])+'</span>'
+      +'<div class="wk-cells">'+cells+'</div>'
+      +'<span class="wk-n">'+lit+'</span></div>';
+  }
+  var head='<div class="wk-head"><span class="wk-d"></span>'
+    +'<div class="wk-cells">'+[0,6,12,18].map(function(h){
+        return '<span style="left:'+(h/24*100).toFixed(2)+'%">'
+          +fmtT(st.srMin+h*60).slice(0,5)+'</span>'; }).join('')+'</div>'
+    +'<span class="wk-n">lit</span></div>';
+  var note='<div class="wk-note">Shaded where the planetary hour carries cycle #'+vib
+    +' for '+escHtml(asset)+' — dark green is the number itself, pale is a supporting one. '
+    +'The columns run from sunrise, not from midnight, because the planetary day does.'
+    +(best?' Most windows this week: '+DAYN[best.d.getDay()]
+       +' with '+best.strong+' direct hour'+(best.strong===1?'':'s')+'.':'')+'</div>';
+  return '<div class="wkgrid">'+head+rows+'</div>'+note;
+}
+
 /* consecutive ranked hours are one window, not three — you sit down once */
 function timBlocks(hours){
   var out=[],cur=null;
@@ -18303,6 +18427,9 @@ function renderTiming(){
       }).join('')
    +'</div>'
    +timSkyStrip()
+   /* the whole week's windows as one shape, rather than fourteen day-cards */
+   +'<div class="a-sub">The week ahead, hour by hour</div>'
+   +timWeekGrid()
    +timDirHtml(st)
    +timTradePlan(st)
    +timTodayHtml(st)
