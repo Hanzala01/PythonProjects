@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b51 — Precision in Timing</title>
+<title>Celestial Alpha b52 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2429,6 +2429,47 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .fn-g,.fn-a{display:none}}
 @media(prefers-reduced-motion:reduce){.hz-r,.fn-r,.hz-tag.fired,.al-dot.on{animation:none!important}}
 
+/* ══ THE MAJOR LEVEL STACK ══ */
+.mstack{margin-top:2px}
+.ms-pair{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:760px){.ms-pair{grid-template-columns:1fr}}
+.ms-side{padding:10px 12px;border-radius:11px;border:1px solid var(--b1);
+  background:linear-gradient(155deg,rgba(139,92,246,.07),rgba(9,5,26,.4))}
+.ms-side.hi{border-color:rgba(248,113,113,.26)}
+.ms-side.lo{border-color:rgba(52,211,153,.26)}
+.ms-side u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--t3)}
+.ms-x{font-size:9px;color:var(--t3);margin-top:3px;opacity:.85;font-variant-numeric:tabular-nums}
+.ms-side b{display:block;font-family:'Space Grotesk';font-size:20px;font-weight:800;
+  color:var(--t1);margin:3px 0 2px;font-variant-numeric:tabular-nums;
+  animation:stPop .45s cubic-bezier(.22,1,.36,1) both}
+.ms-side s{display:block;text-decoration:none;font-size:9.5px;line-height:1.5;color:var(--t2)}
+.ms-live{margin-top:10px;padding:9px 11px;border-radius:9px;font-size:11px;line-height:1.55;
+  background:rgba(139,92,246,.1);border:1px solid rgba(157,77,255,.28);color:var(--t2)}
+.ms-live b{font-family:'Space Grotesk';font-size:13px;color:var(--t1)}
+.ms-rows{margin-top:9px;display:grid;gap:3px}
+.ms-r{display:grid;grid-template-columns:64px 92px 1fr;gap:8px;align-items:baseline;
+  padding:6px 9px;border-radius:8px;font-size:10px;border:1px solid transparent;
+  animation:stIn .32s cubic-bezier(.22,1,.36,1) both}
+.ms-r.yes{border-color:rgba(52,211,153,.28);background:rgba(52,211,153,.06)}
+.ms-r.no{border-color:rgba(248,113,113,.22);background:rgba(248,113,113,.04)}
+.ms-r i{font-style:normal;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.ms-r b{font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.ms-r s{text-decoration:none;color:var(--t3);line-height:1.45}
+.ms-note{margin-top:9px;font-size:9px;line-height:1.65;color:var(--t3)}
+@media(max-width:760px){.ms-r{grid-template-columns:60px 1fr}.ms-r s{grid-column:1/-1}}
+
+/* ══ IN PLAIN WORDS ══ */
+.plain{display:grid;gap:8px}
+.pl-r{padding:11px 13px;border-radius:11px;border:1px solid var(--b1);
+  background:linear-gradient(150deg,rgba(139,92,246,.06),rgba(9,5,26,.35));
+  animation:stIn .38s cubic-bezier(.22,1,.36,1) both}
+.pl-r b{display:block;font-family:'Space Grotesk';font-size:9.5px;font-weight:800;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--p3);margin-bottom:4px}
+.pl-r p{margin:0;font-size:12px;line-height:1.65;color:var(--t1)}
+.pl-note{margin-top:4px;font-size:9px;line-height:1.6;color:var(--t3)}
+@media(prefers-reduced-motion:reduce){.pl-r,.ms-r,.ms-side b{animation:none!important}}
+
 /* the currency tag and impact dot, the way a calendar reads */
 .evc-cur{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.06em;
   padding:1px 6px;border-radius:4px;margin-right:6px;vertical-align:middle;
@@ -2713,7 +2754,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    fixed width any more. */
 .vp-body{grid-template-columns:1fr!important;gap:12px!important}
 .vp-hist{max-height:none}
-.vp-row{height:6px}
+.vp-row{height:5px}
 .vp-levels{max-height:none;overflow:visible;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
   display:grid;gap:8px}
 .vp-l{grid-template-columns:1fr auto!important;gap:4px 10px!important;padding-bottom:6px}
@@ -2878,7 +2919,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .vp-body{display:grid;grid-template-columns:minmax(180px,300px) 1fr;gap:20px;margin-top:12px;
   align-items:start}
 .vp-hist{display:flex;flex-direction:column;gap:1px}
-.vp-row{height:10px;display:flex;align-items:center;position:relative}
+.vp-row{height:7px;display:flex;align-items:center;position:relative}
 /* out-of-value bars sit well back, so the edge of the value area is visible
    without having to read the numbers beside it */
 .vp-b{display:block;height:100%;border-radius:0 2px 2px 0;background:rgba(127,96,191,.22)}
@@ -5698,7 +5739,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b51</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b52</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -11925,6 +11966,263 @@ function horizonsHtml(dp){
 }
 
 /* ══════════════════════════════════════════════════════════════════════
+   IN PLAIN WORDS — the whole board, said back in sentences
+
+   Asked for as the last thing on the tab: everything above, explained
+   simply. Not a summary written once and left to drift — every sentence is
+   built from the same values the panels above are drawing, so it cannot
+   say something the board is not showing.
+   ══════════════════════════════════════════════════════════════════════ */
+function plainWordsHtml(price,dp,asset){
+  dp=dp||2; asset=String(asset||'this asset').toUpperCase();
+  var C=window.CQE_LAST, S=window._lastSig, B=window._lastBias||{};
+  var P=[];
+  function say(k,t){ P.push({k:k,t:t}); }
+
+  /* 1 · the lean */
+  var cb=B.combined;
+  say('The bias', cb
+    ? 'Today '+asset+' leans '+String(cb.label||'').toLowerCase()+' at '+cb.bull+'% — '
+      +(cb.strength==='WEAK'?'weakly, which is close to nothing at all'
+       :cb.strength==='MODERATE'?'moderately'
+       :'strongly')+'. '+(cb.agree&&cb.agree!=='—'?cb.agree+'.':'')
+    : 'No bias yet — run an analysis and the meters fill in.');
+
+  /* 2 · the setup */
+  if(S&&S.style){
+    var G=null; try{ G=sigGate(S); }catch(e){}
+    say('The setup', (S.isBull?'A buy':'A sell')+' is on the table: get in near '
+      +tcFmt(S.entry,dp)+', out at '+tcFmt(S.sl,dp)+' if it is wrong, aiming for '
+      +tcFmt(S.tp,dp)+'. That is '+S.rr+' to 1. '
+      +(G&&G.state==='wait'
+        ? 'It is being held back — '+(G.waitFor||'the checks have not passed')
+        : G&&G.hits!=null
+          ? G.hits+' of '+G.of+' checks pass.'
+          : ''));
+  }else say('The setup','Nothing qualifies right now'
+    +(S&&S.reason?' — '+S.reason:'')+'.');
+
+  /* 3 · how much agrees */
+  if(C&&C.gates&&C.gates.which){
+    var W=C.gates.which, votes=(W.votes||[]).length;
+    var agree=W.agreement!=null?Math.round(W.agreement*100):null;
+    say('How much agrees', votes
+      ? votes+' methods read direction. They come out '+String(W.direction||'').toLowerCase()
+        +' at '+(W.score!=null?W.score:'—')+' out of 100'
+        +(agree!=null?', and they agree with each other '+agree+'% of the way'
+          +(agree<40?' — which is a split board, not a weak trend':''):'')+'.'
+      : 'Not enough loaded to score direction yet.');
+  }
+
+  /* 4 · the major level */
+  try{
+    var M=majorPair((typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||[],price);
+    if(M.level)
+      say('The level that matters','The line to watch is '+tcFmt(M.level.v.px,dp)+' — the second '
+        +(M.level.side==='high'?'high':'low')+', not the extreme at '
+        +tcFmt((M.level.side==='high'?M.topH:M.bottomL).px,dp)+'. '
+        +'The extreme is where price already failed; this is where it was defended.');
+  }catch(e){}
+
+  /* 5 · price and time */
+  try{
+    var O=convergence();
+    if(O&&O.state!=='na')
+      say('Price and time', O.line+' '
+        +(O.hits===3?'That is the rare one — about a session in forty.'
+         :'Price and day land together on about one session in forty, so most days this reads no.'));
+  }catch(e){}
+
+  /* 6 · what is in the way */
+  try{
+    var N=noiseReport();
+    if(N&&!N.clean&&N.items.length){
+      var bad=N.items.filter(function(x){return x.sev===2;});
+      say('What is in the way', (bad.length?bad.length+' serious ':'')+
+        N.items.length+' thing'+(N.items.length===1?'':'s')+' are degrading this read'
+        +(bad.length?', worst first: '+bad[0].k.toLowerCase():'')+'. '
+        +'Nothing here is broken — it is a narrower reading than it looks.');
+    }else if(N&&N.clean)
+      say('What is in the way','Nothing. Every engine has its inputs and nothing was repaired.');
+  }catch(e){}
+
+  var h='<div class="plain">';
+  P.forEach(function(x,i){
+    h+='<div class="pl-r" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'
+      +'<b>'+escHtml(x.k)+'</b><p>'+escHtml(x.t)+'</p></div>';
+  });
+  h+='<div class="pl-note">Every sentence here is built from the same numbers the panels above '
+    +'are drawing. If one of them disagrees with a panel, the panel is right and this is a bug.'
+  +'</div></div>';
+  return h;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE MAJOR LEVEL — the SECOND high, not the highest
+
+   Given as a rule with a worked example, so it is written down here exactly
+   as it was given:
+
+     "major level tops se second ya top lena kabhi same as low"
+     XAU: 5597 is the extreme high. The second high after it is 5421 —
+          that is the level.
+     XAU: 3942 is the extreme low. The one above it is 3991 —
+          that is the level.
+
+   The reasoning holds up. The extreme is where price already went and
+   failed; it is a record, not a level anyone defends. The second high is
+   where sellers actually stood their ground and it is the price that has to
+   break before the extreme is even in play. Same on the floor.
+
+   Everything downstream then hangs off it: the volume-profile level nearest
+   to it, the sigma band it sits in, the wave it belongs to, and finally a
+   confirmation — divergence, or a cycle date landing on it.
+   ══════════════════════════════════════════════════════════════════════ */
+function majorPair(rows,price){
+  var out={topH:null,secondH:null,bottomL:null,secondL:null,required:[]};
+  if(!rows||rows.length<60){ out.required.push('at least 60 bars'); return out; }
+  var pv=null;
+  try{ pv=CQE.pivots(CQE.scrubTicks(rows).rows||rows,{}); }catch(e){}
+  if(!pv||pv.length<4){
+    try{ pv=swingPoints(rows,3); }catch(e2){}
+    if(pv&&pv.hi){ /* swingPoints shape → pivot shape */
+      var conv=[];
+      pv.hi.forEach(function(x){ conv.push({px:x.p,kind:'H',i:x.i,date:x.d||null}); });
+      pv.lo.forEach(function(x){ conv.push({px:x.p,kind:'L',i:x.i,date:x.d||null}); });
+      pv=conv;
+    }
+  }
+  if(!pv||!pv.length){ out.required.push('confirmed pivots'); return out; }
+  function dstr(p){
+    if(p.date)return p.date;
+    var r=rows[p.i]; if(!r)return null;
+    var d=r.t!=null?new Date(+r.t):new Date(r.date||r.time);
+    return isNaN(d)?null:d.toISOString().slice(0,10);
+  }
+  var his=pv.filter(function(p){return p.kind==='H';})
+            .sort(function(a,b){return b.px-a.px;});
+  var los=pv.filter(function(p){return p.kind==='L';})
+            .sort(function(a,b){return a.px-b.px;});
+  if(his[0])out.topH={px:his[0].px,date:dstr(his[0])};
+  if(los[0])out.bottomL={px:los[0].px,date:dstr(los[0])};
+  /* the second one has to be a DIFFERENT price, not the same swing counted
+     twice — pivots half a dollar apart are one high, not two */
+  function nextDistinct(arr,firstPx){
+    for(var i=1;i<arr.length;i++){
+      if(Math.abs(arr[i].px-firstPx)/firstPx>0.005)return arr[i];
+    }
+    return null;
+  }
+  if(his.length>1){ var h2=nextDistinct(his,his[0].px);
+    if(h2)out.secondH={px:h2.px,date:dstr(h2)}; }
+  if(los.length>1){ var l2=nextDistinct(los,los[0].px);
+    if(l2)out.secondL={px:l2.px,date:dstr(l2)}; }
+  /* the level in force is the one on the side price is not already past */
+  out.level = (price!=null&&out.secondH&&out.secondL)
+    ? (Math.abs(out.secondH.px-price)<=Math.abs(price-out.secondL.px)
+        ? {side:'high',v:out.secondH} : {side:'low',v:out.secondL})
+    : (out.secondH?{side:'high',v:out.secondH}
+      :out.secondL?{side:'low',v:out.secondL}:null);
+  return out;
+}
+
+/* the major level, and everything that has to line up on it */
+function majorStackHtml(price,dp){
+  dp=dp||2;
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
+  var M=majorPair(rows,price);
+  if(!M.secondH&&!M.secondL)
+    return '<div class="lm-na">No second high or low yet — '
+      +escHtml((M.required[0]||'not enough confirmed swings'))+'.</div>';
+  var C=window.CQE_LAST;
+  var atr=(C&&C.atr)||null;
+
+  function row(lab,v,note,ok){
+    return '<div class="ms-r'+(ok===true?' yes':ok===false?' no':'')+'">'
+      +'<i>'+lab+'</i><b>'+v+'</b><s>'+note+'</s></div>';
+  }
+  var h='<div class="mstack">';
+
+  /* the two extremes and the two levels that come off them */
+  h+='<div class="ms-pair">'
+    +'<div class="ms-side hi"><u>High side</u>'
+      +'<div class="ms-x">extreme '+(M.topH?tcFmt(M.topH.px,dp):'—')
+        +(M.topH&&M.topH.date?' · '+M.topH.date:'')+'</div>'
+      +'<b>'+(M.secondH?tcFmt(M.secondH.px,dp):'—')+'</b>'
+      +'<s>'+(M.secondH?'the second high'+(M.secondH.date?' of '+M.secondH.date:'')
+              +' — this is the level':'no second high yet')+'</s></div>'
+    +'<div class="ms-side lo"><u>Low side</u>'
+      +'<div class="ms-x">extreme '+(M.bottomL?tcFmt(M.bottomL.px,dp):'—')
+        +(M.bottomL&&M.bottomL.date?' · '+M.bottomL.date:'')+'</div>'
+      +'<b>'+(M.secondL?tcFmt(M.secondL.px,dp):'—')+'</b>'
+      +'<s>'+(M.secondL?'the second low'+(M.secondL.date?' of '+M.secondL.date:'')
+              +' — this is the level':'no second low yet')+'</s></div>'
+  +'</div>';
+
+  if(!M.level)return h+'</div>';
+  var L=M.level.v.px, side=M.level.side;
+  h+='<div class="ms-live">In force now: <b>'+tcFmt(L,dp)+'</b> — the second '
+    +(side==='high'?'high':'low')+', '
+    +(atr?(Math.abs(L-price)/atr).toFixed(2)+' ATR ':'')
+    +(L>price?'above':'below')+' price.</div>';
+
+  /* ── what lines up on it ────────────────────────────────────────── */
+  h+='<div class="ms-rows">';
+
+  /* volume profile */
+  var P=null; try{ P=vpBuild(rows,'',VP_WIN,VP_BINS); }catch(e){}
+  if(P&&P.ok){
+    var cand=[{p:P.poc,l:'the busiest price'},
+              {p:P.vah,l:'top of the value area'},
+              {p:P.val,l:'bottom of the value area'}]
+      .filter(function(x){ return isFinite(x.p); })
+      .sort(function(a,b){ return Math.abs(a.p-L)-Math.abs(b.p-L); })[0];
+    if(cand){
+      var d=Math.abs(cand.p-L)/L*100;
+      h+=row('Volume',tcFmt(cand.p,dp),cand.l+' — '+d.toFixed(2)+'% from the level',d<=0.6);
+    }else h+=row('Volume','—','profile has no comparable level',null);
+  }else h+=row('Volume','—',(P&&P.why)||'no profile built',null);
+
+  /* sigma band */
+  if(C&&C.quant&&C.quant.sd&&C.quant.mean!=null&&C.quant.sd>0){
+    var z=Math.abs(Math.log(L/price))/ (C.quant.sd||1);
+    h+=row('Sigma',z.toFixed(2)+'σ',
+      'the level sits '+z.toFixed(2)+' daily sigma from price', z<=3);
+  }else if(C&&C.quant&&C.quant.sigmaBands){
+    h+=row('Sigma','—','bands computed, no comparable z',null);
+  }else h+=row('Sigma','—','statistics not computed',null);
+
+  /* wave */
+  if(C&&C.elliott&&C.elliott.best){
+    var E=C.elliott;
+    h+=row('Wave',(E.best.label||E.best.dir||'count'),
+      'score '+E.score+' — '+(E.best.dir==='up'?'running up':'running down'),
+      E.score>=40);
+  }else h+=row('Wave','—','no valid count',null);
+
+  /* the confirmation: divergence, or a cycle date on it */
+  var dv=C&&C.divergence, tHits=(C&&C.time&&C.time.hits)||[];
+  var tight=tHits.filter(function(x){return x.tolerance>0&&x.error/x.tolerance<=0.10;});
+  var conf=null;
+  if(dv&&dv.score!=null&&dv.coverage>=60&&dv.score>=40)
+    conf={t:'Divergence '+dv.score+'/100',w:'evidence is building against the current leg',ok:true};
+  else if(tight.length)
+    conf={t:tight.length+' cycle count'+(tight.length===1?'':'s')+' today',
+          w:tight[0].name+' from '+tight[0].fromDate,ok:true};
+  else
+    conf={t:'Not yet',
+          w:(dv&&dv.coverage<60)?'divergence cannot be measured at '+dv.coverage+'% coverage'
+            :'no divergence and no cycle date on it',ok:false};
+  h+=row('Confirm',conf.t,conf.w,conf.ok);
+  h+='</div>';
+
+  h+='<div class="ms-note">The level is the second high or low, never the extreme — '
+    +'the extreme is where price already failed, the second one is where it was defended. '
+    +'Everything under it has to agree before the level is worth trading.</div>';
+  return h+'</div>';
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    THE LEVEL MAP — fifteen clusters that were only ever a sentence
 
    The Gann price engine finds every level two or more methods agree on and
@@ -12541,11 +12839,24 @@ function winsPack(root){
       var tallest=null, tallH=0, sumH=0;
       norm.forEach(function(k){ var kh=h[+k.dataset.pkI]||0;
         sumH+=kh; if(kh>tallH){ tallH=kh; tallest=k; } });
+      /* A BLOCK WITH ONE WINDOW HAS AN EMPTY COLUMN BESIDE IT BY DEFINITION.
+         With a section per step several blocks hold a single panel, and the
+         two-column split then guarantees half the width is blank. One window
+         takes the whole block. */
       if(norm.length>1&&tallH>(sumH-tallH)*2){
         tallest.classList.add('wide');
         g.classList.add('has-wide');
         g.appendChild(tallest);
         norm=norm.filter(function(k){ return k!==tallest; });
+      }
+      /* checked AFTER the promotion, because promoting the tall one can leave
+         exactly one behind — and one window in a two-column split is half a
+         block of blank by definition */
+      if(norm.length===1){
+        norm[0].classList.add('wide');
+        g.classList.add('has-wide');
+        g.appendChild(norm[0]);
+        norm=[];
       }
       var a=document.createElement('div'), b=document.createElement('div');
       a.className='wins-col'; b.className='wins-col';
@@ -12937,9 +13248,10 @@ function tradeCardHtml(){
         +H.entryZone.high.toFixed(dp)+', out at '+(+H.stop).toFixed(dp)+', aiming for '
         +(+H.target).toFixed(dp)+' — '+rr2.toFixed(2)+' to 1. '
         +'It is not live until '+escHtml(H.activation)+'.</div>'
-        +'<div class="sgc-sub" style="margin-top:8px;opacity:.75">Second opinion: the older '
-        +'single-number engine issues nothing here — '
-        +escHtml(S&&S.reason?S.reason:'it is below its own threshold')+'.</div></div>';
+        /* the "second opinion" line pointed at a section that has been removed
+           from this tab, so it was citing something the reader could no longer
+           go and read. The scenario stands on its own. */
+        +'</div>';
     }
     return '<div class="sgc none"><div class="sgc-w">NO TRADE</div>'
       +'<div class="sgc-sub">'+escHtml(S&&S.reason?S.reason:'Nothing qualifies right now.')+'</div></div>';
@@ -13161,7 +13473,12 @@ function vbMount(){
 /* 46 buckets was a tall picture. At 28 the shelves and gaps read the same —
    the profile is about where the business sat, not about resolution — and it
    fits a column without being cut off. */
-var VP_WIN=90, VP_BINS=28, VP_VA=0.70;
+/* SMALLER AGAIN, ASKED FOR TWICE.
+   28 bins at 10px is 280px of bars before the labels; 20 at 7px is 140. The
+   shape of a profile is carried by where the shelves are, not by how many
+   slices it is cut into — at 20 the POC, the value area and the thin gaps
+   all still separate, and the panel stops dominating its column. */
+var VP_WIN=90, VP_BINS=20, VP_VA=0.70;
 /* what the numbers in the volume field actually are, for this instrument */
 /* ══════════════════════════════════════════════════════════════════════
    CQE — CELESTIAL QUANTITATIVE ENGINE
@@ -17104,50 +17421,61 @@ function trendInvalidHtml(T,price,dp,asset){
       looks at, and it used to sit fourth, inside a section called "the case".
       Fear and greed and the evidence meters join it: they are all answers to
       the same question, and they were scattered across two sections. */
-   +act(1,'Which way','Up, down, or neither?',
-        'Before anything else: which side has the upper hand today. The bar below is a vote '
-        +'of the methods that read direction &mdash; 50 means they cancel out. Fear and greed '
-        +'underneath measures how price has behaved, not what anyone is saying.')
+   /* ══════════════════════════════════════════════════════════════════
+      THE ORDER WAS GIVEN, SO IT IS THE ORDER
+
+      The walk used to run which way, when, where, the setups, how much,
+      elsewhere. Read as a first-time user it answers questions nobody asked
+      yet and holds back the one they came for. The sequence below was
+      specified point by point and is followed exactly:
+
+        1 the bias      2 the setup       3 fear and greed
+        4 trend, price and time           5 the scenarios
+        6 the major level                 7 the zones
+        8 the degree    9 the volume      10 behaviour and the fan
+
+      then the whole thing again in plain words at the bottom.
+
+      Dropped on the same instruction: "today's windows", which belongs on
+      the Timing tab and was answering an intraday question in the middle of
+      a daily read; and the older single-number engine, which had already
+      been demoted to a footnote and was still taking room.
+      ══════════════════════════════════════════════════════════════════ */
+
+   +act(1,'The bias','What is today leaning?',
+        'The first thing to know about any instrument: which side has the upper hand today. '
+        +'50 means the methods cancel out and there is nothing to lean on.')
    +'<div class="wins">'
    +win('lean','The day\u2019s lean','<div id="vb_slot"></div>')
-   +win('fng','Fear and greed','<div id="ana_fng"></div>',{shut:true})
+   +'</div>'
+
+   +act(2,'The setup','What is forming right now?',
+        'The trade the board is actually offering, with the price that starts it, the price '
+        +'that ends the argument, and what has to confirm before it is live.')
+   +'<div class="wins">'
+   +win('trade','The setup on the table',
+        '<div id="trade_slot">'+tradeCardHtml()+'</div>'+shareBar('setup'))
+   +win('open','Positions already on',openTradesHtml())
+   +'</div>'
+
+   +act(3,'Fear and greed','How is price behaving?',
+        'Measured from what price has done, not from what anyone is saying about it.')
+   +'<div class="wins">'
+   +win('fng','Fear and greed','<div id="ana_fng"></div>')
+   +'</div>'
+
+   +act(4,'Trend, price and time','How many of them agree?',
+        'The five methods read the same chart and score it separately. What matters is not any '
+        +'one score but how many of them point the same way — agreement is the number, and it '
+        +'is measured rather than asserted.')
+   +'<div class="wins">'
    +win('reads','What each method reads',
         '<div class="ab-reads">'+reads.map(function(r){
           return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
             +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
             +anaMeter(r.p,r.c)
             +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
-        }).join('')+'</div>',{shut:true})
-   +'</div>'
-   /* the day's lean is a reason for the call, so it sits with the reasons.
-      It lives outside this innerHTML so its date input survives a redraw. */
-
-   /* ─── 3 · where ────────────────────────────────────────────────── */
-
-   /* ─── GATE 3 · WHEN ─────────────────────────────────────────────
-      There was no "when" on this tab at all. Every cycle and window lived on
-      the Timing Engine, one click away, so the third of the four gates was
-      simply missing from the walk — and the hypotheses below quote time
-      evidence the reader had no way to see here. */
-   +act(3,'When','Which hours, and which dates?',
-        'Two different clocks. The hours are today&rsquo;s trading windows. The cycles are counted '
-        +'forward from real turning points &mdash; if this market turned 180 days ago, the 180-day '
-        +'mark is a date worth watching. Neither of them says which way.')
-   +'<div class="wins">'
-   /* THE CYCLES ARRIVE AFTER THIS HTML DOES.
-      The five engines run asynchronously — they may still be fetching a
-      volume proxy when the board is built — so reading CQE_LAST while
-      assembling this string got whatever the previous asset had left, or
-      nothing at all, and the block announced "no anniversary falls inside
-      tolerance" on a day with twelve of them. It renders into its own slot
-      and is repainted the moment the engines finish. */
-   +win('when','Today\u2019s windows','<div id="when_slot">'+anaWhen(price,dp)+'</div>')
-   /* gannTime returns spans and read them out as sentences with dates in
-      them. Two windows overlapping is the only thing that makes a date worth
-      anything, and it cannot be seen in prose. */
-   +win('cyc','The cycle windows ahead','<div id="cyc_slot">'+cqeCycleLine()+'</div>')
-   /* three clocks, one for each kind of trade, and the switch that makes
-      them reach you when the tab is not open */
+        }).join('')+'</div>')
    +win('hz','Which clock is running',
         '<div id="hz_slot">'+horizonsHtml(dp)+'</div>'
         +'<div class="al-bar">'
@@ -17157,102 +17485,83 @@ function trendInvalidHtml(T,price,dp,asset){
             +'<button class="btn btn-g btn-sm" onclick="alertsOff(this)">Off</button>'
           +'</div>'
         +'</div>',{tag:'alerts'})
-   /* the column ended here and left half a screen of nothing under it */
-   +win('cross','Elsewhere in the market','<div id="cross_slot"></div>')
    +'</div>'
 
-   /* ─── GATE 2 · WHERE ────────────────────────────────────────────── */
-   +act(2,'Where','Which prices matter?',
-        'A level is only worth watching when several unrelated methods land on the same one. '
-        +'Those are marked. The rest of this map is context: where price sits in its recent '
-        +'range, and which prices it has reacted to before.')
-   /* ══ THE MAP, IN TWO COLUMNS AND IN ORDER OF USE ═════════════════
-      Nineteen hundred pixels in one column, and the two panels a reader
-      actually acts on — the ladder and the zones — were separated by two
-      that are reference material. They pair now: what price is doing beside
-      where it is allowed to do it, then the wheel beside the profile.
+   +act(5,'The scenarios','What could happen, and what would prove it wrong?',
+        'Three ways this can go. Each names the price that starts it and the price that kills '
+        +'it, so being wrong is something you see coming rather than find out about afterwards.')
+   +'<div id="cqe_slot"></div>'
 
-      The Gann rungs go behind a disclosure. They are a complete grid of
-      every rung above and below, which is the right thing to have and the
-      wrong thing to scroll past on the way to something else. */
+   +act(6,'The major level','The one line everything hangs off',
+        'Not the extreme — the SECOND high and the SECOND low. The extreme is where price '
+        +'already failed; the second one is where it was defended, and it is what has to break '
+        +'before the extreme is even in play. Underneath it: the volume shelf nearest to it, '
+        +'the sigma band it sits in, the wave it belongs to, and what would confirm it.')
    +'<div class="wins">'
+   +win('major','The second high and the second low',majorStackHtml(price,dp))
    +win('ladder','The trade ladder',anaLadder(pts,price,lo,hi,dp,S,dir))
-   /* the square-root cycle ladder, and the line the reader sets by hand —
-      which is the one input that overrides the whole trend read */
-   +win('major','Major levels \u2014 the square-root cycle',
-        '<div class="mj-sub" id="major_sub"></div><div id="major_body"></div>')
-   /* the engine's own clusters, on a price scale, with the three scenarios
-      dropped onto it. The panel printed the nearest one and nothing else. */
+   +'</div>'
+
+   +act(7,'The zones','Where to buy and where to sell',
+        'A level is only worth watching when several unrelated methods land on the same one. '
+        +'Those are the zones; the rest of the map is context.')
+   +'<div class="wins">'
+   +win('zones','Buy and sell zones','<div id="zones_slot">'+anaZones(price,dp)+'</div>')
    +win('lmap','Every level the methods agree on',
         '<div id="lmap_slot">'+cqeLevelMap(dp)+'</div>')
+   +'</div>'
+
+   +act(8,'The degree','Where in the cycle is it?',
+        'The square-root wheel turns 360 degrees over a full cycle. Where price sits on it says '
+        +'how far through the move it is.')
+   +'<div class="wins">'
+   +win('wheel','The degree wheel',anaWheel(price,dp))
+   +win('reach','How far it can reach','<div id="reach_slot"></div>')
+   +'</div>'
+
+   +act(9,'The volume','Where the trading actually happened',
+        'Price spends most of its time where the most has already traded. The busiest shelf is '
+        +'where it keeps coming back to.')
+   +'<div class="wins">'
+   +win('vprof','Where the volume traded',
+        vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})()))
+   +'</div>'
+
+   +act(10,'Behaviour, and where price meets time',
+        'What kind of market is this, and when do the two square?',
+        'The fan is the one calculation that names a price AND a date before either arrives. '
+        +'The cycle windows are the dates counted forward from real turning points.')
+   +'<div class="wins">'
    +win('fan','The fan \u2014 where price and time square',
         '<div id="fan_slot">'+cqeFanHtml(dp)+'</div>',{tag:'scalp'})
-   +win('zones','Buy and sell zones','<div id="zones_slot">'+anaZones(price,dp)+'</div>')
-   +'</div>'
-   +'<div class="wins">'
-   /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
-      / Markdown" — Wyckoff's own vocabulary — from sqrt(price) mod 2. That is
-      a property of the price's digits: 4654 gives one phase and 4655 another,
-      with no volume, no range and no structure anywhere in it. There is a
-      real Wyckoff engine now, at the top of this tab, so the labels are gone.
-      The wheel position it also drew is kept, without the phase words. */
-   +win('wheel','The degree wheel',anaWheel(price,dp),{shut:true})
-   +win('reach','How far it can reach','<div id="reach_slot"></div>')
-   +win('vprof','Where the volume traded',
-        vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})()),
-        {shut:true})
+   +win('cyc','The cycle windows ahead','<div id="cyc_slot">'+cqeCycleLine()+'</div>')
+   +win('cross','Elsewhere in the market','<div id="cross_slot"></div>')
    +'</div>'
    +'<details class="amore"><summary>Every Gann rung above and below</summary>'
      +'<div style="margin-top:9px">'+anaRungs(price,dp)+'</div></details>'
 
-   /* ─── 4 · how much, and act ────────────────────────────────────── */
-
-
-   /* ─── GATE 4a · THE SETUPS ──────────────────────────────────────
-      After which way, where and when — because it is built from all three,
-      and reading it first meant reading a conclusion before its reasons. */
-   +act(4,'The setups','What could actually be traded?',
-        'Everything above, turned into three scenarios. Each names the price that starts it and '
-        +'the price that proves it wrong, so being wrong is something you see coming rather than '
-        +'find out about afterwards.')
-   +'<div id="cqe_slot"></div>'
-
-   /* ─── 2 · why ──────────────────────────────────────────────────── */
-
-
-   /* ─── GATE 4b · HOW MUCH ────────────────────────────────────────── */
-   +act(5,'How much','What size, and what is left this month?',
+   +act(11,'How much','What size, and what is left this month?',
         'The only section that can say no. It sizes the position from the stop distance and '
         +'refuses anything the risk rules do not allow, however good the setup above looks.')
    +'<div class="wins">'
    +win('risk','What size is allowed',riskChipHtml(S,conf,price,dp,asset),{tag:'veto'})
-   /* THE SAME RACE THAT CAUGHT THE WHEN BLOCK.
-      This card reads CQE_LAST, and the five methods finish after this HTML
-      is built — so it saw whatever the previous asset left behind, or
-      nothing, and fell through to the older engine's "NO TRADE" while the
-      headline two screens up read WAIT over a buy. It gets a slot and is
-      repainted when the engines land. */
-   +win('trade','The setup on the table',
-        '<div id="trade_slot">'+tradeCardHtml()+'</div>'+shareBar('setup'))
-   +win('open','Positions already on',openTradesHtml())
    +win('qvr','The risk check',qvRiskHtml(S,window._lastQV,price),{shut:true})
    +win('quota','What is left this month',quotaHtml(),{shut:true})
    +'</div>'
 
-   /* ─── 5 · show me ──────────────────────────────────────────────── */
-
-   /* ─── ELSEWHERE ─────────────────────────────────────────────────
-      This opened the tab. Twelve other instruments, before the reader had
-      learned anything about the one they came for. It is a fine question and
-      it is the last one. */
-   +act(6,'Elsewhere','Anything else setting up?',
-        'The same five methods across every other instrument, ranked by how much their evidence '
-        +'agrees. Worth a look after this asset, not instead of it.')
+   +act(12,'Elsewhere','Anything else setting up?',
+        'The same methods across every other instrument, ranked by which is closest to firing. '
+        +'Worth a look after this asset, not instead of it.')
    +'<div class="wins">'
    +win('scan','Every other instrument','<div class="scn" id="scan_body"></div>',{wide:true,fixed:true})
    +'</div>'
-   /* ─── THE WORKING ───────────────────────────────────────────────── */
-   +act(7,'The working','Raw numbers.',
+
+   /* the whole board, said back in sentences */
+   +act(13,'In plain words','All of the above, without the jargon',
+        'If you read nothing else on this tab, read this.')
+   +'<div id="plain_slot">'+plainWordsHtml(price,dp,asset)+'</div>'
+
+   +act(14,'The working','Raw numbers.',
         'For when you want to check something. Nothing here is needed to use the board.')
    /* A FEW HUNDRED FULL ENGINE PASSES IS NOT SOMETHING TO DO ON PAGE LOAD.
       Every bar of the walk runs the pivots, five engines and the whole
@@ -17267,92 +17576,14 @@ function trendInvalidHtml(T,price,dp,asset){
        +'seconds and freezes the page while it runs.</div>'
        +'<div id="bt_slot"></div></div>'
    +'</details>'
-   +'<details class="sec"><summary><b>The older single-number engine</b>'
-     +'<span>what drove this board before the five engines, and still drives the journal and the budget</span></summary>'
-
-   /* ══ THE VERDICT BLOCK — rebuilt, not re-ordered ═════════════════════
-      The last pass moved this card around the page and left the card itself
-      alone, which is not a redesign. It was a two-column panel: a word on the
-      left, a percentage on the right, and the level that would prove it wrong
-      in a separate box underneath, so the three things that make up one
-      decision were laid out as three unrelated facts.
-
-      They are one thing now. A single band carries the decision, what it would
-      cost, and where it dies, reading straight across: what to do · at what
-      price · with what behind it · and the line that ends the argument. The
-      confidence is a bar under the whole width rather than a number in a
-      corner, because a number in a corner invites you to read it as a score
-      out of a hundred, and it is a threshold test — it either clears the bar
-      for a setup or it does not, and the bar is drawn where the threshold is.
-      ══════════════════════════════════════════════════════════════════════ */
-   +(function(){
-      var live=!!(S&&S.style);
-      var lvl=(T&&T.keyLevel!=null)?T.keyLevel:null;
-      var side=live?(S.isBull?'long':'short'):null;
-
-      var strip=[
-        {k:'Entry',  v:live?S.entry.toFixed(dp):'—', c:''},
-        {k:'Stop',   v:live?S.sl.toFixed(dp):'—',    c:'vd-dn'},
-        {k:'Target', v:live?S.tp.toFixed(dp):'—',    c:'vd-up'},
-        {k:'Reward : risk', v:live?(S.rr+' : 1'):'—', c:'vd-ac'}
-      ];
-
-      return '<div class="vd '+(dir==='BUY'?'buy':dir==='SELL'?'sell':'flat')+'">'
-       +'<div class="vd-top">'
-         +'<div class="vd-word">'
-           +'<span class="vd-do">'+(dir?(dir==='BUY'?'Buy':'Sell'):'Stand aside')+'</span>'
-           +(dir?'<span class="vd-as">'+escHtml(asset)+'</span>':'')
-         +'</div>'
-         +'<div class="vd-tag">'+(live
-             ? escHtml(S.style)+' &middot; '+(S.isPending?'resting order':'at market')
-             : 'no setup on the board')+'</div>'
-       +'</div>'
-
-       +'<div class="vd-nums">'+strip.map(function(x){
-           return '<div class="vd-n"><i>'+x.k+'</i><b class="'+x.c+'">'+x.v+'</b></div>';
-         }).join('')+'</div>'
-
-       /* the line that ends the argument, inside the same block as the call */
-       +(lvl!=null
-          ? '<div class="vd-inv"><i>'+(T.mtl?'Your major level':'This is wrong past')+'</i>'
-            +'<b>'+lvl.toFixed(dp)+'</b>'
-            +'<s>'+escHtml(
-                T.mtl
-                 ? asset+' is '+T.label.toLowerCase()+' while it closes '
-                   +(T.dir==='bear'?'below ':'above ')+lvl.toFixed(dp)+'. '
-                   +(T.keyTesting
-                      ? 'Price is the other side of it right now but the last daily close was not — '
-                        +'this is exactly the case the close rule is for. Wait for the close.'
-                      : 'A daily close the other side turns it, and everything on this board turns with it.')
-                 : asset+' stays '+String(T&&T.label||'').toLowerCase()+' while it holds '
-                   +(T&&T.dir==='bear'?'below ':'above ')+lvl.toFixed(dp)
-                   +'. It takes a daily close beyond that, not a wick.')
-            +'</s></div>'
-          : '')
-
-       /* confidence as a threshold test, drawn where the threshold is */
-       +'<div class="vd-conf">'
-         +'<div class="vd-bar">'
-           +'<span class="vd-fill" style="width:'+Math.max(0,Math.min(100,conf))+'%"></span>'
-           +'<u class="vd-thr t68" title="Intraday setups need 68%"></u>'
-           +'<u class="vd-thr t80" title="Swing setups need 80%"></u>'
-         +'</div>'
-         +'<div class="vd-cn"><b>'+conf+'%</b><i>confidence</i></div>'
-         +'<div class="vd-cw">'+escHtml(live
-             ? 'Clears the '+S.style.toLowerCase()+' threshold, so the plan above is placeable.'
-             : (S&&S.reason)||'Below every setup threshold — there is nothing here to place.')
-         +'</div>'
-       +'</div>'
-
-       +(live&&(S.counter||S.rallyNote)
-          ?'<div class="vd-flags">'
-            +(S.counter?'<span class="vd-fl warn">Counter-trend — size down</span>':'')
-            +(S.rallyNote?'<span class="vd-fl">'+escHtml(S.rallyNote)+'</span>':'')
-           +'</div>':'')
-      +'</div>';
-    })()
-   +(S&&S.downgraded?'<div class="qta-dg">'+escHtml(S.downgraded)+'</div>':'')
-   +'</details>'
+   /* THE OLDER SINGLE-NUMBER ENGINE IS GONE FROM THIS TAB.
+      It had already been demoted to a footnote and was still carrying the
+      verdict band, the risk chip, the quota and the step-by-step working —
+      several hundred pixels of a board that the five methods replaced. It
+      still RUNS: the journal, the monthly budget and the sizing all read
+      from it, and the trade card is built by it. What has stopped is
+      printing its reasoning underneath a board that already answered the
+      same question a better way. */
    +'<details class="sec" id="qv_sec" open><summary><b>How is it moving right now?</b>'
      +'<span>volatility, volume and number patterns — in plain words first</span></summary>'
      +'<div class="qv-wrap" id="qv_ana"></div></details>'
