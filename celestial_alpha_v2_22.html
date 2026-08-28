@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b42 — Precision in Timing</title>
+<title>Celestial Alpha b43 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2154,6 +2154,58 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .st-note2{margin-top:9px;font-size:9.5px;line-height:1.6;color:var(--t3)}
 .st-none{font-size:10.5px;color:var(--t3);padding:8px 0}
 @media(prefers-reduced-motion:reduce){.st-r,.st-n b{animation:none!important}}
+
+.hz{display:grid;gap:6px}
+.hz-r{display:grid;grid-template-columns:118px 62px 1fr;gap:9px;align-items:start;
+  padding:9px 11px;border-radius:10px;border:1px solid var(--b1);
+  background:rgba(255,255,255,.02);animation:stIn .38s cubic-bezier(.22,1,.36,1) both}
+.hz-r.fired{border-color:rgba(52,211,153,.36);background:rgba(52,211,153,.07)}
+.hz-r.approaching{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.05)}
+.hz-l b{display:block;font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--t1)}
+.hz-l s{display:block;text-decoration:none;font-size:8.5px;line-height:1.45;color:var(--t3);margin-top:2px}
+.hz-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;
+  letter-spacing:.06em;border:1px solid var(--b1);color:var(--t3)}
+.hz-tag.fired{color:#34D399;border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12);
+  animation:sgPulseG 2.2s infinite}
+.hz-tag.approaching{color:#FBBF24;border-color:rgba(251,191,36,.4)}
+.hz-w{font-size:10px;line-height:1.55;color:var(--t2)}
+.hz-w u{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:3px;opacity:.8}
+.hz-note{margin-top:8px;font-size:9px;line-height:1.6;color:var(--t3)}
+@media(max-width:820px){.hz-r{grid-template-columns:1fr;gap:4px}}
+
+/* the alert switch */
+.al-bar{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:10px;
+  padding:9px 12px;border-radius:10px;border:1px solid var(--b1);background:rgba(255,255,255,.02)}
+#alert_state{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10.5px;color:var(--t2)}
+#alert_state i{font-style:normal;font-size:8.5px;color:var(--t3);opacity:.85;width:100%}
+.al-dot{width:7px;height:7px;border-radius:99px;background:var(--t3);flex:none}
+.al-dot.on{background:#34D399;animation:sgPulseG 2.2s infinite}
+.al-btns{display:flex;gap:7px;margin-left:auto}
+
+/* the fan */
+.fanb{margin-top:2px}
+.fn-scale{font-size:9px;line-height:1.6;color:var(--t3);margin-bottom:7px}
+.fn-rows{display:grid;gap:3px}
+/* six children, and the grid declared five — the anchor column wrapped onto
+   an implicit row 34px wide and stretched every row to six lines. */
+.fn-r{display:grid;grid-template-columns:34px 16px 78px 58px 1fr 122px;gap:7px;align-items:baseline;
+  padding:5px 8px;border-radius:7px;font-size:10px;border:1px solid transparent;
+  animation:stIn .34s cubic-bezier(.22,1,.36,1) both}
+.fn-r.touch{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.09)}
+.fn-r.soon{border-color:rgba(251,191,36,.28);background:rgba(251,191,36,.05)}
+.fn-k{font-weight:800;color:var(--p3);font-size:9.5px}
+.fn-d.u{color:#34D399}
+.fn-d.d{color:#F87171}
+.fn-p{font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.fn-g{color:var(--t3);font-variant-numeric:tabular-nums;font-size:9px}
+.fn-m{color:var(--t2);font-size:9.5px}
+.fn-m b{color:#34D399}
+.fn-a{color:var(--t3);font-size:8.5px;text-align:right;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.fn-note{margin-top:7px;font-size:9px;line-height:1.6;color:var(--t3)}
+@media(max-width:900px){.fn-r{grid-template-columns:34px 16px 78px 1fr;row-gap:2px}
+  .fn-g,.fn-a{display:none}}
+@media(prefers-reduced-motion:reduce){.hz-r,.fn-r,.hz-tag.fired,.al-dot.on{animation:none!important}}
 
 .a-sub{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
   color:var(--t3);margin:14px 0 2px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
@@ -5377,7 +5429,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b42</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b43</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -11029,6 +11081,324 @@ function tcBeLevel(S){
 function tcFmt(v,dp){
   return isFinite(v)?(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp}):'—';
 }
+/* the fan, drawn: every line's price today, where it goes, and when it meets price */
+function cqeFanHtml(dp){
+  var C=window.CQE_LAST, F=C&&C.fan;
+  dp=dp||2;
+  if(!F||!F.lines||!F.lines.length)
+    return '<div class="lm-na">'+escHtml((F&&F.required&&F.required[0])
+      ? 'No fan — needs '+F.required[0]+'.' : 'Run an analysis to draw the fan.')+'</div>';
+  var price=C.price;
+  var h='<div class="fanb"><div class="fn-scale">'+escHtml(F.unitNote)+'</div>';
+  h+='<div class="fn-rows">';
+  F.lines.slice(0,8).forEach(function(l,i){
+    var cls=l.touching?'touch':(l.meetInBars!=null&&l.meetInBars<=14?'soon':'');
+    h+='<div class="fn-r '+cls+'" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
+      +'<span class="fn-k">'+l.ratio+'</span>'
+      +'<span class="fn-d '+(l.dir==='up'?'u':'d')+'">'+(l.dir==='up'?'▲':'▼')+'</span>'
+      +'<span class="fn-p">'+tcFmt(l.lineNow,dp)+'</span>'
+      +'<span class="fn-g">'+(l.gapATR!=null?l.gapATR.toFixed(2)+' ATR':'—')+'</span>'
+      +'<span class="fn-m">'+(l.touching?'<b>squaring now</b>'
+          : l.meetInBars!=null
+            ? 'meets price near '+tcFmt(l.meetPrice,dp)+' in '+l.meetInBars+'b · '+l.meetDate
+            : '—')+'</span>'
+      +'<span class="fn-a">from the '+(l.anchorKind==='H'?'high':'low')+' of '+l.anchor+'</span>'
+    +'</div>';
+  });
+  h+='</div>';
+  h+='<div class="fn-note">Touch tolerance is a quarter ATR. Measured over 161 gold sessions '
+    +'and 101 GLD, that is true on 18.6% and 17.8% of days — about one a week on one '
+    +'instrument.</div></div>';
+  return h;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ALERTS — because nobody watches a screen all day
+
+   A horizon that fires while the tab is in the background is a horizon that
+   did not fire. Three deliveries, strongest first, and each degrades to the
+   next rather than failing:
+
+     SYSTEM   the browser's own notification, which shows with the tab
+              closed. Needs permission, asked for on a click and never on
+              load — a permission prompt nobody asked for gets denied once
+              and then cannot be asked for again.
+     VOICE    Jarvis says it, if speaking is on.
+     TOAST    the in-page notice, which always works.
+
+   Fired alerts are remembered so the same one is not repeated every time
+   the watcher wakes. The key carries the day, so the same event on a new
+   session is a new alert.
+   ══════════════════════════════════════════════════════════════════════ */
+var ALERT_KEY='ca_alerts_seen', ALERT_CFG='ca_alerts_on', _alertTimer=null;
+function alertsOn(){ try{ return localStorage.getItem(ALERT_CFG)==='1'; }catch(e){ return false; } }
+function alertSeen(){
+  try{ return JSON.parse(localStorage.getItem(ALERT_KEY)||'{}'); }catch(e){ return {}; }
+}
+function alertMark(k){
+  try{
+    var S=alertSeen(), today=ymd(new Date());
+    /* only today's keys are kept, so the store cannot grow without limit */
+    var out={}; Object.keys(S).forEach(function(x){ if(S[x]===today)out[x]=S[x]; });
+    out[k]=today;
+    localStorage.setItem(ALERT_KEY,JSON.stringify(out));
+  }catch(e){}
+}
+function alertFresh(k){
+  var S=alertSeen();
+  return S[k]!==ymd(new Date());
+}
+function alertSend(title,body){
+  var done=false;
+  try{
+    if(typeof Notification!=='undefined'&&Notification.permission==='granted'){
+      new Notification(title,{body:body,tag:title,silent:false});
+      done=true;
+    }
+  }catch(e){}
+  try{ if(typeof jvSpeak==='function'&&jvPrefs&&jvPrefs().voice)jvSpeak(title+'. '+body); }catch(e){}
+  try{ notify(title+' — '+body,'bull'); }catch(e){}
+  return done;
+}
+/* ask on a click, never on load */
+function alertsEnable(btn){
+  var B=btnBusy(btn,'Asking');
+  function finish(ok,msg){
+    try{ localStorage.setItem(ALERT_CFG,ok?'1':'0'); }catch(e){}
+    alertsPaint();
+    if(ok){ btnOk(B,'On'); alertWatch(); } else btnFail(B);
+    if(msg)notify(msg,'info');
+  }
+  if(typeof Notification==='undefined'){
+    finish(true,'This browser has no system notifications — alerts will speak and show in the page.');
+    return;
+  }
+  if(Notification.permission==='granted'){ finish(true,'Alerts on.'); return; }
+  if(Notification.permission==='denied'){
+    finish(true,'System notifications are blocked for this page in the browser’s site settings. '
+      +'Alerts will still speak and show in the page.');
+    return;
+  }
+  Notification.requestPermission().then(function(p){
+    finish(true, p==='granted'? 'Alerts on — they will show even with the tab closed.'
+      : 'Permission not given. Alerts will speak and show in the page instead.');
+  }).catch(function(){ finish(true,'Alerts on — in-page only.'); });
+}
+function alertsOff(btn){
+  try{ localStorage.setItem(ALERT_CFG,'0'); }catch(e){}
+  if(_alertTimer){ clearInterval(_alertTimer); _alertTimer=null; }
+  alertsPaint(); btnOk(btn,'Off');
+}
+function alertsPaint(){
+  var el=document.getElementById('alert_state');
+  if(!el)return;
+  var on=alertsOn();
+  var sys=(typeof Notification!=='undefined')?Notification.permission:'unavailable';
+  el.innerHTML='<span class="al-dot'+(on?' on':'')+'"></span>'
+    +(on?'Watching — you will be told when a horizon fires':'Alerts are off')
+    +'<i>'+(sys==='granted'?'system notifications allowed'
+           :sys==='denied'?'system notifications blocked in browser settings — voice and in-page only'
+           :sys==='default'?'system notifications not yet allowed'
+           :'no system notifications in this browser')+'</i>';
+}
+/* the watcher: check the horizons, alert on anything new */
+function alertCheck(){
+  if(!alertsOn())return;
+  var H; try{ H=horizons(); }catch(e){ return; }
+  var asset=(typeof _lastAsset!=='undefined'&&_lastAsset)||'the board';
+  (H.fired||[]).forEach(function(f){
+    var k=asset+'|'+f.h+'|'+f.what;
+    if(!alertFresh(k))return;
+    alertMark(k);
+    alertSend('Celestial — '+f.h+' window on '+String(asset).toUpperCase(), f.what);
+  });
+  /* a setup the gate has cleared is worth more than a horizon opening */
+  try{
+    var S=window._lastSig;
+    if(S&&S.style){
+      var G=sigGate(S);
+      if(G.state==='clear'||G.state==='caution'){
+        var k2=asset+'|setup|'+S.style+'|'+S.entry+'|'+(S.isBull?'B':'S');
+        if(alertFresh(k2)){
+          alertMark(k2);
+          alertSend('Celestial — '+(S.isBull?'buy':'sell')+' setup confirmed on '
+            +String(asset).toUpperCase(),
+            S.style+' · entry '+S.entry+' · stop '+S.sl+' · target '+S.tp
+            +' · '+(G.hits!=null?G.hits+' of '+G.of+' checks':'confirmed'));
+        }
+      }
+    }
+  }catch(e){}
+}
+function alertWatch(){
+  if(_alertTimer)clearInterval(_alertTimer);
+  /* five minutes: the Moon moves half a degree an hour and a fan touch is a
+     daily bar event, so anything faster is polling for its own sake */
+  _alertTimer=setInterval(alertCheck,5*60*1000);
+  alertCheck();
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THREE HORIZONS — a different clock for each kind of trade
+
+   Asked for directly, and it is the right shape: the thing that tells you
+   when to scalp is not the thing that tells you when to hold for weeks.
+
+     SCALP     the Gann fan. A line drawn from a pivot at scale s, and the
+               bar where price meets it. Both the price and the date are
+               known before either arrives, which nothing else here does.
+     INTRADAY  the Moon — its sign, its degree, and the hours it changes.
+               It moves about thirteen degrees a day, so it is the only body
+               that says anything about a single session.
+     SWING     the slow planets — sign changes and major aspects. These are
+               dated weeks out and do not move for a session, which is
+               exactly why they are wrong for one and right for a swing.
+
+   Every horizon still has to pass the same confirmation chain. A horizon
+   decides WHEN TO LOOK, never whether to trade — that is the gate's job and
+   it has not moved.
+
+   MEASURED, so nobody expects more than it gives. Walking 161 XAU sessions
+   and 101 GLD, the nearest fan line sits within a quarter ATR of price on
+   18.6% and 17.8% of days — about one touch a week on one instrument. Five
+   to ten a week means five to ten instruments, not a looser tolerance.
+   ══════════════════════════════════════════════════════════════════════ */
+var FAN_TOUCH_RATE='18% of sessions, about one a week per instrument';
+function horizons(){
+  var C=window.CQE_LAST, out={scalp:null,intraday:null,swing:null,fired:[]};
+  var price=C&&C.price;
+
+  /* ── SCALP · the fan ─────────────────────────────────────────────── */
+  var F=C&&C.fan;
+  if(!F||!F.lines||!F.lines.length){
+    out.scalp={state:'na',why:(F&&F.required&&F.required[0])
+      ? 'Cannot draw a fan — '+F.required[0]+'.'
+      : 'No analysis has produced a fan yet.'};
+  }else{
+    var t=F.touching[0]||null, n=F.nearest;
+    /* the soonest line price is actually converging on */
+    var soon=F.lines.filter(function(l){return l.meetInBars!=null&&l.meetInBars<=14;})
+                    .sort(function(a,b){return a.meetInBars-b.meetInBars;})[0]||null;
+    out.scalp={
+      state: t?'fired':soon?'approaching':'quiet',
+      rate:FAN_TOUCH_RATE, unit:F.unit, unitNote:F.unitNote,
+      line:t||n, soon:soon,
+      why: t
+        ? 'Price is on the '+t.ratio+' line from the '+(t.anchorKind==='H'?'high':'low')
+          +' of '+t.anchor+' — '+t.lineNow.toFixed(2)+', '+t.gapATR.toFixed(2)+' ATR away. '
+          +'Price and time have squared here.'
+        : soon
+        ? 'Price is converging on the '+soon.ratio+' line — they meet near '
+          +soon.meetPrice.toFixed(2)+' in '+soon.meetInBars+' bar'
+          +(soon.meetInBars===1?'':'s')+', around '+soon.meetDate+'.'
+        : 'The nearest line is the '+n.ratio+' at '+n.lineNow.toFixed(2)+', '
+          +n.gapATR.toFixed(2)+' ATR away. Nothing is squaring.'
+    };
+    if(t)out.fired.push({h:'Scalp',what:'Fan touch — '+t.ratio+' at '+t.lineNow.toFixed(2)});
+  }
+
+  /* ── INTRADAY · the Moon ─────────────────────────────────────────── */
+  var M=null; try{ M=moonNow(); }catch(e){}
+  if(!M){ out.intraday={state:'na',why:'The Moon’s position could not be computed.'}; }
+  else{
+    /* the two things that actually mark a session: a sign change inside the
+       day, and the last degrees of a sign, which is where a body is leaving
+       one set of conditions and has not entered the next */
+    var late=M.deg>=27, early=M.deg<=3;
+    var changing=M.hoursToNextSign!=null&&M.hoursToNextSign<=12;
+    out.intraday={
+      state: changing?'fired':(late||early)?'approaching':'quiet',
+      moon:M,
+      why: changing
+        ? 'The Moon leaves '+M.sign+' for '+M.nextSign+' in about '
+          +M.hoursToNextSign+' hours — the session changes character inside the day.'
+        : late
+        ? 'The Moon is at '+M.deg.toFixed(1)+'° of '+M.sign+' — the last degrees, '
+          +'leaving '+M.element+' '+M.quality+' behind and not yet into '+M.nextSign+'.'
+        : early
+        ? 'The Moon has just entered '+M.sign+' at '+M.deg.toFixed(1)+'° — '
+          +M.elementSay+', '+M.qualitySay+'.'
+        : 'The Moon is mid-sign at '+M.deg.toFixed(1)+'° of '+M.sign+'. Nothing marks this session.'
+    };
+    if(changing)out.fired.push({h:'Intraday',what:'Moon enters '+M.nextSign
+      +' in '+M.hoursToNextSign+'h'});
+  }
+
+  /* ── SWING · the slow planets ────────────────────────────────────── */
+  try{
+    var eph=getEph(), now=new Date();
+    var SLOW=['jupiter','saturn','uranus','neptune','pluto'];
+    var ingress=[], hard=[];
+    SLOW.forEach(function(b){
+      if(!eph[b])return;
+      var S=signOf(eph[b].lon), rate=null;
+      try{ rate=lonRate(b,now); }catch(e){}
+      if(rate==null||Math.abs(rate)<1e-6)return;
+      var left=rate>0?(30-S.deg):S.deg;      /* degrees to the next boundary */
+      var days=Math.round(left/Math.abs(rate));
+      if(days<=90)ingress.push({body:b,name:PLANET_NAME[b]||b,from:S.sign,
+        to:SIGNS[(S.idx+(rate>0?1:11))%12],deg:S.deg,days:days,retro:rate<0});
+    });
+    ingress.sort(function(a,b){return a.days-b.days;});
+    /* major aspects between slow bodies, which are the ones that hold */
+    try{
+      liveAspects(eph).forEach(function(x){
+        if(SLOW.indexOf(x.a)<0||SLOW.indexOf(x.b)<0)return;
+        if(['Conjunction','Opposition','Square','Trine'].indexOf(x.asp.n)<0)return;
+        hard.push({a:PLANET_NAME[x.a]||x.a,b:PLANET_NAME[x.b]||x.b,
+                   asp:x.asp.n,sym:x.asp.s,orb:x.orb});
+      });
+    }catch(e){}
+    hard.sort(function(a,b){return a.orb-b.orb;});
+    var ing=ingress[0]||null, hd=hard[0]||null;
+    var fired=(ing&&ing.days<=14)||(hd&&hd.orb<=1);
+    out.swing={
+      state: fired?'fired':(ing&&ing.days<=45)||(hd&&hd.orb<=3)?'approaching':'quiet',
+      ingress:ingress.slice(0,3), aspects:hard.slice(0,3),
+      why: (ing&&ing.days<=14)
+        ? ing.name+' leaves '+ing.from+' for '+ing.to+' in about '+ing.days
+          +' days'+(ing.retro?', moving retrograde':'')+' — a change of backdrop, not of session.'
+        : (hd&&hd.orb<=1)
+        ? hd.a+' '+hd.asp.toLowerCase()+' '+hd.b+' at '+hd.orb.toFixed(2)
+          +'° — as tight as a slow aspect gets.'
+        : ing
+        ? 'Nearest sign change: '+ing.name+' into '+ing.to+' in about '+ing.days+' days.'
+          +(hd?' Tightest slow aspect: '+hd.a+' '+hd.asp.toLowerCase()+' '+hd.b
+             +' at '+hd.orb.toFixed(1)+'°.':'')
+        : 'No slow-planet sign change inside 90 days.'
+    };
+    if(fired)out.fired.push({h:'Swing',what:out.swing.why.split('—')[0].trim()});
+  }catch(e){ out.swing={state:'na',why:'The ephemeris could not be read.'}; }
+
+  return out;
+}
+
+function horizonsHtml(dp){
+  var H=horizons(); dp=dp||2;
+  var rows=[
+    {k:'Scalp',    sub:'the Gann fan — a price and a date, both known in advance', o:H.scalp},
+    {k:'Intraday', sub:'the Moon — sign, degree, and the hour it changes',          o:H.intraday},
+    {k:'Swing',    sub:'the slow planets — sign changes and major aspects',         o:H.swing}
+  ];
+  var h='<div class="hz">';
+  rows.forEach(function(r,i){
+    var st=(r.o&&r.o.state)||'na';
+    h+='<div class="hz-r '+st+'" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'
+      +'<div class="hz-l"><b>'+r.k+'</b><s>'+escHtml(r.sub)+'</s></div>'
+      +'<div class="hz-m"><span class="hz-tag '+st+'">'
+        +(st==='fired'?'NOW':st==='approaching'?'SOON':st==='quiet'?'quiet':'no data')
+      +'</span></div>'
+      +'<div class="hz-w">'+escHtml((r.o&&r.o.why)||'—')
+        +(r.o&&r.o.rate?'<u>fires on '+escHtml(r.o.rate)+'</u>':'')
+      +'</div></div>';
+  });
+  h+='</div>';
+  h+='<div class="hz-note">A horizon decides when to look, never whether to trade — '
+    +'the confirmation chain still has to pass. Five to ten trades a week means five to '
+    +'ten instruments watched, not a looser tolerance on one.</div>';
+  return h;
+}
+
 /* ══════════════════════════════════════════════════════════════════════
    THE LEVEL MAP — fifteen clusters that were only ever a sentence
 
@@ -12969,6 +13339,147 @@ function priceTimeSquare(rows,pv,opt){
   return S;
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   THE GANN FAN — the line itself, not the ratio
+
+   priceTimeSquare answers "has this leg squared out?" by comparing distance
+   travelled against days elapsed. That is a verdict about the past. The
+   method actually being asked for is a projection:
+
+       from a pivot low   P(t) = L + s·t
+       from a pivot high  P(t) = H − s·t
+
+   Draw the line, and the bar where real price meets it is the bar where
+   price and time have squared. That price and that date are both known in
+   advance, which is the entire point — it is the one calculation in the app
+   that names a level AND a day before either arrives.
+
+   s is the scale: how much price is worth one bar of time. The 1×1 line uses
+   the median daily true range, which is the market's own unit rather than a
+   number chosen to make the chart look right. The rest of the fan is the
+   standard set of halvings and doublings around it.
+   ══════════════════════════════════════════════════════════════════════ */
+var FAN_RATIOS=[
+  {k:'4x1', m:4,    n:'four price to one of time — the steepest, breaks first'},
+  {k:'2x1', m:2,    n:'two price to one of time'},
+  {k:'1x1', m:1,    n:'the balance line — one unit of price per bar'},
+  {k:'1x2', m:0.5,  n:'one price to two of time'},
+  {k:'1x4', m:0.25, n:'the shallowest — the last line to give way'}
+];
+function gannFan(rows,pv,opt){
+  opt=opt||{};
+  var F={unit:null, lines:[], required:[], notes:[]};
+  if(!rows||rows.length<60){ F.required.push('at least 60 bars'); return F; }
+  if(!pv||!pv.length){ F.required.push('a confirmed pivot to draw from'); return F; }
+
+  /* ══ THE SCALE IS THE WHOLE METHOD, AND THE FIRST ONE WAS WRONG ══════
+     The median daily true range looked like the honest choice — the market's
+     own unit rather than a number picked to fit. Measured, it is not: on 621
+     bars of gold the median range is 51.18, and a 1x1 line drawn from an
+     anchor 174 bars back therefore rises 8,905 above it. The line printed
+     13,298 against a price of 4,654, and the down-lines went negative.
+
+     The daily range is the right unit for asking whether ONE LEG has squared
+     out, which is what priceTimeSquare uses it for. It is the wrong unit for
+     a fan, because a fan is drawn across the whole chart. Gann's scaling is
+     the chart's own geometry: the 1x1 line crosses the full price range over
+     the full time span, so one unit of price really is one unit of time on
+     the picture being read.
+
+         s = (highest high - lowest low) / bars
+
+     On the same data that is 3.34 a bar rather than 51.18, and the fan lands
+     where price actually is. */
+  var hh=null,ll=null;
+  for(var i=0;i<rows.length;i++){
+    var h=num(rows[i].high), l=num(rows[i].low);
+    if(h!=null&&(hh==null||h>hh))hh=h;
+    if(l!=null&&(ll==null||l<ll))ll=l;
+  }
+  if(hh==null||ll==null||!(hh>ll)){ F.required.push('a price range to scale against'); return F; }
+  var unit=(hh-ll)/rows.length; F.unit=unit;
+  var a=atr(rows,14);
+  F.range={high:hh,low:ll,bars:rows.length};
+  F.unitNote='one bar of time is worth '+unit.toFixed(2)+' — the full price range ('
+    +ll.toFixed(2)+' to '+hh.toFixed(2)+') divided by '+rows.length+' bars, so the 1x1 line '
+    +'crosses the chart corner to corner and one unit of price really is one unit of time';
+
+  var lastRow=rows[rows.length-1], nowT=dayOf(lastRow).getTime(), price=num(lastRow.close);
+  /* bar index, not calendar days: a line drawn on trading bars does not jump
+     three units over a weekend when nothing traded */
+  var idxOf={}; rows.forEach(function(r,ix){ idxOf[dayOf(r).toISOString().slice(0,10)]=ix; });
+  var lastIdx=rows.length-1;
+
+  /* the most prominent recent pivots on each side, not simply the newest —
+     a three-bar wiggle is not an anchor for a fan */
+  function prominence(p){
+    var seg=rows.slice(p.i).map(function(r){return num(r.close);}).filter(function(x){return x!=null;});
+    if(!seg.length)return 0;
+    var base=p.kind==='H'?Math.min.apply(null,seg):Math.max.apply(null,seg);
+    return Math.abs(p.px-base)/p.px;
+  }
+  var lows=pv.filter(function(p){return p.kind==='L';}).slice(-8)
+             .sort(function(x,y){return prominence(y)-prominence(x);});
+  var highs=pv.filter(function(p){return p.kind==='H';}).slice(-8)
+              .sort(function(x,y){return prominence(y)-prominence(x);});
+  var anchors=[];
+  if(lows[0])anchors.push({p:lows[0],dir:'up'});
+  if(highs[0])anchors.push({p:highs[0],dir:'down'});
+
+  var tolATR=opt.tolATR||0.25;
+  anchors.forEach(function(A){
+    var pi=(A.p.i!=null)?A.p.i:idxOf[A.p.date];
+    if(pi==null)return;
+    var bars=lastIdx-pi;
+    if(bars<3)return;
+    FAN_RATIOS.forEach(function(R){
+      var s=unit*R.m;
+      var lineNow=A.dir==='up' ? A.p.px + s*bars : A.p.px - s*bars;
+      if(lineNow<=0)return;
+      var gap=price-lineNow;
+      var gapATR=a? Math.abs(gap)/a : null;
+      /* where the line will be over the next fortnight, so a touch can be
+         anticipated rather than noticed after the fact */
+      var ahead=[];
+      for(var d=1;d<=14;d++){
+        var lp=A.dir==='up'? A.p.px+s*(bars+d) : A.p.px-s*(bars+d);
+        if(lp>0)ahead.push({bars:d,price:+lp.toFixed(4),
+          date:new Date(nowT+d*86400000).toISOString().slice(0,10)});
+      }
+      /* if price holds its recent pace, when do the two meet? */
+      var pace=null, meetIn=null, meetPrice=null;
+      if(rows.length>10){
+        var back=Math.min(10,rows.length-1);
+        var p0=num(rows[rows.length-1-back].close);
+        if(p0!=null)pace=(price-p0)/back;              /* price per bar */
+      }
+      if(pace!=null){
+        var closing=(A.dir==='up'? (s-pace) : (pace+s));  /* gap change per bar */
+        if(Math.abs(closing)>1e-9){
+          var n=gap/closing;
+          if(n>0&&n<=120){ meetIn=Math.round(n);
+            meetPrice=+((A.dir==='up'? A.p.px+s*(bars+meetIn) : A.p.px-s*(bars+meetIn))).toFixed(4); }
+        }
+      }
+      F.lines.push({
+        anchor:A.p.date, anchorPrice:A.p.px, anchorKind:A.p.kind, dir:A.dir,
+        ratio:R.k, ratioNote:R.n, s:+s.toFixed(4), bars:bars,
+        lineNow:+lineNow.toFixed(4), gap:+gap.toFixed(4), gapATR:gapATR!=null?+gapATR.toFixed(3):null,
+        side: gap>0?'price above the line':gap<0?'price below the line':'on the line',
+        touching: gapATR!=null&&gapATR<=tolATR,
+        ahead:ahead, meetInBars:meetIn, meetPrice:meetPrice,
+        meetDate: meetIn!=null? new Date(nowT+meetIn*86400000).toISOString().slice(0,10) : null
+      });
+    });
+  });
+  F.lines.sort(function(x,y){
+    var ax=x.gapATR==null?99:x.gapATR, ay=y.gapATR==null?99:y.gapATR; return ax-ay; });
+  F.touching=F.lines.filter(function(l){return l.touching;});
+  F.nearest=F.lines[0]||null;
+  if(!F.lines.length)F.notes.push('No anchor pivot old enough to draw a fan from.');
+  return F;
+}
+
 /* ══ §9 · WYCKOFF, THE REST OF THE VOCABULARY ═════════════════════════
    The engine read springs, upthrusts and the two range phases. The framework
    also asks for the four that describe a range breaking rather than holding,
@@ -13494,6 +14005,7 @@ root.CQE={ dataQuality:dataQuality, scrubTicks:scrubTicks,
   projections:projections, riskGate:riskGate, hypotheses:hypotheses, volumeQuality:volumeQuality, pivots:pivots,
   wyckoff:wyckoff, elliott:elliott, gannPrice:gannPrice, gannTime:gannTime,
   quant:quant, momentum:momentum, clusterLevels:clusterLevels, gates:gates,
+  gannFan:gannFan, FAN_RATIOS:FAN_RATIOS,
   /* THESE TWO WERE PRIVATE AND THAT IS WHY THE TRADE COULD NOT SEE THEM.
      continuationConfirm is the six-check chain for a trend-continuation
      trade — the mirror of the reversal chain — and it existed only inside
@@ -14508,6 +15020,9 @@ function cqeRun(rows,volRows,volName,price,opt){
      The cross-market series are optional. Where they were not supplied the
      component is named as missing and the score renormalises over what was
      computed rather than quietly scoring the gap as zero. */
+  /* the fan is a price engine reading, computed beside the others */
+  var FAN=null; try{ FAN=CQE.gannFan(R,pv,{}); }catch(e){ console.error('gann fan:',e); }
+
   var DV=CQE.divergence;
   var dparts={
     momentum:   DV.momentum(R,pv),
@@ -14593,7 +15108,7 @@ function cqeRun(rows,volRows,volName,price,opt){
 
   return {price:price, atr:a, bars:R.length, dq:CQE.dataQuality(R), repaired:scrub.repaired,
           pivots:pv, wyckoff:W, elliott:E, gann:G, time:T, quant:Q, momentum:M,
-          projections:PR, core:core, gates:g, hypotheses:H, square:PT, signs:WS,
+          projections:PR, core:core, gates:g, hypotheses:H, square:PT, signs:WS, fan:FAN,
           divergence:dscore, divergenceParts:dparts, yieldCurve:curveOut,
           reversal:rev, majorTrend:MJ,
           volumeFrom:volName||null, required:[]};
@@ -15373,6 +15888,11 @@ function renderCQE(){
            if(lm)lm.innerHTML=cqeLevelMap(dp); }catch(e){ console.error('level map:',e); }
       try{ var cy=document.getElementById('cyc_slot');
            if(cy)cy.innerHTML=cqeCycleLine(); }catch(e){ console.error('cycle line:',e); }
+      try{ var fs2=document.getElementById('fan_slot');
+           if(fs2)fs2.innerHTML=cqeFanHtml(dp); }catch(e){ console.error('fan:',e); }
+      try{ var hz=document.getElementById('hz_slot');
+           if(hz)hz.innerHTML=horizonsHtml(dp); alertsPaint(); }catch(e){ console.error('horizons:',e); }
+      try{ alertCheck(); }catch(e){}
       /* the bot parked this signal because the methods had not finished.
          They have now, so it gets its answer. */
       try{ if(typeof BOT!=='undefined'&&BOT&&BOT._deferred){
@@ -15980,6 +16500,17 @@ function trendInvalidHtml(T,price,dp,asset){
       anything, and it cannot be seen in prose. */
    +'<div class="a-sub">The cycle windows ahead</div>'
    +'<div id="cyc_slot">'+cqeCycleLine()+'</div>'
+   /* three clocks, one for each kind of trade, and the switch that makes
+      them reach you when the tab is not open */
+   +'<div class="a-sub">Which clock is running</div>'
+   +'<div id="hz_slot">'+horizonsHtml(dp)+'</div>'
+   +'<div class="al-bar">'
+     +'<div id="alert_state"></div>'
+     +'<div class="al-btns">'
+       +'<button class="btn btn-a btn-sm" onclick="alertsEnable(this)">Alert me</button>'
+       +'<button class="btn btn-g btn-sm" onclick="alertsOff(this)">Off</button>'
+     +'</div>'
+   +'</div>'
    /* the column ended here and left half a screen of nothing under it */
    +'<div id="cross_slot"></div>'
 
@@ -16005,6 +16536,8 @@ function trendInvalidHtml(T,price,dp,asset){
       dropped onto it. The panel printed the nearest one and nothing else. */
    +'<div class="a-sub">Every level the methods agree on</div>'
    +'<div id="lmap_slot">'+cqeLevelMap(dp)+'</div>'
+   +'<div class="a-sub">The fan — where price and time square</div>'
+   +'<div id="fan_slot">'+cqeFanHtml(dp)+'</div>'
    +'</section><section>'
    +'<div id="zones_slot">'+anaZones(price,dp)+'</div>'
    +'</section></div>'
