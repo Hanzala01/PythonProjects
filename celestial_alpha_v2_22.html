@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b41 — Precision in Timing</title>
+<title>Celestial Alpha b42 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2154,6 +2154,75 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .st-note2{margin-top:9px;font-size:9.5px;line-height:1.6;color:var(--t3)}
 .st-none{font-size:10.5px;color:var(--t3);padding:8px 0}
 @media(prefers-reduced-motion:reduce){.st-r,.st-n b{animation:none!important}}
+
+.a-sub{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);margin:14px 0 2px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
+
+/* ══ THE LEVEL MAP ══ */
+.lmap{position:relative;margin-top:4px;border-radius:11px;border:1px solid var(--b1);
+  background:linear-gradient(180deg,rgba(52,211,153,.045),rgba(9,5,26,.3) 48%,rgba(248,113,113,.045));
+  overflow:hidden}
+.lm-b{position:absolute;left:0;height:15px;margin-top:-7.5px;display:flex;align-items:center;
+  gap:6px;padding:0 7px;border-radius:0 7px 7px 0;font-size:9px;line-height:1;
+  background:rgba(139,92,246,.16);border:1px solid rgba(157,77,255,.3);border-left:none;
+  transform-origin:left center;animation:lmIn .42s cubic-bezier(.22,1,.36,1) both;
+  transition:background .18s}
+.lm-b:hover{background:rgba(139,92,246,.3)}
+@keyframes lmIn{from{opacity:0;transform:scaleX(.2)}to{opacity:1;transform:none}}
+.lm-b.up{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.3)}
+.lm-b.dn{background:rgba(248,113,113,.11);border-color:rgba(248,113,113,.28)}
+.lm-b i{font-style:normal;font-weight:800;font-size:9px;color:var(--t1);opacity:.9;flex:none}
+.lm-b b{font-weight:600;color:var(--t2);font-variant-numeric:tabular-nums;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lm-b.tight b{display:none}
+.lm-b.tight:hover b{display:block}
+.lm-p{position:absolute;left:0;right:0;height:0;border-top:2px solid #E9DEFC;margin-top:-1px;
+  box-shadow:0 0 12px rgba(233,222,252,.5);animation:lmFade .6s .25s both}
+@keyframes lmFade{from{opacity:0}to{opacity:1}}
+.lm-p b{position:absolute;right:7px;top:-8px;padding:1px 7px;border-radius:6px;font-size:9.5px;
+  font-weight:800;background:#E9DEFC;color:#120d2a;font-variant-numeric:tabular-nums}
+.lm-m{position:absolute;right:0;width:0;height:0;margin-top:-8px;
+  animation:lmFade .5s .35s both}
+.lm-m span{position:absolute;right:86px;top:0;font-size:11px;line-height:1}
+.lm-m.hy-pri span{color:#34D399}
+.lm-m.hy-sec span{color:#60A5FA}
+.lm-m.hy-rev span{color:#FBBF24}
+.lm-m.stop span{opacity:.85}
+.lm-key{display:flex;flex-wrap:wrap;gap:9px;margin-top:7px;font-size:9px;color:var(--t3)}
+.lm-key .k-up{color:#34D399}
+.lm-key .k-dn{color:#F87171}
+.lm-key .k-m.hy-pri{color:#34D399}
+.lm-key .k-m.hy-sec{color:#60A5FA}
+.lm-key .k-m.hy-rev{color:#FBBF24}
+.lm-key .k-n{margin-left:auto;opacity:.8}
+.lm-na{font-size:10.5px;color:var(--t3);padding:14px 0}
+
+/* ══ THE CYCLE TIMELINE ══ */
+.cyl{position:relative;margin-top:4px;padding:16px 0 4px}
+.cy-axis{position:relative;height:11px;margin-bottom:5px}
+.cy-axis span{position:absolute;transform:translateX(-50%);font-size:8.5px;letter-spacing:.05em;
+  color:var(--t3);white-space:nowrap}
+.cy-axis span:first-child{transform:none}
+.cy-axis span:last-child{transform:translateX(-100%)}
+.cy-track{position:relative}
+.cy-row{position:relative;height:26px;animation:stIn .4s cubic-bezier(.22,1,.36,1) both}
+.cy-band{position:absolute;top:3px;height:9px;border-radius:5px;
+  background:linear-gradient(90deg,rgba(139,92,246,.45),rgba(167,139,250,.75));
+  box-shadow:0 0 10px rgba(139,92,246,.3)}
+.cy-due{position:absolute;top:0;width:2px;height:15px;background:#E9DEFC;border-radius:2px;
+  box-shadow:0 0 7px rgba(233,222,252,.7)}
+.cy-lbl{position:absolute;top:14px;font-size:8.5px;color:var(--t3);white-space:nowrap}
+.cy-row .cy-lbl{padding-left:1px}
+.cy-lbl i{font-style:normal;margin-left:5px;color:var(--p3);font-weight:700}
+.cy-now{position:absolute;left:0;top:16px;bottom:4px;width:1px;
+  background:linear-gradient(180deg,rgba(233,222,252,.7),rgba(233,222,252,0))}
+.cy-today{margin-top:8px;padding:8px 11px;border-radius:9px;border:1px solid var(--b1);
+  background:rgba(255,255,255,.02)}
+.cy-today.on{border-color:rgba(52,211,153,.32);background:rgba(52,211,153,.07)}
+.cy-today b{display:block;font-size:11px;font-weight:700;color:var(--t1)}
+.cy-today s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);
+  margin-top:3px;line-height:1.5}
+@media(prefers-reduced-motion:reduce){.lm-b,.lm-p,.lm-m,.cy-row{animation:none!important}}
 
 /* two cards side by side: the answer, and what is in the way of it */
 .conv-band{display:grid;grid-template-columns:1.35fr 1fr;gap:10px;margin-bottom:10px;
@@ -5308,7 +5377,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b41</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-27 · b42</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -10961,6 +11030,164 @@ function tcFmt(v,dp){
   return isFinite(v)?(+v).toLocaleString('en',{minimumFractionDigits:dp,maximumFractionDigits:dp}):'—';
 }
 /* ══════════════════════════════════════════════════════════════════════
+   THE LEVEL MAP — fifteen clusters that were only ever a sentence
+
+   The Gann price engine finds every level two or more methods agree on and
+   the panel printed the nearest one in prose. Everything else — where the
+   rest sit, which are thick with agreement and which are thin, whether the
+   room above price is emptier than the room below — was computed and never
+   drawn, and none of it can be read from a list.
+
+   Price is a line. The clusters are bars whose width is how many independent
+   methods put a level there. The three hypotheses drop their entry, stop and
+   target onto the same scale, so "target 4874" stops being a number and
+   becomes a place with things around it.
+   ══════════════════════════════════════════════════════════════════════ */
+function cqeLevelMap(dp){
+  var C=window.CQE_LAST;
+  if(!C||!C.gann)return '<div class="lm-na">Run an analysis to draw the map.</div>';
+  dp=dp||2;
+  var price=C.price, atr=C.atr||1;
+  var cl=((C.gann&&C.gann.clusters)||[]).slice();
+  if(!cl.length)return '<div class="lm-na">No level has two methods agreeing on it.</div>';
+
+  /* marks from the three hypotheses, so the scenarios sit on the same scale */
+  var marks=[];
+  (C.hypotheses||[]).forEach(function(h){
+    if(!h)return;
+    /* prefixed: .sec is already the collapsible-section class on the Timing
+       tab, and an unprefixed one here inherited its box in the legend. */
+    var tag=h.kind==='Reversal'?'hy-rev':h.rank===1?'hy-pri':'hy-sec';
+    var anchor=h.entryZone?h.entryZone.anchor:(h.entry!=null&&typeof h.entry==='number'?h.entry:null);
+    if(anchor!=null)marks.push({p:+anchor,t:'entry',c:tag,l:(h.kind||'')+' entry'});
+    if(h.stop!=null)marks.push({p:+h.stop,t:'stop',c:tag,l:(h.kind||'')+' stop'});
+    if(h.target!=null)marks.push({p:+h.target,t:'target',c:tag,l:(h.kind||'')+' target'});
+  });
+
+  /* the scale has to hold everything, or a mark lands outside the box */
+  var all=cl.map(function(c){return c.price;}).concat(marks.map(function(m){return m.p;})).concat([price]);
+  var lo=Math.min.apply(null,all), hi=Math.max.apply(null,all);
+  if(!(hi>lo))return '<div class="lm-na">Every level sits at one price — nothing to plot.</div>';
+  var pad=(hi-lo)*0.06; lo-=pad; hi+=pad;
+  var H=270;
+  var y=function(p){ return (hi-p)/(hi-lo)*H; };
+  var maxS=Math.max.apply(null,cl.map(function(c){return c.strength;}));
+
+  var h='<div class="lmap" style="height:'+H+'px">';
+  /* the bars, strongest agreement widest */
+  /* FIFTEEN LEVELS IN 270 PIXELS WILL COLLIDE.
+     Where two bars land within a row height of each other the price label is
+     dropped and the strength count kept — the bar and its tooltip still
+     carry the number, and two prices printed on top of each other carry
+     neither. */
+  var lastY=-99;
+  cl.sort(function(a,b){return b.price-a.price;}).forEach(function(c,i){
+    var yy=y(c.price), crowded=(yy-lastY)<13; if(!crowded)lastY=yy;
+    var w=Math.round(26+ (c.strength/maxS)*54);
+    var side=c.price>price?'up':'dn';
+    h+='<div class="lm-b '+side+(crowded?' tight':'')+'" style="top:'+yy.toFixed(1)+'px;width:'+w+'%;'
+      +'animation-delay:'+(i*0.035).toFixed(2)+'s" '
+      +'title="'+escHtml(c.price.toFixed(dp)+' — '+c.strength+' methods: '+(c.methods||[]).join(', ')
+        +' · '+(Math.abs(c.price-price)/atr).toFixed(2)+' ATR away')+'">'
+      +'<i>'+c.strength+'</i><b>'+tcFmt(c.price,dp)+'</b></div>';
+  });
+  /* the hypothesis marks */
+  marks.forEach(function(m){
+    h+='<div class="lm-m '+m.c+' '+m.t+'" style="top:'+y(m.p).toFixed(1)+'px" '
+      +'title="'+escHtml(m.l+' '+m.p.toFixed(dp))+'"><span>'
+      +(m.t==='entry'?'▸':m.t==='stop'?'✕':'◆')+'</span></div>';
+  });
+  /* price last, so it is on top of everything */
+  h+='<div class="lm-p" style="top:'+y(price).toFixed(1)+'px"><b>'+tcFmt(price,dp)+'</b></div>';
+  h+='</div>';
+
+  var above=cl.filter(function(c){return c.price>price;}).length;
+  var below=cl.length-above;
+  h+='<div class="lm-key">'
+    +'<span class="k-up">'+above+' above</span>'
+    +'<span class="k-dn">'+below+' below</span>'
+    +'<span class="k-m hy-pri">▸ primary</span>'
+    +'<span class="k-m hy-sec">▸ secondary</span>'
+    +'<span class="k-m hy-rev">▸ reversal</span>'
+    +'<span class="k-n">bar width is how many methods agree</span>'
+  +'</div>';
+  return h;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE CYCLE TIMELINE — the time engine's windows, as time
+
+   gannTime returns counts that land today and windows that open later, and
+   both were read out as sentences with dates in them. A window is a span;
+   written as "opens 2026-09-04, closes 2026-09-28" it takes real effort to
+   see that two of them overlap, which is the only thing that makes a date
+   worth anything.
+   ══════════════════════════════════════════════════════════════════════ */
+function cqeCycleLine(){
+  var C=window.CQE_LAST;
+  if(!C||!C.time)return '<div class="lm-na">Run an analysis to draw the timeline.</div>';
+  var T=C.time, wins=(T.windows||[]).slice(0,6);
+  var hits=(T.hits||[]);
+  var today=new Date(); today.setHours(0,0,0,0);
+  var DAY=86400000;
+  /* A FIXED 90-DAY AXIS WAS MOSTLY EMPTY.
+     Every window on this data closes inside a fortnight, so two thirds of
+     the track carried nothing and the bands were squeezed into the first
+     inch. The axis ends a little past the furthest window instead, with a
+     floor so a single close window does not fill the screen. */
+  var furthest=0;
+  wins.forEach(function(w){
+    var d=(new Date(w.closes+'T00:00:00')-today)/DAY;
+    if(d>furthest)furthest=d;
+  });
+  var span=Math.max(21,Math.min(90,Math.ceil(furthest*1.15)));
+  var d2x=function(d){
+    var dt=(new Date(d+'T00:00:00')-today)/DAY;
+    return Math.max(0,Math.min(100,(dt/span)*100));
+  };
+  if(!wins.length&&!hits.length)
+    return '<div class="lm-na">No cycle count lands today and no window opens inside 90 days.</div>';
+
+  var h='<div class="cyl">';
+  h+='<div class="cy-axis">'
+    +'<span style="left:0%">today</span>'
+    +'<span style="left:33.3%">+'+Math.round(span/3)+'d</span>'
+    +'<span style="left:66.6%">+'+Math.round(span*2/3)+'d</span>'
+    +'<span style="left:100%">+'+span+'d</span></div>';
+  h+='<div class="cy-track">';
+  wins.forEach(function(w,i){
+    var a=d2x(w.opens), b=d2x(w.closes), due=d2x(w.dueDate);
+    var wd=Math.max(1.5,b-a);
+    h+='<div class="cy-row" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'
+      +'<div class="cy-band" style="left:'+a.toFixed(2)+'%;width:'+wd.toFixed(2)+'%" '
+        +'title="'+escHtml(w.name+' — window '+w.opens+' to '+w.closes+', due '+w.dueDate)+'"></div>'
+      +'<div class="cy-due" style="left:'+due.toFixed(2)+'%" '
+        +'title="'+escHtml('due '+w.dueDate)+'"></div>'
+      +'<div class="cy-lbl" style="left:'+Math.min(72,a).toFixed(2)+'%">'
+        +escHtml(w.name)+'<i>'+w.daysRemaining+'d</i></div>'
+    +'</div>';
+  });
+  h+='</div>';
+  h+='<div class="cy-now" title="today"></div>';
+  h+='</div>';
+
+  /* counts that land today get their own line — they are not a span */
+  var tight=hits.filter(function(x){return x.tolerance>0&&x.error/x.tolerance<=0.10;});
+  var seen={}; tight.forEach(function(x){ seen[x.fromDate]=1; });
+  h+='<div class="cy-today '+(tight.length?'on':'')+'">'
+    +'<b>'+(tight.length?tight.length+' tight count'+(tight.length===1?'':'s')+' land today'
+                       :hits.length? hits.length+' loose count'+(hits.length===1?'':'s')+' land today'
+                       :'nothing lands today')+'</b>'
+    +(tight.length?'<s>'+Object.keys(seen).length+' separate pivot'
+        +(Object.keys(seen).length===1?'':'s')+' — '
+        +tight.slice(0,2).map(function(x){
+            return x.name+' from '+x.fromDate+' ('+(x.error===0?'exact':x.error+'d off')+')';
+          }).join('; ')+'</s>':'')
+  +'</div>';
+  return h;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    THE NOISE REPORT — what is degrading this read, named
 
    Asked for directly: tell me what the noise is. Every panel in the app
@@ -15142,6 +15369,10 @@ function renderCQE(){
            if(tc)tc.innerHTML=tradeCardHtml(); }catch(e){}
       try{ convergencePaint(); }catch(e){ console.error('convergence:',e); }
       try{ noisePaint(); }catch(e){ console.error('noise:',e); }
+      try{ var lm=document.getElementById('lmap_slot');
+           if(lm)lm.innerHTML=cqeLevelMap(dp); }catch(e){ console.error('level map:',e); }
+      try{ var cy=document.getElementById('cyc_slot');
+           if(cy)cy.innerHTML=cqeCycleLine(); }catch(e){ console.error('cycle line:',e); }
       /* the bot parked this signal because the methods had not finished.
          They have now, so it gets its answer. */
       try{ if(typeof BOT!=='undefined'&&BOT&&BOT._deferred){
@@ -15744,6 +15975,11 @@ function trendInvalidHtml(T,price,dp,asset){
       tolerance" on a day with twelve of them. It renders into its own slot
       and is repainted the moment the engines finish. */
    +'<div id="when_slot">'+anaWhen(price,dp)+'</div>'
+   /* gannTime returns spans and read them out as sentences with dates in
+      them. Two windows overlapping is the only thing that makes a date worth
+      anything, and it cannot be seen in prose. */
+   +'<div class="a-sub">The cycle windows ahead</div>'
+   +'<div id="cyc_slot">'+cqeCycleLine()+'</div>'
    /* the column ended here and left half a screen of nothing under it */
    +'<div id="cross_slot"></div>'
 
@@ -15765,6 +16001,10 @@ function trendInvalidHtml(T,price,dp,asset){
       wrong thing to scroll past on the way to something else. */
    +'<div class="a2"><section>'
    +anaLadder(pts,price,lo,hi,dp,S,dir)
+   /* the engine's own clusters, on a price scale, with the three scenarios
+      dropped onto it. The panel printed the nearest one and nothing else. */
+   +'<div class="a-sub">Every level the methods agree on</div>'
+   +'<div id="lmap_slot">'+cqeLevelMap(dp)+'</div>'
    +'</section><section>'
    +'<div id="zones_slot">'+anaZones(price,dp)+'</div>'
    +'</section></div>'
