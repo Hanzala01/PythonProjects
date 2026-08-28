@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b48 — Precision in Timing</title>
+<title>Celestial Alpha b49 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2429,6 +2429,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .fn-g,.fn-a{display:none}}
 @media(prefers-reduced-motion:reduce){.hz-r,.fn-r,.hz-tag.fired,.al-dot.on{animation:none!important}}
 
+.mj-sub{font-size:9.5px;line-height:1.6;color:var(--t3);margin-bottom:9px}
 .a-sub{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
   color:var(--t3);margin:14px 0 2px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
 
@@ -5666,7 +5667,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b48</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b49</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -6154,15 +6155,12 @@ body{background:var(--bg0)}
             <div id="sig_conf_badge" class="tag td">Calculating...</div>
           </div>
           <div id="ai_trades"></div>
-
-          <!-- 5. MAJOR LEVELS (square-root cycle, ÷100 scaling) -->
-          <div class="card">
-            <div class="ch">
-              <div class="ct"><div class="dot" style="background:var(--green)"></div>Major Levels — Square Root Cycle</div>
-              <div class="cs" id="major_sub">Levels measured out from the current price by turning the square-root cycle. Prices where a turn tends to land.</div>
-            </div>
-            <div class="cb" id="major_body"></div>
-          </div>
+          <!-- MAJOR LEVELS MOVED.
+               This card lived here, inside #ai_out, which the redesign left
+               display:none — so the ladder was being computed and written
+               into a hidden node on every analysis. It is a window on the
+               new board now, in the Where block where the other price
+               panels are. The ids travelled with it. -->
 
         </div>
 
@@ -17148,6 +17146,10 @@ function trendInvalidHtml(T,price,dp,asset){
       wrong thing to scroll past on the way to something else. */
    +'<div class="wins">'
    +win('ladder','The trade ladder',anaLadder(pts,price,lo,hi,dp,S,dir))
+   /* the square-root cycle ladder, and the line the reader sets by hand —
+      which is the one input that overrides the whole trend read */
+   +win('major','Major levels \u2014 the square-root cycle',
+        '<div class="mj-sub" id="major_sub"></div><div id="major_body"></div>')
    /* the engine's own clusters, on a price scale, with the three scenarios
       dropped onto it. The panel printed the nearest one and nothing else. */
    +win('lmap','Every level the methods agree on',
@@ -17355,6 +17357,9 @@ function trendInvalidHtml(T,price,dp,asset){
   /* the windows are all in the DOM and measurable now, so pack them into the
      two columns. Twice: once immediately, once after the entrance animation
      and the async slots have settled their heights. */
+  /* the window is rebuilt empty by the innerHTML above; renderMajorLevels
+     runs after runAI but the tab can also be drawn without one */
+  try{ renderMajorLevels(price); }catch(e){ console.error('major levels:',e); }
   try{ winsPack(host); }catch(e){ console.error('pack:',e); }
   setTimeout(function(){ try{ winsPack(host); }catch(e){} },420);
 }
@@ -21643,12 +21648,12 @@ function myEvAdd(){
   A.push({t:t,d:d,tm:tm||'00:00',i:im,a:af.trim(),id:Date.now()});
   myEvSave(A);
   ['ev_t','ev_a'].forEach(function(id){ var e=document.getElementById(id); if(e)e.value=''; });
-  try{ renderEconCal(); }catch(e){}
+  try{ renderSentimentV3(); }catch(e){ try{ renderEconCal(); }catch(e2){} }
   notify('Added — '+t,'info');
 }
 function myEvDel(id){
   myEvSave(myEvLoad().filter(function(x){ return String(x.id)!==String(id); }));
-  try{ renderEconCal(); }catch(e){}
+  try{ renderSentimentV3(); }catch(e){ try{ renderEconCal(); }catch(e2){} }
 }
 /* merged into the calendar as real rows, tagged so their origin is obvious */
 function myEvEvents(){
@@ -23358,12 +23363,9 @@ function renderSentiment(){
           +(e.affects?' · watching '+escHtml(e.affects):'')+'</div></div>'
         +'<span class="tag '+tc+'" style="margin-left:10px;flex-shrink:0">'+e.impact+'</span></div>';
     }).join('');
-    /* the two questions the list itself could not answer: what did this
-       actually do last time, and where do the events a rule cannot reach go */
-    cal.insertAdjacentHTML('beforeend',
-      '<div class="ec-split">'+econImpactHtml()+'</div>'
-      +'<div class="ec-split"><div class="ecm-h">Events you add yourself'
-        +'<b>no feed available</b></div>'+myEvHtml()+'</div>');
+    /* these two used to be appended here as well; #econ_cal is inside the
+       hidden legacy container, so that copy was never visible. They render
+       on the v3 board instead. */
   }
   /* market mood from astro bias engine */
   try{
@@ -23810,6 +23812,17 @@ function renderSentimentV3(){
    +'<div class="sn-week">'+week+'</div>'
    +'<div class="sn-sech"><b>What is coming</b><span>and what each one usually does to price</span></div>'
    +'<div class="sn-evs">'+(cards||'<div class="sn-load">No scheduled releases in range.</div>')+'</div>'
+   /* MEASURED IMPACT AND HAND-ENTERED EVENTS WERE BEING DRAWN INTO A HIDDEN NODE.
+      Both were appended to #econ_cal, which lives inside #sen_legacy — a
+      container the redesign left display:none. The event study ran, the
+      dollar and the metal were compared, the form was built, and none of it
+      was ever on screen. They render here, on the board people actually see. */
+   +'<div class="sn-sech"><b>What this release has actually done</b>'
+     +'<span>measured on the loaded history, not asserted from a table</span></div>'
+   +'<div id="sn_impact">'+econImpactHtml()+'</div>'
+   +'<div class="sn-sech"><b>Events you add yourself</b>'
+     +'<span>anything no rule can produce — a symposium, a speaker, a revision</span></div>'
+   +'<div id="sn_myev">'+myEvHtml()+'</div>'
    +'<div class="sn-sech"><b>The Tide</b><span>the slow money underneath — rates, inflation, jobs and energy, '
      +'which move on their own clock and set what every release lands into</span></div>'
    +'<div id="sn_macro"></div>'
