@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b49 — Precision in Timing</title>
+<title>Celestial Alpha b50 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2428,6 +2428,22 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:900px){.fn-r{grid-template-columns:34px 16px 78px 1fr;row-gap:2px}
   .fn-g,.fn-a{display:none}}
 @media(prefers-reduced-motion:reduce){.hz-r,.fn-r,.hz-tag.fired,.al-dot.on{animation:none!important}}
+
+/* the measured bias, on the release card */
+.evb{display:flex;flex-wrap:wrap;gap:7px;align-items:stretch;margin-top:9px;padding-top:9px;
+  border-top:1px solid var(--b1)}
+.evb.none{display:block;font-size:9.5px;line-height:1.6;color:var(--t3)}
+.evb-s{flex:1 1 120px;min-width:0;padding:7px 9px;border-radius:9px;
+  border:1px solid var(--b1);background:rgba(255,255,255,.02)}
+.evb-s.up{border-color:rgba(52,211,153,.32);background:rgba(52,211,153,.06)}
+.evb-s.dn{border-color:rgba(248,113,113,.32);background:rgba(248,113,113,.06)}
+.evb-s i{display:block;font-style:normal;font-size:8px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.evb-s b{display:block;font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1);
+  margin:2px 0 1px;font-variant-numeric:tabular-nums}
+.evb-s s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3)}
+.evb-s.na b{color:var(--t3)}
+.evb em{flex:1 1 100%;font-style:normal;font-size:8.5px;color:var(--t3);opacity:.8}
 
 .mj-sub{font-size:9.5px;line-height:1.6;color:var(--t3);margin-bottom:9px}
 .a-sub{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
@@ -5667,7 +5683,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b49</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b50</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -21553,6 +21569,48 @@ function econLoadAll(done){
     macroFetch(nm,function(){ if(--left===0){_econLoading=false;if(done)done();} });
   });
 }
+/* ══════════════════════════════════════════════════════════════════════
+   RELEASE TIMES ARE EASTERN, AND WERE BEING SET AS LOCAL
+
+   Every event here used setHours(18,30) or setHours(23,0) — that is 18:30
+   in whatever timezone the browser happens to be in, and no US release is
+   scheduled in the reader's timezone. Checked against the real instants:
+
+     Non-Farm Payrolls is 08:30 America/New_York = 12:30Z on 2026-09-04
+
+     browser in Karachi    produced 13:30Z   an hour late   (showed 6:30 PM
+                                                             where the real
+                                                             calendar says 5:30)
+     browser in New York   produced 22:30Z   ten hours late
+     browser in London     produced 17:30Z   five hours late
+
+   The Karachi case is the one that was reported: off by exactly one hour,
+   because 18:30 PKT happens to be an hour past 08:30 EDT. In winter, when
+   New York leaves daylight time and Karachi does not, the same hardcoded
+   number would be off by two.
+
+   The time is now stated in Eastern and converted, so it is correct in any
+   timezone and on both sides of a daylight-saving change.
+   ══════════════════════════════════════════════════════════════════════ */
+function etOffsetMinutes(d){
+  /* how far ahead of UTC New York is at this instant, in minutes (negative) */
+  try{
+    var f=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',
+      year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    var q={}; f.formatToParts(d).forEach(function(x){ q[x.type]=x.value; });
+    var asUTC=Date.UTC(+q.year,+q.month-1,+q.day,(+q.hour)%24,+q.minute,+q.second);
+    return (asUTC-d.getTime())/60000;
+  }catch(e){ return -240; }        /* EDT, if Intl has no zone database */
+}
+/* the UTC instant of hh:mm Eastern on a given Eastern calendar day. Two
+   passes, because the offset depends on the instant we are still solving for
+   and one pass lands on the wrong side of a DST boundary. */
+function etDate(y,m,day,hh,mm){
+  var naive=Date.UTC(y,m,day,hh,mm,0,0), t=naive;
+  for(var i=0;i<2;i++) t=naive-etOffsetMinutes(new Date(t))*60000;
+  return new Date(t);
+}
 function buildEconEvents(){
   var now=new Date(), out=[];
   function nthWeekdayOfMonth(y,m,weekday,n){
@@ -21570,19 +21628,20 @@ function buildEconEvents(){
        holidays, which the note says rather than pretending otherwise. */
     var nfp=nthWeekdayOfMonth(yy,mm,5,1);
     if(nfp){
-      nfp.setHours(18,30,0,0);
+      nfp=etDate(yy,mm,nfp.getDate(),8,30);
       out.push({t:'Non-Farm Payrolls',d:nfp,prec:'rule',
-        note:'First Friday of the month, 08:30 ET. BLS shifts this around some holidays.',
+        note:'First Friday of the month, 08:30 Eastern, converted to your clock. '
+          +'BLS shifts this around some holidays.',
         fc:'—',impact:'High'});
     }
     /* CPI and PPI — released mid-month on a BLS schedule with no day-of-month
        rule. Showing an exact day would be inventing one, so the midpoint of
        the real window is used for ordering and the window itself is shown. */
-    var cpi=new Date(yy,mm,12,18,30,0,0);
+    var cpi=etDate(yy,mm,12,8,30);
     out.push({t:'CPI (Inflation)',d:cpi,prec:'window',winFrom:10,winTo:15,
       note:'BLS releases CPI mid-month, typically the 10th–15th. No fixed day of month — check the BLS schedule for the exact date.',
       fc:'—',impact:'High'});
-    var ppi=new Date(yy,mm,15,18,30,0,0);
+    var ppi=etDate(yy,mm,15,8,30);
     out.push({t:'PPI (Producer Prices)',d:ppi,prec:'window',winFrom:13,winTo:18,
       note:'BLS releases PPI in the days around CPI, typically the 13th–18th. No fixed day of month.',
       fc:'—',impact:'Medium'});
@@ -21594,10 +21653,11 @@ function buildEconEvents(){
   var FOMC_YEAR=2026;
   var fomc=[[0,28],[2,18],[3,29],[5,17],[6,29],[8,16],[9,28],[11,9]];
   fomc.forEach(function(f){
-    var d=new Date(FOMC_YEAR,f[0],f[1],23,0,0,0);
+    var d=etDate(FOMC_YEAR,f[0],f[1],14,0);
     if(d<=now)return;
     out.push({t:'Federal Funds Rate',d:d,prec:'scheduled',
-      note:'Published FOMC meeting date. Decision at 14:00 ET on the second day.',
+      note:'Published FOMC meeting date. Decision at 14:00 Eastern on the second day, '
+        +'converted to your clock.',
       fc:'—',impact:'High'});
   });
 
@@ -21761,6 +21821,54 @@ function econStudy(rows,dateSet){
     last:hits.slice(-3).reverse()
   };
 }
+/* ══════════════════════════════════════════════════════════════════════
+   THE BIAS, ON THE EVENT ITSELF
+
+   The study existed as one panel at the bottom of the page. What was asked
+   for is the answer ON the release: this one is coming, so what does it do
+   to the metal and what does it do to the dollar.
+
+   Measured where the date is derivable and refused where it is not, per
+   event rather than in general. A hand-entered event carries whatever
+   instruments the reader tagged it with and no measurement at all, which is
+   the truthful thing to show for something with one occurrence.
+   ══════════════════════════════════════════════════════════════════════ */
+function econBiasChip(e){
+  if(!e)return '';
+  if(e.mine)
+    return '<div class="evb none">'+(e.affects
+      ? 'You marked this as affecting '+escHtml(e.affects)+'. One-off events have no history to '
+        +'measure, so nothing is claimed about the size or the direction.'
+      : 'Entered by hand. No history to measure, so nothing is claimed about which way it goes.')
+    +'</div>';
+  /* only payrolls has a rule that reconstructs its own past dates */
+  if(!/payroll/i.test(e.t||''))
+    return '<div class="evb none">No measured bias: '+escHtml(e.t)+' has no day-of-month rule, '
+      +'so its past release dates cannot be reconstructed from the calendar and there is nothing '
+      +'honest to measure against.</div>';
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
+  var asset=((typeof _lastAsset!=='undefined'&&_lastAsset)||'the asset').toUpperCase();
+  var A=rows.length>60? econStudy(rows,econFirstFridays(rows)) : {n:0,why:'no history loaded'};
+  var D=null,dLabel='Dollar';
+  try{
+    var dc=CQE_XM_CACHE&&CQE_XM_CACHE.dollar;
+    if(dc&&dc.rows&&dc.rows.length>60){ D=econStudy(dc.rows,econFirstFridays(dc.rows));
+      dLabel=String(dc.label||'Dollar').split('(')[0].trim(); }
+  }catch(e2){}
+  if(!A.n&&!(D&&D.n))
+    return '<div class="evb none">Load an asset with daily history and the measured bias appears '
+      +'here.</div>';
+  function side(nm,S){
+    if(!S||!S.n)return '<span class="evb-s na"><i>'+escHtml(nm)+'</i><b>—</b><s>no sample</s></span>';
+    var lean=S.upPct>=60?'up':S.upPct<=40?'down':'a coin flip';
+    return '<span class="evb-s '+(S.upPct>=60?'up':S.upPct<=40?'dn':'')+'">'
+      +'<i>'+escHtml(nm)+'</i><b>'+(S.medDay>=0?'+':'')+S.medDay.toFixed(2)+' ATR</b>'
+      +'<s>'+S.upPct+'% up &middot; '+lean+'</s></span>';
+  }
+  return '<div class="evb">'+side(asset,A)+side(dLabel,D)
+    +'<em>over '+((A.n||D.n))+' past releases, measured</em></div>';
+}
+
 /* one line a reader can act on, or an honest refusal */
 function econImpactHtml(){
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
@@ -23777,7 +23885,15 @@ function renderSentimentV3(){
       +'<div class="cd">'+(days<=0?'today':'in '+days+'d')+'</div>'
       +'<div class="n">'+escHtml(e.t)+'</div>'
       +'<div class="w">'+econWhen(e)+' · '+econPrecLabel(e)+' · '+e.impact+' impact</div>'
-      +'<div class="x">'+escHtml(senWhat(e.t))+'</div></div>';
+      /* senWhat matches four known releases and falls through to a generic
+         line about a print. A symposium has no print, and a speaker is not a
+         release, so a hand-entered event says what it is instead. */
+      +'<div class="x">'+escHtml(e.mine
+          ? (e.affects? 'Entered by you, watching '+e.affects+'.'
+                      : 'Entered by you.')
+            +' Nothing here is derived from a feed.'
+          : senWhat(e.t))+'</div>'
+      +econBiasChip(e)+'</div>';
   }).join('');
 
   host.className='sn';
