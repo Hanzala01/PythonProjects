@@ -8,7 +8,7 @@
      thirty-one copies of the same download named (29), (30), (31) gives you
      no way to tell which one you just opened. The tab says it now, before
      the page has even finished loading. -->
-<title>Celestial Alpha b45 — Precision in Timing</title>
+<title>Celestial Alpha b46 — Precision in Timing</title>
 <!-- ══ THE FONTS WERE HOLDING THE WHOLE PAGE HOSTAGE ══════════════════
      A plain <link rel="stylesheet"> blocks rendering: the browser will not
      paint until it has fetched and parsed it. Measured on this file, that one
@@ -2229,6 +2229,78 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .pane>*{animation:none!important}
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   WINDOWS AND THEIR PACKING
+
+   .a2 was two rigid columns of stacked panels. Measured, its four blocks
+   wasted 1,743px of vertical space at 1440 and 1,760px at 1920 — a short
+   left column cannot borrow the tall right one's overflow, so the gap is
+   simply black.
+
+   CSS columns pack instead of aligning: a window that ends flows straight
+   into the next one. break-inside:avoid keeps a window whole, and a window
+   wider than a column takes the full width by leaving the flow.
+   ══════════════════════════════════════════════════════════════════════ */
+/* THREE COLUMNS MADE IT TALLER, NOT SHORTER.
+   At 1920 with column-count:3 the tab measured 5,856px against 5,486px at
+   1440 with two — narrower columns force the wide panels to wrap, and the
+   volume profile grew 773px to 909px, the fan 429px to 726px. Two columns
+   at every width above the phone breakpoint. */
+/* CSS COLUMNS BALANCE, THEY DO NOT PACK.
+   column-count sets every column to the same height, so a block whose
+   windows do not divide evenly still carries the rounding as empty space,
+   and every heading that spans restarts the flow and fragments it further.
+   Measured, six spanned blocks came to 5,404px against 4,595px for four
+   unspanned ones — the structure was fighting the layout.
+
+   winsPack() distributes the windows into two real columns in JS, each one
+   going to whichever column is currently shortest. That is a greedy bin
+   pack: it reads in order, it balances to within one window's height, and
+   headings stay outside as ordinary full-width blocks. */
+.wins{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.wins-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px}
+@media(max-width:900px){.wins{display:block}.wins-col{display:block}}
+.win{width:100%;margin:0;
+  border-radius:13px;border:1px solid var(--b1);overflow:hidden;
+  background:linear-gradient(168deg,rgba(24,18,48,.62),rgba(9,6,22,.78));
+  transition:border-color .22s,box-shadow .22s,transform .22s;
+  animation:winIn .44s cubic-bezier(.22,1,.36,1) both}
+@keyframes winIn{from{opacity:0;transform:translateY(10px) scale(.995)}to{opacity:1;transform:none}}
+.win:hover{border-color:rgba(157,77,255,.34);
+  box-shadow:0 12px 34px rgba(0,0,0,.42),0 0 0 1px rgba(157,77,255,.1)}
+/* a wide window leaves the two-column split and takes the block's full width */
+.win.wide{width:100%}
+.wins.has-wide{flex-wrap:wrap}
+.wins>.win.wide{flex:1 0 100%}
+/* A SPANNER RESTARTS THE COLUMN FLOW.
+   The gate headings were inside .wins and rendered as column items, so the
+   first fix was column-span:all. That is worse: CSS columns begin a fresh
+   balanced set after every spanning element, which fragmented one block
+   into four short ones and put the tab back up from 4,595px to 5,396px.
+   The headings are emitted before the block instead, one .wins per gate. */
+.win-h{display:flex;align-items:center;gap:7px;padding:6px 11px;cursor:pointer;
+  border-bottom:1px solid var(--b1);
+  background:linear-gradient(90deg,rgba(139,92,246,.10),rgba(139,92,246,0));
+  user-select:none;transition:background .18s}
+.win-h:hover{background:linear-gradient(90deg,rgba(139,92,246,.2),rgba(139,92,246,.02))}
+.win-dot{width:6px;height:6px;border-radius:99px;background:var(--p3);flex:none;opacity:.75}
+.win-h b{font-family:'Space Grotesk';font-size:10.5px;font-weight:800;letter-spacing:.055em;
+  text-transform:uppercase;color:var(--t2);min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.win-h em{font-style:normal;font-size:8px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:2px 7px;border-radius:99px;
+  background:rgba(139,92,246,.16);border:1px solid rgba(157,77,255,.3);color:var(--p3)}
+.win-x{margin-left:auto;font-size:9px;color:var(--t3);transition:transform .26s cubic-bezier(.22,1,.36,1)}
+.win-b{padding:10px 11px 11px}
+/* shut: the body is gone from layout, so the packing tightens immediately */
+.win.shut .win-b{display:none}
+.win.shut .win-x{transform:rotate(-90deg)}
+.win.shut{background:rgba(9,6,22,.5)}
+.win.shut .win-h{border-bottom-color:transparent}
+.win.t-warn{border-color:rgba(251,191,36,.3)}
+.win.t-bad{border-color:rgba(248,113,113,.32)}
+@media(prefers-reduced-motion:reduce){.win{animation:none!important}.win-x{transition:none}}
+
 /* ══ THE WEEK GRID ══ */
 .wkgrid{margin-top:4px;border-radius:11px;border:1px solid var(--b1);
   background:rgba(9,5,26,.32);padding:9px 11px;overflow:hidden}
@@ -2378,10 +2450,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   margin-top:3px;line-height:1.5}
 @media(prefers-reduced-motion:reduce){.lm-b,.lm-p,.lm-m,.cy-row{animation:none!important}}
 
-/* two cards side by side: the answer, and what is in the way of it */
-.conv-band{display:grid;grid-template-columns:1.35fr 1fr;gap:10px;margin-bottom:10px;
-  align-items:start}
-@media(max-width:1100px){.conv-band{grid-template-columns:1fr}}
+/* THE SAME RIGID PAIR, THE SAME VOID.
+   The answer card is short and the noise list is long, so a fixed two-column
+   grid left half a screen of black under the left one. It packs like every
+   other window block now. */
+.conv-band{column-count:2;column-gap:10px;margin-bottom:10px}
+@media(max-width:1100px){.conv-band{column-count:1}}
+.conv-band>.card{break-inside:avoid;-webkit-column-break-inside:avoid;
+  display:inline-block;width:100%;margin:0 0 10px}
 .noiz{padding:12px 15px;text-align:left}
 .nz-h{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk';font-size:10px;
   font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
@@ -5531,7 +5607,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b45</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-28 · b46</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -8679,6 +8755,12 @@ function initMotion(){
   });
   var ov=document.getElementById('cmdk');
   if(ov)ov.addEventListener('click',function(e){ if(e.target===ov)cmdClose(); });
+  /* the split is computed from measured heights, so a width change invalidates
+     it. Debounced, because resize fires continuously while a window is dragged. */
+  var _rz=null;
+  window.addEventListener('resize',function(){
+    clearTimeout(_rz); _rz=setTimeout(function(){ try{ winsPack(); }catch(e){} },180);
+  });
   document.addEventListener('mousemove',function(e){
     var n=e.target.closest('.nav-item');
     if(!n)return;
@@ -12294,6 +12376,101 @@ function selfTestRun(btn){
    Two of three is the interesting case and it is named rather than rounded
    up to a yes.
    ══════════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════
+   WINDOWS — the panel, and the packing that made the tab a third shorter
+
+   The tab was built from .a2 blocks: two rigid columns, each a <section>
+   holding a stack of panels. Rigid is the problem. Measured at 1440 and
+   1920 the four blocks ran 984 against 1280, 816 against 292, 171 against
+   717, 574 against 197 — 1,743px of dead vertical space, which is the black
+   void in the middle of the screen and roughly a third of the whole tab.
+
+   Nothing packs it because the two sides are independent stacks: a short
+   left column cannot borrow the tall right one's overflow.
+
+   Every panel becomes a window instead — its own titled box — and the
+   windows flow into a masonry column layout, so a short one is followed by
+   the next window rather than by empty space. Two windows sit side by side
+   in the same block, which is what was asked for, and each one collapses to
+   its title bar so a reader can shut what they are not using.
+   ══════════════════════════════════════════════════════════════════════ */
+var WIN_KEY='ca_wins_shut';
+function winShut(){ try{ return JSON.parse(localStorage.getItem(WIN_KEY)||'{}'); }catch(e){ return {}; } }
+/* REFERENCE PANELS OPEN BY DEFAULT WERE THE REST OF THE SCROLLING.
+   The wheel, the profile, the meters and the month's quota are all things
+   to consult, not things to read on the way past. They start shut and open
+   on one click. A choice the reader has actually made is remembered and
+   always beats the default. */
+function winIsShut(id,defShut){
+  var S=winShut();
+  return (S[id]===undefined) ? !!defShut : !!S[id];
+}
+function winToggle(id,el){
+  var S=winShut(), w0=el&&el.closest?el.closest('.win'):null;
+  /* toggling from the DOM state, not from storage, so the first click on a
+     panel that is shut only by default opens it rather than shutting it again */
+  var isShut=w0?w0.classList.contains('shut'):!!S[id];
+  S[id]=!isShut;
+  try{ localStorage.setItem(WIN_KEY,JSON.stringify(S)); }catch(e){}
+  var w=el&&el.closest?el.closest('.win'):document.querySelector('.win[data-w="'+id+'"]');
+  if(w)w.classList.toggle('shut',!!S[id]);
+  /* the balance changed, so the pack is stale */
+  try{ winsPack(w?w.closest('.wins'):null); }catch(e){}
+  sfx('tap');
+}
+/* greedy two-column bin pack: each window joins whichever column is shorter */
+function winsPack(root){
+  var narrow=window.matchMedia&&window.matchMedia('(max-width:900px)').matches;
+  (root||document).querySelectorAll('.wins').forEach(function(g){
+    var kids=[].slice.call(g.querySelectorAll(':scope > .win, :scope > .wins-col > .win'));
+    if(!kids.length)return;
+    /* MEASURE BEFORE DETACHING.
+       The first version removed the old columns and then read offsetHeight
+       while packing — but removing a column detaches the windows inside it,
+       and a detached node measures zero. Every height after the first came
+       back 0, the greedy choice was meaningless, and a re-pack made the tab
+       taller than no pack at all: 6,183px against 5,191px, with one block
+       splitting 400 against 72. Heights are taken while everything is still
+       laid out, and the pack then runs on the recorded numbers. */
+    var h={}, i=0;
+    kids.forEach(function(k){ k.dataset.pkI=(i); h[i]=k.offsetHeight; i++; });
+    [].slice.call(g.querySelectorAll(':scope > .wins-col')).forEach(function(c){ c.remove(); });
+    g.classList.remove('has-wide');
+    if(narrow){ kids.forEach(function(k){ g.appendChild(k); }); return; }
+    var wide=kids.filter(function(k){ return k.classList.contains('wide'); });
+    var norm=kids.filter(function(k){ return !k.classList.contains('wide'); });
+    if(norm.length){
+      var a=document.createElement('div'), b=document.createElement('div');
+      a.className='wins-col'; b.className='wins-col';
+      g.appendChild(a); g.appendChild(b);
+      var ha=0, hb=0;
+      norm.forEach(function(k){
+        var kh=(h[+k.dataset.pkI]||0)+10;
+        if(ha<=hb){ a.appendChild(k); ha+=kh; }
+        else      { b.appendChild(k); hb+=kh; }
+      });
+    }
+    /* a wide window cannot sit inside a column, so it follows them */
+    if(wide.length){ g.classList.add('has-wide'); wide.forEach(function(k){ g.appendChild(k); }); }
+    kids.forEach(function(k){ delete k.dataset.pkI; });
+  });
+}
+/* id is used for the remembered state, so it has to be stable across redraws */
+function win(id,title,body,opt){
+  opt=opt||{};
+  var shut=winIsShut(id,opt.shut);
+  return '<div class="win'+(shut?' shut':'')+(opt.wide?' wide':'')+(opt.tone?' t-'+opt.tone:'')+'" '
+    +'data-w="'+escHtml(id)+'">'
+    +'<div class="win-h" onclick="winToggle(\''+escHtml(id)+'\',this)">'
+      +'<span class="win-dot"></span>'
+      +'<b>'+escHtml(title)+'</b>'
+      +(opt.tag?'<em>'+escHtml(opt.tag)+'</em>':'')
+      +'<span class="win-x">&#9662;</span>'
+    +'</div>'
+    +'<div class="win-b">'+body+'</div>'
+  +'</div>';
+}
+
 /* takes an engine result so the scanner can ask it per instrument; falls back
    to the live board when called with nothing, which is every existing caller */
 function convergence(Cin){
@@ -16249,6 +16426,8 @@ function renderCQE(){
            if(fs2)fs2.innerHTML=cqeFanHtml(dp); }catch(e){ console.error('fan:',e); }
       try{ var hz=document.getElementById('hz_slot');
            if(hz)hz.innerHTML=horizonsHtml(dp); alertsPaint(); }catch(e){ console.error('horizons:',e); }
+      /* every slot above just changed height, so the two columns are stale */
+      try{ winsPack(); }catch(e){ console.error('pack:',e); }
       try{ alertCheck(); }catch(e){}
       /* the bot parked this signal because the methods had not finished.
          They have now, so it gets its answer. */
@@ -16811,7 +16990,6 @@ function trendInvalidHtml(T,price,dp,asset){
       pair at the end — the decision and the alternatives. Below 1100px the
       grid collapses to one column, because two narrow columns read worse
       than one wide one. */
-   +'<div class="a2"><section>'
    /* ─── GATE 1 · WHICH WAY ────────────────────────────────────────
       The day's lean first, because it is the first thing anyone actually
       looks at, and it used to sit fourth, inside a section called "the case".
@@ -16821,20 +16999,22 @@ function trendInvalidHtml(T,price,dp,asset){
         'Before anything else: which side has the upper hand today. The bar below is a vote '
         +'of the methods that read direction &mdash; 50 means they cancel out. Fear and greed '
         +'underneath measures how price has behaved, not what anyone is saying.')
-   +'<div id="vb_slot"></div>'
-   +'<div id="ana_fng"></div>'
-   +'<div class="ab-reads">'+reads.map(function(r){
-       return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
-         +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
-         +anaMeter(r.p,r.c)
-         +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
-     }).join('')+'</div>'
+   +'<div class="wins">'
+   +win('lean','The day\u2019s lean','<div id="vb_slot"></div>')
+   +win('fng','Fear and greed','<div id="ana_fng"></div>',{shut:true})
+   +win('reads','What each method reads',
+        '<div class="ab-reads">'+reads.map(function(r){
+          return '<div class="ab-read"><div class="ab-cap">'+r.k+'</div>'
+            +'<div class="ab-v" style="color:'+r.c+'">'+escHtml(r.v)+'</div>'
+            +anaMeter(r.p,r.c)
+            +'<div class="ab-note">'+escHtml((r.note||'').slice(0,46))+'</div></div>';
+        }).join('')+'</div>',{shut:true})
+   +'</div>'
    /* the day's lean is a reason for the call, so it sits with the reasons.
       It lives outside this innerHTML so its date input survives a redraw. */
 
    /* ─── 3 · where ────────────────────────────────────────────────── */
 
-   +'</section><section>'
    /* ─── GATE 3 · WHEN ─────────────────────────────────────────────
       There was no "when" on this tab at all. Every cycle and window lived on
       the Timing Engine, one click away, so the third of the four gates was
@@ -16844,6 +17024,7 @@ function trendInvalidHtml(T,price,dp,asset){
         'Two different clocks. The hours are today&rsquo;s trading windows. The cycles are counted '
         +'forward from real turning points &mdash; if this market turned 180 days ago, the 180-day '
         +'mark is a date worth watching. Neither of them says which way.')
+   +'<div class="wins">'
    /* THE CYCLES ARRIVE AFTER THIS HTML DOES.
       The five engines run asynchronously — they may still be fetching a
       volume proxy when the board is built — so reading CQE_LAST while
@@ -16851,27 +17032,25 @@ function trendInvalidHtml(T,price,dp,asset){
       nothing at all, and the block announced "no anniversary falls inside
       tolerance" on a day with twelve of them. It renders into its own slot
       and is repainted the moment the engines finish. */
-   +'<div id="when_slot">'+anaWhen(price,dp)+'</div>'
+   +win('when','Today\u2019s windows','<div id="when_slot">'+anaWhen(price,dp)+'</div>')
    /* gannTime returns spans and read them out as sentences with dates in
       them. Two windows overlapping is the only thing that makes a date worth
       anything, and it cannot be seen in prose. */
-   +'<div class="a-sub">The cycle windows ahead</div>'
-   +'<div id="cyc_slot">'+cqeCycleLine()+'</div>'
+   +win('cyc','The cycle windows ahead','<div id="cyc_slot">'+cqeCycleLine()+'</div>')
    /* three clocks, one for each kind of trade, and the switch that makes
       them reach you when the tab is not open */
-   +'<div class="a-sub">Which clock is running</div>'
-   +'<div id="hz_slot">'+horizonsHtml(dp)+'</div>'
-   +'<div class="al-bar">'
-     +'<div id="alert_state"></div>'
-     +'<div class="al-btns">'
-       +'<button class="btn btn-a btn-sm" onclick="alertsEnable(this)">Alert me</button>'
-       +'<button class="btn btn-g btn-sm" onclick="alertsOff(this)">Off</button>'
-     +'</div>'
-   +'</div>'
+   +win('hz','Which clock is running',
+        '<div id="hz_slot">'+horizonsHtml(dp)+'</div>'
+        +'<div class="al-bar">'
+          +'<div id="alert_state"></div>'
+          +'<div class="al-btns">'
+            +'<button class="btn btn-a btn-sm" onclick="alertsEnable(this)">Alert me</button>'
+            +'<button class="btn btn-g btn-sm" onclick="alertsOff(this)">Off</button>'
+          +'</div>'
+        +'</div>',{tag:'alerts'})
    /* the column ended here and left half a screen of nothing under it */
-   +'<div id="cross_slot"></div>'
-
-   +'</section></div>'
+   +win('cross','Elsewhere in the market','<div id="cross_slot"></div>')
+   +'</div>'
 
    /* ─── GATE 2 · WHERE ────────────────────────────────────────────── */
    +act(2,'Where','Which prices matter?',
@@ -16887,30 +17066,29 @@ function trendInvalidHtml(T,price,dp,asset){
       The Gann rungs go behind a disclosure. They are a complete grid of
       every rung above and below, which is the right thing to have and the
       wrong thing to scroll past on the way to something else. */
-   +'<div class="a2"><section>'
-   +anaLadder(pts,price,lo,hi,dp,S,dir)
+   +'<div class="wins">'
+   +win('ladder','The trade ladder',anaLadder(pts,price,lo,hi,dp,S,dir))
    /* the engine's own clusters, on a price scale, with the three scenarios
       dropped onto it. The panel printed the nearest one and nothing else. */
-   +'<div class="a-sub">Every level the methods agree on</div>'
-   +'<div id="lmap_slot">'+cqeLevelMap(dp)+'</div>'
-   +'<div class="a-sub">The fan — where price and time square</div>'
-   +'<div id="fan_slot">'+cqeFanHtml(dp)+'</div>'
-   +'</section><section>'
-   +'<div id="zones_slot">'+anaZones(price,dp)+'</div>'
-   +'</section></div>'
-   +'<div class="a2"><section>'
+   +win('lmap','Every level the methods agree on',
+        '<div id="lmap_slot">'+cqeLevelMap(dp)+'</div>')
+   +win('fan','The fan \u2014 where price and time square',
+        '<div id="fan_slot">'+cqeFanHtml(dp)+'</div>',{tag:'scalp'})
+   +win('zones','Buy and sell zones','<div id="zones_slot">'+anaZones(price,dp)+'</div>')
+   +'</div>'
+   +'<div class="wins">'
    /* anaCycle used to sit here printing "Accumulation / Markup / Distribution
       / Markdown" — Wyckoff's own vocabulary — from sqrt(price) mod 2. That is
       a property of the price's digits: 4654 gives one phase and 4655 another,
       with no volume, no range and no structure anywhere in it. There is a
       real Wyckoff engine now, at the top of this tab, so the labels are gone.
       The wheel position it also drew is kept, without the phase words. */
-   +anaWheel(price,dp)
-   /* the wheel is a third the height of the profile beside it */
-   +'<div id="reach_slot"></div>'
-   +'</section><section>'
-   +vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})())
-   +'</section></div>'
+   +win('wheel','The degree wheel',anaWheel(price,dp),{shut:true})
+   +win('reach','How far it can reach','<div id="reach_slot"></div>')
+   +win('vprof','Where the volume traded',
+        vpHtml(price,dp,(function(){try{return dailySigma().v||0;}catch(e){return 0;}})()),
+        {shut:true})
+   +'</div>'
    +'<details class="amore"><summary>Every Gann rung above and below</summary>'
      +'<div style="margin-top:9px">'+anaRungs(price,dp)+'</div></details>'
 
@@ -16929,27 +17107,27 @@ function trendInvalidHtml(T,price,dp,asset){
    /* ─── 2 · why ──────────────────────────────────────────────────── */
 
 
-   +'<div class="a2"><section>'
    /* ─── GATE 4b · HOW MUCH ────────────────────────────────────────── */
    +act(5,'How much','What size, and what is left this month?',
         'The only section that can say no. It sizes the position from the stop distance and '
         +'refuses anything the risk rules do not allow, however good the setup above looks.')
-   +riskChipHtml(S,conf,price,dp,asset)
+   +'<div class="wins">'
+   +win('risk','What size is allowed',riskChipHtml(S,conf,price,dp,asset),{tag:'veto'})
    /* THE SAME RACE THAT CAUGHT THE WHEN BLOCK.
       This card reads CQE_LAST, and the five methods finish after this HTML
       is built — so it saw whatever the previous asset left behind, or
       nothing, and fell through to the older engine's "NO TRADE" while the
       headline two screens up read WAIT over a buy. It gets a slot and is
       repainted when the engines land. */
-   +'<div id="trade_slot">'+tradeCardHtml()+'</div>'
-   +openTradesHtml()
-   +qvRiskHtml(S,window._lastQV,price)
-   +quotaHtml()
-   +shareBar('setup')
+   +win('trade','The setup on the table',
+        '<div id="trade_slot">'+tradeCardHtml()+'</div>'+shareBar('setup'))
+   +win('open','Positions already on',openTradesHtml())
+   +win('qvr','The risk check',qvRiskHtml(S,window._lastQV,price),{shut:true})
+   +win('quota','What is left this month',quotaHtml(),{shut:true})
+   +'</div>'
 
    /* ─── 5 · show me ──────────────────────────────────────────────── */
 
-   +'</section><section>'
    /* ─── ELSEWHERE ─────────────────────────────────────────────────
       This opened the tab. Twelve other instruments, before the reader had
       learned anything about the one they came for. It is a fine question and
@@ -16957,10 +17135,9 @@ function trendInvalidHtml(T,price,dp,asset){
    +act(6,'Elsewhere','Anything else setting up?',
         'The same five methods across every other instrument, ranked by how much their evidence '
         +'agrees. Worth a look after this asset, not instead of it.')
-   +'<div class="scn" id="scan_body"></div>'
-
-
-   +'</section></div>'
+   +'<div class="wins">'
+   +win('scan','Every other instrument','<div class="scn" id="scan_body"></div>',{wide:true})
+   +'</div>'
    /* ─── THE WORKING ───────────────────────────────────────────────── */
    +act(7,'The working','Raw numbers.',
         'For when you want to check something. Nothing here is needed to use the board.')
@@ -17095,6 +17272,11 @@ function trendInvalidHtml(T,price,dp,asset){
   host.querySelectorAll('.ab-meter i').forEach(function(i){
     i.style.width='0';requestAnimationFrame(function(){requestAnimationFrame(function(){i.style.width=i.style.getPropertyValue('--w');});});
   });
+  /* the windows are all in the DOM and measurable now, so pack them into the
+     two columns. Twice: once immediately, once after the entrance animation
+     and the async slots have settled their heights. */
+  try{ winsPack(host); }catch(e){ console.error('pack:',e); }
+  setTimeout(function(){ try{ winsPack(host); }catch(e){} },420);
 }
 /* the jump bar. Scrolling the pane rather than the window, because the board
    lives inside a scrolling main column and window.scrollTo would move nothing. */
