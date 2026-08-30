@@ -4042,100 +4042,108 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tdir-k s{text-decoration:none;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 .tdir-k em{font-style:normal;font-size:10px;color:var(--t2);font-variant-numeric:tabular-nums}
 
-/* ── THE TIMING ENGINE CARD — five layers, one score ─────────────────── */
-.tmg{margin:14px 0;border:1px solid var(--b1);border-radius:16px;padding:16px 18px 14px;
+/* ── THE TIMING ENGINE CARD ──────────────────────────────────────────
+   Laid out in the order the questions get asked: the answer in words, the
+   three plain facts, whether it has ever worked here, then the clocks, then
+   the working. Nothing is hidden — the arithmetic is in the last block, open
+   on one click. */
+.tmg{margin:14px 0;border:1px solid var(--b1);border-radius:16px;padding:18px 20px 15px;
   background:linear-gradient(155deg,rgba(83,51,153,.16),rgba(11,6,40,.92))}
 .tmg.near{border-color:rgba(245,158,11,.36)}
 .tmg.in{border-color:rgba(168,85,247,.55);box-shadow:0 0 0 1px rgba(168,85,247,.2)}
-.tmg.hot{box-shadow:0 0 0 1px rgba(245,158,11,.3),0 10px 34px rgba(245,158,11,.09)}
-.tmg-head{display:grid;grid-template-columns:150px minmax(240px,1.5fr) minmax(230px,1fr);
-  gap:18px;align-items:center}
-@media (max-width:1080px){.tmg-head{grid-template-columns:1fr}}
 
-.tmg-meter{position:relative;text-align:center}
+.tmg-top{display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center}
+@media (max-width:820px){.tmg-top{grid-template-columns:1fr}}
+.tmg-meter{text-align:center}
 .tmg-arc{width:130px;height:76px;display:block;margin:0 auto}
 .tmg-arc .bg{fill:none;stroke:rgba(255,255,255,.09);stroke-width:9;stroke-linecap:round}
 .tmg-arc .fg{fill:none;stroke:var(--p3);stroke-width:9;stroke-linecap:round;
   filter:drop-shadow(0 0 6px rgba(168,85,247,.5));transition:stroke-dasharray .6s ease}
 .tmg.near .tmg-arc .fg{stroke:var(--warn);filter:drop-shadow(0 0 6px rgba(245,158,11,.5))}
 .tmg.in .tmg-arc .fg{stroke:var(--up);filter:drop-shadow(0 0 7px rgba(34,197,94,.55))}
-.tmg-num{margin-top:-22px}
-.tmg-num b{display:block;font-family:'Space Grotesk';font-size:32px;font-weight:800;
+.tmg-num{margin-top:-24px}
+.tmg-num b{display:block;font-family:'Space Grotesk';font-size:34px;font-weight:800;
   line-height:1;color:var(--t1);font-variant-numeric:tabular-nums}
-.tmg-num u{text-decoration:none;font-size:14px;color:var(--t3);margin-left:1px}
-.tmg-num i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--t3);margin-top:5px}
+.tmg-num i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3);margin-top:6px}
 
-.tmg-title{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t2)}
-.tmg-title s{text-decoration:none;font-weight:500;letter-spacing:.04em;text-transform:none;
-  color:var(--t3);margin-left:8px;font-size:10px}
-.tmg-pill{display:inline-block;margin:8px 0 7px;padding:3px 11px;border-radius:99px;
-  font-size:10px;font-weight:800;letter-spacing:.11em;border:1px solid var(--b1);color:var(--t2)}
-.tmg-pill.out{color:var(--t3)}
-.tmg-pill.near{color:var(--warn);border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.08)}
-.tmg-pill.in{color:var(--up);border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.1)}
-.tmg-say{font-size:11px;color:var(--t2);line-height:1.65}
+.tmg-title{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t3)}
+.tmg-title s{text-decoration:none;font-weight:500;letter-spacing:.03em;text-transform:none;
+  color:var(--t3);margin-left:8px;font-size:10px;opacity:.85}
+/* THE ANSWER. It is the largest thing on the card because it is the only
+   thing most readings need. */
+.tmg-word{font-family:'Space Grotesk';font-size:27px;font-weight:800;line-height:1.15;
+  letter-spacing:.005em;color:var(--t1);margin:9px 0 8px}
+.tmg.in .tmg-word{color:var(--up)}
+.tmg.near .tmg-word{color:var(--warn)}
+.tmg-say{font-size:12px;color:var(--t2);line-height:1.7;max-width:74ch}
+.tmg-say b{color:var(--t1);font-weight:700}
 
-.tmg-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.tmg-st{border:1px solid var(--b1);border-radius:11px;padding:9px 11px;background:rgba(11,6,40,.6)}
+.tmg-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}
+@media (max-width:820px){.tmg-stats{grid-template-columns:1fr}}
+.tmg-st{border:1px solid var(--b1);border-radius:11px;padding:10px 12px;background:rgba(11,6,40,.6)}
 .tmg-st i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.11em;
   text-transform:uppercase;color:var(--t3)}
-.tmg-st b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:700;color:var(--t1);
-  margin-top:3px;line-height:1.15}
+.tmg-st b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:700;color:var(--t1);
+  margin-top:4px;line-height:1.15}
 .tmg-st b.d-bull{color:var(--up)} .tmg-st b.d-bear{color:var(--dn)}
 .tmg-st b.d-neutral,.tmg-st b.d-na{color:var(--warn)}
-.tmg-st s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:4px;line-height:1.5}
+.tmg-st s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:5px;line-height:1.55}
 
-.tmg-ls-h{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--t3);margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--b1)}
-.tmg-l{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(90px,.9fr) 62px minmax(150px,1.2fr);
-  gap:12px;align-items:center;padding:9px 11px;border:1px solid var(--b1);border-radius:11px;
-  background:rgba(11,6,40,.55);margin-bottom:7px}
-.tmg-l.on{border-color:rgba(168,85,247,.45);background:rgba(83,51,153,.16)}
-.tmg-l.zero{opacity:.62}
-.tmg-ln b{display:block;font-size:12px;font-weight:700;color:var(--t1)}
-.tmg-ln i{display:block;font-style:normal;font-size:9px;color:var(--t3);margin-top:2px}
-.tmg-lb{position:relative;height:6px;border-radius:99px;background:rgba(255,255,255,.08)}
-.tmg-lb span{position:absolute;left:0;top:0;height:6px;border-radius:99px;background:var(--p3);
-  box-shadow:0 0 8px rgba(168,85,247,.5)}
-.tmg-l.on .tmg-lb span{background:var(--up);box-shadow:0 0 8px rgba(34,197,94,.5)}
-.tmg-lw{text-align:right}
-.tmg-lw b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--t1);
-  font-variant-numeric:tabular-nums;line-height:1}
-.tmg-l.zero .tmg-lw b{color:var(--t3)}
-.tmg-lw i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--t3);margin-top:3px}
-.tmg-ls em{font-style:normal;font-size:8px;font-weight:800;letter-spacing:.1em;color:var(--t3);
-  border:1px solid var(--b1);border-radius:99px;padding:1px 7px}
-.tmg-ls em.f{color:var(--up);border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.1)}
-.tmg-ls em.q{color:var(--warn);border-color:rgba(245,158,11,.4)}
-.tmg-l.zero .tmg-lb span{background:rgba(255,255,255,.3);box-shadow:none}
-.tmg-ls s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:5px;line-height:1.5}
-.tmg-lx{grid-column:1/-1;font-size:9.5px;color:var(--t2);line-height:1.6;
-  padding-top:8px;margin-top:2px;border-top:1px solid var(--b1)}
-@media (max-width:900px){.tmg-l{grid-template-columns:1fr 1fr}.tmg-lw{text-align:left}}
-
-.tmg-grade{display:flex;gap:11px;align-items:flex-start;margin-top:12px;padding:10px 12px;
+/* has this ever worked here */
+.tmg-grade{display:flex;gap:12px;align-items:flex-start;margin-top:11px;padding:11px 13px;
   border:1px solid var(--b1);border-radius:11px;background:rgba(11,6,40,.6)}
 .tmg-grade.g{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.07)}
 .tmg-grade.a{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
 .tmg-grade.r{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.07)}
-.tmg-g-b{flex:0 0 auto;font-size:8.5px;font-weight:800;letter-spacing:.11em;padding:3px 9px;
-  border-radius:99px;border:1px solid var(--b1);color:var(--t3);white-space:nowrap}
+.tmg-g-b{flex:0 0 auto;font-size:8.5px;font-weight:800;letter-spacing:.1em;padding:4px 10px;
+  border-radius:99px;border:1px solid var(--b1);color:var(--t3);white-space:nowrap;margin-top:1px}
 .tmg-grade.g .tmg-g-b{color:var(--up);border-color:rgba(34,197,94,.5)}
 .tmg-grade.a .tmg-g-b{color:var(--warn);border-color:rgba(245,158,11,.5)}
 .tmg-grade.r .tmg-g-b{color:var(--dn);border-color:rgba(239,68,68,.55)}
-.tmg-g-t{font-size:10.5px;color:var(--t2);line-height:1.65}
-.tmg-g-t b{color:var(--t1);font-family:'Space Grotesk';font-size:13px;font-weight:800}
+.tmg-g-t{font-size:11.5px;color:var(--t2);line-height:1.7}
+.tmg-g-t b{color:var(--t1);font-weight:800}
+.tmg-g-t u{text-decoration:none;color:var(--t3);font-size:10px}
 
-.tmg-calc{margin-top:12px;border-top:1px solid var(--b1);padding-top:10px}
-.tmg-calc summary{cursor:pointer;font-size:9.5px;font-weight:800;letter-spacing:.11em;
+/* the five clocks */
+.tmg-ls-h{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--t3);margin:18px 0 6px;padding-top:13px;border-top:1px solid var(--b1)}
+.tmg-note{font-size:10.5px;color:var(--t3);line-height:1.65;margin-bottom:10px;max-width:82ch}
+.tmg-l{display:grid;grid-template-columns:minmax(160px,1fr) minmax(220px,1.6fr) 108px;
+  gap:14px;align-items:center;padding:11px 13px;border:1px solid var(--b1);border-radius:11px;
+  background:rgba(11,6,40,.55);margin-bottom:7px}
+@media (max-width:820px){.tmg-l{grid-template-columns:1fr}}
+.tmg-l.on{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.06)}
+.tmg-l.zero{opacity:.66}
+.tmg-ln b{display:block;font-size:13px;font-weight:700;color:var(--t1)}
+.tmg-ln i{display:block;font-style:normal;font-size:9.5px;color:var(--t3);margin-top:3px;line-height:1.5}
+.tmg-lm em{display:inline-block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3);border:1px solid var(--b1);border-radius:99px;padding:2px 8px}
+.tmg-lm em.f{color:var(--up);border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.1)}
+.tmg-lm em.q{color:var(--warn);border-color:rgba(245,158,11,.4)}
+.tmg-lm s{display:block;text-decoration:none;font-size:10.5px;color:var(--t2);margin-top:6px;line-height:1.6}
+.tmg-lw{text-align:right}
+.tmg-lw b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:800;color:var(--t1);
+  font-variant-numeric:tabular-nums;line-height:1}
+.tmg-l.zero .tmg-lw b{color:var(--t3)}
+.tmg-lb{position:relative;height:5px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:7px}
+.tmg-lb span{position:absolute;left:0;top:0;height:5px;border-radius:99px;background:var(--p3)}
+.tmg-l.on .tmg-lb span{background:var(--up);box-shadow:0 0 8px rgba(34,197,94,.45)}
+.tmg-lx{grid-column:1/-1;font-size:10px;color:var(--t3);line-height:1.65;
+  padding-top:9px;margin-top:3px;border-top:1px solid var(--b1)}
+
+/* the working */
+.tmg-calc{margin-top:14px;border-top:1px solid var(--b1);padding-top:11px}
+.tmg-calc summary{cursor:pointer;font-size:9.5px;font-weight:800;letter-spacing:.1em;
   text-transform:uppercase;color:var(--t3);list-style:none}
 .tmg-calc summary::-webkit-details-marker{display:none}
 .tmg-calc summary:before{content:'\25B8 ';color:var(--p3)}
 .tmg-calc[open] summary:before{content:'\25BE '}
-.tmg-calc p{font-size:10px;color:var(--t2);line-height:1.7;margin:9px 0 0}
+.tmg-calc p{font-size:10.5px;color:var(--t2);line-height:1.75;margin:10px 0 0;max-width:96ch}
 .tmg-calc p b{color:var(--warn)}
+.tmg-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;
+  color:var(--t3);line-height:1.9;background:rgba(11,6,40,.7);border:1px solid var(--b1);
+  border-radius:9px;padding:10px 12px}
 
 /* ── EVERY WINDOW TODAY, and what the sky has dated ── */
 .tdy{margin-top:14px}   /* not .td — that name is already a table cell up top */
@@ -20725,12 +20733,16 @@ function tmgL1(rows,now){
   O.last=last.date; O.lastPx=last.px; O.due=new Date(dueT); O.to=to;
   O.s=tmgNear(to,band*TMG_KERNEL);
   O.fired=Math.abs(to)<=band;
-  O.why='Measured on this asset’s own bars: '+gaps.length+' trough-to-trough distances, '
-    +'median '+Math.round(len)+' days, band ±'+Math.round(band)+' from how much those '
-    +'distances themselves vary. The last confirmed trough was '+last.date
-    +', which puts turn number '+k+' on '+new Date(dueT).toISOString().slice(0,10)+' — '
-    +(Math.abs(to)<0.5?'which is today.'
-      :to>0?tmgPlural(to,'day')+' ahead.':tmgPlural(to,'day')+' overdue.');
+  /* said the way it would be said out loud. The same numbers were here
+     before as "21 trough-to-trough distances, median 33, band ±8 from how
+     much those distances themselves vary", which is how the maths was done
+     and not how anybody reads. */
+  O.why='Over its last '+gaps.length+' cycles this asset put in a low every '+Math.round(len)
+    +' days on average — sometimes up to '+Math.round(band)+' days early or late. '
+    +'Its last low was '+last.date+', so the next one is due '
+    +new Date(dueT).toISOString().slice(0,10)+' — '
+    +(Math.abs(to)<0.5?'that is today.'
+      :to>0?tmgPlural(to,'day')+' from now.':tmgPlural(to,'day')+' ago, so it is overdue.');
   return O;
 }
 
@@ -20752,10 +20764,9 @@ function tmgL2(now){
   O.ok=true; O.s=tmgNear(days,1.6); O.fired=days<=1.6;
   O.phase=which; O.days=days; O.deg=deg; O.sign=M?M.sign:null;
   O.tone=tone; O.toneAt=nmT.toISOString().slice(0,10);
-  O.why='The Moon is '+deg.toFixed(1)+'° from '+which+', about '+days.toFixed(1)
-    +' day'+(days>=1.5?'s':'')+' away'+(M?', travelling through '+M.sign:'')
-    +'. The month’s new Moon fell on '+O.toneAt+(tone?' in '+tone:'')
-    +', which is the tone McWhirter reads the month by.';
+  O.why='The next '+which+' Moon is about '+days.toFixed(1)+' day'+(days>=1.5?'s':'')+' away'
+    +(M?', and the Moon is passing through '+M.sign:'')+'. This month’s new Moon fell on '
+    +O.toneAt+(tone?' in '+tone:'')+' — the sign McWhirter reads the month\u2019s tone from.';
   return O;
 }
 
@@ -21134,7 +21145,24 @@ function tmgEngine(asset){
   return E;
 }
 
-/* ══ THE CARD ═══════════════════════════════════════════════════════════ */
+/* ══ THE CARD ═══════════════════════════════════════════════════════════
+   WRITTEN TWICE, BECAUSE THE FIRST ONE WAS UNREADABLE.
+
+   The first version led with a percentage and then explained itself in the
+   language the maths was done in: base rates, percentage points, noise
+   thresholds, the authors' names, and five rows whose main visible fact was
+   the number 0. Everything on it was true and none of it answered the only
+   two questions a person opening this tab actually has — is a turn due, and
+   what do I do about it.
+
+   So the order is inverted. The answer is a sentence, in words, at the top.
+   The number sits beside it as support rather than as the headline. "Does
+   this work on this asset" is stated as "worked 42 times out of 100, against
+   34 for a random day", because that is the same fact without the notation.
+   Every layer says USED or NOT USED before it says anything else. The
+   statistics have not been removed or softened — they are one click down,
+   under a summary that says what is in there. ══════════════════════════ */
+
 var TMG_ARC=169.6;                       /* pi x 54 — the half-circle's length */
 function tmgArcSvg(pct){
   var d='M10 64 A54 54 0 0 1 118 64';
@@ -21145,17 +21173,53 @@ function tmgArcSvg(pct){
     +'</svg>';
 }
 function tmgPp(x){ return (x>0?'+':'')+(x*100).toFixed(1)+'pp'; }
-function tmgRateTxt(m,base){
-  if(!m)return 'not tested';
-  if(!m.fires)return 'never fired in the loaded history';
-  if(!m.tested)return m.fires+' firing'+(m.fires===1?'':'s')+' — too few to test';
-  var b=base==null?'':' against '+Math.round(base*100)+'% base';
-  return Math.round(m.rate*100)+'% of its '+m.fires+' firings landed on a turn'+b+', '
-    +tmgPp(m.raw)+' — '+(m.sig?'clear of noise':'inside noise, needs '+tmgPp(m.need));
-}
+function tmgOf100(r){ return Math.round(r*100)+' times out of 100'; }
+
+/* plain names, because "Geocosmic · Merriman" tells a reader nothing about
+   what is being counted */
+var TMG_PLAIN={
+  cycles:{n:'Price cycle', d:'how often this asset makes a low, measured on its own bars'},
+  lunar :{n:'Moon',        d:'how close today is to a new or full Moon'},
+  geo   :{n:'Slow planets',d:'squares and oppositions between Jupiter and Pluto'},
+  spiral:{n:'Spiral dates',d:'Fibonacci counts of lunar months from the big low'},
+  node  :{n:'Node backdrop',d:'the 18.6-year cycle — background only, never a trigger'}
+};
 var TMG_GRADE={
-  proven:{w:'PROVEN',c:'g'},unproven:{w:'UNPROVEN',c:'a'},
-  failed:{w:'FAILED HERE',c:'r'},untested:{w:'UNTESTED',c:'n'}};
+  proven  :{w:'TESTED · WORKS',        c:'g'},
+  unproven:{w:'TESTED · NOT SURE YET', c:'a'},
+  failed  :{w:'TESTED · DOES NOT WORK HERE',c:'r'},
+  untested:{w:'NOT ENOUGH HISTORY',    c:'n'}};
+
+/* the headline: what a person would say out loud looking at this */
+function tmgHeadline(E){
+  var d=E.to;
+  if(E.grade==='failed')return 'This engine does not work on '+E.asset;
+  if(E.score>=50){
+    if(d==null)return 'A turn is due';
+    if(Math.abs(d)<0.5)return 'A turn is due TODAY';
+    if(d>0)return 'A turn is due in '+tmgPlural(d,'day');
+    return 'A turn is '+tmgPlural(d,'day')+' overdue';
+  }
+  if(E.score>=25)return 'A turn is getting close';
+  return 'No turn is due';
+}
+/* and the one line under it that says what to do about it */
+function tmgAction(E){
+  if(E.grade==='failed')
+    return 'Ignore this card on '+E.asset+' and use the level and trend work instead. '
+      +'No alert will be raised from here.';
+  if(E.score<50)
+    return (E.dir&&E.dir!=='neutral')
+      ? 'Nothing to act on here. The day leans '+E.dir+', so trade WITH that, not against it.'
+      : 'Nothing to act on here, and the day has no side either.';
+  if(E.dir&&E.dir!=='neutral')
+    return 'Watch for '+(E.dir==='bull'?'a low turning up':'a high rolling over')
+      +'. The clock and the day’s lean agree, which is the only case where both '
+      +'halves of the app point at one trade.';
+  return 'Watch the level. A turn is due but the day has no side, so take whichever way it '
+    +'breaks, smaller. Nothing here is telling you which direction.';
+}
+
 function tmgHtml(){
   var E;
   try{ E=tmgEngine(); }
@@ -21163,117 +21227,151 @@ function tmgHtml(){
     +escHtml(e.message||'no inputs')+'.</div>'; }
 
   if(!E.usable)
-    return '<div class="tmg out"><div class="tmg-head" style="grid-template-columns:1fr">'
-      +'<div class="tmg-mid"><div class="tmg-title">Timing engine <s>when, not which way</s></div>'
-      +'<div class="tmg-pill out">NOT MEASURED</div>'
+    return '<div class="tmg out"><div class="tmg-top" style="grid-template-columns:1fr">'
+      +'<div class="tmg-mid"><div class="tmg-title">Timing engine '
+      +'<s>when a turn is due — never up or down</s></div>'
+      +'<div class="tmg-word">Nothing measured yet</div>'
       +'<div class="tmg-say">'+escHtml(E.combine.line)+'</div></div></div></div>';
-  var sk=E.status==='IN WINDOW'?'in':E.status==='APPROACHING'?'near':'out';
-  var over=E.score>=50;
-  var toTxt = E.to==null ? '—'
-            : Math.abs(E.to)<0.5 ? 'today'
-            : E.to>0 ? tmgPlural(E.to,'day') : tmgPlural(E.to,'day')+' late';
 
-  /* the five rows, each carrying its own raw reading, its measured weight and
-     the hit rate that produced that weight — so a zero is explained on the
-     same line it appears on */
+  var sk=E.grade==='failed'?'out'
+        :E.status==='IN WINDOW'?'in':E.status==='APPROACHING'?'near':'out';
+  var SC=(E.test.score&&E.test.score.rate!=null&&E.test.score.days>=20)?E.test.score:null;
+  var GG=TMG_GRADE[E.grade]||TMG_GRADE.untested;
+
+  /* NEXT TURN AS A DATE, NOT AS "TODAY". "Today" is fine in the sentence at
+     the top; in a tile headed NEXT TURN it leaves you with nothing to write
+     in a diary. The date leads and the plain words follow it. */
+  var due=E.by.cycles.ok?E.by.cycles.due:null;
+  var dueTxt=due?timFmtDay(due):'—';
+  var dueSub=E.to==null?'no cycle measured'
+    :Math.abs(E.to)<0.5?'that is today'
+    :E.to>0?'in '+tmgPlural(E.to,'day'):tmgPlural(E.to,'day')+' ago — overdue';
+
   var rows=E.layers.map(function(x){
-    var w=Math.round((E.weights[x.id]||0)*100);
-    var m=x.test;
-    return '<div class="tmg-l'+(x.fired?' on':'')+(w===0?' zero':'')+'">'
-      +'<div class="tmg-ln"><b>'+escHtml(x.name)+'</b><i>'+escHtml(x.book)+'</i></div>'
-      +'<div class="tmg-lb"><span style="width:'+Math.round((x.s||0)*100)+'%"></span></div>'
-      +'<div class="tmg-lw"><b>'+w+'%</b><i>weight</i></div>'
-      /* FIRING in green next to a 0% weight read as a live signal that had
-         been ignored. It is the opposite: the layer is on its date and has
-         not earned the right to move the number. Both facts, one badge. */
-      +'<div class="tmg-ls">'+(x.fired
-          ? (w>0?'<em class="f">FIRING</em>':'<em class="q">firing · no weight</em>')
-          : '<em>quiet</em>')
-        +'<s>'+escHtml(tmgRateTxt(m,E.test.base))+'</s></div>'
+    var w=Math.round((E.weights[x.id]||0)*100), m=x.test, P=TMG_PLAIN[x.id]||{n:x.name,d:''};
+    /* one sentence saying why this layer counts or does not, in the same
+       words for all five so they can be compared at a glance */
+    var verdict = w>0
+      ? 'Used — worth '+w+'% of the score'
+      : !m||!m.tested
+      ? 'Not used — too few past cases to test it'
+      : m.rate==null
+      ? 'Not used — never fired in the loaded history'
+      : 'Not used — worked '+tmgOf100(m.rate)+', a random day works '
+        +tmgOf100(E.test.base)+'. Not better.';
+    /* ON and "used 100%" side by side read as a contradiction, because they
+       answer different questions: the badge is about TODAY, the weight is
+       about whether the clock is trusted at all. Both now say which. */
+    var state = x.fired
+      ? (w>0?'on its date today':'on its date today · not counted')
+      : 'not on its date today';
+    return '<div class="tmg-l'+(x.fired&&w>0?' on':'')+(w===0?' zero':'')+'">'
+      +'<div class="tmg-ln"><b>'+escHtml(P.n)+'</b><i>'+escHtml(P.d)+'</i></div>'
+      +'<div class="tmg-lm">'
+        +'<em class="'+(x.fired&&w>0?'f':x.fired?'q':'')+'">'+state+'</em>'
+        +'<s>'+escHtml(verdict)+'</s>'
+      +'</div>'
+      +'<div class="tmg-lw"><b>'+w+'%</b>'
+        +'<div class="tmg-lb"><span style="width:'+w+'%"></span></div></div>'
       +'<div class="tmg-lx">'+escHtml(x.why)+'</div>'
     +'</div>';
   }).join('');
 
   var base=E.test&&E.test.base!=null?Math.round(E.test.base*100):null;
-  var SC=(E.test.score&&E.test.score.rate!=null&&E.test.score.days>=20)?E.test.score:null;
-  var GG=TMG_GRADE[E.grade]||TMG_GRADE.untested;
 
-  return '<div class="tmg '+sk+(over?' hot':'')+'">'
-   +'<div class="tmg-head">'
+  return '<div class="tmg '+sk+'">'
+
+   /* ── 1 · THE ANSWER, IN WORDS ─────────────────────────────────────── */
+   +'<div class="tmg-top">'
      +'<div class="tmg-meter">'+tmgArcSvg(E.score)
-       +'<div class="tmg-num"><b>'+E.score+'<u>%</u></b><i>timing score</i></div></div>'
+       +'<div class="tmg-num"><b>'+E.score+'</b><i>timing score</i></div></div>'
      +'<div class="tmg-mid">'
-       +'<div class="tmg-title">Timing engine <s>when, not which way</s></div>'
-       +'<div class="tmg-pill '+sk+'">'+E.status+'</div>'
-       +'<div class="tmg-say">'+escHtml(E.combine.line)+'</div>'
-     +'</div>'
-     +'<div class="tmg-stats">'
-       +'<div class="tmg-st"><i>Next turn</i><b>'+escHtml(toTxt)+'</b>'
-         +'<s>'+(E.len?Math.round(E.len)+'-day cycle ±'+Math.round(E.band):'no cycle measured')+'</s></div>'
-       +'<div class="tmg-st"><i>Layers firing</i><b>'+E.fired.length+' of 5</b>'
-         +'<s>'+escHtml(E.fired.length?E.fired.join(', '):'none of them')
-         +' — '+(E.carry.length?E.carry.join(' and ')+' carr'+(E.carry.length>1?'y':'ies')+' weight'
-                             :'none of them carries weight')+'</s></div>'
-       +'<div class="tmg-st"><i>Day’s lean</i><b class="d-'+(E.dir||'na')+'">'
-         +escHtml(E.dir?E.dir.toUpperCase():'—')+'</b>'
-         +'<s>'+escHtml(E.combine.word)+'</s></div>'
+       +'<div class="tmg-title">Timing engine '
+         +'<s>this card answers WHEN only — never up or down</s></div>'
+       +'<div class="tmg-word">'+escHtml(tmgHeadline(E))+'</div>'
+       +'<div class="tmg-say"><b>What to do:</b> '+escHtml(tmgAction(E))+'</div>'
      +'</div>'
    +'</div>'
-   /* THE LINE THAT STOPS THE PERCENTAGE SPEAKING FOR ITSELF.
-      A score of 100 looks like certainty and is not one: it says every clock
-      that earned weight is pointing at today, not that a turn will happen.
-      What it has actually MEANT on this asset is a measured number, so it is
-      printed at the same size, right under it, and it is the number the
-      alert is gated on. */
+
+   /* ── 2 · THREE THINGS, ALL PLAIN ──────────────────────────────────── */
+   +'<div class="tmg-stats">'
+     +'<div class="tmg-st"><i>Next turn</i><b>'+escHtml(dueTxt)+'</b>'
+       +'<s>'+escHtml(dueSub)+'</s></div>'
+     +'<div class="tmg-st"><i>How often this asset turns</i>'
+       +'<b>'+(E.len?'every '+Math.round(E.len)+' days':'—')+'</b>'
+       +'<s>'+(E.band?'give or take '+Math.round(E.band)+' days, measured on its own bars'
+                    :'no cycle could be measured')+'</s></div>'
+     +'<div class="tmg-st"><i>Day’s lean (the other card)</i>'
+       +'<b class="d-'+(E.dir||'na')+'">'+escHtml(E.dir?E.dir.toUpperCase():'—')+'</b>'
+       +'<s>up or down comes from there, not from here</s></div>'
+   +'</div>'
+
+   /* ── 3 · HAS THIS EVER WORKED HERE ────────────────────────────────── */
    +(SC
      ? '<div class="tmg-grade '+GG.c+'">'
        +'<span class="tmg-g-b">'+GG.w+'</span>'
-       +'<span class="tmg-g-t"><b>'+Math.round(SC.rate*100)+'%</b> of the '+SC.days
-         +' past days that scored 50 or more carried a turn within three days, '
-         +'against <b>'+Math.round(SC.base*100)+'%</b> for any day at all '
-         +'— '+tmgPp(SC.edge)+', on '+E.test.n+' bars.'
+       +'<span class="tmg-g-t">On '+escHtml(E.asset)+', a score of 50 or more was followed by '
+         +'a real turn <b>'+tmgOf100(SC.rate)+'</b>. Picking a day at random works '
+         +'<b>'+tmgOf100(SC.base)+'</b>. '
          +(E.grade==='proven'
-           ? ' Clear of the '+tmgPp(SC.need)+' noise threshold, so the alert is live.'
+           ? 'Clearly better, so the alert is switched on.'
            :E.grade==='unproven'
-           ? ' Short of the '+tmgPp(SC.need)+' needed to call it clear of noise. The alert '
-             +'still fires and says so.'
-           : ' Below the base rate. The alert is held on this asset.')
+           ? 'Better, but not by enough to be certain on '+SC.days+' cases. The alert still '
+             +'fires and tells you it is unproven.'
+           : 'Worse than random — so the alert is switched off here, and this card is '
+             +'showing you a number it does not trust.')
+         +' <u>Checked on '+E.test.n+' days of this asset’s own history.</u>'
        +'</span></div>'
-     : '<div class="tmg-grade n"><span class="tmg-g-b">UNTESTED</span>'
-       +'<span class="tmg-g-t">Not enough loaded history to say what this score has meant here'
+     : '<div class="tmg-grade n"><span class="tmg-g-b">NOT ENOUGH HISTORY</span>'
+       +'<span class="tmg-g-t">There are not enough past days loaded to say whether this score '
+       +'has ever meant anything on '+escHtml(E.asset)
        +(E.test.why?' — '+escHtml(E.test.why):'')+'.</span></div>')
-   +'<div class="tmg-ls-h">The five layers, and what each one has earned</div>'
+
+   /* ── 4 · THE FIVE CLOCKS ──────────────────────────────────────────── */
+   +'<div class="tmg-ls-h">The five clocks — and which ones are allowed to count</div>'
+   +'<div class="tmg-note">A clock only counts if it beat a random day on this asset’s own '
+     +'past. Most of them do not, on most assets, and a 0% here means exactly that — not '
+     +'that something is broken.</div>'
    +'<div class="tmg-list">'+rows+'</div>'
-   +'<details class="tmg-calc"><summary>How the weights were decided</summary>'
-     +'<p>Layer 1 is measured on '+escHtml(E.asset)+'’s own bars — no astrology in it — '
-       +'so it holds half the score outright and takes back anything the other four fail to earn. '
-       +(E.anchored?'':'<b>It could not run here: no daily history is loaded, so the score has no anchor '
-         +'and rests entirely on the astro layers.</b> ')
-     +'Layers 2 to 5 were replayed over '+(E.test.n||E.rows)+' loaded bars and asked whether the days '
-       +'they fired on carried a confirmed turn within three days. '
+
+   /* ── 5 · THE WORKING, ONE CLICK DOWN ──────────────────────────────── */
+   +'<details class="tmg-calc"><summary>The full working — hit rates, base rates and how '
+     +'the weights were set</summary>'
+     +'<p>The price cycle is measured on '+escHtml(E.asset)+'’s own bars with no astrology '
+       +'in it, so it holds half the score outright and takes back anything the other four fail '
+       +'to earn. '
+       +(E.anchored?'':'<b>It could not run here — no daily history is loaded, so the score '
+         +'has no anchor at all.</b> ')
+       +'The other four were replayed over '+(E.test.n||E.rows)+' loaded bars and asked whether '
+       +'the days they fired on carried a confirmed turn within three days. '
      +(base!=null
-       ? 'Across that history '+base+'% of ALL days had a turn within three, so that is the number '
-         +'each layer had to beat. A layer at or below it earns nothing.'
+       ? 'Across that history '+base+'% of ALL days had a turn within three, so that is the '
+         +'number each one had to beat.'
        : 'The test could not run — '+escHtml(E.test.why||'not enough history')
-         +' — so every astro layer is treated as untested and weighted at zero, and the score is '
-         +'the cycle layer alone.')
+         +' — so every astro clock is treated as untested and weighted at zero.')
      +'</p>'
-     +'<p>Pivots are only confirmed some bars after they print, so the replay lets layer 1 see only '
-       +'troughs confirmed ten bars or more before the day it is scoring. Without that it would be '
-       +'marking its own homework. Any layer with fewer than twelve firings is reported untested '
-       +'rather than given a flattering rate off a handful of dates.</p>'
-     +'<p>Each layer beats the base rate or it does not, and "beats" means by more than the '
-       +'binomial noise on its own firing count — 1.64 standard errors, the one-sided 95% mark. '
-       +'A layer two points above base on 135 firings has not beaten anything, and before that '
-       +'threshold was added the lunar layer collected the whole astro half of the score on '
-       +'exactly that. Any layer with fewer than twelve firings is reported untested rather than '
-       +'given a flattering rate off a handful of dates.</p>'
-     +'<p>The score itself is the weighted sum of the five raw readings, each a bell curve on how '
-       +'near its own date is — 1 on the day, falling away inside the band. It is a weight of '
-       +'evidence, not a probability: 100 means every clock that earned weight points at today, '
-       +'not that a turn is certain. What it has actually meant here is the measured line above. '
-       +'50 is the alert line, and the alert is held on an asset where that line resolves below '
-       +'the base rate.</p>'
+     +'<p>Beating it means beating it by more than the binomial noise on its own firing count '
+       +'— 1.64 standard errors, the one-sided 95% mark. A clock two points above base on '
+       +'135 firings has not beaten anything, and before that threshold was added the Moon '
+       +'collected the entire astro half of the score on exactly that. Fewer than twelve '
+       +'firings and it is reported untested rather than given a flattering rate off a handful '
+       +'of dates.</p>'
+     +'<p>Pivots are only confirmed some bars after they print, so the replay lets the price '
+       +'cycle see only troughs confirmed ten bars or more before the day it is scoring. '
+       +'Without that it would be marking its own homework.</p>'
+     +'<p>The score is the weighted sum of the five readings, each a bell curve on how near its '
+       +'own date is. It is a weight of evidence, not a probability: 100 means every clock that '
+       +'earned weight points at today, not that a turn is certain. What it has actually meant '
+       +'here is the measured line above.</p>'
+     +'<p class="tmg-mono">'
+       +Object.keys(E.test.layers).map(function(k){
+          var m=E.test.layers[k];
+          return (TMG_PLAIN[k]?TMG_PLAIN[k].n:k)+': '+m.fires+' firings, '
+            +(m.rate==null?'—':Math.round(m.rate*100)+'% hit')
+            +', base '+base+'%, '+tmgPp(m.raw||0)+', needs '+tmgPp(m.need||0)
+            +' → weight '+Math.round((E.weights[k]||0)*100)+'%';
+        }).join('<br>')
+     +'</p>'
    +'</details>'
   +'</div>';
 }
@@ -24047,9 +24145,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b81';
+var CA_BUILD='b82';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The five-layer Timing Engine is on the Timing tab \u2014 one score for WHEN, the day\u2019s lean beside it, and an alert whenever a reversal window clears 50%';
+var CA_WHATS_NEW='The Timing Engine now says its answer in words first \u2014 is a turn due, what to do, and whether it has ever worked on this asset';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
