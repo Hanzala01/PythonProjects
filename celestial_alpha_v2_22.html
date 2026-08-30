@@ -4042,6 +4042,101 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tdir-k s{text-decoration:none;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 .tdir-k em{font-style:normal;font-size:10px;color:var(--t2);font-variant-numeric:tabular-nums}
 
+/* ── THE TIMING ENGINE CARD — five layers, one score ─────────────────── */
+.tmg{margin:14px 0;border:1px solid var(--b1);border-radius:16px;padding:16px 18px 14px;
+  background:linear-gradient(155deg,rgba(83,51,153,.16),rgba(11,6,40,.92))}
+.tmg.near{border-color:rgba(245,158,11,.36)}
+.tmg.in{border-color:rgba(168,85,247,.55);box-shadow:0 0 0 1px rgba(168,85,247,.2)}
+.tmg.hot{box-shadow:0 0 0 1px rgba(245,158,11,.3),0 10px 34px rgba(245,158,11,.09)}
+.tmg-head{display:grid;grid-template-columns:150px minmax(240px,1.5fr) minmax(230px,1fr);
+  gap:18px;align-items:center}
+@media (max-width:1080px){.tmg-head{grid-template-columns:1fr}}
+
+.tmg-meter{position:relative;text-align:center}
+.tmg-arc{width:130px;height:76px;display:block;margin:0 auto}
+.tmg-arc .bg{fill:none;stroke:rgba(255,255,255,.09);stroke-width:9;stroke-linecap:round}
+.tmg-arc .fg{fill:none;stroke:var(--p3);stroke-width:9;stroke-linecap:round;
+  filter:drop-shadow(0 0 6px rgba(168,85,247,.5));transition:stroke-dasharray .6s ease}
+.tmg.near .tmg-arc .fg{stroke:var(--warn);filter:drop-shadow(0 0 6px rgba(245,158,11,.5))}
+.tmg.in .tmg-arc .fg{stroke:var(--up);filter:drop-shadow(0 0 7px rgba(34,197,94,.55))}
+.tmg-num{margin-top:-22px}
+.tmg-num b{display:block;font-family:'Space Grotesk';font-size:32px;font-weight:800;
+  line-height:1;color:var(--t1);font-variant-numeric:tabular-nums}
+.tmg-num u{text-decoration:none;font-size:14px;color:var(--t3);margin-left:1px}
+.tmg-num i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3);margin-top:5px}
+
+.tmg-title{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t2)}
+.tmg-title s{text-decoration:none;font-weight:500;letter-spacing:.04em;text-transform:none;
+  color:var(--t3);margin-left:8px;font-size:10px}
+.tmg-pill{display:inline-block;margin:8px 0 7px;padding:3px 11px;border-radius:99px;
+  font-size:10px;font-weight:800;letter-spacing:.11em;border:1px solid var(--b1);color:var(--t2)}
+.tmg-pill.out{color:var(--t3)}
+.tmg-pill.near{color:var(--warn);border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.08)}
+.tmg-pill.in{color:var(--up);border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.1)}
+.tmg-say{font-size:11px;color:var(--t2);line-height:1.65}
+
+.tmg-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tmg-st{border:1px solid var(--b1);border-radius:11px;padding:9px 11px;background:rgba(11,6,40,.6)}
+.tmg-st i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3)}
+.tmg-st b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:700;color:var(--t1);
+  margin-top:3px;line-height:1.15}
+.tmg-st b.d-bull{color:var(--up)} .tmg-st b.d-bear{color:var(--dn)}
+.tmg-st b.d-neutral,.tmg-st b.d-na{color:var(--warn)}
+.tmg-st s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:4px;line-height:1.5}
+
+.tmg-ls-h{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--t3);margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--b1)}
+.tmg-l{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(90px,.9fr) 62px minmax(150px,1.2fr);
+  gap:12px;align-items:center;padding:9px 11px;border:1px solid var(--b1);border-radius:11px;
+  background:rgba(11,6,40,.55);margin-bottom:7px}
+.tmg-l.on{border-color:rgba(168,85,247,.45);background:rgba(83,51,153,.16)}
+.tmg-l.zero{opacity:.62}
+.tmg-ln b{display:block;font-size:12px;font-weight:700;color:var(--t1)}
+.tmg-ln i{display:block;font-style:normal;font-size:9px;color:var(--t3);margin-top:2px}
+.tmg-lb{position:relative;height:6px;border-radius:99px;background:rgba(255,255,255,.08)}
+.tmg-lb span{position:absolute;left:0;top:0;height:6px;border-radius:99px;background:var(--p3);
+  box-shadow:0 0 8px rgba(168,85,247,.5)}
+.tmg-l.on .tmg-lb span{background:var(--up);box-shadow:0 0 8px rgba(34,197,94,.5)}
+.tmg-lw{text-align:right}
+.tmg-lw b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--t1);
+  font-variant-numeric:tabular-nums;line-height:1}
+.tmg-l.zero .tmg-lw b{color:var(--t3)}
+.tmg-lw i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3);margin-top:3px}
+.tmg-ls em{font-style:normal;font-size:8px;font-weight:800;letter-spacing:.1em;color:var(--t3);
+  border:1px solid var(--b1);border-radius:99px;padding:1px 7px}
+.tmg-ls em.f{color:var(--up);border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.1)}
+.tmg-ls em.q{color:var(--warn);border-color:rgba(245,158,11,.4)}
+.tmg-l.zero .tmg-lb span{background:rgba(255,255,255,.3);box-shadow:none}
+.tmg-ls s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:5px;line-height:1.5}
+.tmg-lx{grid-column:1/-1;font-size:9.5px;color:var(--t2);line-height:1.6;
+  padding-top:8px;margin-top:2px;border-top:1px solid var(--b1)}
+@media (max-width:900px){.tmg-l{grid-template-columns:1fr 1fr}.tmg-lw{text-align:left}}
+
+.tmg-grade{display:flex;gap:11px;align-items:flex-start;margin-top:12px;padding:10px 12px;
+  border:1px solid var(--b1);border-radius:11px;background:rgba(11,6,40,.6)}
+.tmg-grade.g{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.07)}
+.tmg-grade.a{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
+.tmg-grade.r{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.07)}
+.tmg-g-b{flex:0 0 auto;font-size:8.5px;font-weight:800;letter-spacing:.11em;padding:3px 9px;
+  border-radius:99px;border:1px solid var(--b1);color:var(--t3);white-space:nowrap}
+.tmg-grade.g .tmg-g-b{color:var(--up);border-color:rgba(34,197,94,.5)}
+.tmg-grade.a .tmg-g-b{color:var(--warn);border-color:rgba(245,158,11,.5)}
+.tmg-grade.r .tmg-g-b{color:var(--dn);border-color:rgba(239,68,68,.55)}
+.tmg-g-t{font-size:10.5px;color:var(--t2);line-height:1.65}
+.tmg-g-t b{color:var(--t1);font-family:'Space Grotesk';font-size:13px;font-weight:800}
+
+.tmg-calc{margin-top:12px;border-top:1px solid var(--b1);padding-top:10px}
+.tmg-calc summary{cursor:pointer;font-size:9.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3);list-style:none}
+.tmg-calc summary::-webkit-details-marker{display:none}
+.tmg-calc summary:before{content:'\25B8 ';color:var(--p3)}
+.tmg-calc[open] summary:before{content:'\25BE '}
+.tmg-calc p{font-size:10px;color:var(--t2);line-height:1.7;margin:9px 0 0}
+.tmg-calc p b{color:var(--warn)}
+
 /* ── EVERY WINDOW TODAY, and what the sky has dated ── */
 .tdy{margin-top:14px}   /* not .td — that name is already a table cell up top */
 .td-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:16px 0 9px}
@@ -20470,6 +20565,719 @@ function timEngineHtml(dp){
     +'instruments watched, not a looser tolerance on one.</div>';
   return h;
 }
+/* ══════════════════════════════════════════════════════════════════════
+   THE TIMING ENGINE — WHEN, AND ONLY WHEN
+
+   Five layers, from the five books, answering one question: is a turn due?
+   It does not pick a side and it does not pick a price. The side already
+   exists on this tab — calcAstroBias reads bull, bear or neutral — and the
+   two are shown NEXT TO each other rather than multiplied together. When
+   they do not line up, that is printed as a disagreement instead of being
+   averaged into a number that means neither thing.
+
+   LAYER 1  CYCLES        Merriman · Sun, Moon & Silver   — the anchor
+   LAYER 2  LUNAR         Sun, Moon & Silver · McWhirter
+   LAYER 3  GEOCOSMIC     Merriman
+   LAYER 4  SPIRAL DATES  Carolan
+   LAYER 5  NODE MACRO    McWhirter                       — context only
+
+   WHY THE WEIGHTS ARE NOT WRITTEN DOWN HERE. Only layer 1 has a fixed
+   weight, because it is measured from the asset's own price history and
+   nothing astrological is assumed for it. Layers 2 to 5 earn their weight
+   from a forward test run over every bar the app has loaded: on the days
+   each layer fired, did a confirmed turn actually arrive? That hit rate is
+   compared with the base rate — the share of ALL days that have a turn near
+   them — and only the DIFFERENCE becomes weight. A layer that fires as
+   often as chance contributes nothing. That is what "untested ≈ 0 weight"
+   has to mean if it is to mean anything.
+════════════════════════════════════════════════════════════════════════ */
+
+var TMG_SYN=29.530588853;                      /* the synodic month, in days */
+var TMG_FIB=[1,2,3,5,8,13,21,34,55,89,144];
+var TMG_SLOW=['jupiter','saturn','uranus','neptune','pluto'];
+var TMG_NAMES={cycles:'Cycles',lunar:'Lunar',geo:'Geocosmic',spiral:'Spiral dates',node:'Node macro'};
+
+function tmgRows(){
+  var R=(typeof HIST_ROWS!=='undefined')?HIST_ROWS:null;
+  return (R&&R.length>=120)?R:null;
+}
+/* pivots, num and dayOf are private to the CQE module — only the first is
+   exported, and the other two are three lines each. Reaching for the export
+   rather than the bare name matters: written as `pivots(...)` this threw
+   ReferenceError straight into a catch, layer 1 saw zero troughs, and the
+   anchor of the whole score silently read "no cycle measured" on an asset
+   with six hundred bars loaded. */
+/* TWO STRICTNESSES, BECAUSE TWO DIFFERENT OBJECTS ARE BEING COUNTED.
+   The cycle is MEASURED on ordinary swings — two ATR — because averaging
+   trough-to-trough distances needs enough troughs to average, and on 620
+   bars of gold that is 22 of them against 13 at a strict setting. What the
+   layers are TESTED against is a turn big enough to be worth an alert, and
+   that is a three-ATR reversal. Measured on the same history: the loose
+   setting puts a turn within three days of 39% of ALL days, which is so
+   close to a coin flip that no layer could ever separate itself from it. The
+   strict setting brings that base rate to 34% with 37 turns, and the edges
+   below are differences against THAT number. */
+var TMG_ATR_CYCLE=2.0, TMG_ATR_TURN=3.0;
+
+/* THE BAND, AND HOW SHARPLY THE SCORE FALLS OFF INSIDE IT.
+   The band is measured — the median absolute deviation of this asset's own
+   trough-to-trough distances — floored at three days so a metronomic asset
+   does not get an impossible window and capped at a quarter of the cycle so
+   a ragged one does not end up calling every day a window. Gold measures
+   33 ± 11, and a plain bell on that width scored 50 or better on more than
+   half of all days; the kernel narrows the falloff so the alert line stays a
+   minority of days. Both numbers are used by the live read and by the replay
+   that sets the weights, from here, so the two can never drift apart. */
+function tmgBand(len,mad){ return Math.max(3,Math.min(len/4,Math.round(mad)||3)); }
+var TMG_KERNEL=0.55;
+
+/* THE WEIGHTS, IN ONE PLACE.
+   Layer 1 is the anchor: it is measured on price alone, so it holds half the
+   score outright and takes back whatever the other four fail to earn. Layers
+   2 to 5 split the other half in proportion to the edge each one cleared —
+   edge being how far its hit rate beat the base rate AFTER the noise
+   threshold, so a layer inside noise contributes exactly nothing. The node
+   layer is capped at five percent whatever it measures, because the book
+   that supplies it calls it context and an 18.6-year cycle cannot date a
+   turn to a week. */
+function tmgWeights(layers,anchored){
+  var W={cycles:0.50,lunar:0,geo:0,spiral:0,node:0}, K=['lunar','geo','spiral','node'];
+  var tot=0, e={};
+  K.forEach(function(k){ var m=layers[k]; e[k]=(m&&m.edge)||0; tot+=e[k]; });
+  if(tot>0){
+    K.forEach(function(k){ W[k]=0.50*e[k]/tot; });
+    if(W.node>0.05){
+      var back=W.node-0.05, other=W.lunar+W.geo+W.spiral;
+      W.node=0.05;
+      if(other>0)['lunar','geo','spiral'].forEach(function(k){ W[k]+=back*(W[k]/other); });
+    }
+  }
+  var astro=W.lunar+W.geo+W.spiral+W.node;
+  W.cycles=1-astro;
+  if(!anchored){
+    W.cycles=0;
+    if(astro>0)K.forEach(function(k){ W[k]=W[k]/astro; });
+  }
+  return W;
+}
+function tmgPivots(rows,mult){
+  var f=(typeof CQE!=='undefined'&&CQE&&CQE.pivots)?CQE.pivots:null;
+  if(!f)return [];
+  try{ return f(rows,{atrMult:mult||TMG_ATR_CYCLE,minBars:4})||[]; }catch(e){ return []; }
+}
+function tmgNum(x){ var v=+x; return isFinite(v)?v:null; }
+function tmgDayOf(r){ return r.t!=null? new Date(+r.t) : new Date(r.date||r.time||r.datetime); }
+function tmgCap(s){ s=String(s||''); return s.charAt(0).toUpperCase()+s.slice(1); }
+function tmgDays(a,b){ return (a-b)/86400000; }
+/* a bell on distance: 1 on the date, about .37 one band away, ~0 at three */
+function tmgNear(d,band){ if(!(band>0))return 0; var x=d/band; return Math.exp(-x*x); }
+function tmgMed(a){
+  if(!a||!a.length)return null;
+  var s=a.slice().sort(function(x,y){return x-y;}), m=s.length>>1;
+  return s.length%2?s[m]:(s[m-1]+s[m])/2;
+}
+function tmgSep(a,b){ return Math.abs(((a-b)%360+540)%360-180); }   /* 0..180 */
+/* the Moon's mean node, straight from the same orbital element the ephemeris
+   already uses for the Moon — no need to reach into the wheel module */
+function tmgNode(date){ return rev(125.1228-0.0529538083*dFromDate(date)); }
+function tmgPlural(n,w){ n=Math.abs(Math.round(n)); return n+' '+w+(n===1?'':'s'); }
+
+/* ── LAYER 1 · CYCLES ────────────────────────────────────────────────────
+   The dominant cycle is not taken from a book. It is measured trough to
+   trough on this asset's own bars, using the same zigzag pivot detector the
+   Elliott and Gann code already uses, so a cycle here means the same thing
+   it means everywhere else in the app. Silver's ~17 weeks is a prior worth
+   knowing and nothing more — gold gets gold's number. */
+function tmgL1(rows,now){
+  var O={id:'cycles',name:'Cycles',book:'Merriman · Sun, Moon & Silver',
+         ok:false,s:0,fired:false,why:'',n:0,len:null,band:null,last:null,due:null,to:null,k:null};
+  if(!rows){
+    O.why='No daily history is loaded for this asset, so its own cycle cannot be measured. '
+      +'This layer is the anchor, so without it the score leans entirely on the other four.';
+    return O;
+  }
+  var P=tmgPivots(rows,TMG_ATR_CYCLE);
+  var lows=P.filter(function(p){return p.kind==='L';});
+  if(lows.length<4){
+    O.why='Only '+tmgPlural(lows.length,'confirmed trough')+' in '+rows.length
+      +' bars — four are needed before an average length means anything.';
+    return O;
+  }
+  var gaps=[],i;
+  for(i=1;i<lows.length;i++){
+    var g=tmgDays(lows[i].t,lows[i-1].t);
+    if(g>=8)gaps.push(g);          /* under eight days is the same trough twice */
+  }
+  if(gaps.length<3){
+    O.why='Fewer than three usable trough-to-trough distances in the loaded bars.';
+    return O;
+  }
+  var len=tmgMed(gaps);
+  var dev=gaps.map(function(x){return Math.abs(x-len);});
+  var band=tmgBand(len,tmgMed(dev));
+  var last=lows[lows.length-1];
+  var el=tmgDays(now,last.t);
+  var k=Math.max(1,Math.round(el/len));       /* which turn since that trough */
+  var dueT=last.t+k*len*86400000;
+  var to=tmgDays(dueT,now);
+
+  O.ok=true; O.n=gaps.length; O.len=len; O.band=band; O.k=k;
+  O.last=last.date; O.lastPx=last.px; O.due=new Date(dueT); O.to=to;
+  O.s=tmgNear(to,band*TMG_KERNEL);
+  O.fired=Math.abs(to)<=band;
+  O.why='Measured on this asset’s own bars: '+gaps.length+' trough-to-trough distances, '
+    +'median '+Math.round(len)+' days, band ±'+Math.round(band)+' from how much those '
+    +'distances themselves vary. The last confirmed trough was '+last.date
+    +', which puts turn number '+k+' on '+new Date(dueT).toISOString().slice(0,10)+' — '
+    +(Math.abs(to)<0.5?'which is today.'
+      :to>0?tmgPlural(to,'day')+' ahead.':tmgPlural(to,'day')+' overdue.');
+  return O;
+}
+
+/* ── LAYER 2 · LUNAR ─────────────────────────────────────────────────── */
+function tmgL2(now){
+  var O={id:'lunar',name:'Lunar',book:'Sun, Moon & Silver · McWhirter',
+         ok:false,s:0,fired:false,why:''};
+  var eph=null; try{ eph=getEphemeris(now); }catch(e){}
+  if(!eph){ O.why='The ephemeris did not answer.'; return O; }
+  var el=rev(eph.moon.lon-eph.sun.lon);
+  var toNew=Math.min(el,360-el), toFull=Math.abs(180-el);
+  var which=toNew<=toFull?'new':'full', deg=Math.min(toNew,toFull);
+  var days=deg/12.19;                 /* the Moon gains on the Sun at ~12.19°/day */
+  var M=null; try{ M=moonNow(now); }catch(e){}
+  /* McWhirter's monthly tone is the sign the month's NEW Moon fell in, which
+     is the Sun's sign at that moment — so it is read back rather than guessed */
+  var nmT=new Date(+now-(el/12.19)*86400000), tone=null;
+  try{ tone=signOf(getEphemeris(nmT).sun.lon).sign; }catch(e){}
+  O.ok=true; O.s=tmgNear(days,1.6); O.fired=days<=1.6;
+  O.phase=which; O.days=days; O.deg=deg; O.sign=M?M.sign:null;
+  O.tone=tone; O.toneAt=nmT.toISOString().slice(0,10);
+  O.why='The Moon is '+deg.toFixed(1)+'° from '+which+', about '+days.toFixed(1)
+    +' day'+(days>=1.5?'s':'')+' away'+(M?', travelling through '+M.sign:'')
+    +'. The month’s new Moon fell on '+O.toneAt+(tone?' in '+tone:'')
+    +', which is the tone McWhirter reads the month by.';
+  return O;
+}
+
+/* ── LAYER 3 · GEOCOSMIC SIGNATURES ──────────────────────────────────────
+   Square and opposition among Jupiter through Pluto, three degrees of orb.
+   The rule the book insists on is enforced one level up, in the weighting:
+   a signature being active buys it nothing until the forward test says the
+   days it was active were different from ordinary days. */
+function tmgL3(now){
+  var O={id:'geo',name:'Geocosmic',book:'Merriman',ok:false,s:0,fired:false,why:'',hits:[]};
+  var eph=null; try{ eph=getEphemeris(now); }catch(e){}
+  if(!eph){ O.why='The ephemeris did not answer.'; return O; }
+  var orb=3, hits=[], i, j;
+  for(i=0;i<TMG_SLOW.length;i++)for(j=i+1;j<TMG_SLOW.length;j++){
+    var d=tmgSep(eph[TMG_SLOW[i]].lon,eph[TMG_SLOW[j]].lon);
+    [90,180].forEach(function(ang){
+      var off=Math.abs(d-ang);
+      if(off<=orb)hits.push({a:TMG_SLOW[i],b:TMG_SLOW[j],ang:ang,off:off});
+    });
+  }
+  O.ok=true; O.hits=hits;
+  if(hits.length){
+    hits.sort(function(x,y){return x.off-y.off;});
+    O.s=tmgNear(hits[0].off,orb*0.7);
+    O.fired=true;
+    O.why=hits.map(function(h){
+      return tmgCap(h.a)+' '+(h.ang===90?'square':'opposite')+' '+tmgCap(h.b)
+        +' ('+h.off.toFixed(1)+'° off exact)';
+    }).join('; ')+'.';
+  }else{
+    O.why='No square or opposition between the slow bodies is inside '+orb+'° today.';
+  }
+  return O;
+}
+
+/* ── LAYER 4 · SPIRAL DATES ──────────────────────────────────────────────
+   Carolan projects Fibonacci multiples of the lunar month forward from a
+   panic low. The low used here is the lowest low in the bars the app has
+   actually loaded, named on the card, so nobody has to wonder which low the
+   count started from. */
+function tmgL4(rows,now){
+  var O={id:'spiral',name:'Spiral dates',book:'Carolan',ok:false,s:0,fired:false,why:''};
+  if(!rows){ O.why='No daily history is loaded, so there is no low to count forward from.'; return O; }
+  var lo=null,i;
+  for(i=0;i<rows.length;i++){
+    var l=tmgNum(rows[i].low); if(l==null)continue;
+    if(!lo||l<lo.px){
+      var d=tmgDayOf(rows[i]); if(isNaN(d))continue;
+      lo={px:l,t:d.getTime(),date:d.toISOString().slice(0,10)};
+    }
+  }
+  if(!lo){ O.why='No usable low in the loaded bars.'; return O; }
+  var best=null;
+  TMG_FIB.forEach(function(f){
+    var at=lo.t+f*TMG_SYN*86400000, off=tmgDays(at,now);
+    if(!best||Math.abs(off)<Math.abs(best.off))best={f:f,at:at,off:off};
+  });
+  var tol=3, s=tmgNear(best.off,tol), m=now.getMonth();
+  O.autumn=(m>=7&&m<=10);           /* August into November */
+  if(O.autumn)s=Math.min(1,s*1.25);
+  O.ok=true; O.low=lo; O.pick=best; O.s=s; O.fired=Math.abs(best.off)<=tol;
+  O.why='Counting from the lowest low in the loaded bars — '+lo.date+' at '+lo.px
+    +' — the nearest Fibonacci lunar-month projection is '+best.f+' × 29.53 days, '
+    +new Date(best.at).toISOString().slice(0,10)+', '
+    +(Math.abs(best.off)<1?'which is today.'
+      :tmgPlural(best.off,'day')+(best.off>0?' ahead.':' back.'))
+    +(O.autumn?' Weighted up a quarter for the autumn window, which is where Carolan’s '
+      +'spirals land most often.':'');
+  return O;
+}
+
+/* ── LAYER 5 · NODE MACRO ────────────────────────────────────────────────
+   Eighteen and a half years per revolution, so this cannot trigger anything.
+   It says which backdrop the decade is running against and is capped at five
+   percent of the score for exactly that reason. */
+function tmgL5(now){
+  var O={id:'node',name:'Node macro',book:'McWhirter',ok:true,s:0,fired:false,why:''};
+  var L=tmgNode(now), S=signOf(L);
+  var dLeo=tmgSep(L,135), dAq=tmgSep(L,315), near=Math.min(dLeo,dAq);
+  O.lon=L; O.sign=S.sign; O.deg=S.deg;
+  O.s=tmgNear(near,45);
+  O.fired=near<=30;
+  O.tilt=(dAq<dLeo)?'contraction':'expansion';
+  O.why='The Moon’s North Node stands at '+S.deg.toFixed(1)+'° '+S.sign+', '
+    +Math.round(near)+'° from '+(dAq<dLeo?'mid-Aquarius — the macro peak backdrop'
+      :'mid-Leo — the macro bottom backdrop')
+    +'. An 18.6-year tilt toward '+O.tilt+', never a trigger.';
+  return O;
+}
+
+/* ══ THE FORWARD TEST — where every astro weight comes from ══════════════
+   Each layer is replayed over every bar the app has loaded and asked one
+   question: on the days you fired, did a confirmed turn arrive within three
+   days? The result is compared with the base rate, the share of ALL days in
+   the same history that have a turn within three days. Only the difference
+   is weight.
+
+   THE LOOK-AHEAD TRAP. A zigzag pivot is not known on the day it prints —
+   it is only confirmed once price has reversed far enough. Scoring layer 1
+   against troughs it could not have seen would flatter it enormously. The
+   replay therefore only lets layer 1 see troughs confirmed at least ten bars
+   before the day being scored.
+
+   Below twelve firings a layer is reported UNTESTED and given zero weight.
+   Four firings that all happened to work out is not evidence, and rounding
+   that to 100% would be the exact mistake the spec was written to stop. */
+var _tmgTestCache={};
+
+/* how much better than the base rate a layer has to read before the
+   difference is worth anything. Binomial standard error on its own firing
+   count, times 1.64 — the one-sided 95% mark. Measured on gold this is what
+   separates the lunar layer (135 firings, 36% against a 34% base, two points
+   of "edge" that are pure noise) from a layer that has actually done
+   something. Without it the lunar layer collected the entire astro half of
+   the score on a two-point difference, which is the exact mistake the spec
+   was written to prevent. */
+function tmgNeed(base,fires){
+  if(!(fires>0)||base==null)return 1;
+  return 1.64*Math.sqrt(base*(1-base)/fires);
+}
+
+function tmgTest(rows){
+  var O={ok:false,win:3,lag:10,minFires:12,base:null,n:0,turns:0,layers:{},
+         score:null,why:null};
+  if(!rows||rows.length<160){
+    O.why=rows?('only '+rows.length+' bars are loaded — 160 are needed for a test worth quoting')
+               :'no daily history is loaded';
+    return O;
+  }
+  var TP=tmgPivots(rows,TMG_ATR_TURN);
+  var P=tmgPivots(rows,TMG_ATR_CYCLE);
+  if(TP.length<5||P.length<5){ O.why='fewer than five confirmed pivots in the loaded bars'; return O; }
+  var turnT=TP.map(function(p){return p.t;}), W=O.win*86400000;
+  function turnNear(t){
+    for(var i=0;i<turnT.length;i++)if(Math.abs(turnT[i]-t)<=W)return true;
+    return false;
+  }
+  var days=[],i;
+  for(i=0;i<rows.length;i++){ var d=tmgDayOf(rows[i]); if(!isNaN(d))days.push({t:d.getTime(),i:i}); }
+  if(days.length<160){ O.why='fewer than 160 dated bars'; return O; }
+  var hitAll=0;
+  days.forEach(function(x){ x.turn=turnNear(x.t); if(x.turn)hitAll++; });
+  O.base=hitAll/days.length; O.n=days.length; O.turns=TP.length;
+
+  var lows=P.filter(function(p){return p.kind==='L';});
+  var acc={cycles:{f:0,h:0},lunar:{f:0,h:0},geo:{f:0,h:0},spiral:{f:0,h:0},node:{f:0,h:0}};
+  var sp=tmgL4(rows,new Date(days[days.length-1].t));
+
+  /* PASS ONE — every layer's raw reading on every bar, kept rather than
+     thrown away, because pass two needs them and re-deriving 620 days of
+     ephemeris a second time to get them back would double the cost of the
+     tab for nothing. */
+  days.forEach(function(x){
+    var t=x.t, now=new Date(t), j;
+    x.s={cycles:0,lunar:0,geo:0,spiral:0,node:0};
+
+    /* layer 1, as it could have been known on that day and no earlier */
+    var seen=[];
+    for(j=0;j<lows.length;j++)if(lows[j].i<=x.i-O.lag)seen.push(lows[j]);
+    if(seen.length>=4){
+      var gaps=[];
+      for(j=1;j<seen.length;j++){ var g=tmgDays(seen[j].t,seen[j-1].t); if(g>=8)gaps.push(g); }
+      if(gaps.length>=3){
+        var len=tmgMed(gaps);
+        var dev=gaps.map(function(v){return Math.abs(v-len);});
+        var band=tmgBand(len,tmgMed(dev));
+        var lastT=seen[seen.length-1].t;
+        var k=Math.max(1,Math.round(tmgDays(t,lastT)/len));
+        var to=tmgDays(lastT+k*len*86400000,t);
+        x.s.cycles=tmgNear(to,band*TMG_KERNEL);
+        if(Math.abs(to)<=band){ acc.cycles.f++; if(x.turn)acc.cycles.h++; }
+      }
+    }
+
+    var eph=null; try{ eph=getEphemeris(now); }catch(e){}
+    if(eph){
+      var elg=rev(eph.moon.lon-eph.sun.lon);
+      var dd=Math.min(Math.min(elg,360-elg),Math.abs(180-elg))/12.19;
+      x.s.lunar=tmgNear(dd,1.6);
+      if(dd<=1.6){ acc.lunar.f++; if(x.turn)acc.lunar.h++; }
+
+      var off=null, a, b;
+      for(a=0;a<TMG_SLOW.length;a++)for(b=a+1;b<TMG_SLOW.length;b++){
+        var s2=tmgSep(eph[TMG_SLOW[a]].lon,eph[TMG_SLOW[b]].lon);
+        var o1=Math.min(Math.abs(s2-90),Math.abs(s2-180));
+        if(off==null||o1<off)off=o1;
+      }
+      if(off!=null&&off<=3){
+        x.s.geo=tmgNear(off,2.1);
+        acc.geo.f++; if(x.turn)acc.geo.h++;
+      }
+    }
+
+    var nl=tmgNode(now), nr=Math.min(tmgSep(nl,135),tmgSep(nl,315));
+    x.s.node=tmgNear(nr,45);
+    if(nr<=30){ acc.node.f++; if(x.turn)acc.node.h++; }
+
+    if(sp.ok){
+      var bestSp=null;
+      for(j=0;j<TMG_FIB.length;j++){
+        var o2=tmgDays(sp.low.t+TMG_FIB[j]*TMG_SYN*86400000,t);
+        if(bestSp==null||Math.abs(o2)<Math.abs(bestSp))bestSp=o2;
+      }
+      if(bestSp!=null){
+        /* the same autumn weighting the live layer applies — without it the
+           replay would be scoring a slightly different engine than the one
+           on the screen, and the weights it produced would not be the
+           weights that number was made with */
+        var mo=now.getMonth();
+        x.s.spiral=Math.min(1,tmgNear(bestSp,3)*((mo>=7&&mo<=10)?1.25:1));
+        if(Math.abs(bestSp)<=3){ acc.spiral.f++; if(x.turn)acc.spiral.h++; }
+      }
+    }
+  });
+
+  Object.keys(acc).forEach(function(k){
+    var A=acc[k], rate=A.f?A.h/A.f:null, tested=A.f>=O.minFires;
+    var need=tmgNeed(O.base,A.f);
+    var raw=(rate==null)?null:rate-O.base;
+    O.layers[k]={fires:A.f,hits:A.h,rate:rate,tested:tested,need:need,raw:raw,
+                 sig:!!(tested&&raw!=null&&raw>=need),
+                 edge:(tested&&raw!=null)?Math.max(0,raw-need):0};
+  });
+
+  /* PASS TWO — THE ONLY NUMBER THAT MATTERS.
+     Individual hit rates say whether a layer is worth weighting. This says
+     whether the finished score is worth reading: replay it over the same
+     history with the weights just derived, and compare the days that scored
+     50 or more against the base rate. If the alert line does not beat the
+     base rate, the alert is noise and the card has to say so rather than
+     ring anyway. */
+  var Wt=tmgWeights(O.layers,true);
+  var hi=0,hiHit=0,dist=[0,0,0,0,0];
+  days.forEach(function(x){
+    var v=0;
+    Object.keys(x.s).forEach(function(k){ v+=(Wt[k]||0)*x.s[k]; });
+    x.v=Math.round(Math.max(0,Math.min(1,v))*100);
+    dist[Math.min(4,Math.floor(x.v/20))]++;
+    if(x.v>=50){ hi++; if(x.turn)hiHit++; }
+  });
+  O.score={weights:Wt,days:hi,share:hi/days.length,
+           rate:hi?hiHit/hi:null,base:O.base,dist:dist,
+           need:tmgNeed(O.base,hi)};
+  O.score.edge=O.score.rate==null?null:O.score.rate-O.base;
+
+  /* ── THE GRADE, AND WHY THE ALERT IS NOT UNCONDITIONAL ────────────────
+     Measured across four instruments on two years of daily bars:
+
+       Bitcoin   50+ days carried a turn 63% of the time against a 38% base
+       Gold      42% against 34% — a real gap, a whisker inside noise
+       Silver    23% against 31%  ← WORSE than picking a day at random
+       EUR/USD   19% against 25%  ← same
+
+     On silver and the euro the cycle layer itself reads below the base rate,
+     and because the anchor absorbs whatever the astro layers fail to earn it
+     still ends up carrying the score. A 50+ reading there is not a weak
+     signal, it is an anti-signal, and ringing an alarm on it would be worse
+     than having no engine at all. So the grade gates the alert: proven and
+     unproven ring, failed does not, and the card says which one this asset
+     is rather than letting a confident-looking percentage speak for itself. */
+  O.score.grade = (hi<20||O.score.rate==null) ? 'untested'
+                : O.score.edge>=O.score.need ? 'proven'
+                : O.score.edge>0 ? 'unproven' : 'failed';
+  O.score.beats=(O.score.grade==='proven');
+  O.ok=true;
+  return O;
+}
+function tmgTestCached(asset,rows){
+  var key=String(asset)+'|'+(rows?rows.length:0)+'|'
+    +(rows&&rows.length?String(tmgDayOf(rows[rows.length-1]).getTime()):'0');
+  if(_tmgTestCache[key])return _tmgTestCache[key];
+  var T; try{ T=tmgTest(rows); }catch(e){ T={ok:false,layers:{},base:null,why:e.message||'test failed'}; }
+  _tmgTestCache[key]=T;
+  return T;
+}
+
+/* ══ THE ENGINE ═════════════════════════════════════════════════════════ */
+function tmgEngine(asset){
+  var A=asset||(function(){try{return timAsset();}catch(e){return 'Gold';}})();
+  var now=new Date(), rows=tmgRows();
+  var T=tmgTestCached(A,rows);
+  var L=[tmgL1(rows,now),tmgL2(now),tmgL3(now),tmgL4(rows,now),tmgL5(now)];
+  var by={}; L.forEach(function(x){ by[x.id]=x; x.test=T.layers[x.id]||null; });
+
+  /* ── WEIGHTS ──────────────────────────────────────────────────────────
+     Layer 1 is the anchor and holds half the score outright. The other half
+     is split between layers 2 to 5 in proportion to the edge each one
+     actually measured, with the node layer capped at five percent because
+     the book itself calls it context. Anything the astro layers do not earn
+     falls back to layer 1 rather than being handed out for nothing — so on
+     an asset where none of them tests above chance, this is a pure cycle
+     score and says so. */
+  var W=tmgWeights(T.layers,!!by.cycles.ok);
+
+  var score=0;
+  L.forEach(function(x){ score+=(W[x.id]||0)*(x.s||0); });
+  score=Math.round(Math.max(0,Math.min(1,score))*100);
+
+  /* NO ANCHOR AND NO TEST IS NOT A SCORE OF ZERO — IT IS NO SCORE.
+     Every weight is zero in that state, so the sum is zero, and a card
+     reading "0% · OUT" would be indistinguishable from a genuinely quiet
+     day. It is not quiet; nothing has been measured. The card says so
+     instead, and the alert cannot fire off it. */
+  var usable=by.cycles.ok||T.ok;
+
+  var l1=by.cycles;
+  var status = !usable ? 'NO DATA'
+    : l1.ok
+    ? (l1.fired||score>=65 ? 'IN WINDOW'
+       : (Math.abs(l1.to)<=l1.band*2.5||score>=45) ? 'APPROACHING' : 'OUT')
+    : (score>=65?'IN WINDOW':score>=45?'APPROACHING':'OUT');
+
+  var fired=L.filter(function(x){return x.fired;}).map(function(x){return x.name;});
+  /* firing and carrying weight are different things, and the tile that
+     counted only the first was the misleading half of the card */
+  var carry=L.filter(function(x){return x.fired&&(W[x.id]||0)>0;}).map(function(x){return x.name;});
+  /* the grade of the finished score on this asset's own history — read
+     before the combine line, because a failed grade changes what that line
+     is allowed to say */
+  var G=(T.score&&T.score.grade)||'untested';
+
+  /* ── THE DIRECTION, SET BESIDE IT AND NOT MIXED INTO IT ────────────────
+     The timing score is a WHEN. calcAstroBias is a WHICH WAY. Multiplying
+     them produces a single number that answers neither question, so they are
+     reported as a pair and the relation between them is named. When no
+     relation forms — a turn is due but the day has no side — that is what it
+     says. The instruction was to compute it and leave it, not to invent one. */
+  var D=null;
+  try{
+    var noon=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,0,0);
+    D=calcAstroBias(A,getEphemeris(noon),now);
+  }catch(e){}
+  var dir=D?D.dir:null;
+  var C;
+  if(!usable){
+    C={k:'none',word:'Not measured',
+       line:'No daily history is loaded for '+A+', so the cycle cannot be measured and the '
+        +'astro layers cannot be tested. Nothing is scored here — this is not a quiet day, it '
+        +'is an unread one. Open the chart on this asset and the engine fills in.'};
+  }else if(score<50){
+    /* the failed grade is worth a sentence even on a quiet day, but not a
+       paragraph — a reader looking at 0% does not need the anti-signal
+       lecture, only the fact that this asset's line has not worked */
+    C={k:'quiet',word:'No turn due',
+       line:'Timing reads '+score+'%, under the 50% line. '
+        +(dir&&dir!=='neutral'
+          ? 'The day still leans '+dir+' — that is a trend read, not a turn, so trade it with the trend rather than against it.'
+          : 'The day has no side either, so there is nothing to act on from this tab.')
+        +(G==='failed'?' On this asset the 50 line has not worked at all, so nothing would '
+          +'have been raised even above it.':'')};
+  }else if(G==='failed'){
+    C={k:'failed',word:'Held — anti-signal',
+       line:'Timing reads '+score+'%, but on '+A+'’s own history days scoring 50 or more '
+        +'carried a turn '+Math.round(T.score.rate*100)+'% of the time against '
+        +Math.round(T.score.base*100)+'% for any day at all — worse than picking a date out '
+        +'of the air. The number is shown because it was computed; the alert is held, because '
+        +'ringing on it would be worse than having no engine here.'};
+  }else if(dir&&dir!=='neutral'){
+    C={k:'agree',word:'Turn due · '+dir.toUpperCase(),
+       line:'Timing reads '+score+'% and the day leans '+dir+'. Both halves are saying '
+        +'something, so a reversal here would be '+(dir==='bull'?'a low turning up':'a high rolling over')
+        +'. This is the only case where the two tabs point at one trade.'};
+  }else{
+    C={k:'open',word:'Turn due · no side',
+       line:'Timing reads '+score+'%, so a turn is due — but the day’s lean is neutral, '
+        +'so no relation forms between the two. Left as it is: watch the level, take whichever '
+        +'way it breaks, smaller. Nothing here is claiming a direction.'};
+  }
+
+  var E={asset:A,at:now,score:score,status:status,usable:usable,grade:G,
+         mayAlert:(G!=='failed'),layers:L,by:by,weights:W,test:T,
+         fired:fired,carry:carry,dir:dir,bull:D?D.bull:null,combine:C,
+         to:l1.ok?l1.to:null,len:l1.ok?l1.len:null,band:l1.ok?l1.band:null,
+         anchored:!!l1.ok, rows:rows?rows.length:0};
+  window.TMG_LAST=E;
+  return E;
+}
+
+/* ══ THE CARD ═══════════════════════════════════════════════════════════ */
+var TMG_ARC=169.6;                       /* pi x 54 — the half-circle's length */
+function tmgArcSvg(pct){
+  var d='M10 64 A54 54 0 0 1 118 64';
+  return '<svg class="tmg-arc" viewBox="0 0 128 74" aria-hidden="true">'
+    +'<path class="bg" d="'+d+'"/>'
+    +'<path class="fg" d="'+d+'" stroke-dasharray="'
+      +(TMG_ARC*Math.max(0,Math.min(100,pct))/100).toFixed(1)+' '+TMG_ARC.toFixed(1)+'"/>'
+    +'</svg>';
+}
+function tmgPp(x){ return (x>0?'+':'')+(x*100).toFixed(1)+'pp'; }
+function tmgRateTxt(m,base){
+  if(!m)return 'not tested';
+  if(!m.fires)return 'never fired in the loaded history';
+  if(!m.tested)return m.fires+' firing'+(m.fires===1?'':'s')+' — too few to test';
+  var b=base==null?'':' against '+Math.round(base*100)+'% base';
+  return Math.round(m.rate*100)+'% of its '+m.fires+' firings landed on a turn'+b+', '
+    +tmgPp(m.raw)+' — '+(m.sig?'clear of noise':'inside noise, needs '+tmgPp(m.need));
+}
+var TMG_GRADE={
+  proven:{w:'PROVEN',c:'g'},unproven:{w:'UNPROVEN',c:'a'},
+  failed:{w:'FAILED HERE',c:'r'},untested:{w:'UNTESTED',c:'n'}};
+function tmgHtml(){
+  var E;
+  try{ E=tmgEngine(); }
+  catch(e){ return '<div class="lm-na">The timing engine could not run — '
+    +escHtml(e.message||'no inputs')+'.</div>'; }
+
+  if(!E.usable)
+    return '<div class="tmg out"><div class="tmg-head" style="grid-template-columns:1fr">'
+      +'<div class="tmg-mid"><div class="tmg-title">Timing engine <s>when, not which way</s></div>'
+      +'<div class="tmg-pill out">NOT MEASURED</div>'
+      +'<div class="tmg-say">'+escHtml(E.combine.line)+'</div></div></div></div>';
+  var sk=E.status==='IN WINDOW'?'in':E.status==='APPROACHING'?'near':'out';
+  var over=E.score>=50;
+  var toTxt = E.to==null ? '—'
+            : Math.abs(E.to)<0.5 ? 'today'
+            : E.to>0 ? tmgPlural(E.to,'day') : tmgPlural(E.to,'day')+' late';
+
+  /* the five rows, each carrying its own raw reading, its measured weight and
+     the hit rate that produced that weight — so a zero is explained on the
+     same line it appears on */
+  var rows=E.layers.map(function(x){
+    var w=Math.round((E.weights[x.id]||0)*100);
+    var m=x.test;
+    return '<div class="tmg-l'+(x.fired?' on':'')+(w===0?' zero':'')+'">'
+      +'<div class="tmg-ln"><b>'+escHtml(x.name)+'</b><i>'+escHtml(x.book)+'</i></div>'
+      +'<div class="tmg-lb"><span style="width:'+Math.round((x.s||0)*100)+'%"></span></div>'
+      +'<div class="tmg-lw"><b>'+w+'%</b><i>weight</i></div>'
+      /* FIRING in green next to a 0% weight read as a live signal that had
+         been ignored. It is the opposite: the layer is on its date and has
+         not earned the right to move the number. Both facts, one badge. */
+      +'<div class="tmg-ls">'+(x.fired
+          ? (w>0?'<em class="f">FIRING</em>':'<em class="q">firing · no weight</em>')
+          : '<em>quiet</em>')
+        +'<s>'+escHtml(tmgRateTxt(m,E.test.base))+'</s></div>'
+      +'<div class="tmg-lx">'+escHtml(x.why)+'</div>'
+    +'</div>';
+  }).join('');
+
+  var base=E.test&&E.test.base!=null?Math.round(E.test.base*100):null;
+  var SC=(E.test.score&&E.test.score.rate!=null&&E.test.score.days>=20)?E.test.score:null;
+  var GG=TMG_GRADE[E.grade]||TMG_GRADE.untested;
+
+  return '<div class="tmg '+sk+(over?' hot':'')+'">'
+   +'<div class="tmg-head">'
+     +'<div class="tmg-meter">'+tmgArcSvg(E.score)
+       +'<div class="tmg-num"><b>'+E.score+'<u>%</u></b><i>timing score</i></div></div>'
+     +'<div class="tmg-mid">'
+       +'<div class="tmg-title">Timing engine <s>when, not which way</s></div>'
+       +'<div class="tmg-pill '+sk+'">'+E.status+'</div>'
+       +'<div class="tmg-say">'+escHtml(E.combine.line)+'</div>'
+     +'</div>'
+     +'<div class="tmg-stats">'
+       +'<div class="tmg-st"><i>Next turn</i><b>'+escHtml(toTxt)+'</b>'
+         +'<s>'+(E.len?Math.round(E.len)+'-day cycle ±'+Math.round(E.band):'no cycle measured')+'</s></div>'
+       +'<div class="tmg-st"><i>Layers firing</i><b>'+E.fired.length+' of 5</b>'
+         +'<s>'+escHtml(E.fired.length?E.fired.join(', '):'none of them')
+         +' — '+(E.carry.length?E.carry.join(' and ')+' carr'+(E.carry.length>1?'y':'ies')+' weight'
+                             :'none of them carries weight')+'</s></div>'
+       +'<div class="tmg-st"><i>Day’s lean</i><b class="d-'+(E.dir||'na')+'">'
+         +escHtml(E.dir?E.dir.toUpperCase():'—')+'</b>'
+         +'<s>'+escHtml(E.combine.word)+'</s></div>'
+     +'</div>'
+   +'</div>'
+   /* THE LINE THAT STOPS THE PERCENTAGE SPEAKING FOR ITSELF.
+      A score of 100 looks like certainty and is not one: it says every clock
+      that earned weight is pointing at today, not that a turn will happen.
+      What it has actually MEANT on this asset is a measured number, so it is
+      printed at the same size, right under it, and it is the number the
+      alert is gated on. */
+   +(SC
+     ? '<div class="tmg-grade '+GG.c+'">'
+       +'<span class="tmg-g-b">'+GG.w+'</span>'
+       +'<span class="tmg-g-t"><b>'+Math.round(SC.rate*100)+'%</b> of the '+SC.days
+         +' past days that scored 50 or more carried a turn within three days, '
+         +'against <b>'+Math.round(SC.base*100)+'%</b> for any day at all '
+         +'— '+tmgPp(SC.edge)+', on '+E.test.n+' bars.'
+         +(E.grade==='proven'
+           ? ' Clear of the '+tmgPp(SC.need)+' noise threshold, so the alert is live.'
+           :E.grade==='unproven'
+           ? ' Short of the '+tmgPp(SC.need)+' needed to call it clear of noise. The alert '
+             +'still fires and says so.'
+           : ' Below the base rate. The alert is held on this asset.')
+       +'</span></div>'
+     : '<div class="tmg-grade n"><span class="tmg-g-b">UNTESTED</span>'
+       +'<span class="tmg-g-t">Not enough loaded history to say what this score has meant here'
+       +(E.test.why?' — '+escHtml(E.test.why):'')+'.</span></div>')
+   +'<div class="tmg-ls-h">The five layers, and what each one has earned</div>'
+   +'<div class="tmg-list">'+rows+'</div>'
+   +'<details class="tmg-calc"><summary>How the weights were decided</summary>'
+     +'<p>Layer 1 is measured on '+escHtml(E.asset)+'’s own bars — no astrology in it — '
+       +'so it holds half the score outright and takes back anything the other four fail to earn. '
+       +(E.anchored?'':'<b>It could not run here: no daily history is loaded, so the score has no anchor '
+         +'and rests entirely on the astro layers.</b> ')
+     +'Layers 2 to 5 were replayed over '+(E.test.n||E.rows)+' loaded bars and asked whether the days '
+       +'they fired on carried a confirmed turn within three days. '
+     +(base!=null
+       ? 'Across that history '+base+'% of ALL days had a turn within three, so that is the number '
+         +'each layer had to beat. A layer at or below it earns nothing.'
+       : 'The test could not run — '+escHtml(E.test.why||'not enough history')
+         +' — so every astro layer is treated as untested and weighted at zero, and the score is '
+         +'the cycle layer alone.')
+     +'</p>'
+     +'<p>Pivots are only confirmed some bars after they print, so the replay lets layer 1 see only '
+       +'troughs confirmed ten bars or more before the day it is scoring. Without that it would be '
+       +'marking its own homework. Any layer with fewer than twelve firings is reported untested '
+       +'rather than given a flattering rate off a handful of dates.</p>'
+     +'<p>Each layer beats the base rate or it does not, and "beats" means by more than the '
+       +'binomial noise on its own firing count — 1.64 standard errors, the one-sided 95% mark. '
+       +'A layer two points above base on 135 firings has not beaten anything, and before that '
+       +'threshold was added the lunar layer collected the whole astro half of the score on '
+       +'exactly that. Any layer with fewer than twelve firings is reported untested rather than '
+       +'given a flattering rate off a handful of dates.</p>'
+     +'<p>The score itself is the weighted sum of the five raw readings, each a bell curve on how '
+       +'near its own date is — 1 on the day, falling away inside the band. It is a weight of '
+       +'evidence, not a probability: 100 means every clock that earned weight points at today, '
+       +'not that a turn is certain. What it has actually meant here is the measured line above. '
+       +'50 is the alert line, and the alert is held on an asset where that line resolves below '
+       +'the base rate.</p>'
+   +'</details>'
+  +'</div>';
+}
+
 /* the Analytics slot is called hz_slot and has been since the horizons panel
    lived there; it draws the engine now, so the old name is one line */
 function horizonsHtml(dp){ return timEngineHtml(dp); }
@@ -21271,6 +22079,11 @@ function renderTiming(){
       the aspects. The seven lines it produces were only visible on the
       Analytics tab, which is the wrong place for the Timing tab's verdict. */
    +'<div class="te-strip">'+timEngineHtml()+'</div>'
+   /* WHEN, on its own, right under the engine's verdict. The five-layer
+      timing score is a different question from everything else on this tab:
+      not which way, only whether a turn is due. It sits here because the
+      alert that fires off it points people at this tab. */
+   +tmgHtml()
    +'<div class="tk-hero '+v.level+'">'
     +'<div class="tk-col">'
       +'<div class="tk-dial">'+ring
@@ -21741,6 +22554,25 @@ function ntfCollect(){
     });
   }catch(e){}
 
+  /* 5 · a reversal window that is open now.
+     The bell holds what is OUTSTANDING, and a window above the 50 line is
+     outstanding for as long as it is open — the toast fires once and is
+     gone, this stays until it is read. Held on an asset whose 50 line has
+     historically resolved below the base rate, same as the alert. */
+  try{
+    var TM=window.TMG_LAST||tmgEngine();
+    if(TM&&TM.usable&&TM.mayAlert&&TM.score>=50)
+      out.push({id:'tmg:'+TM.asset+':'+Math.floor(TM.score/10), kind:'timing', at:now,
+        icon:'\u25D4', tone:TM.grade==='proven'?'up':'warn',
+        title:'Reversal window '+TM.score+'% on '+String(TM.asset).toUpperCase(),
+        body:TM.status+' · '
+          +(TM.to==null?'no dated turn'
+            :Math.abs(TM.to)<0.5?'turn dated today'
+            :TM.to>0?'turn in '+tmgPlural(TM.to,'day'):'turn '+tmgPlural(TM.to,'day')+' overdue')
+          +' · '+(TM.carry.length?TM.carry.join(' + '):'no layer carrying weight')
+          +' · '+TM.grade+' on this asset'});
+  }catch(e){}
+
   out.sort(function(a,b){ return b.at-a.at; });
   return out;
 }
@@ -21964,6 +22796,52 @@ function bigAlertCheck(){
       alertSend('Price is at a key zone on '+asset,
         tcFmt(Z.px,2)+' · '+Z.dist.toFixed(2)+' ATR away · '+Z.strength
         +' calculations from each side agree here');
+  }catch(e){}
+
+  /* 5 · A REVERSAL WINDOW, AS A PERCENTAGE, EVERY DAY IT CLEARS FIFTY.
+     The other four triggers are events — a release, an hour, a count, a
+     level. This one is a reading, and it is checked daily rather than waited
+     for, because the five layers can build toward a turn over a week without
+     any single one of them "happening" on a date you could put in a diary.
+
+     Once per day per ten-point band. Bucketing matters: without it a score
+     drifting 51 → 52 → 53 would alert on every ninety-second sweep, and with
+     a bucket any wider than ten a window strengthening from 51 to 68 would
+     go unmentioned. Ten points is a real change in the reading and at most
+     five alerts in a day. */
+  try{
+    var TM=tmgEngine();
+    /* mayAlert is false on an asset where 50+ days have historically resolved
+       BELOW the base rate. Ringing there would be worse than silence, and the
+       card says so in place of the alert. */
+    if(TM&&TM.usable&&TM.mayAlert&&TM.score>=50
+       &&bigAlertKey('tmg:'+TM.asset+':'+Math.floor(TM.score/10))){
+      var when = TM.to==null ? 'no dated turn'
+               : Math.abs(TM.to)<0.5 ? 'the turn is dated today'
+               : TM.to>0 ? 'turn dated in '+tmgPlural(TM.to,'day')
+                         : 'turn '+tmgPlural(TM.to,'day')+' overdue';
+      var SCx=TM.test&&TM.test.score;
+      var proof = TM.grade==='proven'&&SCx
+          ? 'proven line — '+Math.round(SCx.rate*100)+'% of past 50+ days turned, against '
+            +Math.round(SCx.base*100)+'% base'
+        : TM.grade==='unproven'&&SCx
+          ? 'unproven line — '+Math.round(SCx.rate*100)+'% of past 50+ days turned, against '
+            +Math.round(SCx.base*100)+'% base, inside noise'
+          : 'not yet tested on this asset';
+      /* the engine's own asset, not the board's — and only the layers that
+         actually carry weight, because naming a 0%-weight layer as "firing"
+         in a push notification is the one place there is no room to explain
+         the difference */
+      alertSend('Reversal window '+TM.score+'% on '+String(TM.asset).toUpperCase(),
+        TM.status+' · '+when+' · '
+        +(TM.carry.length?TM.carry.join(' + ')+' firing'
+          :TM.fired.length?TM.fired.join(' + ')+' on date but carrying no weight'
+          :'no single layer firing, the weight is cumulative')
+        +' · '+(TM.dir&&TM.dir!=='neutral'
+                ? 'the day leans '+TM.dir+', so the two agree'
+                : 'the day has no side, so no direction is claimed')
+        +' · '+proof);
+    }
   }catch(e){}
 }
 
@@ -23169,9 +24047,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b80';
+var CA_BUILD='b81';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The sidebar picture is back to how it was';
+var CA_WHATS_NEW='The five-layer Timing Engine is on the Timing tab \u2014 one score for WHEN, the day\u2019s lean beside it, and an alert whenever a reversal window clears 50%';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
