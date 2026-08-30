@@ -2437,6 +2437,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .te-say{margin-top:9px;font-size:10px;line-height:1.6;color:var(--t2)}
 .te-clash{margin-top:8px;padding:8px 10px;border-radius:9px;font-size:9.5px;line-height:1.6;
   color:var(--t2);border:1px solid rgba(248,113,113,.28);background:rgba(248,113,113,.06)}
+.ch-pick{cursor:pointer;transition:.16s}
+.ch-pick:hover{border-color:rgba(196,181,253,.55)}
+.ch-car{font-style:normal;font-size:8px;opacity:.6;margin-left:2px}
+.chm{position:fixed;z-index:9500;width:230px;max-height:70vh;overflow-y:auto;
+  padding:8px;border-radius:13px;border:1px solid rgba(160,130,220,.28);
+  background:rgba(16,9,38,.98);box-shadow:0 20px 56px rgba(0,0,0,.6);
+  animation:teIn .22s cubic-bezier(.2,.9,.25,1) both}
+.chm-g{font-size:7.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);padding:7px 6px 4px}
+.chm-i{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;font:inherit;
+  padding:6px 9px;border-radius:8px;cursor:pointer;color:var(--t2);
+  border:1px solid transparent;background:transparent;transition:.14s}
+.chm-i:hover{background:rgba(160,130,220,.14);color:var(--t1)}
+.chm-i.on{background:rgba(160,130,220,.2);border-color:rgba(196,181,253,.4)}
+.chm-i b{font-family:'Space Grotesk';font-size:10px;font-weight:800;min-width:46px}
+.chm-i.on b{color:#C4B5FD}
+.chm-i s{text-decoration:none;font-size:9px;color:var(--t3)}
+.te-clash i{display:block;font-style:normal;font-size:8px;line-height:1.6;
+  color:var(--t3);margin-top:5px;padding-top:5px;
+  border-top:1px solid rgba(248,113,113,.18)}
 .te-clash b{display:block;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
   color:#F87171;margin-bottom:3px}
 .te-calc{margin-top:9px}
@@ -6581,7 +6601,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b77</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b78</div>
     <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
          The card was 236px of fixed height for a name, a build string, four
          lines of marketing and a large illustration — and the notifications
@@ -6660,7 +6680,13 @@ body{background:var(--bg0)}
       <!-- where the Moon is, directly above the chart, filled by moonStripPaint -->
       <div id="moon_strip"></div>
       <div class="ch-bar">
-        <span class="pill on">&#9889; <b id="ch_asset">XAU/USD</b></span>
+        <!-- THIS PILL WAS A LABEL, NOT A CONTROL. It printed the asset and
+             had no click handler at all, so the chart could only ever show
+             whatever the last analysis ran on and there was no way to look at
+             another instrument from here. It is a switcher now. -->
+        <span class="pill on ch-pick" onclick="chAssetMenu(event)"
+              title="Switch the instrument on the chart">&#9889;
+          <b id="ch_asset">XAU/USD</b> <i class="ch-car">&#9662;</i></span>
         <span class="pill">4H &#9662;</span>
         <span class="pill">&#9698; Indicators</span>
         <span class="pill ghost" style="margin-left:auto">&#9673; Celestial Engine</span>
@@ -14502,6 +14528,109 @@ function sigGateHtml(G,dp){
   return h+'</div>';
 }
 
+/* ══ HAS THIS SETUP ALREADY FINISHED? ═══════════════════════════════════
+   The board drew whatever the last analysis produced and never asked whether
+   price had since walked through the target or the stop. So a setup that hit
+   its target hours ago kept sitting on the chart as if it were still on the
+   table, and the next one could not appear until something else forced a
+   re-run.
+
+   The test is the same one the market applies: for a long, the target is
+   reached at or above tp and the stop at or below sl; for a short, the other
+   way round. Nothing is inferred — it is the live price against the two
+   numbers the setup itself named.
+
+   `pending` is a setup price has not reached yet; `live` is one price is
+   inside the entry band. Both stay on the board. `tp` and `sl` are finished
+   and say so. */
+function sigOutcome(sig,price){
+  if(!sig||!sig.style)return {k:'none'};
+  if(price==null||!isFinite(price))return {k:'unknown'};
+  var long=!!sig.isBull;
+  var hitTp = long ? price>=sig.tp : price<=sig.tp;
+  var hitSl = long ? price<=sig.sl : price>=sig.sl;
+  if(hitTp)return {k:'tp', word:'Target reached',
+    say:'Price has been to '+tcFmt(sig.tp,price<10?4:2)+'. This setup is finished — '
+       +'run the analysis again for the next one.'};
+  if(hitSl)return {k:'sl', word:'Stopped out',
+    say:'Price has been to '+tcFmt(sig.sl,price<10?4:2)+'. This setup is finished — '
+       +'run the analysis again for the next one.'};
+  var eb=Math.abs(sig.entry-sig.sl)*0.28||price*0.0008;
+  if(price>=sig.entry-eb&&price<=sig.entry+eb)
+    return {k:'live', word:'In the entry band', say:'Price is where the setup wants it.'};
+  /* PAST THE ENTRY, HEADING FOR THE TARGET, IS NOT "WAITING".
+     The first version called anything outside the band pending, so a long at
+     4460 on a 4400 entry and a 4520 target — sixty points in profit — read as
+     though nothing had happened yet. There are two ways to be outside the
+     band and they are opposites. */
+  var toward = sig.isBull ? price>sig.entry+eb : price<sig.entry-eb;
+  if(toward){
+    var span=Math.abs(sig.tp-sig.entry)||1;
+    var got=Math.abs(price-sig.entry);
+    return {k:'running', word:'Running',
+      say:'Price is past the entry and '+Math.round(got/span*100)
+         +'% of the way to the target.'};
+  }
+  return {k:'pending', word:'Waiting',
+    say:'Price has not reached the entry band yet.'};
+}
+/* ══ SWITCHING THE INSTRUMENT FROM THE CHART ═══════════════════════════
+   The chart could only show whatever the last analysis happened to run on.
+   Everything needed to change that already existed — ASSETS, the asset box
+   the analysis reads, setTimAsset and anaRun — but nothing on the chart was
+   wired to any of it.
+
+   One menu, grouped the way the list already is (metals, crypto, forex,
+   stocks, commodity), and picking one runs the whole board on it: the
+   analysis, the timing engine, and the chart with it. */
+function chAssetMenu(ev){
+  if(ev)ev.stopPropagation();
+  var old=document.getElementById('ch_menu');
+  if(old){ old.remove(); return; }
+  var cur=((document.getElementById('ai_asset_txt')||{}).value||'Gold');
+  var groups={};
+  (ASSETS||[]).forEach(function(a){ (groups[a.cat]=groups[a.cat]||[]).push(a); });
+  var order=['Metal','Crypto','Forex','Stock','Commodity'];
+  var h='';
+  order.forEach(function(g){
+    if(!groups[g])return;
+    h+='<div class="chm-g">'+g+'</div>';
+    groups[g].forEach(function(a){
+      h+='<button class="chm-i'+(a.n===cur?' on':'')+'" data-a="'+escHtml(a.n)+'">'
+        +'<b>'+escHtml(a.t)+'</b><s>'+escHtml(a.n)+'</s></button>';
+    });
+  });
+  var m=document.createElement('div');
+  m.id='ch_menu'; m.className='chm'; m.innerHTML=h;
+  document.body.appendChild(m);
+  var pill=document.querySelector('.ch-pick');
+  var r=pill.getBoundingClientRect();
+  var top=r.bottom+7, left=r.left;
+  if(left+230>window.innerWidth-12)left=Math.max(12,window.innerWidth-242);
+  if(top+m.offsetHeight>window.innerHeight-12)
+    top=Math.max(12,window.innerHeight-m.offsetHeight-12);
+  m.style.left=Math.round(left)+'px'; m.style.top=Math.round(top)+'px';
+  m.querySelectorAll('.chm-i').forEach(function(bn){
+    bn.onclick=function(){ chAssetPick(bn.getAttribute('data-a')); };
+  });
+  setTimeout(function(){
+    document.addEventListener('click',function close(e){
+      if(m.contains(e.target))return;
+      m.remove(); document.removeEventListener('click',close);
+    });
+  },0);
+}
+function chAssetPick(name){
+  var m=document.getElementById('ch_menu'); if(m)m.remove();
+  var el=document.getElementById('ai_asset_txt'); if(el)el.value=name;
+  var ab=document.getElementById('ab_asset'); if(ab)ab.value=name;
+  try{ setTimAsset(name); }catch(e){}
+  var lab=document.getElementById('ch_asset');
+  var A=(ASSETS||[]).filter(function(x){return x.n===name;})[0];
+  if(lab)lab.textContent=A?(A.t==='XAU'?'XAU/USD':A.t):name;
+  try{ notify('Switching the board to '+name+'\u2026','info'); }catch(e){}
+  try{ anaRun(); }catch(e){ try{ runAnalyze(); }catch(e2){} }
+}
 function tradeCardHtml(){
   var S=window._lastSig, asset=(document.getElementById('ai_asset_txt')||{}).value||_lastAsset||'—';
   var px=parseFloat((document.getElementById('ai_price')||{}).value)||_lastPrice||0;
@@ -20090,7 +20219,15 @@ function timEngineHtml(dp){
     {k:'Current cycle',v:E.cycle,s:'counted from a confirmed pivot',cls:''},
     {k:'Progress',v:E.progress==null?'—':E.progress+'%',
      s:'elapsed against the full count',bar:E.progress,cls:''},
-    {k:'Next window',v:E.next.text,s:E.next.label||'nothing dated ahead',cls:'te-w'},
+    /* THE CARD BESIDE IT SAYS 256D AND THIS ONE SAID "144 days count", WITH
+       NOTHING EXPLAINING WHY THEY DIFFER. They are different counts — the
+       running one is the cycle nearest completion, the next window is
+       whichever count opens soonest, and those are almost never the same
+       thing. The label says which it is now. */
+    {k:'Next window',v:E.next.text,
+     s:(E.next.label||'nothing dated ahead')
+       +(E.next.src==='gann'?' — a different count from the one running':''),
+     cls:'te-w'},
     {k:'Time confluence',v:cf.level,
      s:cf.count+' independent clock'+(cf.count===1?'':'s'),cls:'cf-'+cf.level.toLowerCase()},
     {k:'Time bias',v:bias.k,s:'what the clocks lean towards',cls:'bi-'+biasK}
@@ -20109,7 +20246,17 @@ function timEngineHtml(dp){
   h+='</div>';
 
   h+='<div class="te-say">'+escHtml(bias.why)+'</div>';
-  if(E.conflict)h+='<div class="te-clash"><b>Clocks disagree</b>'+escHtml(E.conflict)+'</div>';
+  /* "TIME CONFLUENCE: HIGH" AND "CLOCKS DISAGREE" SAT SIDE BY SIDE AND READ
+     AS A CONTRADICTION. They answer different questions: confluence counts
+     how many clocks land on the same DATE, conflict is about what they mean
+     once they get there. Three clocks can agree it happens on Tuesday and
+     still disagree about whether Tuesday ends the move or restarts it. The
+     banner says that rather than leaving it to be worked out. */
+  if(E.conflict)h+='<div class="te-clash"><b>Clocks disagree on what it means</b>'
+    +escHtml(E.conflict)
+    +'<i>This is not a contradiction of the confluence above. That counts how many '
+      +'clocks land on the same date; this is about what they say once they do.</i>'
+  +'</div>';
 
   h+='<details class="te-calc"><summary>View calculation</summary><div class="te-rows">'
     +E.calc.map(function(r){
@@ -22825,9 +22972,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b77';
+var CA_BUILD='b78';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The day\u2019s lean now shows its percentile and the year\u2019s own bull/bear/neutral split';
+var CA_WHATS_NEW='Chart can switch instrument \u00b7 a setup that hit its target now says so';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -28998,7 +29145,17 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
     var conf=sig&&sig.conf!=null?sig.conf:0;
     dashSet('v_conf',conf+'%',conf>=80?'var(--green)':conf>=65?'var(--amber)':'var(--ts)');
     document.querySelectorAll('.conf-bar div').forEach(function(b){b.dataset.w=conf;b.style.width=conf+'%';});
-    if(sig&&sig.style){
+    var OC=null; try{ OC=sigOutcome(sig,price); }catch(e){}
+    if(sig&&sig.style&&OC&&(OC.k==='tp'||OC.k==='sl')){
+      /* finished. Showing the old numbers as if they were still live is the
+         one thing this card must not do. */
+      dashSet('v_ez',OC.word,OC.k==='tp'?'var(--green)':'var(--red)');
+      dashSet('v_sl','—');
+      dashSet('v_tps','run the analysis for the next setup');
+      var tw=document.getElementById('v_tps'); if(tw)tw.title=OC.say;
+      dashSet('v_tp1','—');dashSet('v_tp2','—');dashSet('v_tp3','—');
+      dashSet('v_rr','—');
+    }else if(sig&&sig.style){
       /* the entry is a band, not a line — the same width the chart draws */
       var eb=Math.abs(sig.entry-sig.sl)*0.28||price*0.0008;
       dashSet('v_ez',f(sig.entry-eb)+' – '+f(sig.entry+eb),sig.isBull?'var(--green)':'var(--red)');
