@@ -2670,6 +2670,152 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:560px){.evn{grid-template-columns:1fr;gap:6px;text-align:left}
   .evn-c.fc{text-align:left}.evn-g{text-align:left}}
 @media(prefers-reduced-motion:reduce){.mb-t{animation:none;opacity:1;transform:none}}
+/* ── the trading journal board ───────────────────────────────────────── */
+/* THE BOARD WAS RENDERING INTO ONE COLUMN OF A TWO-COLUMN GRID.
+   #pane_portfolio is a grid of two 562px tracks, so the board took one of
+   them, the three summary panels were squeezed into 562px and the third was
+   cut off the side. Measured: jb_board w=562 inside pane w=1164. It spans. */
+#jb_board{grid-column:1/-1}
+.jb{margin-bottom:14px}
+.jb-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:9px;
+  margin-bottom:14px}
+.jb-h1{padding:13px 15px;border-radius:14px;border:1px solid rgba(160,130,220,.16);
+  background:rgba(24,14,52,.55);opacity:0;transform:translateY(8px);
+  animation:revIn .5s cubic-bezier(.22,1,.36,1) forwards}
+.jb-h1 i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.jb-h1 b{display:block;font-family:'Space Grotesk';font-size:25px;font-weight:800;
+  line-height:1.1;color:var(--t1);margin:7px 0 4px;letter-spacing:-.01em}
+.jb-h1 b.g{color:#34D399}
+.jb-h1 b.l{color:#F87171}
+.jb-h1 s{display:block;text-decoration:none;font-size:8px;color:var(--t3);line-height:1.5}
+.jb-sec{font-family:'Space Grotesk';font-size:10px;font-weight:800;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--t3);text-align:center;margin:16px 0 9px;
+  display:flex;align-items:center;gap:11px}
+.jb-sec:before,.jb-sec:after{content:'';flex:1;height:1px;background:rgba(160,130,220,.16)}
+.jb-g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.jb-g3b{display:grid;grid-template-columns:.85fr 1.3fr .85fr;gap:9px}
+@media(max-width:1040px){.jb-g3,.jb-g3b{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.jb-g3,.jb-g3b{grid-template-columns:1fr}}
+.jb-p{padding:13px 14px;border-radius:14px;border:1px solid rgba(160,130,220,.14);
+  background:rgba(20,11,46,.5)}
+.jb-pt{font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:#C4B5FD;margin-bottom:10px;display:flex;justify-content:space-between;
+  align-items:center;gap:8px;flex-wrap:wrap}
+.jb-pt2{font-size:8px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--t3);margin:12px 0 6px;padding-top:9px;
+  border-top:1px solid rgba(160,130,220,.1)}
+.jb-rows{display:grid;gap:2px}
+.jb-r{display:flex;justify-content:space-between;align-items:baseline;gap:9px;
+  padding:5px 7px;border-radius:7px}
+.jb-r:nth-child(odd){background:rgba(10,5,28,.4)}
+.jb-r.str{background:rgba(160,130,220,.1);margin-top:3px}
+.jb-r i{font-style:normal;font-size:9.5px;color:var(--t2)}
+.jb-r i u{text-decoration:none;font-size:7.5px;color:var(--t3);margin-left:5px;
+  padding:1px 5px;border-radius:99px;background:rgba(160,130,220,.14)}
+.jb-r b{font-family:'Space Grotesk';font-size:11.5px;font-weight:800;color:var(--t1)}
+.jb-r b.g{color:#34D399}
+.jb-r b.l{color:#F87171}
+.jb-split{display:flex;height:7px;border-radius:99px;overflow:hidden;margin:11px 0 6px;
+  background:rgba(160,130,220,.12)}
+.jb-split span{transition:width .7s cubic-bezier(.2,.9,.25,1)}
+.jb-split span.g{background:#34D399}
+.jb-split span.l{background:#F87171}
+.jb-splitk{display:flex;align-items:center;gap:5px;font-size:8.5px;color:var(--t3);
+  flex-wrap:wrap}
+.jb-splitk em{width:7px;height:7px;border-radius:2px;display:inline-block}
+.jb-splitk em.g{background:#34D399}
+.jb-splitk em.l{background:#F87171;margin-left:7px}
+.jb-splitk s{text-decoration:none;margin-left:auto;opacity:.75}
+/* the diverging histogram */
+.jb-hist{display:flex;align-items:flex-end;gap:3px;height:132px;padding:0 2px}
+.jb-hb{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  height:100%;position:relative}
+.jb-hb span{width:100%;border-radius:4px 4px 0 0;transform-origin:bottom;
+  animation:jbBar .55s cubic-bezier(.2,.9,.25,1) both}
+@keyframes jbBar{from{transform:scaleY(0)}}
+.jb-hb span.g{background:#34D399}
+.jb-hb span.l{background:#F87171}
+.jb-hb u{position:absolute;top:-13px;text-decoration:none;font-size:8px;color:var(--t3)}
+.jb-hx{display:flex;justify-content:space-between;font-size:8px;color:var(--t3);
+  margin-top:5px;padding-top:5px;border-top:1px solid rgba(160,130,220,.14)}
+.jb-hx .mid{opacity:.6}
+.jb-hk{display:flex;align-items:center;gap:5px;font-size:8.5px;color:var(--t3);margin-top:7px}
+.jb-hk em{width:7px;height:7px;border-radius:2px;display:inline-block}
+.jb-hk em.g{background:#34D399;margin-left:8px}
+.jb-hk em.l{background:#F87171}
+.jb-hk s{text-decoration:none;margin-left:auto;opacity:.75;text-align:right}
+/* arc meters, not two-slice donuts */
+.jb-meters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.jb-m{display:flex;align-items:center;gap:9px}
+.jb-mv{width:62px;height:62px;flex:none}
+.jb-arc{animation:jbArc 1s cubic-bezier(.2,.9,.25,1) both}
+@keyframes jbArc{from{stroke-dashoffset:213.6}}
+.jb-mt b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:800;
+  color:var(--t1);line-height:1.1}
+.jb-mt i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--t3);margin-top:2px}
+.jb-mt s{display:block;text-decoration:none;font-size:8px;color:var(--t3);opacity:.8}
+.jb-stats{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.jb-s{padding:6px 8px;border-radius:8px;background:rgba(10,5,28,.42)}
+.jb-s i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--t3)}
+.jb-s b{display:block;font-family:'Space Grotesk';font-size:12.5px;font-weight:800;
+  color:var(--t1);margin-top:2px}
+.jb-s b.g{color:#34D399}
+.jb-s b.l{color:#F87171}
+.jb-s s{display:block;text-decoration:none;font-size:7.5px;color:var(--t3);margin-top:1px}
+.jb-warn{margin-top:9px;padding:7px 9px;border-radius:8px;font-size:8.5px;line-height:1.55;
+  color:var(--t2);border:1px solid rgba(251,191,36,.28);background:rgba(251,191,36,.06)}
+/* periods and the week */
+.jb-per{display:grid;gap:2px}
+.jb-pr{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:baseline;
+  padding:6px 7px;border-radius:7px;opacity:0;transform:translateX(-5px);
+  animation:evxIn .42s cubic-bezier(.2,.9,.25,1) forwards}
+.jb-pr:nth-child(odd){background:rgba(10,5,28,.4)}
+.jb-pr.str{background:rgba(160,130,220,.1)}
+.jb-pr i{font-style:normal;font-size:9.5px;color:var(--t2)}
+.jb-pr b{font-family:'Space Grotesk';font-size:11.5px;font-weight:800;color:var(--t1)}
+.jb-pr b.g,.jb-pr s.g{color:#34D399}
+.jb-pr b.l,.jb-pr s.l{color:#F87171}
+.jb-pr s{text-decoration:none;font-size:8.5px;color:var(--t3);min-width:62px;text-align:right}
+.jb-wr{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:baseline;
+  padding:7px 8px;border-radius:8px;background:rgba(10,5,28,.4);margin-bottom:4px}
+.jb-wr i{font-style:normal;font-size:9px;color:var(--t3);grid-row:1}
+.jb-wr b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1);
+  grid-row:1;text-align:right}
+.jb-wr b.g{color:#34D399}
+.jb-wr b.l{color:#F87171}
+.jb-wr s{grid-column:1/-1;text-decoration:none;font-size:8px;color:var(--t3)}
+.jb-wr s.g{color:#34D399;opacity:.8}
+.jb-wr s.l{color:#F87171;opacity:.8}
+/* the curve */
+.jb-tabs{display:flex;gap:2px}
+.jb-tabs button{font:inherit;font-size:8px;font-weight:800;letter-spacing:.05em;
+  padding:2px 7px;border-radius:99px;cursor:pointer;color:var(--t3);
+  border:1px solid rgba(160,130,220,.2);background:transparent;transition:.18s}
+.jb-tabs button:hover{color:var(--t1);border-color:rgba(196,181,253,.45)}
+.jb-tabs button.on{color:#C4B5FD;background:rgba(160,130,220,.16);
+  border-color:rgba(196,181,253,.5)}
+.jb-curve{width:100%;height:126px;display:block}
+.jb-cl{stroke-dasharray:2000;animation:jbDraw 1.3s cubic-bezier(.4,0,.2,1) both}
+@keyframes jbDraw{from{stroke-dashoffset:2000}}
+.jb-cx{display:flex;justify-content:space-between;font-size:8.5px;color:var(--t3);
+  margin-top:5px;padding-top:5px;border-top:1px solid rgba(160,130,220,.14)}
+.jb-cx .g{color:#34D399}
+.jb-cx .l{color:#F87171}
+.jb-na{font-size:9px;line-height:1.6;color:var(--t3);padding:14px 4px;text-align:center}
+.jb-foot{margin-top:12px;font-size:8.5px;line-height:1.6;color:var(--t3);opacity:.85}
+.jb-empty{padding:26px 20px;border-radius:14px;text-align:center;
+  border:1px dashed rgba(160,130,220,.24);background:rgba(20,11,46,.42)}
+.jb-empty b{display:block;font-family:'Space Grotesk';font-size:14px;font-weight:800;
+  color:var(--t1);margin-bottom:6px}
+.jb-empty span{font-size:9.5px;line-height:1.65;color:var(--t3);max-width:460px;
+  display:inline-block}
+@media(prefers-reduced-motion:reduce){
+  .jb-h1,.jb-pr,.jb-hb span,.jb-arc,.jb-cl{animation:none !important;opacity:1 !important;
+    transform:none !important;stroke-dashoffset:inherit}
+}
 .te-strip2{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
 .te-strip2 span{flex:1 1 84px;padding:6px 9px;border-radius:9px;
   border:1px solid rgba(160,130,220,.15);background:rgba(24,14,52,.45)}
@@ -6028,7 +6174,7 @@ body{background:var(--bg0)}
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Market Intelligence</div>
-    <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Portfolio</div>
+    <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Trading Journal</div>
     <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>The Books</div>
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7M10 20a2.2 2.2 0 004 0"/></svg>Alerts</div>
@@ -6042,7 +6188,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b60</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b61</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -6821,6 +6967,9 @@ body{background:var(--bg0)}
             <div class="cs">Setups waiting on your decision — nothing here has been placed.</div></div>
           <div class="cb" id="appr_body"></div>
         </div>
+        <!-- THE JOURNAL BOARD — the layout from the reference sheet, in this
+             app's own theme, every figure computed from JRNL -->
+        <div id="jb_board"></div>
         <!-- TOP STATS ROW -->
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px">
           <div style="background:var(--s1);border:1px solid var(--rim2);border-radius:var(--r2);padding:14px 16px;position:relative;overflow:hidden">
@@ -21718,6 +21867,9 @@ function jrnlLoad(){
 }
 function jrnlSave(){
   try{ localStorage.setItem(JRNL_KEY,JSON.stringify(JRNL)); }catch(e){}
+  /* the board is derived entirely from JRNL, so it is stale the instant a
+     trade is logged, closed or edited */
+  try{ if(typeof jbPaint==='function')jbPaint(); }catch(e){}
   /* the dashboard reads these counters straight off the journal, so refresh
      them here rather than waiting for the next visit to that tab */
   try{ if(typeof dashStats==='function')dashStats(); }catch(e){}
@@ -21977,6 +22129,370 @@ function calcFund(){
 ══════════════════════════════════════ */
 function addAsset(){var nm=document.getElementById('pinp').value.trim();if(!nm)return;var r=calcNN(nm),p=plByNum(r.f);PORT.push({n:nm.charAt(0).toUpperCase()+nm.slice(1),g:r.g,num:r.f,pl:p?p.n:'?',day:p?p.day:'?'});document.getElementById('pinp').value='';renderPort();notify('Added '+nm+' #'+r.f,'info');}
 function qa(n){document.getElementById('pinp').value=n;addAsset();}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE TRADING JOURNAL BOARD
+
+   Built to the layout in the reference sheet — a headline strip, then
+   overall summary in three panels, then performance in three — in this
+   app's own theme rather than the red-on-navy of the original.
+
+   EVERY FIGURE COMES OUT OF JRNL. Nothing here is a sample number. Where
+   the journal cannot answer something the panel says which trades it is
+   short of, because a statistic computed from four trades and printed like
+   one computed from four hundred is the most misleading thing a journal can
+   do.
+
+   Form choices, deliberately:
+     the gains/losses histogram is a DIVERGING bar chart — two hues either
+     side of a neutral zero — because the data's job is polarity, not
+     magnitude;
+     win rate and profit rate are ARC METERS, a track with a filled arc,
+     not two-slice donuts: one ratio against a limit is a meter, and a pie
+     of two slices is the same number drawn worse;
+     the equity curve is a single line, so it needs no legend — the title
+     names it;
+     colour never carries a value alone. Every green and every red sits
+     beside a signed number or a word.
+   ══════════════════════════════════════════════════════════════════════ */
+function jbClosed(){ return JRNL.filter(function(j){return j.r!=='open';}); }
+function jbNum(v){ var n=parseFloat(v); return isFinite(n)?n:0; }
+function jbMoney(v,dp){
+  var n=jbNum(v), s=n<0?'-':'';
+  return s+'$'+Math.abs(n).toLocaleString('en',
+    {minimumFractionDigits:dp==null?2:dp,maximumFractionDigits:dp==null?2:dp});
+}
+/* THE MINUS SIGN WAS BEING STRIPPED OFF LOSSES.
+   jbMoney already writes the sign, and this then removed every '-' from the
+   string — so a losing instrument printed "$27.57" in red, which reads as a
+   gain shown in the wrong colour. The sign is the value; only the plus has
+   to be added. */
+function jbSigned(v,dp){
+  var n=jbNum(v);
+  return (n>0?'+':'')+jbMoney(n,dp);
+}
+function jbDate(j){ var d=new Date(j.d); return isNaN(d)?null:d; }
+
+/* ── the whole statistic set, computed once ─────────────────────────── */
+function jbStats(){
+  var C=jbClosed(), S={n:C.length};
+  var longs=C.filter(function(j){return j.dir==='buy';});
+  var shorts=C.filter(function(j){return j.dir==='sell';});
+  var sum=function(a){return a.reduce(function(s,j){return s+jbNum(j.pnl);},0);};
+  S.longPnl=sum(longs); S.shortPnl=sum(shorts); S.totalPnl=sum(C);
+  S.wins=C.filter(function(j){return jbNum(j.pnl)>0;});
+  S.losses=C.filter(function(j){return jbNum(j.pnl)<0;});
+  S.flat=C.filter(function(j){return jbNum(j.pnl)===0;});
+  S.grossWin=sum(S.wins); S.grossLoss=Math.abs(sum(S.losses));
+  S.winRate=C.length?S.wins.length/C.length*100:null;
+  /* profit rate: the share of gross turnover that ended up as profit —
+     the reference sheet's second dial, and a different question to win rate */
+  var gross=S.grossWin+S.grossLoss;
+  S.profitRate=gross>0?S.grossWin/gross*100:null;
+  S.aveProfit=S.wins.length?S.grossWin/S.wins.length:null;
+  S.aveLoss=S.losses.length?S.grossLoss/S.losses.length:null;
+  S.wlRatio=S.losses.length?S.wins.length/S.losses.length:(S.wins.length?null:null);
+  S.plRatio=(S.aveProfit!=null&&S.aveLoss)?S.aveProfit/S.aveLoss:null;
+  S.pf=S.grossLoss>0?S.grossWin/S.grossLoss:(S.grossWin>0?null:null);
+  S.expectancy=C.length?S.totalPnl/C.length:null;
+  /* average win and loss as a percentage move, from the field the journal
+     already stores on every row */
+  var pct=function(a){
+    var v=a.map(function(j){return Math.abs(parseFloat(String(j.move||'').replace('%','')));})
+           .filter(isFinite);
+    return v.length? v.reduce(function(s,x){return s+x;},0)/v.length : null;
+  };
+  S.aveWinPct=pct(S.wins); S.aveLossPct=pct(S.losses);
+
+  /* per instrument, best and worst by cumulative result */
+  var byA={};
+  C.forEach(function(j){
+    var k=(j.a||'—').toUpperCase();
+    if(!byA[k])byA[k]={a:k,pnl:0,n:0};
+    byA[k].pnl+=jbNum(j.pnl); byA[k].n++;
+  });
+  S.byAsset=Object.keys(byA).map(function(k){return byA[k];})
+    .sort(function(x,y){return y.pnl-x.pnl;});
+  return S;
+}
+
+/* ── an arc meter: a track and a filled arc, read like a gauge ───────── */
+function jbMeter(pct,label,sub,tone){
+  var R=34, CX=42, CY=42, C=2*Math.PI*R;
+  var v=(pct==null)?0:Math.max(0,Math.min(100,pct));
+  var col=tone==='good'?'#34D399':tone==='bad'?'#F87171':'#C4B5FD';
+  return '<div class="jb-m">'
+    +'<svg viewBox="0 0 84 84" class="jb-mv" role="img" aria-label="'
+      +escHtml(label+' '+(pct==null?'no data':v.toFixed(1)+' percent'))+'">'
+      +'<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="none" '
+        +'stroke="rgba(160,130,220,.14)" stroke-width="8"/>'
+      +(pct==null?'':'<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="none" stroke="'+col+'" '
+        +'stroke-width="8" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" '
+        +'stroke-dashoffset="'+(C*(1-v/100)).toFixed(1)+'" '
+        +'transform="rotate(-90 '+CX+' '+CY+')" class="jb-arc"/>')
+    +'</svg>'
+    +'<div class="jb-mt"><b>'+(pct==null?'—':v.toFixed(1)+'%')+'</b>'
+      +'<i>'+escHtml(label)+'</i>'+(sub?'<s>'+escHtml(sub)+'</s>':'')+'</div>'
+  +'</div>';
+}
+
+/* ── the diverging histogram of results ─────────────────────────────── */
+function jbHist(){
+  var C=jbClosed();
+  if(C.length<5)
+    return '<div class="jb-na">'+C.length+' closed trade'+(C.length===1?'':'s')
+      +'. A distribution needs at least five before its shape means anything.</div>';
+  /* buckets in percentage move, symmetric around zero so the two sides are
+     comparable rather than separately scaled */
+  var vals=C.map(function(j){
+    var m=parseFloat(String(j.move||'').replace('%',''));
+    if(!isFinite(m))m=0;
+    return jbNum(j.pnl)<0?-Math.abs(m):Math.abs(m);
+  });
+  var mx=Math.max.apply(null,vals.map(Math.abs).concat([1]));
+  var step=mx/5, bins=[];
+  for(var i=-5;i<5;i++)bins.push({lo:i*step,hi:(i+1)*step,n:0});
+  vals.forEach(function(v){
+    var k=Math.floor(v/step); if(k<-5)k=-5; if(k>4)k=4;
+    bins[k+5].n++;
+  });
+  var top=Math.max.apply(null,bins.map(function(b){return b.n;}).concat([1]));
+  var bars=bins.map(function(b,i){
+    var h=b.n/top*100, neg=b.hi<=0;
+    return '<div class="jb-hb" title="'+b.n+' trade'+(b.n===1?'':'s')+' between '
+      +b.lo.toFixed(2)+'% and '+b.hi.toFixed(2)+'%">'
+      +'<span class="'+(neg?'l':'g')+'" style="height:'+Math.max(b.n?4:0,h)+'%;'
+        +'animation-delay:'+(i*0.035).toFixed(2)+'s"></span>'
+      +(b.n?'<u>'+b.n+'</u>':'')+'</div>';
+  }).join('');
+  return '<div class="jb-hist">'+bars+'</div>'
+    +'<div class="jb-hx"><span>'+(-mx).toFixed(1)+'%</span>'
+      +'<span class="mid">0</span><span>+'+mx.toFixed(1)+'%</span></div>'
+    +'<div class="jb-hk"><em class="l"></em>losses<em class="g"></em>gains'
+      +'<s>'+C.length+' closed trades, bucketed by the move each one made</s></div>';
+}
+
+/* ── the equity curve ───────────────────────────────────────────────── */
+function jbCurve(limit,w,h){
+  var C=jbClosed().slice().reverse();          /* JRNL is newest-first */
+  if(limit&&limit!=='ALL')C=C.slice(-limit);
+  if(C.length<2)
+    return '<div class="jb-na">Two closed trades draw the first line. There '
+      +(C.length===1?'is 1':'are '+C.length)+'.</div>';
+  var start=jbNum(document.getElementById('port_start')&&document.getElementById('port_start').value)||0;
+  var eq=[start], run=start;
+  C.forEach(function(j){ run+=jbNum(j.pnl); eq.push(run); });
+  var lo=Math.min.apply(null,eq), hi=Math.max.apply(null,eq);
+  if(hi===lo){hi=lo+1;}
+  w=w||400; h=h||120;
+  var pts=eq.map(function(v,i){
+    return [(i/(eq.length-1))*w, h-((v-lo)/(hi-lo))*(h-10)-5];
+  });
+  var d='M'+pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join('L');
+  var area=d+'L'+w+','+h+'L0,'+h+'Z';
+  var up=eq[eq.length-1]>=eq[0];
+  var col=up?'#34D399':'#F87171';
+  return '<svg viewBox="0 0 '+w+' '+h+'" class="jb-curve" preserveAspectRatio="none" '
+    +'role="img" aria-label="equity after each closed trade">'
+    +'<defs><linearGradient id="jbg" x1="0" y1="0" x2="0" y2="1">'
+      +'<stop offset="0%" stop-color="'+col+'" stop-opacity=".26"/>'
+      +'<stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
+    +'<path d="'+area+'" fill="url(#jbg)"/>'
+    +'<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2" '
+      +'stroke-linejoin="round" class="jb-cl"/>'
+  +'</svg>'
+  +'<div class="jb-cx"><span>'+jbMoney(eq[0],0)+'</span>'
+    +'<span>'+C.length+' trades</span>'
+    +'<span class="'+(up?'g':'l')+'">'+jbMoney(eq[eq.length-1],0)+'</span></div>';
+}
+
+/* ── performance by period ──────────────────────────────────────────── */
+function jbPeriods(){
+  var C=jbClosed(), now=new Date(), Y=now.getFullYear();
+  function span(from,to){
+    var v=C.filter(function(j){ var d=jbDate(j); return d&&d>=from&&d<to; });
+    return {n:v.length, pnl:v.reduce(function(s,j){return s+jbNum(j.pnl);},0)};
+  }
+  var rows=[
+    {k:'This month', v:span(new Date(Y,now.getMonth(),1),new Date(Y,now.getMonth()+1,1))},
+    {k:'1st quarter',v:span(new Date(Y,0,1),new Date(Y,3,1))},
+    {k:'2nd quarter',v:span(new Date(Y,3,1),new Date(Y,6,1))},
+    {k:'3rd quarter',v:span(new Date(Y,6,1),new Date(Y,9,1))},
+    {k:'4th quarter',v:span(new Date(Y,9,1),new Date(Y+1,0,1))},
+    {k:'Year to date',v:span(new Date(Y,0,1),new Date(Y+1,0,1)),strong:true},
+    {k:'Previous year',v:span(new Date(Y-1,0,1),new Date(Y,0,1))}
+  ];
+  var start=jbNum(document.getElementById('port_start')&&document.getElementById('port_start').value)||0;
+  return '<div class="jb-per">'+rows.map(function(r,i){
+    var pct=start>0?(r.v.pnl/start*100):null;
+    var tone=r.v.n===0?'':r.v.pnl>0?'g':r.v.pnl<0?'l':'';
+    return '<div class="jb-pr'+(r.strong?' str':'')+'" style="animation-delay:'
+        +(i*0.04).toFixed(2)+'s">'
+      +'<i>'+escHtml(r.k)+'</i>'
+      +'<b class="'+tone+'">'+(r.v.n?jbSigned(r.v.pnl):'—')+'</b>'
+      +'<s class="'+tone+'">'+(r.v.n?(pct!=null?(pct>=0?'+':'')+pct.toFixed(1)+'%':r.v.n+' trades'):'no trades')+'</s>'
+    +'</div>';
+  }).join('')+'</div>';
+}
+
+/* ── the week ───────────────────────────────────────────────────────── */
+function jbWeek(){
+  var C=jbClosed(), now=new Date();
+  var day=now.getDay(), monday=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((day+6)%7));
+  var prev=new Date(monday.getTime()-7*86400000);
+  function span(from,to){
+    var v=C.filter(function(j){ var d=jbDate(j); return d&&d>=from&&d<to; });
+    return {n:v.length, pnl:v.reduce(function(s,j){return s+jbNum(j.pnl);},0)};
+  }
+  var t=span(monday,new Date(monday.getTime()+7*86400000)), p=span(prev,monday);
+  var start=jbNum(document.getElementById('port_start')&&document.getElementById('port_start').value)||0;
+  function row(k,v){
+    var pct=start>0?(v.pnl/start*100):null;
+    var tone=v.n===0?'':v.pnl>0?'g':v.pnl<0?'l':'';
+    return '<div class="jb-wr"><i>'+k+'</i><b class="'+tone+'">'
+      +(v.n?jbSigned(v.pnl):'—')+'</b>'
+      +'<s class="'+tone+'">'+(v.n?(pct!=null?(pct>=0?'+':'')+pct.toFixed(2)+'%':'')+' · '+v.n+' trade'+(v.n===1?'':'s'):'no trades')+'</s></div>';
+  }
+  return row('This week',t)+row('Previous week',p);
+}
+
+/* ── the board ──────────────────────────────────────────────────────── */
+var _jbCurveLimit=200;
+function jbSetCurve(n,btn){
+  _jbCurveLimit=(n==='ALL')?'ALL':+n;
+  try{
+    var el=document.getElementById('jb_curve');
+    if(el)el.innerHTML=jbCurve(_jbCurveLimit);
+    var w=btn&&btn.parentNode;
+    if(w)w.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b===btn);});
+  }catch(e){}
+}
+function jbBoardHtml(){
+  var S=jbStats();
+  var start=jbNum(document.getElementById('port_start')&&document.getElementById('port_start').value)||0;
+  var curRaw=parseFloat(document.getElementById('port_cur')&&document.getElementById('port_cur').value);
+  var hasCur=!isNaN(curRaw)&&curRaw>0;
+  var end=hasCur?curRaw:start+S.totalPnl;
+  var withdrawn=hasCur?(start+S.totalPnl-curRaw):0;
+
+  if(!JRNL.length)
+    return '<div class="jb"><div class="jb-empty"><b>The journal is empty</b>'
+      +'<span>Every figure on this board is computed from trades you have logged — '
+      +'nothing here is a sample. Log a trade below, or let the bot log one, and the '
+      +'board fills in.</span></div></div>';
+
+  function stat(k,v,sub,tone){
+    return '<div class="jb-s"><i>'+escHtml(k)+'</i>'
+      +'<b'+(tone?' class="'+tone+'"':'')+'>'+v+'</b>'
+      +(sub?'<s>'+escHtml(sub)+'</s>':'')+'</div>';
+  }
+  var head=[
+    {k:'Capital',   v:start?jbMoney(start,0):'—', s:'what you started with'},
+    {k:'Net profit / loss', v:jbSigned(S.totalPnl), s:S.n+' closed trade'+(S.n===1?'':'s'),
+     t:S.totalPnl>0?'g':S.totalPnl<0?'l':''},
+    {k:'Withdrawals', v:Math.abs(withdrawn)>0.005?jbMoney(withdrawn,0):'—',
+     s:hasCur?'balance you typed vs the journal':'type a current balance to show this'},
+    {k:'End balance', v:jbMoney(end,0), s:hasCur?'as you entered it':'capital plus the journal'}
+  ].map(function(x,i){
+    return '<div class="jb-h1" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
+      +'<i>'+escHtml(x.k)+'</i><b'+(x.t?' class="'+x.t+'"':'')+'>'+x.v+'</b>'
+      +'<s>'+escHtml(x.s)+'</s></div>';
+  }).join('');
+
+  var wl=(S.wins.length+S.losses.length)||1;
+  var best=S.byAsset.slice(0,3), worst=S.byAsset.slice(-3).reverse()
+    .filter(function(x){return best.indexOf(x)<0;});
+
+  return '<div class="jb">'
+   +'<div class="jb-head">'+head+'</div>'
+
+   +'<div class="jb-sec">Overall summary</div>'
+   +'<div class="jb-g3">'
+     /* 1 · overall performance */
+     +'<div class="jb-p"><div class="jb-pt">Overall performance</div>'
+       +'<div class="jb-rows">'
+         +'<div class="jb-r"><i>Long net P&amp;L</i><b class="'+(S.longPnl>=0?'g':'l')+'">'
+           +jbSigned(S.longPnl)+'</b></div>'
+         +'<div class="jb-r"><i>Short net P&amp;L</i><b class="'+(S.shortPnl>=0?'g':'l')+'">'
+           +jbSigned(S.shortPnl)+'</b></div>'
+         +'<div class="jb-r str"><i>Total net P&amp;L</i><b class="'+(S.totalPnl>=0?'g':'l')+'">'
+           +jbSigned(S.totalPnl)+'</b></div>'
+       +'</div>'
+       +'<div class="jb-split" title="'+S.wins.length+' winners against '+S.losses.length+' losers">'
+         +'<span class="g" style="width:'+(S.wins.length/wl*100).toFixed(1)+'%"></span>'
+         +'<span class="l" style="width:'+(S.losses.length/wl*100).toFixed(1)+'%"></span>'
+       +'</div>'
+       +'<div class="jb-splitk"><em class="g"></em>'+S.wins.length+' won'
+         +'<em class="l"></em>'+S.losses.length+' lost'
+         +(S.flat.length?'<s>'+S.flat.length+' flat</s>':'')+'</div>'
+       +'<div class="jb-pt2">By instrument</div>'
+       +'<div class="jb-rows">'
+         +(S.byAsset.length? S.byAsset.slice(0,6).map(function(x){
+             return '<div class="jb-r"><i>'+escHtml(x.a)+'<u>'+x.n+'</u></i>'
+               +'<b class="'+(x.pnl>=0?'g':'l')+'">'+jbSigned(x.pnl)+'</b></div>';
+           }).join('') : '<div class="jb-na">No closed trades yet.</div>')
+       +'</div>'
+     +'</div>'
+
+     /* 2 · distribution */
+     +'<div class="jb-p"><div class="jb-pt">Distribution of gains and losses</div>'
+       +jbHist()
+     +'</div>'
+
+     /* 3 · trade statistics */
+     +'<div class="jb-p"><div class="jb-pt">Overall trade statistics</div>'
+       +'<div class="jb-meters">'
+         +jbMeter(S.winRate,'Win rate',S.wins.length+' of '+S.n,
+           S.winRate==null?'':S.winRate>=50?'good':'bad')
+         +jbMeter(S.profitRate,'Profit rate','of gross turnover',
+           S.profitRate==null?'':S.profitRate>=50?'good':'bad')
+       +'</div>'
+       +'<div class="jb-stats">'
+         +stat('Win trades',S.wins.length,'')
+         +stat('Loss trades',S.losses.length,'')
+         +stat('Ave. profit',S.aveProfit!=null?jbMoney(S.aveProfit):'—','per winner','g')
+         +stat('Ave. loss',S.aveLoss!=null?jbMoney(-S.aveLoss):'—','per loser','l')
+         +stat('Ave. win %',S.aveWinPct!=null?S.aveWinPct.toFixed(2)+'%':'—','move')
+         +stat('Ave. loss %',S.aveLossPct!=null?S.aveLossPct.toFixed(2)+'%':'—','move')
+         +stat('W : L ratio',S.wlRatio!=null?S.wlRatio.toFixed(2)+' : 1':'—','count')
+         +stat('P : L ratio',S.plRatio!=null?S.plRatio.toFixed(2)+' : 1':'—','size')
+         +stat('Profit factor',S.pf!=null?S.pf.toFixed(2):'—',
+           S.pf==null?'needs a loser to divide by':'gross win / gross loss',
+           S.pf==null?'':S.pf>=1.5?'g':S.pf>=1?'':'l')
+         +stat('Expectancy',S.expectancy!=null?jbSigned(S.expectancy):'—','per trade',
+           S.expectancy==null?'':S.expectancy>=0?'g':'l')
+       +'</div>'
+       +(S.n<20?'<div class="jb-warn">'+S.n+' closed trade'+(S.n===1?'':'s')
+         +'. Under about twenty these figures move a lot with each new one — they '
+         +'describe what has happened, not what to expect.</div>':'')
+     +'</div>'
+   +'</div>'
+
+   +'<div class="jb-sec">Performance</div>'
+   +'<div class="jb-g3b">'
+     +'<div class="jb-p"><div class="jb-pt">Performance per period</div>'+jbPeriods()+'</div>'
+     +'<div class="jb-p"><div class="jb-pt">Performance curve'
+       +'<span class="jb-tabs">'
+         +[20,50,100,200,500,'ALL'].map(function(n){
+            return '<button class="'+(n===_jbCurveLimit?'on':'')+'" '
+              +'onclick="jbSetCurve(\''+n+'\',this)">'+n+'</button>';
+          }).join('')
+       +'</span></div>'
+       +'<div id="jb_curve">'+jbCurve(_jbCurveLimit)+'</div></div>'
+     +'<div class="jb-p"><div class="jb-pt">Weekly performance</div>'+jbWeek()
+       +'<div id="jb_wcurve">'+jbCurve(10,300,70)+'</div></div>'
+   +'</div>'
+   +'<div class="jb-foot">Every number on this board is computed from the '+JRNL.length
+     +' entr'+(JRNL.length===1?'y':'ies')+' in your journal. Nothing is sampled, '
+     +'estimated or carried over from a template.</div>'
+  +'</div>';
+}
+function jbPaint(){
+  var el=document.getElementById('jb_board');
+  if(!el)return;
+  try{ el.innerHTML=jbBoardHtml(); }catch(e){ console.error('journal board:',e); }
+}
+
 function renderPort(){
   var tb=document.getElementById('ptbl');
   if(!PORT.length){tb.innerHTML='<tr><td colspan="7" class="dim italic tc" style="padding:20px">No assets</td></tr>';return;}
@@ -23128,7 +23644,8 @@ function goTab(name,btn){
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
   }
   if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashMember();}catch(e){console.error('dash:',e);}}
-  if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();renderApprovals();}
+  if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();renderApprovals();
+    try{jbPaint();}catch(e){console.error('journal board:',e);}}
   if(name==='bot'){renderBot();renderBroker();}
 }
 /* ══ ECONOMIC CALENDAR — recurring high-impact events, live countdown ══ */
