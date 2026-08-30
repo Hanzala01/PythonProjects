@@ -2676,6 +2676,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    them, the three summary panels were squeezed into 562px and the third was
    cut off the side. Measured: jb_board w=562 inside pane w=1164. It spans. */
 #jb_board{grid-column:1/-1}
+.nav-alt{display:block;font-size:7.5px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--t3);opacity:.7;margin-top:1px}
 .jb{margin-bottom:14px}
 .jb-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:9px;
   margin-bottom:14px}
@@ -2683,9 +2685,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:rgba(24,14,52,.55);opacity:0;transform:translateY(8px);
   animation:revIn .5s cubic-bezier(.22,1,.36,1) forwards}
 .jb-h1 i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--t3)}
-.jb-h1 b{display:block;font-family:'Space Grotesk';font-size:25px;font-weight:800;
-  line-height:1.1;color:var(--t1);margin:7px 0 4px;letter-spacing:-.01em}
+  text-transform:uppercase;color:var(--t3);margin-top:4px}
+.jb-h1 b{display:block;font-family:'Space Grotesk';font-size:23px;font-weight:800;
+  line-height:1.1;color:var(--t1);letter-spacing:-.01em}
 .jb-h1 b.g{color:#34D399}
 .jb-h1 b.l{color:#F87171}
 .jb-h1 s{display:block;text-decoration:none;font-size:8px;color:var(--t3);line-height:1.5}
@@ -2716,6 +2718,29 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jb-r b{font-family:'Space Grotesk';font-size:11.5px;font-weight:800;color:var(--t1)}
 .jb-r b.g{color:#34D399}
 .jb-r b.l{color:#F87171}
+.jb-r3{display:grid;grid-template-columns:1fr auto 12px 46px;gap:7px;align-items:baseline;
+  padding:5px 7px;border-radius:7px}
+.jb-r3:nth-child(odd){background:rgba(10,5,28,.4)}
+.jb-r3.str{background:rgba(160,130,220,.1);margin-top:3px}
+.jb-r3 i{font-style:normal;font-size:9.5px;color:var(--t2)}
+.jb-r3 i em{font-style:normal;font-size:7.5px;color:var(--t3);margin-left:5px;
+  padding:1px 5px;border-radius:99px;background:rgba(160,130,220,.14)}
+.jb-r3 b{font-family:'Space Grotesk';font-size:11.5px;font-weight:800;color:var(--t1);
+  text-align:right}
+.jb-r3 u{text-decoration:none;font-size:8px;color:var(--t3);text-align:center}
+.jb-r3 s{text-decoration:none;font-size:9px;color:var(--t3);text-align:right}
+.jb-r3 b.g,.jb-r3 u.g,.jb-r3 s.g{color:#34D399}
+.jb-r3 b.l,.jb-r3 u.l,.jb-r3 s.l{color:#F87171}
+/* the split bar carries the two gross totals */
+.jb-split span{display:flex;align-items:center;justify-content:center;overflow:hidden}
+.jb-split em{font-style:normal;font-size:7.5px;font-weight:800;color:rgba(6,2,18,.82)}
+/* histogram axes */
+.jb-hwrap{display:flex;gap:7px}
+.jb-hy{writing-mode:vertical-rl;transform:rotate(180deg);font-size:7.5px;font-weight:800;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--t3);text-align:center;flex:none}
+.jb-hcol{flex:1;min-width:0}
+.jb-hxt{font-size:7.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--t3);text-align:center;margin-top:4px}
 .jb-split{display:flex;height:7px;border-radius:99px;overflow:hidden;margin:11px 0 6px;
   background:rgba(160,130,220,.12)}
 .jb-split span{transition:width .7s cubic-bezier(.2,.9,.25,1)}
@@ -2756,12 +2781,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jb-mt i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.07em;
   text-transform:uppercase;color:var(--t3);margin-top:2px}
 .jb-mt s{display:block;text-decoration:none;font-size:8px;color:var(--t3);opacity:.8}
-.jb-stats{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+/* ten statistics in four columns is two rows and a half-empty third; five
+   columns is exactly two, which is why the sheet's own grid is even */
+.jb-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+@media(max-width:1400px){.jb-stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1040px){.jb-stats{grid-template-columns:1fr 1fr}}
 .jb-s{padding:6px 8px;border-radius:8px;background:rgba(10,5,28,.42)}
 .jb-s i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--t3)}
-.jb-s b{display:block;font-family:'Space Grotesk';font-size:12.5px;font-weight:800;
-  color:var(--t1);margin-top:2px}
+  text-transform:uppercase;color:var(--t3);margin-top:3px}
+.jb-s b{display:block;font-family:'Space Grotesk';font-size:14px;font-weight:800;
+  color:var(--t1);line-height:1.1}
 .jb-s b.g{color:#34D399}
 .jb-s b.l{color:#F87171}
 .jb-s s{display:block;text-decoration:none;font-size:7.5px;color:var(--t3);margin-top:1px}
@@ -2769,15 +2798,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   color:var(--t2);border:1px solid rgba(251,191,36,.28);background:rgba(251,191,36,.06)}
 /* periods and the week */
 .jb-per{display:grid;gap:2px}
-.jb-pr{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:baseline;
+.jb-pr{display:grid;grid-template-columns:1fr auto 12px 48px;gap:7px;align-items:baseline;
   padding:6px 7px;border-radius:7px;opacity:0;transform:translateX(-5px);
   animation:evxIn .42s cubic-bezier(.2,.9,.25,1) forwards}
 .jb-pr:nth-child(odd){background:rgba(10,5,28,.4)}
 .jb-pr.str{background:rgba(160,130,220,.1)}
 .jb-pr i{font-style:normal;font-size:9.5px;color:var(--t2)}
 .jb-pr b{font-family:'Space Grotesk';font-size:11.5px;font-weight:800;color:var(--t1)}
-.jb-pr b.g,.jb-pr s.g{color:#34D399}
-.jb-pr b.l,.jb-pr s.l{color:#F87171}
+.jb-pr b.g,.jb-pr s.g,.jb-pr u.g{color:#34D399}
+.jb-pr b.l,.jb-pr s.l,.jb-pr u.l{color:#F87171}
+.jb-pr u{text-decoration:none;font-size:8px;color:var(--t3);text-align:center}
+.jb-pr b{text-align:right}
 .jb-pr s{text-decoration:none;font-size:8.5px;color:var(--t3);min-width:62px;text-align:right}
 .jb-wr{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:baseline;
   padding:7px 8px;border-radius:8px;background:rgba(10,5,28,.4);margin-bottom:4px}
@@ -6174,7 +6205,7 @@ body{background:var(--bg0)}
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
     <div class="nav-item" onclick='goTab("sentiment",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>Market Intelligence</div>
-    <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Trading Journal</div>
+    <div class="nav-item" onclick='goTab("portfolio",this)'><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Trading Journal<span class="nav-alt">Portfolio</span></div>
     <div class="nav-item" onclick='goTab("fundamentals",this)'><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-6 7 6v12M10 21v-5h4v5"/></svg>The Books</div>
     <div class="nav-item" onclick='goTab("announcements",this)'><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4c2.8.4 5 2.8 5 5.6"/></svg>Community<span class="nav-tag">PRIVATE</span></div>
     <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7M10 20a2.2 2.2 0 004 0"/></svg>Alerts</div>
@@ -6188,7 +6219,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b61</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b62</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -6970,53 +7001,14 @@ body{background:var(--bg0)}
         <!-- THE JOURNAL BOARD — the layout from the reference sheet, in this
              app's own theme, every figure computed from JRNL -->
         <div id="jb_board"></div>
-        <!-- TOP STATS ROW -->
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px">
-          <div style="background:var(--s1);border:1px solid var(--rim2);border-radius:var(--r2);padding:14px 16px;position:relative;overflow:hidden">
-            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Net P&amp;L</div>
-            <div style="font-size:26px;font-weight:900;color:var(--green);letter-spacing:-.02em" id="port_pnl">+$0.00</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px" id="port_ret">0.0% return</div>
-            <svg id="port_spark_pnl" width="80" height="30" style="position:absolute;right:12px;bottom:12px;opacity:.6"></svg>
-          </div>
-          <div style="background:var(--s1);border:1px solid var(--rim2);border-radius:var(--r2);padding:14px 16px;position:relative;overflow:hidden">
-            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Win Rate</div>
-            <div style="display:flex;align-items:baseline;gap:8px">
-              <div style="font-size:26px;font-weight:900;color:var(--white);letter-spacing:-.02em" id="port_wr">0%</div>
-              <div style="font-size:11px;color:var(--muted)" id="port_wr_sub">0W / 0L</div>
-            </div>
-            <div style="margin-top:8px;height:4px;background:var(--s4);border-radius:4px;overflow:hidden">
-              <div id="port_wr_bar" style="height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .6s"></div>
-            </div>
-          </div>
-          <div style="background:var(--s1);border:1px solid var(--rim2);border-radius:var(--r2);padding:14px 16px">
-            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Profit Factor</div>
-            <div style="font-size:26px;font-weight:900;color:var(--white);letter-spacing:-.02em" id="port_pf">0.00</div>
-            <div style="font-size:11px;margin-top:4px" id="port_pf_lbl">—</div>
-          </div>
-          <div style="background:var(--s1);border:1px solid var(--rim2);border-radius:var(--r2);padding:14px 16px">
-            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Account Balance</div>
-            <div style="font-size:26px;font-weight:900;color:var(--white);letter-spacing:-.02em" id="port_bal">$0</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px" id="port_broker_lbl">Manual mode</div>
-          </div>
-        </div>
-
-        <!-- ROW 2: Equity + Calendar -->
-        <div class="pf-wide" style="display:grid;grid-template-columns:1fr 1.6fr;gap:10px">
-          <!-- Net Cumulative P&L -->
-          <div style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r3);padding:14px">
-            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Net Cumulative P&amp;L</div>
-            <svg id="eq_svg" width="100%" height="110" viewBox="0 0 400 110" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="rgba(62,207,142,.35)"/>
-                  <stop offset="100%" stop-color="rgba(62,207,142,0)"/>
-                </linearGradient>
-              </defs>
-              <path id="eq_fill" fill="url(#eqGrad)" d="M0,110 L400,110 Z"/>
-              <path id="eq_line" fill="none" stroke="var(--green)" stroke-width="1.5" d="M0,55"/>
-            </svg>
-            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--muted)" id="eq_labels"></div>
-          </div>
+        <!-- THE STATS ROW AND THE EQUITY CHART LIVED HERE AND ARE GONE.
+             Both are on the journal board above — win rate, profit factor,
+             net P&L, balance and the equity curve, all from the same JRNL.
+             Leaving them here meant the tab showed the same four numbers
+             twice and then drew the same curve again underneath, which is
+             what "the old version came back" was: it had not gone anywhere.
+             The calendar below is NOT on the board, so it stays. -->
+          <div style="margin-bottom:10px">
           <!-- P&L Calendar Heatmap -->
           <div style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r3);padding:14px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -21883,6 +21875,14 @@ try{timAlertLoad().forEach(timAlertSchedule);}catch(e){}
 var EQ_DATA=[];
 
 function updatePortStats(){
+  /* THE STATS ROW AND THE EQUITY CHART MOVED TO THE JOURNAL BOARD.
+     Their nodes are gone from the markup, and every line below wrote to them
+     with getElementById(...).textContent — seventeen of them, none guarded —
+     so the first one would throw and everything after it, including the
+     best/worst day cards that are still on the page, silently stopped
+     running. These two setters no-op on a missing node instead. */
+  function _pt(id,v){ var e=document.getElementById(id); if(e)e.textContent=v; }
+  function _ps(id,k,v){ var e=document.getElementById(id); if(e)e.style[k]=v; }
   var start=parseFloat(document.getElementById('port_start').value)||0;
   var curRaw=parseFloat(document.getElementById('port_cur').value);
   var hasCur=!isNaN(curRaw)&&curRaw>0;
@@ -21899,17 +21899,17 @@ function updatePortStats(){
   var actualBal=hasCur?curRaw:start+totalPnL;
   var ret=start>0?((totalPnL/start)*100).toFixed(1):'0.0';
 
-  document.getElementById('port_bal').textContent='$'+actualBal.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-  document.getElementById('port_pnl').textContent=(totalPnL>=0?'+':'')+'$'+Math.abs(totalPnL).toFixed(2);
-  document.getElementById('port_pnl').style.color=totalPnL>=0?'var(--green)':'var(--red)';
-  document.getElementById('port_ret').textContent=(totalPnL>=0?'+':'')+ret+'% return · '+closed.length+' closed'+(JRNL.length>closed.length?' · '+(JRNL.length-closed.length)+' open':'');
-  document.getElementById('port_wr').textContent=wr+'%';
-  document.getElementById('port_wr_sub').textContent=wins+'W / '+losses+'L';
-  document.getElementById('port_wr_bar').style.width=wr+'%';
-  document.getElementById('port_wr_bar').style.background=parseFloat(wr)>=50?'var(--green)':'var(--red)';
-  document.getElementById('port_pf').textContent=pf;
-  document.getElementById('port_pf_lbl').textContent=parseFloat(pf)>=2?'Excellent':parseFloat(pf)>=1.5?'Profitable':parseFloat(pf)>=1?'Marginal':'Unprofitable';
-  document.getElementById('port_pf_lbl').style.color=parseFloat(pf)>=1.5?'var(--green)':parseFloat(pf)>=1?'var(--amber)':'var(--red)';
+  _pt('port_bal','$'+actualBal.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}));
+  _pt('port_pnl',(totalPnL>=0?'+':'')+'$'+Math.abs(totalPnL).toFixed(2));
+  _ps('port_pnl','color',totalPnL>=0?'var(--green)':'var(--red)');
+  _pt('port_ret',(totalPnL>=0?'+':'')+ret+'% return · '+closed.length+' closed'+(JRNL.length>closed.length?' · '+(JRNL.length-closed.length)+' open':''));
+  _pt('port_wr',wr+'%');
+  _pt('port_wr_sub',wins+'W / '+losses+'L');
+  _ps('port_wr_bar','width',wr+'%');
+  _ps('port_wr_bar','background',parseFloat(wr)>=50?'var(--green)':'var(--red)');
+  _pt('port_pf',pf);
+  _pt('port_pf_lbl',parseFloat(pf)>=2?'Excellent':parseFloat(pf)>=1.5?'Profitable':parseFloat(pf)>=1?'Marginal':'Unprofitable');
+  _ps('port_pf_lbl','color',parseFloat(pf)>=1.5?'var(--green)':parseFloat(pf)>=1?'var(--amber)':'var(--red)');
 
   // Best/worst day
   var dayMap={};
@@ -21918,10 +21918,10 @@ function updatePortStats(){
   if(days.length){
     var best=days.reduce(function(a,b){return dayMap[a]>dayMap[b]?a:b;});
     var worst=days.reduce(function(a,b){return dayMap[a]<dayMap[b]?a:b;});
-    document.getElementById('best_day_pnl').textContent='+$'+dayMap[best].toFixed(2);
-    document.getElementById('best_day_date').textContent=best;
-    document.getElementById('worst_day_pnl').textContent='$'+dayMap[worst].toFixed(2);
-    document.getElementById('worst_day_date').textContent=worst;
+    _pt('best_day_pnl','+$'+dayMap[best].toFixed(2));
+    _pt('best_day_date',best);
+    _pt('worst_day_pnl','$'+dayMap[worst].toFixed(2));
+    _pt('worst_day_date',worst);
   }
 
   // Equity curve
@@ -22172,6 +22172,20 @@ function jbSigned(v,dp){
   return (n>0?'+':'')+jbMoney(n,dp);
 }
 function jbDate(j){ var d=new Date(j.d); return isNaN(d)?null:d; }
+/* The reference sheet writes every result as a value, then an arrow, then a
+   percentage of capital. The arrow is redundant with the sign and the colour
+   — which is the point: three ways to read the same fact, so none of them is
+   load-bearing on its own. */
+function jbArrow(n){ return n>0?'\u25B2':n<0?'\u25BC':'\u2014'; }
+function jbPct(n,base){
+  if(!base||!isFinite(base))return null;
+  var v=n/base*100;
+  return (v>=0?'':'')+v.toFixed(1)+'%';
+}
+function jbCap(){
+  var e=document.getElementById('port_start');
+  return jbNum(e&&e.value)||0;
+}
 
 /* ── the whole statistic set, computed once ─────────────────────────── */
 function jbStats(){
@@ -22265,11 +22279,16 @@ function jbHist(){
         +'animation-delay:'+(i*0.035).toFixed(2)+'s"></span>'
       +(b.n?'<u>'+b.n+'</u>':'')+'</div>';
   }).join('');
-  return '<div class="jb-hist">'+bars+'</div>'
-    +'<div class="jb-hx"><span>'+(-mx).toFixed(1)+'%</span>'
-      +'<span class="mid">0</span><span>+'+mx.toFixed(1)+'%</span></div>'
+  return '<div class="jb-hwrap">'
+      +'<div class="jb-hy">Number of trades</div>'
+      +'<div class="jb-hcol"><div class="jb-hist">'+bars+'</div>'
+        +'<div class="jb-hx"><span>'+(-mx).toFixed(1)+'%</span>'
+          +'<span class="mid">0</span><span>+'+mx.toFixed(1)+'%</span></div>'
+        +'<div class="jb-hxt">% gain / loss per trade</div>'
+      +'</div>'
+    +'</div>'
     +'<div class="jb-hk"><em class="l"></em>losses<em class="g"></em>gains'
-      +'<s>'+C.length+' closed trades, bucketed by the move each one made</s></div>';
+      +'<s>'+C.length+' closed trades</s></div>';
 }
 
 /* ── the equity curve ───────────────────────────────────────────────── */
@@ -22329,8 +22348,9 @@ function jbPeriods(){
     return '<div class="jb-pr'+(r.strong?' str':'')+'" style="animation-delay:'
         +(i*0.04).toFixed(2)+'s">'
       +'<i>'+escHtml(r.k)+'</i>'
-      +'<b class="'+tone+'">'+(r.v.n?jbSigned(r.v.pnl):'—')+'</b>'
-      +'<s class="'+tone+'">'+(r.v.n?(pct!=null?(pct>=0?'+':'')+pct.toFixed(1)+'%':r.v.n+' trades'):'no trades')+'</s>'
+      +'<b class="'+tone+'">'+(r.v.n?jbSigned(r.v.pnl,1):'\u2014')+'</b>'
+      +'<u class="'+tone+'">'+(r.v.n?jbArrow(r.v.pnl):'')+'</u>'
+      +'<s class="'+tone+'">'+(r.v.n?(pct!=null?pct.toFixed(1)+'%':r.v.n+' trades'):'no trades')+'</s>'
     +'</div>';
   }).join('')+'</div>';
 }
@@ -22349,9 +22369,10 @@ function jbWeek(){
   function row(k,v){
     var pct=start>0?(v.pnl/start*100):null;
     var tone=v.n===0?'':v.pnl>0?'g':v.pnl<0?'l':'';
-    return '<div class="jb-wr"><i>'+k+'</i><b class="'+tone+'">'
-      +(v.n?jbSigned(v.pnl):'—')+'</b>'
-      +'<s class="'+tone+'">'+(v.n?(pct!=null?(pct>=0?'+':'')+pct.toFixed(2)+'%':'')+' · '+v.n+' trade'+(v.n===1?'':'s'):'no trades')+'</s></div>';
+    return '<div class="jb-pr"><i>'+k+'</i>'
+      +'<b class="'+tone+'">'+(v.n?jbSigned(v.pnl,1):'\u2014')+'</b>'
+      +'<u class="'+tone+'">'+(v.n?jbArrow(v.pnl):'')+'</u>'
+      +'<s class="'+tone+'">'+(v.n?(pct!=null?pct.toFixed(2)+'%':v.n+' trades'):'no trades')+'</s></div>';
   }
   return row('This week',t)+row('Previous week',p);
 }
@@ -22382,21 +22403,25 @@ function jbBoardHtml(){
       +'board fills in.</span></div></div>';
 
   function stat(k,v,sub,tone){
-    return '<div class="jb-s"><i>'+escHtml(k)+'</i>'
-      +'<b'+(tone?' class="'+tone+'"':'')+'>'+v+'</b>'
+    /* value first, label under it — the sheet reads as a grid of numbers with
+       names attached, not a list of names with numbers attached */
+    return '<div class="jb-s"><b'+(tone?' class="'+tone+'"':'')+'>'+v+'</b>'
+      +'<i>'+escHtml(k)+'</i>'
       +(sub?'<s>'+escHtml(sub)+'</s>':'')+'</div>';
   }
+  /* one strip, value over label, the way the sheet does it — four tall
+     cards for four numbers was giving them more room than the panels that
+     actually carry the analysis */
   var head=[
-    {k:'Capital',   v:start?jbMoney(start,0):'—', s:'what you started with'},
-    {k:'Net profit / loss', v:jbSigned(S.totalPnl), s:S.n+' closed trade'+(S.n===1?'':'s'),
-     t:S.totalPnl>0?'g':S.totalPnl<0?'l':''},
-    {k:'Withdrawals', v:Math.abs(withdrawn)>0.005?jbMoney(withdrawn,0):'—',
-     s:hasCur?'balance you typed vs the journal':'type a current balance to show this'},
-    {k:'End balance', v:jbMoney(end,0), s:hasCur?'as you entered it':'capital plus the journal'}
+    {k:'Capital',   v:start?jbMoney(start,1):'—'},
+    {k:'Net profit / loss', v:jbSigned(S.totalPnl,1), t:S.totalPnl>0?'g':S.totalPnl<0?'l':''},
+    {k:'Withdrawals', v:Math.abs(withdrawn)>0.005?jbMoney(withdrawn,1):'—',
+     t:withdrawn<0?'l':''},
+    {k:'End balance', v:jbMoney(end,1)}
   ].map(function(x,i){
     return '<div class="jb-h1" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
-      +'<i>'+escHtml(x.k)+'</i><b'+(x.t?' class="'+x.t+'"':'')+'>'+x.v+'</b>'
-      +'<s>'+escHtml(x.s)+'</s></div>';
+      +'<b'+(x.t?' class="'+x.t+'"':'')+'>'+x.v+'</b>'
+      +'<i>'+escHtml(x.k)+'</i></div>';
   }).join('');
 
   var wl=(S.wins.length+S.losses.length)||1;
@@ -22411,25 +22436,41 @@ function jbBoardHtml(){
      /* 1 · overall performance */
      +'<div class="jb-p"><div class="jb-pt">Overall performance</div>'
        +'<div class="jb-rows">'
-         +'<div class="jb-r"><i>Long net P&amp;L</i><b class="'+(S.longPnl>=0?'g':'l')+'">'
-           +jbSigned(S.longPnl)+'</b></div>'
-         +'<div class="jb-r"><i>Short net P&amp;L</i><b class="'+(S.shortPnl>=0?'g':'l')+'">'
-           +jbSigned(S.shortPnl)+'</b></div>'
-         +'<div class="jb-r str"><i>Total net P&amp;L</i><b class="'+(S.totalPnl>=0?'g':'l')+'">'
-           +jbSigned(S.totalPnl)+'</b></div>'
+         +[['Long net P&L',S.longPnl],['Short net P&L',S.shortPnl],
+           ['Total net P&L',S.totalPnl,1]].map(function(r){
+            var t=r[1]>0?'g':r[1]<0?'l':'', pc=jbPct(r[1],start);
+            return '<div class="jb-r3'+(r[2]?' str':'')+'">'
+              +'<i>'+r[0]+'</i>'
+              +'<b class="'+t+'">'+jbSigned(r[1],1)+'</b>'
+              +'<u class="'+t+'">'+jbArrow(r[1])+'</u>'
+              +'<s class="'+t+'">'+(pc==null?'—':pc)+'</s></div>';
+          }).join('')
        +'</div>'
-       +'<div class="jb-split" title="'+S.wins.length+' winners against '+S.losses.length+' losers">'
-         +'<span class="g" style="width:'+(S.wins.length/wl*100).toFixed(1)+'%"></span>'
-         +'<span class="l" style="width:'+(S.losses.length/wl*100).toFixed(1)+'%"></span>'
-       +'</div>'
+       +(function(){
+          /* the bar is split by GROSS MONEY won against gross money lost, not
+             by trade count — the sheet writes the two totals on the bar, and
+             a count split cannot carry a money figure */
+          var g=S.grossWin, l=S.grossLoss, tot=(g+l)||1;
+          return '<div class="jb-split" title="'+jbMoney(g)+' won against '
+              +jbMoney(l)+' lost">'
+            +'<span class="g" style="width:'+(g/tot*100).toFixed(1)+'%">'
+              +(g/tot>0.16?'<em>'+jbMoney(g,0)+'</em>':'')+'</span>'
+            +'<span class="l" style="width:'+(l/tot*100).toFixed(1)+'%">'
+              +(l/tot>0.16?'<em>'+jbMoney(l,0)+'</em>':'')+'</span>'
+          +'</div>';
+        })()
        +'<div class="jb-splitk"><em class="g"></em>'+S.wins.length+' won'
          +'<em class="l"></em>'+S.losses.length+' lost'
          +(S.flat.length?'<s>'+S.flat.length+' flat</s>':'')+'</div>'
        +'<div class="jb-pt2">By instrument</div>'
        +'<div class="jb-rows">'
-         +(S.byAsset.length? S.byAsset.slice(0,6).map(function(x){
-             return '<div class="jb-r"><i>'+escHtml(x.a)+'<u>'+x.n+'</u></i>'
-               +'<b class="'+(x.pnl>=0?'g':'l')+'">'+jbSigned(x.pnl)+'</b></div>';
+         +(S.byAsset.length? S.byAsset.slice(0,7).map(function(x){
+             var t=x.pnl>0?'g':x.pnl<0?'l':'', pc=jbPct(x.pnl,start);
+             return '<div class="jb-r3"><i>'+escHtml(x.a)
+               +'<em>'+x.n+'</em></i>'
+               +'<b class="'+t+'">'+jbSigned(x.pnl,1)+'</b>'
+               +'<u class="'+t+'">'+jbArrow(x.pnl)+'</u>'
+               +'<s class="'+t+'">'+(pc==null?'—':pc)+'</s></div>';
            }).join('') : '<div class="jb-na">No closed trades yet.</div>')
        +'</div>'
      +'</div>'
@@ -22457,7 +22498,7 @@ function jbBoardHtml(){
          +stat('W : L ratio',S.wlRatio!=null?S.wlRatio.toFixed(2)+' : 1':'—','count')
          +stat('P : L ratio',S.plRatio!=null?S.plRatio.toFixed(2)+' : 1':'—','size')
          +stat('Profit factor',S.pf!=null?S.pf.toFixed(2):'—',
-           S.pf==null?'needs a loser to divide by':'gross win / gross loss',
+           S.pf==null?'no losers yet':'win \u00F7 loss',
            S.pf==null?'':S.pf>=1.5?'g':S.pf>=1?'':'l')
          +stat('Expectancy',S.expectancy!=null?jbSigned(S.expectancy):'—','per trade',
            S.expectancy==null?'':S.expectancy>=0?'g':'l')
