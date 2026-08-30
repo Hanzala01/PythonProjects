@@ -2844,6 +2844,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* the member card has artwork bleeding out of its right edge and no
    overflow rule, so a row laid on top of it ran past the card and read
    through the illustration. It is boxed, and the rows are opaque. */
+/* smaller and rounder, as asked, and no fixed height so an empty card is
+   genuinely small and a full one grows to hold the rows */
+.side-card{border-radius:16px !important;padding:12px 13px !important;min-height:0 !important}
+.side-card .sc-badge{margin-bottom:7px}
+.side-card .sc-badge .b{width:24px;height:24px;font-size:8px}
+.side-card .sc-badge .n{font-size:11px}
+.side-card .sc-lines{font-size:8.5px;line-height:1.6;margin-top:7px;color:var(--t3);opacity:.8}
+.side-card .sc-build{margin-top:4px}
+/* the illustration was the reason the card had to be 236px tall */
+.side-card > svg{opacity:.35;width:86px !important;height:110px !important;bottom:6px !important}
 .side-ntf{display:none;margin-top:10px;position:relative;z-index:2;
   max-width:100%;overflow:hidden}
 .side-ntf.has{display:block}
@@ -6498,14 +6508,20 @@ body{background:var(--bg0)}
     <div class="nav-item" onclick="celestialSettings()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</div>
     <div class="nav-item" onclick='goTab("reference",this)'><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v18H6a2 2 0 01-2-2zM19 17H6a2 2 0 000 4"/></svg>Reference</div>
   </nav>
-  <div class="side-card rise" style="animation-delay:.1s;min-height:236px;overflow:hidden">
+  <div class="side-card rise" style="animation-delay:.1s;overflow:hidden">
     <div class="sc-badge"><div class="b">CA</div><div class="n">Celestial Alpha</div></div>
     <!-- A VISIBLE BUILD MARKER.
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b71</div>
-    <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b72</div>
+    <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
+         The card was 236px of fixed height for a name, a build string, four
+         lines of marketing and a large illustration — and the notifications
+         had to fit underneath all of it. The four lines are on one line now
+         and the height is whatever the content needs, so the stack is what
+         the card is mostly for. -->
+    <div class="sc-lines">Private &middot; Precision in Timing &middot; Built for the Few</div>
     <!-- where a notification goes to live once its few seconds at the top are
          up. Empty it costs nothing; it only takes height when it holds something. -->
     <div id="side_ntf" class="side-ntf"></div>
@@ -22490,7 +22506,10 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b71';
+var CA_BUILD='b72';
+/* one line, rewritten with the build, so the toast says something real */
+var CA_WHATS_NEW='Trade history is paged · notifications live in the sidebar card · '
+  +'the member card is smaller';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -32223,6 +32242,25 @@ try{dashCalendar();dashTiming();dashMember();}catch(e){}
 try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
 try{ntfStart();}catch(e){console.error("notifications:",e);}
+/* ══ WHICH COPY IS THIS ═══════════════════════════════════════════════
+   Downloads fills with celestial_alpha (1).html, (2), (3) — Chrome will not
+   overwrite — and an older one gets opened, and then a feature that shipped
+   is reported missing. That has now cost several rounds, and the build
+   string in the sidebar corner was not enough to stop it.
+
+   So the app says its own build out loud, once per build, through the
+   notification it already has: a toast at the top for six seconds naming the
+   version and what changed in it, which then retires into the sidebar stack
+   like any other. If that toast does not appear on open, the file is one
+   that has already been opened — or an older one. */
+setTimeout(function(){
+  try{
+    var k='ca_build_seen';
+    if(localStorage.getItem(k)===CA_BUILD)return;
+    localStorage.setItem(k,CA_BUILD);
+    caToast('You are on build '+CA_BUILD, CA_WHATS_NEW, 'up', 'portfolio');
+  }catch(e){}
+},2200);
 /* the curtain comes down once the init block has actually finished, rather
    than on the load event alone — this line is the last thing that runs */
 try{bootDone();}catch(e){console.error('boot:',e);}
