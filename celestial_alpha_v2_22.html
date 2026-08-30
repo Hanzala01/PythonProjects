@@ -2839,6 +2839,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-size:13px;line-height:1;color:var(--t3);opacity:0;transition:opacity .18s}
 .ntf-i:hover .ntf-x{opacity:.7}
 .ntf-x:hover{color:var(--t1);opacity:1 !important}
+.tdir-ctx{grid-column:1/-1;display:grid;gap:5px;margin-top:10px;padding-top:9px;
+  border-top:1px solid rgba(160,130,220,.14)}
+.tc-p{font-size:9.5px;color:var(--t2)}
+.tc-p b{font-family:'Space Grotesk';font-size:12px;font-weight:800;color:#C4B5FD}
+.tc-s{font-size:8.5px;line-height:1.6;color:var(--t3)}
+.tc-s em{font-style:normal;font-weight:700;color:var(--t2)}
+.tc-s em.g{color:#34D399}
+.tc-s em.r{color:#F87171}
+.tdir-r b.long{color:#FBBF24}
 .ntf-waits{margin-top:9px;padding-top:8px;border-top:1px solid rgba(160,130,220,.14)}
 .ntf-waits>summary{cursor:pointer;list-style:none;font-size:8px;font-weight:800;
   letter-spacing:.08em;text-transform:uppercase;color:var(--t3);padding:3px 0}
@@ -6552,7 +6561,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b75</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b76</div>
     <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
          The card was 236px of fixed height for a name, a build string, four
          lines of marketing and a large illustration — and the notifications
@@ -8328,7 +8337,7 @@ function calcAstroBias(assetName,eph,refDate){
 }
 /* Each asset's own distribution of bull readings across a year around today.
    Six milliseconds for 365 days, so it is computed on demand and kept. */
-var _biasRaw=false, _calibCache={};
+var _biasRaw=false, _calibCache={}, _leanCache={};
 function astroCalib(assetName){
   /* calcAstroBias can run before this file's var initialisers do, so the cache
      is created on first use rather than assumed to exist */
@@ -20120,6 +20129,48 @@ function timDirHtml(st){
         :'No side. Trade the level whichever way it breaks, smaller.';
   var pos=Math.max(2,Math.min(98,A.bull));
   var mid=A.calib?A.calib.mid:50;
+  /* ══ HOW UNUSUAL IS TODAY, AND WHAT WAS THE YEAR'S OWN SPLIT ═══════
+     Measured across eight assets over their own calibration year, the split
+     is bull 32%, bear 34%, neutral 35% — the terciles do their job and the
+     reading is not stuck. What IS true is that the longest one-way run runs
+     12 to 20 days, so opening this daily for three weeks can genuinely show
+     the same word every time. That is the slow bodies not moving, not the
+     engine failing, and the panel has to say so rather than leave it to be
+     guessed at.
+
+     Two figures, both measured: where today sits in this asset's own year,
+     and what that year's split actually was. A reading of 65 on an asset
+     whose ordinary day is 61 is normal, and it now says so.
+
+     Cached per asset per day. Without that this is 365 ephemeris
+     computations on every repaint of the tab. */
+  var pctile=null, split=null;
+  try{
+    if(typeof _leanCache==='undefined'||!_leanCache)window._leanCache={};
+    var lk=a+'|'+new Date().toISOString().slice(0,10);
+    var LC=_leanCache[lk];
+    if(!LC){
+      var v=[], k;
+      _biasRaw=true;
+      try{
+        for(k=-182;k<183;k++){
+          var dd=new Date(Date.now()+k*86400000); dd.setHours(12,0,0,0);
+          v.push(calcAstroBias(a,getEphemeris(dd),dd).bull);
+        }
+      } finally { _biasRaw=false; }
+      LC={v:v}; _leanCache[lk]=LC;
+    }
+    var below=0; LC.v.forEach(function(x){ if(x<A.bull)below++; });
+    pctile=Math.round(below/LC.v.length*100);
+    var C2=A.calib;
+    if(C2){
+      var nb=0,nr=0;
+      LC.v.forEach(function(x){ if(x>=C2.hi)nb++; else if(x<=C2.lo)nr++; });
+      split={bull:Math.round(nb/LC.v.length*100), bear:Math.round(nr/LC.v.length*100)};
+      split.flat=100-split.bull-split.bear;
+    }
+  }catch(e){ _biasRaw=false; pctile=null; split=null; }
+
   return '<div class="tdir '+A.dir+'">'
    +'<div class="tdir-l"><i>The day leans</i><b style="color:'+col+'">'+lab+'</b>'
      +'<span>'+escHtml(say)+'</span></div>'
@@ -20128,8 +20179,27 @@ function timDirHtml(st){
        +'<span style="left:'+pos.toFixed(0)+'%;background:'+col+'"></span></div>'
      +'<div class="tdir-k"><s>bear</s><em>'+A.bull+'% bull &middot; ordinary day '+mid+'%</em><s>bull</s></div>'
    +'</div>'
-   +'<div class="tdir-r"><i>Run</i><b>'+(run>1?'day '+run:'first day')+'</b>'
+   +'<div class="tdir-r"><i>Run</i><b'+(run>=6?' class="long"':'')+'>'
+     +(run>1?'day '+run:'first day')+'</b>'
      +'<span>'+(run>=6?'one read holding, not '+run+' separate ones':'of this direction')+'</span></div>'
+   /* the emphasis line: the number, and what it is measured against */
+   +(pctile!=null
+     ? '<div class="tdir-ctx">'
+       +'<span class="tc-p"><b>'+pctile+'th</b> percentile for '+escHtml(a)
+         +' \u2014 '+(pctile>=85?'an unusually strong reading'
+                :pctile>=65?'firmer than an ordinary day'
+                :pctile>=35?'an ordinary day for this asset'
+                :pctile>=15?'softer than an ordinary day':'an unusually weak reading')+'</span>'
+       +(split
+         ? '<span class="tc-s">Over its own year this asset read '
+           +'<em class="g">bull '+split.bull+'%</em>, '
+           +'<em class="r">bear '+split.bear+'%</em>, '
+           +'<em>neutral '+split.flat+'%</em>'
+           +(run>=6?' \u2014 and the same word can hold for two or three weeks when the '
+              +'slow bodies do not move':'')+'</span>'
+         : '')
+     +'</div>'
+     : '')
    +'</div>';
 }
 /* ══ TODAY, IN FULL ═══════════════════════════════════════════════════
@@ -22709,9 +22779,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b75';
+var CA_BUILD='b76';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Alerts now warn an hour ahead, and the bell shows what each one is waiting for';
+var CA_WHATS_NEW='The day\u2019s lean now shows its percentile and the year\u2019s own bull/bear/neutral split';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
