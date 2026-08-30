@@ -2934,6 +2934,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jb-demo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:10px 14px;border-radius:12px;margin-bottom:12px;
   border:1px solid rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
+.jb-demo-n{flex:1 1 100%;font-style:normal;font-size:8px;color:var(--t3);opacity:.75}
 .jb-demo b{font-family:'Space Grotesk';font-size:10px;font-weight:800;letter-spacing:.12em;
   text-transform:uppercase;color:#F87171;flex:none}
 .jb-demo span{flex:1 1 260px;font-size:9px;line-height:1.6;color:var(--t2)}
@@ -6503,7 +6504,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b70</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b71</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- where a notification goes to live once its few seconds at the top are
          up. Empty it costs nothing; it only takes height when it holds something. -->
@@ -22489,7 +22490,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b70';
+var CA_BUILD='b71';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -22499,6 +22500,9 @@ function jrnlLoad(){
 }
 function jrnlSave(){
   try{ localStorage.setItem(JRNL_KEY,JSON.stringify(JRNL)); }catch(e){}
+  /* the moment there is a trade of your own in here, the demo stops being
+     offered — that is the signal, not a button press */
+  try{ if(typeof jbMarkReal==='function')jbMarkReal(); }catch(e){}
   /* the board is derived entirely from JRNL, so it is stale the instant a
      trade is logged, closed or edited */
   try{ if(typeof jbPaint==='function')jbPaint(); }catch(e){}
@@ -23042,12 +23046,29 @@ function mt5Import(btn){
    every open — once, recorded in localStorage — so clearing it makes it stay
    cleared, and a journal with anything in it is never touched.
    ══════════════════════════════════════════════════════════════════════ */
-var DEMO_SEEDED_KEY='ca_demo_seeded';
+/* "CLEARED ONCE, STAYS CLEARED" WAS THE WRONG RULE, AND IT COST FOUR ROUNDS.
+   Pressing Clear demo wrote a flag that stopped the demo ever loading again.
+   That is defensible while you have your own trades — and wrong before you
+   do, because from then on every new copy of the file opens completely
+   empty: journal 0, board all dashes, trade history empty, pager blank.
+   Measured on a returning profile: exactly that. So each new build looked
+   identical to the last one, and the person looking at it was right.
+
+   The rule that actually works: the demo comes back whenever the journal is
+   empty, UNLESS a real trade has been logged at some point. Clearing it does
+   what it says for as long as you are looking, and once there is real data
+   in the journal it never returns. The banner says so, so it is not a
+   surprise. */
+var DEMO_REAL_KEY='ca_had_real';
+function jbMarkReal(){
+  try{
+    if(JRNL.some(function(j){return !j.demo;}))localStorage.setItem(DEMO_REAL_KEY,'1');
+  }catch(e){}
+}
 function jbAutoSeed(){
   try{
-    if(JRNL.length)return;                       /* never over real trades */
-    if(localStorage.getItem(DEMO_SEEDED_KEY))return;  /* cleared once, stays cleared */
-    localStorage.setItem(DEMO_SEEDED_KEY,'1');
+    if(JRNL.length)return;                        /* something is already there */
+    if(localStorage.getItem(DEMO_REAL_KEY))return; /* they have their own trades */
     jbDemoLoad(true);
   }catch(e){}
 }
@@ -23130,9 +23151,6 @@ function jbDemoLoad(auto){
 }
 
 function jbDemoClear(quiet){
-  /* clearing is a decision, and it has to survive a reload — otherwise the
-     demo comes back on the next open and the button does nothing */
-  try{ localStorage.setItem(DEMO_SEEDED_KEY,'1'); }catch(e){}
   var before=JRNL.length;
   var keep=JRNL.filter(function(j){return !j.demo;});
   JRNL.length=0;
@@ -23444,6 +23462,7 @@ function jbBoardHtml(){
       +'<span>These are generated sample trades, not yours. Everything below is '
       +'computed from them exactly as it would be from real ones.</span>'
       +'<button class="btn btn-g btn-sm" onclick="jbDemoClear()">Clear demo</button>'
+      +'<i class="jb-demo-n">it comes back on reload until you log a trade of your own</i>'
     +'</div>':'')
    +(empty?'<div class="jb-wait"><b>Waiting for your first trade</b>'
       +'<span>This is the shape of the board. Every figure on it is computed from '
