@@ -1747,7 +1747,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rfab-b{position:absolute;top:-5px;right:-5px;font-family:'Space Grotesk';font-size:10px;
   font-weight:800;line-height:1;padding:3px 6px;border-radius:99px;background:var(--p2);
   color:#fff;border:1.5px solid #0B0628;font-variant-numeric:tabular-nums}
-.rfab{position:relative}
+/* THIS ONE LINE PUT THE RISK CALCULATOR OFF THE SCREEN.
+   .rfab is declared position:fixed, right:20px, bottom:20px — a floating
+   button in the corner. This later rule set it back to relative, which threw
+   away the right/bottom entirely and let it lay out wherever it happened to
+   land in the body flow. Measured: x=-20, y=1246 — off the left edge and
+   below the fold, on every tab. It was never hidden; it was parked outside
+   the window. The badge it was added for works under fixed anyway, because
+   a fixed element is a containing block for its absolute children. */
 .rfab.live{border-color:rgba(127,96,191,.9)}
 .rfab.live .rfab-i{stroke:var(--pGlow)}
 .rfab.open{background:radial-gradient(120% 120% at 30% 20%,#533399,#22114A)}
@@ -2748,17 +2755,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   color:#C4B5FD !important;
 }
 /* ── the notification centre ─────────────────────────────────────────── */
-.ntf-wrap{position:relative;margin:0 0 6px}
-.ntf-bell{display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;
-  padding:9px 12px;border-radius:11px;font:inherit;text-align:left;
-  color:var(--t2);border:1px solid rgba(160,130,220,.14);background:rgba(24,14,52,.4);
+/* top right, beside the member badge — a small round bell, not a nav row */
+.dh-top{display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.dsk{margin-top:10px;padding-top:9px;border-top:1px solid rgba(160,130,220,.12)}
+.ntf-wrap{position:relative}
+.ntf-bell{position:relative;display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;cursor:pointer;border-radius:50%;font:inherit;
+  color:var(--t2);border:1px solid rgba(160,130,220,.2);background:rgba(24,14,52,.55);
   transition:.18s cubic-bezier(.2,.9,.25,1)}
-.ntf-bell:hover{color:var(--t1);border-color:rgba(196,181,253,.4);background:rgba(34,20,70,.6)}
-.ntf-bell svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;
+.ntf-bell:hover{color:var(--t1);border-color:rgba(196,181,253,.5);background:rgba(44,26,90,.8);
+  transform:translateY(-1px)}
+.ntf-bell svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;
   stroke-linecap:round;stroke-linejoin:round}
-.ntf-bell span{font-size:11px;font-weight:600;flex:1}
-.ntf-count{font-style:normal;font-size:9px;font-weight:800;min-width:18px;text-align:center;
-  padding:2px 5px;border-radius:99px;color:#fff;background:#F87171;flex:none}
+.ntf-count{position:absolute;top:-4px;right:-4px;font-style:normal;font-size:8.5px;
+  font-weight:800;min-width:16px;height:16px;line-height:15px;text-align:center;padding:0 4px;
+  border-radius:99px;color:#fff;background:#F87171;border:1.5px solid rgba(11,6,32,.9)}
 .ntf-count.hide{display:none}
 .ntf-bell.ping svg{animation:ntfRing .7s cubic-bezier(.36,.07,.19,.97)}
 @keyframes ntfRing{0%,100%{transform:rotate(0)}15%{transform:rotate(14deg)}
@@ -6485,17 +6496,8 @@ body{background:var(--bg0)}
            the logo it read as decoration nobody could name. It is a row in
            Settings now, where every other preference already lives. -->
     </div>
-    <!-- the notification centre: one bell, every tab -->
-    <div id="ntf_wrap" class="ntf-wrap">
-      <button id="ntf_bell" class="ntf-bell" type="button" onclick="ntfToggle()"
-              title="Notifications">
-        <svg viewBox="0 0 24 24"><path d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
-          <path d="M10 20a2 2 0 004 0"/></svg>
-        <span>Notifications</span>
-        <i class="ntf-count hide">0</i>
-      </button>
-      <div id="ntf_panel" class="ntf-panel"></div>
-    </div>
+    <!-- The bell was a full-width row here, above Dashboard. It belongs where
+         a bell belongs: top right, beside the member badge, small. -->
     <div class="nav-item on" onclick='goTab("dashboard",this)'><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Dashboard</div>
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
     <div class="nav-item" onclick='goTab("timing",this)'><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing Engine</div>
@@ -6514,7 +6516,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b72</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b73</div>
     <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
          The card was 236px of fixed height for a name, a build string, four
          lines of marketing and a large illustration — and the notifications
@@ -6559,8 +6561,19 @@ body{background:var(--bg0)}
         <div class="dh-fng" id="dh_fng"></div>
     </div>
     <div class="dh-r">
-      <div class="dh-badge" onclick="dashSetMember()" title="Click to set the member name"><span class="dh-av" id="dh_ini">CA</span>
-        <div><b id="dh_user">Celestial Alpha</b><i>Elite Member</i></div></div>
+      <div class="dh-top">
+        <div id="ntf_wrap" class="ntf-wrap">
+          <button id="ntf_bell" class="ntf-bell" type="button" onclick="ntfToggle()"
+                  title="Notifications" aria-label="Notifications">
+            <svg viewBox="0 0 24 24"><path d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
+              <path d="M10 20a2 2 0 004 0"/></svg>
+            <i class="ntf-count hide">0</i>
+          </button>
+          <div id="ntf_panel" class="ntf-panel"></div>
+        </div>
+        <div class="dh-badge" onclick="dashSetMember()" title="Click to set the member name"><span class="dh-av" id="dh_ini">CA</span>
+          <div><b id="dh_user">Celestial Alpha</b><i>Elite Member</i></div></div>
+      </div>
       <div class="dh-art" aria-hidden="true"></div>
       <div class="dh-q">We don&rsquo;t predict the future.<br>We calculate the <b>probability</b><br>of it happening.</div>
     </div>
@@ -6629,6 +6642,12 @@ body{background:var(--bg0)}
           <div class="ts-tp"><span>TP 2</span><b id="v_tp2">&mdash;</b></div>
           <div class="ts-tp"><span>TP 3</span><b id="v_tp3">&mdash;</b></div>
           <div class="ts-row"><span class="k">Risk to Reward</span><span class="v acc" id="v_rr">&mdash;</span></div>
+          <!-- THE RISK CALCULATOR, ON THE BOARD RATHER THAN BEHIND A BUTTON.
+               It existed only as a floating button that was, it turns out,
+               positioned off the screen — so the one panel that can say NO
+               was the one nobody could find. The answer belongs beside the
+               setup it is sizing; the button still opens the full working. -->
+          <div id="dash_risk" class="dsk"></div>
         </div>
         <button class="cta" onclick="goTab('analytics',document.querySelector('.nav-item[onclick*=&quot;analytics&quot;]'))">View Full Analysis</button>
       </div>
@@ -10160,6 +10179,7 @@ function riskSetBal(el){
 function riskRefresh(){
   try{ riskDockSync(); }catch(e){}
   try{ riskFabSync(); }catch(e){}
+  try{ riskDashSync(); }catch(e){}
   try{
     var chip=document.querySelector('.rk-chip');
     if(!chip)return;
@@ -10227,6 +10247,15 @@ function riskChipHtml(S,conf,price,dp,asset){
    tab, carrying the current percentage on its face. The dock opens above it.
    The chip on the board stays, because on that board it is worth having the
    full line in the flow of reading. */
+/* the same one-line answer, on the dashboard, where the setup it sizes is */
+function riskDashSync(){
+  var el=document.getElementById('dash_risk');
+  if(!el)return;
+  var S=window._lastSig, conf=S?S.conf:0;
+  var price=parseFloat((document.getElementById('ai_price')||{}).value)||0;
+  var asset=(typeof _lastAsset!=='undefined'&&_lastAsset)||'';
+  try{ el.innerHTML=riskChipHtml(S,conf,price,price<10?4:2,asset); }catch(e){ el.innerHTML=''; }
+}
 function riskFabSync(){
   var el=document.getElementById('risk_fab');
   if(!el){
@@ -18845,7 +18874,7 @@ function trendInvalidHtml(T,price,dp,asset){
   try{ renderCQE(); }catch(e){ console.error('CQE panel:',e); }
   /* the dock lives on <body> so it survives this redraw, but its numbers came
      from the previous analysis and have to be refreshed */
-  try{ if(RISK_OPEN)riskDockSync(); riskFabSync(); }catch(e){}
+  try{ if(RISK_OPEN)riskDockSync(); riskFabSync(); riskDashSync(); }catch(e){}
   try{ scanRender(); }catch(e){}
 
   host.querySelectorAll('.mj-track .fill').forEach(function(f){
@@ -21290,8 +21319,10 @@ function ntfPlace(){
   var b=document.getElementById('ntf_bell'), pan=document.getElementById('ntf_panel');
   if(!b||!pan)return;
   var r=b.getBoundingClientRect();
-  var left=r.right+10, top=r.top;
-  /* keep it on screen on a narrow window rather than off the right edge */
+  /* it hangs from the right edge of the bell now that the bell is in the
+     top-right corner — opening rightwards would put it off the screen */
+  var left=r.right-330, top=r.bottom+9;
+  if(left<12)left=12;
   if(left+330>window.innerWidth-12)left=Math.max(12,window.innerWidth-342);
   if(top+pan.offsetHeight>window.innerHeight-12)
     top=Math.max(12,window.innerHeight-pan.offsetHeight-12);
@@ -21308,8 +21339,88 @@ function ntfToggle(){
 }
 function ntfDismiss(id){ _ntfSeen[id]=1; ntfSeenSave(); ntfPaint(); }
 function ntfClearAll(){ ntfCollect().forEach(function(n){ _ntfSeen[n.id]=1; }); ntfSeenSave(); ntfPaint(); }
+/* ══ THE SEPARATE WARNING, FOR SOMETHING ABOUT TO HAPPEN ══════════════
+   "alert alag se bhi jab kuch bara hone wala ho" — a different thing from
+   the list in the bell. The bell holds what is outstanding; this fires once,
+   loudly, when something is IMMINENT, and it goes to the phone too.
+
+   Four triggers, all dated rather than inferred, and each fires once per
+   occurrence rather than on every sweep:
+
+     a High-impact release inside 30 minutes
+     a planetary hour window that carries this asset's cycle opening
+       inside 15 minutes
+     a Gann count landing today with more than one clock on the date
+     price arriving inside half an ATR of a key zone
+
+   The last two are the ones you cannot see coming without the app, which is
+   why they are here at all. */
+var _bigSeen={};
+function bigAlertKey(k){
+  var day=new Date().toISOString().slice(0,10);
+  var id=day+'|'+k;
+  if(_bigSeen[id])return false;
+  _bigSeen[id]=1;
+  try{ localStorage.setItem('ca_big_seen',JSON.stringify(_bigSeen)); }catch(e){}
+  return true;
+}
+try{ _bigSeen=JSON.parse(localStorage.getItem('ca_big_seen')||'{}')||{}; }catch(e){ _bigSeen={}; }
+
+function bigAlertCheck(){
+  var asset=((typeof _lastAsset!=='undefined'&&_lastAsset)||'the board').toUpperCase();
+
+  /* 1 · a release that moves price on its own, half an hour out */
+  try{
+    var now=Date.now();
+    (buildEconEvents()||[]).forEach(function(e){
+      if(e.impact!=='High')return;
+      var mins=(e.d-now)/60000;
+      if(mins<0||mins>30)return;
+      if(!bigAlertKey('news:'+e.t+':'+(+e.d)))return;
+      alertSend(String(e.t)+' in '+Math.round(mins)+' minutes',
+        (e.country||'')+(e.fc&&e.fc!=='—'?' · forecast '+e.fc:'')
+        +' · size down or stand aside through it');
+    });
+  }catch(e){}
+
+  /* 2 · a window this asset's own cycle carries, opening shortly */
+  try{
+    var st=timState();
+    (timTodayWindows(st)||[]).forEach(function(w){
+      if(w.inMin==null||w.inMin<0||w.inMin>15)return;
+      if(w.best<2)return;                      /* only the asset's own number */
+      if(!bigAlertKey('win:'+w.start))return;
+      alertSend('Window opens in '+Math.round(w.inMin)+' minutes on '+asset,
+        fmtT(w.start)+'–'+fmtT(w.end%1440)+' · '+w.names.join(', ')+' · trade it as a '
+        +String(w.kind).toLowerCase());
+    });
+  }catch(e){}
+
+  /* 3 · a count landing today that more than one clock marks */
+  try{
+    var E=window.TIM_ENGINE||timEngine();
+    if(E&&E.state==='Completion'&&E.confluence&&E.confluence.count>=2
+       &&bigAlertKey('cyc:'+E.cycle))
+      alertSend(E.cycle+' cycle completes today on '+asset,
+        E.bias.k+' · '+E.confluence.count+' independent clocks on the same date');
+  }catch(e){}
+
+  /* 4 · price arriving at a level decided in advance */
+  try{
+    var Z=ribKeyZone();
+    if(Z&&Z.dist!=null&&Z.dist<=0.5&&bigAlertKey('zone:'+Z.px.toFixed(2)))
+      alertSend('Price is at a key zone on '+asset,
+        tcFmt(Z.px,2)+' · '+Z.dist.toFixed(2)+' ATR away · '+Z.strength
+        +' calculations from each side agree here');
+  }catch(e){}
+}
+
 function ntfStart(){
   ntfPaint();
+  /* the imminent check runs on its own clock — the bell's minute is fine for
+     a list, too slow for something thirty minutes out */
+  try{ bigAlertCheck(); }catch(e){}
+  setInterval(function(){ try{ bigAlertCheck(); }catch(e){} },90000);
   /* a minute is fast enough for a release two hours out and slow enough that
      four engines are not re-run on a timer nobody is watching */
   setInterval(ntfPaint,60000);
@@ -22506,10 +22617,10 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b72';
+var CA_BUILD='b73';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Trade history is paged · notifications live in the sidebar card · '
-  +'the member card is smaller';
+var CA_WHATS_NEW='Bell moved to the top right \u00b7 the risk calculator was off-screen '
+  +'and is fixed \u00b7 a separate alert when something big is close';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -23863,7 +23974,7 @@ try {
        rather than showing five rings reading zero */
     try{ dashMatrixIdle('waiting for a price'); }catch(e){}
     /* both round buttons belong to the window, not to one tab */
-    try{ riskFabSync(); }catch(e){}
+    try{ riskFabSync(); riskDashSync(); }catch(e){}
     try{ jvRender(); }catch(e){}
     /* a wake word that was switched on should still be on after a reload */
     try{ jvDot(); if(jvPrefs().wake)jvWakeStart(); else jvFirstRun(); }catch(e){}
