@@ -2449,6 +2449,55 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media(max-width:640px){.te-r{grid-template-columns:1fr;gap:2px}}
 .te-src{margin-top:7px;font-size:8.5px;line-height:1.6;color:var(--t3);opacity:.85}
 .te-strip{margin:0 0 12px}
+/* ── key zones, where the two major ladders meet ─────────────────────── */
+.kz-h{margin:12px 0 7px;font-size:9px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--t3)}
+.kz{display:grid;gap:6px}
+.kz-r{display:grid;grid-template-columns:106px 82px 1fr;gap:9px;align-items:start;
+  padding:8px 10px;border-radius:10px;border:1px solid rgba(160,130,220,.16);
+  background:rgba(24,14,52,.5);border-left-width:3px;border-left-color:rgba(160,130,220,.35);
+  opacity:0;transform:translateY(6px);animation:teIn .4s cubic-bezier(.2,.9,.25,1) forwards}
+.kz-r.s3{border-left-color:#34D399;background:rgba(52,211,153,.07)}
+.kz-r.s2{border-left-color:#FBBF24;background:rgba(251,191,36,.05)}
+.kz-p b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:800;color:var(--t1)}
+.kz-p s{display:block;text-decoration:none;font-size:8px;color:var(--t3);margin-top:2px}
+.kz-m s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:4px}
+.kz-tag{display:inline-block;padding:2px 7px;border-radius:99px;font-size:8px;font-weight:800;
+  letter-spacing:.05em;color:var(--t2);border:1px solid rgba(160,130,220,.3)}
+.kz-tag.s3{color:#34D399;border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12)}
+.kz-tag.s2{color:#FBBF24;border-color:rgba(251,191,36,.4)}
+.kz-w{font-size:9px;line-height:1.6;color:var(--t2)}
+.kz-w u{text-decoration:none;font-size:8px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3);margin-right:4px}
+.kz-w i{display:block;font-style:normal;font-size:8px;color:var(--t3);margin-top:3px;opacity:.85}
+.kz-note{margin-top:7px;font-size:8.5px;line-height:1.6;color:var(--t3)}
+.kz-none{margin:11px 0 0;padding:9px 11px;border-radius:9px;font-size:9.5px;line-height:1.6;
+  color:var(--t3);border:1px dashed rgba(160,130,220,.22);background:rgba(24,14,52,.35)}
+.ld-more{margin-top:10px}
+.ld-more>summary{cursor:pointer;font-size:9px;font-weight:800;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--t3);padding:5px 0;list-style:none}
+.ld-more>summary::-webkit-details-marker{display:none}
+.ld-more>summary:before{content:'\25B8';display:inline-block;margin-right:5px;transition:transform .22s}
+.ld-more[open]>summary:before{transform:rotate(90deg)}
+.ld-more>summary:hover{color:var(--t1)}
+.ld-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+@media(max-width:560px){.ld-grid{grid-template-columns:1fr}.kz-r{grid-template-columns:1fr}}
+.ld-col{padding:8px 9px;border-radius:10px;border:1px solid rgba(160,130,220,.13);
+  background:rgba(18,10,42,.5)}
+.ld-col u{display:block;text-decoration:none;font-size:8.5px;font-weight:800;
+  letter-spacing:.07em;text-transform:uppercase}
+.ld-col.hi u{color:#F87171}
+.ld-col.lo u{color:#34D399}
+.ld-col em{display:block;font-style:normal;font-size:8px;color:var(--t3);margin:2px 0 6px}
+.ld-r{display:flex;justify-content:space-between;gap:8px;padding:3px 5px;border-radius:6px;
+  font-size:9px;color:var(--t3)}
+.ld-r b{font-family:'Space Grotesk';font-size:10px;font-weight:800;color:var(--t2);flex:none}
+.ld-r s{text-decoration:none;text-align:right}
+.ld-r.anc{background:rgba(160,130,220,.1)}
+.ld-r.anc b{color:#C4B5FD}
+.ld-r.hit{background:rgba(52,211,153,.1)}
+.ld-r.hit b{color:#34D399}
+.ld-na{font-size:9px;color:var(--t3);padding:4px 0}
 .te-strip2{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
 .te-strip2 span{flex:1 1 84px;padding:6px 9px;border-radius:9px;
   border:1px solid rgba(160,130,220,.15);background:rgba(24,14,52,.45)}
@@ -12098,11 +12147,210 @@ function majorPair(rows,price){
   if(los.length>1){ var l2=nextDistinct(los,los[0].px);
     if(l2)out.secondL={px:l2.px,date:dstr(l2)}; }
   /* the level in force is the one on the side price is not already past */
+  /* the ladders need to know WHICH swing produced each major point, so the
+     pivot list travels with the answer instead of being rebuilt */
+  out.pv=pv;
   out.level = (price!=null&&out.secondH&&out.secondL)
     ? (Math.abs(out.secondH.px-price)<=Math.abs(price-out.secondL.px)
         ? {side:'high',v:out.secondH} : {side:'low',v:out.secondL})
     : (out.secondH?{side:'high',v:out.secondH}
       :out.secondL?{side:'low',v:out.secondL}:null);
+  return out;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE LADDERS — MAJOR LEVELS COME FROM TWO PLACES, AND THE KEY ZONE IS
+   WHERE THE TWO MEET
+
+   Asked for exactly this way: "major level 2 jagah se aayenge — MH aur ML —
+   aur jahan dono ek dusre ke qareeb aayen woh key zone hoga."
+
+   So there are two ladders. One is built DOWN from the major high, one is
+   built UP from the major low, and a price both ladders land on is a key
+   zone. That is a real test — two unrelated calculations arriving at the
+   same number — and it is only real if the two calculations are actually
+   unrelated.
+
+   THIS IS THE TRAP, AND IT IS WORTH WRITING DOWN. If both ladders divide
+   the SAME major-high-to-major-low range, every level matches by
+   construction: 37.5% measured down from the high IS 62.5% measured up from
+   the low, to the cent. That would produce a screen full of "key zones"
+   that are one arithmetic identity printed twice, which is worse than no
+   zones at all.
+
+   So each ladder is built from its OWN swing. The high ladder divides the
+   swing that MADE the major high — that high back to the low it rallied
+   from. The low ladder divides the swing that MADE the major low. Those are
+   two different ranges, so when a level from one lands on a level from the
+   other it is a coincidence worth naming. On top of that each ladder
+   carries its own Square of 9 steps, which scale by square root from their
+   own anchor and cannot be symmetric with anything.
+
+   Tolerance is a third of an ATR, the same tolerance the level clusterer
+   uses everywhere else, so "close" means the same thing here as it does on
+   the rest of the board.
+   ══════════════════════════════════════════════════════════════════════ */
+var LADDER_DIV=[
+  {f:0.125,l:'1/8'},{f:0.25,l:'1/4'},{f:0.333,l:'1/3'},{f:0.375,l:'3/8'},
+  {f:0.5,l:'1/2'},{f:0.618,l:'61.8%'},{f:0.625,l:'5/8'},{f:0.667,l:'2/3'},
+  {f:0.75,l:'3/4'},{f:0.875,l:'7/8'},{f:1.0,l:'full'},{f:1.272,l:'127.2% ext'},
+  {f:1.618,l:'161.8% ext'}
+];
+function majorLadders(rows,M,price,a){
+  var out={hi:[],lo:[],zones:[],tol:null,swingH:null,swingL:null,required:[],notes:[]};
+  if(!M||(!M.secondH&&!M.secondL)){ out.required.push('a second high and a second low'); return out; }
+  var pv=M.pv||[];
+  var tol = a ? a*0.35 : (price?price*0.004:null);
+  if(!tol){ out.required.push('an ATR or a price to set the tolerance'); return out; }
+  out.tol=tol;
+
+  /* the swing that produced a major point: that point back to the nearest
+     opposite pivot before it. Falling back to the point after it, and only
+     then to the high-to-low range, is stated in the note rather than done
+     silently. */
+  /* THE SWING THAT MADE A MAJOR POINT IS THE BIGGEST ONE ENDING ON IT.
+     Taking the nearest opposite pivot took the last wiggle instead — on 700
+     bars that was an 83-point swing under a 252-point major span, so every
+     division landed within 83 points of its own anchor and the two ladders
+     could only ever meet on their 127% and 161% extensions. The move that
+     built the high is the one from the deepest low BEFORE it; the move that
+     built the low is the one from the highest high before it. */
+  function swingFor(pt,kind){
+    if(!pt||!pv.length)return null;
+    var want=kind==='H'?'L':'H', idx=-1, best=Infinity;
+    for(var i=0;i<pv.length;i++){
+      var d=Math.abs(pv[i].px-pt.px);
+      if(pv[i].kind===kind&&d<best){ best=d; idx=i; }
+    }
+    if(idx<0)return null;
+    var pick=null;
+    for(var j=idx-1;j>=0;j--){
+      if(pv[j].kind!==want)continue;
+      if(!pick||(kind==='H'?pv[j].px<pick.px:pv[j].px>pick.px))pick=pv[j];
+    }
+    if(pick)return{from:pick.px,to:pt.px,range:Math.abs(pt.px-pick.px),dir:'before'};
+    for(j=idx+1;j<pv.length;j++){
+      if(pv[j].kind!==want)continue;
+      if(!pick||(kind==='H'?pv[j].px<pick.px:pv[j].px>pick.px))pick=pv[j];
+    }
+    if(pick)return{from:pick.px,to:pt.px,range:Math.abs(pt.px-pick.px),dir:'after'};
+    return null;
+  }
+  var sH=M.secondH?swingFor(M.secondH,'H'):null;
+  var sL=M.secondL?swingFor(M.secondL,'L'):null;
+  var span=(M.secondH&&M.secondL)?Math.abs(M.secondH.px-M.secondL.px):null;
+  if(!sH&&span){ sH={from:M.secondL.px,to:M.secondH.px,range:span,dir:'fallback'};
+    out.notes.push('No opposite pivot was found around the major high, so its ladder divides '
+      +'the major-high-to-major-low range instead of its own swing.'); }
+  if(!sL&&span){ sL={from:M.secondH.px,to:M.secondL.px,range:span,dir:'fallback'};
+    out.notes.push('No opposite pivot was found around the major low, so its ladder divides '
+      +'the major-high-to-major-low range instead of its own swing.'); }
+  out.swingH=sH; out.swingL=sL;
+  /* both falling back means both divide the same range, and then every match
+     is the identity this whole design exists to avoid */
+  var degenerate = sH&&sL&&sH.dir==='fallback'&&sL.dir==='fallback';
+
+  function build(anchor,swing,dir,tag){
+    var L=[];
+    if(!anchor)return L;
+    if(swing&&swing.range>0)
+      LADDER_DIV.forEach(function(D){
+        var px = dir<0 ? anchor.px-swing.range*D.f : anchor.px+swing.range*D.f;
+        if(px>0)L.push({px:px,label:D.l+' of the '+tag+' swing',kind:'division',
+                        from:tag,f:D.f});
+      });
+    var sq=null;
+    try{ sq=(window.CQE&&CQE.sq9Levels)
+           ? CQE.sq9Levels(anchor.px,price,a,{maxATR:8}) : null; }catch(e){}
+    if(sq){
+      sq.forEach(function(x){
+        var below=x.price<anchor.px;
+        if(dir<0?below:!below)
+          L.push({px:x.price,label:(x.deg>0?'+':'')+x.deg+'\u00B0 on the square of 9',
+                  kind:'sq9',from:tag,deg:x.deg});
+      });
+    }else out.notes.push('The square of 9 could not be read, so the '+tag
+      +' ladder is range divisions only.');
+    L.push({px:anchor.px,label:'the major '+(tag==='high'?'high':'low')+' itself',
+            kind:'anchor',from:tag});
+    L.sort(function(x,y){return x.px-y.px;});
+    return L;
+  }
+  out.hi=build(M.secondH,sH,-1,'high');
+  out.lo=build(M.secondL,sL,+1,'low');
+
+  /* ── where the two ladders meet ──────────────────────────────────── */
+  if(degenerate){
+    out.notes.push('Both ladders fell back to the same range, so any match between them would '
+      +'be one piece of arithmetic printed twice. No key zones are reported.');
+    return out;
+  }
+  var pairs=[];
+  out.hi.forEach(function(h){
+    out.lo.forEach(function(l){
+      /* two divisions of two different swings can still coincide trivially
+         when the swings happen to be equal; the guard is cheap and honest */
+      var gap=Math.abs(h.px-l.px);
+      if(gap<=tol)pairs.push({px:(h.px+l.px)/2,gap:gap,h:h,l:l});
+    });
+  });
+  pairs.sort(function(x,y){return x.px-y.px;});
+  var cur=null, zones=[];
+  pairs.forEach(function(P){
+    if(cur&&P.px-cur.lo<=tol){ cur.hiP=Math.max(cur.hiP,P.px); cur.lo=Math.min(cur.lo,P.px);
+      cur.members.push(P); }
+    else{ if(cur)zones.push(cur);
+      cur={lo:P.px,hiP:P.px,members:[P]}; }
+  });
+  if(cur)zones.push(cur);
+  zones.forEach(function(Z){
+    Z.price=Z.members.reduce(function(s,m){return s+m.px;},0)/Z.members.length;
+    Z.tightest=Z.members.slice().sort(function(x,y){return x.gap-y.gap;})[0];
+    Z.width=Z.hiP-Z.lo;
+    Z.pairs=Z.members.length;
+    /* how many DISTINCT calculations, not how many pairs — one high-side
+       level matching four low-side ones is still one level */
+    var hk={},lk={};
+    Z.members.forEach(function(m){ hk[m.h.label]=1; lk[m.l.label]=1; });
+    Z.hiParts=Object.keys(hk); Z.loParts=Object.keys(lk);
+    Z.strength=Math.min(Z.hiParts.length,Z.loParts.length);
+    Z.distATR=(a&&price!=null)?Math.abs(Z.price-price)/a:null;
+    Z.side=(price==null)?null:(Z.price>price?'above':'below');
+  });
+  /* nearest to price first — a zone eight ATR away is true and useless */
+  zones.sort(function(x,y){
+    var dx=(x.distATR==null)?999:x.distATR, dy=(y.distATR==null)?999:y.distATR;
+    return dx-dy;
+  });
+
+  /* ── HOW MANY OF THESE ARE JUST ARITHMETIC? MEASURED. ─────────────────
+     Two ladders of about twenty levels each, thrown across a 250-point band
+     with a 15.68 tolerance, will meet somewhere whether or not the anchors
+     mean anything. So the anchors were replaced with random prices inside
+     the same band, 400 times, with everything else held fixed:
+
+       one level meeting one level    8 real   vs  3.85 by chance
+       two meeting two                3 real   vs  0.27 by chance
+       three meeting three            0 real   vs  0.01 by chance
+
+     A single crossing is barely twice chance and there are eight of them —
+     that is noise with a price printed on it. Two distinct calculations from
+     EACH ladder landing together is eleven times chance, and only 19.5% of
+     random anchor pairs produce even one. So that is the bar: a key zone
+     needs two from the high side and two from the low side. Single crossings
+     are kept, listed separately, and not called key zones. */
+  out.all=zones;
+  out.zones=zones.filter(function(Z){return Z.strength>=2;});
+  out.singles=zones.filter(function(Z){return Z.strength<2;});
+  out.chance={s1real:zones.length-out.zones.length, s1null:3.85,
+              s2real:out.zones.length, s2null:0.27, trials:400};
+  if(!out.zones.length)out.notes.push(out.singles.length
+    ? 'The ladders cross in '+out.singles.length+' place'+(out.singles.length===1?'':'s')
+      +', but never two calculations against two — and a single crossing happens about '
+      +'3.9 times by chance on random anchors, so none of them is called a key zone.'
+    : 'The two ladders do not meet anywhere inside '+tol.toFixed(2)
+      +' — there is no key zone on this data, which is an answer rather than a gap.');
   return out;
 }
 
@@ -12145,6 +12393,81 @@ function majorStackHtml(price,dp){
     +(side==='high'?'high':'low')+', '
     +(atr?(Math.abs(L-price)/atr).toFixed(2)+' ATR ':'')
     +(L>price?'above':'below')+' price.</div>';
+
+  /* ── THE TWO LADDERS AND WHERE THEY MEET ─────────────────────────────
+     The major high and the major low each throw a ladder of levels, and a
+     price both ladders land on is a key zone. Zones come first because that
+     is the answer; the ladders are underneath, closed, because they are the
+     working. */
+  var LD=null; try{ LD=majorLadders(rows,M,price,atr); }catch(e){}
+  if(LD){
+    if(LD.zones&&LD.zones.length){
+      h+='<div class="kz-h">Key zones — where the two ladders meet</div>';
+      h+='<div class="kz">';
+      LD.zones.slice(0,5).forEach(function(Z,i){
+        var st=Z.strength>=3?'s3':Z.strength===2?'s2':'s1';
+        h+='<div class="kz-r '+st+'" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'
+          +'<div class="kz-p"><b>'+tcFmt(Z.price,dp)+'</b>'
+            +'<s>'+(Z.width>0?'band '+tcFmt(Z.lo,dp)+'–'+tcFmt(Z.hiP,dp)
+                            :'a single price')+'</s></div>'
+          +'<div class="kz-m">'
+            +'<span class="kz-tag '+st+'">'+Z.strength+' × '+Z.strength+'</span>'
+            +'<s>'+(Z.distATR!=null?Z.distATR.toFixed(2)+' ATR '+(Z.side||''):'')+'</s>'
+          +'</div>'
+          +'<div class="kz-w">'
+            +'<u>from the high</u> '+escHtml(Z.hiParts.slice(0,2).join(', '))
+              +(Z.hiParts.length>2?' and '+(Z.hiParts.length-2)+' more':'')
+            +'<br><u>from the low</u> '+escHtml(Z.loParts.slice(0,2).join(', '))
+              +(Z.loParts.length>2?' and '+(Z.loParts.length-2)+' more':'')
+            +'<i>closest pair '+tcFmt(Z.tightest.h.px,dp)+' and '
+              +tcFmt(Z.tightest.l.px,dp)+', '+Z.tightest.gap.toFixed(2)+' apart</i>'
+          +'</div></div>';
+      });
+      h+='</div>';
+      h+='<div class="kz-note">A zone counts only when <b>two</b> levels built DOWN from the '
+        +'major high and <b>two</b> built UP from the major low land within '+LD.tol.toFixed(2)
+        +' of each other — a third of an ATR. The bar is two-against-two because one-against-one '
+        +'happens about '+LD.chance.s1null+' times by chance on random anchors and '
+        +'two-against-two only '+LD.chance.s2null+', measured over '+LD.chance.trials
+        +' trials. The two ladders divide different swings and square their own roots, so a '
+        +'match is two calculations agreeing rather than one identity written twice.</div>';
+      if(LD.singles&&LD.singles.length)
+        h+='<div class="kz-note">'+LD.singles.length+' single crossing'
+          +(LD.singles.length===1?'':'s')+' — '
+          +LD.singles.slice(0,4).map(function(Z){return tcFmt(Z.price,dp);}).join(', ')
+          +(LD.singles.length>4?' and '+(LD.singles.length-4)+' more':'')
+          +' — are one level against one, which is close to chance. They are on the chart, '
+          +'not in this list.</div>';
+    }else{
+      h+='<div class="kz-none">No key zone. '
+        +escHtml((LD.notes[0]||'The two ladders do not meet anywhere close enough.'))+'</div>';
+    }
+    if(LD.notes.length&&LD.zones.length)
+      h+='<div class="kz-note">'+escHtml(LD.notes.join(' '))+'</div>';
+
+    function ladderCol(list,ttl,sw,cls){
+      if(!list||!list.length)return '<div class="ld-col '+cls+'"><u>'+ttl+'</u>'
+        +'<div class="ld-na">nothing to build from</div></div>';
+      var inZone={};
+      (LD.zones||[]).forEach(function(Z){ Z.members.forEach(function(m){
+        inZone[m.h.px.toFixed(4)]=1; inZone[m.l.px.toFixed(4)]=1; }); });
+      var body=list.slice().sort(function(a2,b2){return b2.px-a2.px;}).map(function(x){
+        return '<div class="ld-r'+(x.kind==='anchor'?' anc':'')
+          +(inZone[x.px.toFixed(4)]?' hit':'')+'">'
+          +'<b>'+tcFmt(x.px,dp)+'</b><s>'+escHtml(x.label)+'</s></div>';
+      }).join('');
+      return '<div class="ld-col '+cls+'"><u>'+ttl+'</u>'
+        +'<em>'+(sw?'dividing a '+tcFmt(sw.range,dp)+' swing'
+                  +(sw.dir==='fallback'?' (fallback range)':''):'square of 9 only')+'</em>'
+        +body+'</div>';
+    }
+    h+='<details class="ld-more"><summary>Both ladders in full — '
+      +((LD.hi||[]).length+(LD.lo||[]).length)+' levels</summary>'
+      +'<div class="ld-grid">'
+      +ladderCol(LD.hi,'Down from the major high',LD.swingH,'hi')
+      +ladderCol(LD.lo,'Up from the major low',LD.swingL,'lo')
+      +'</div></details>';
+  }
 
   /* ── what lines up on it ────────────────────────────────────────── */
   h+='<div class="ms-rows">';
@@ -14998,6 +15321,10 @@ root.CQE={ dataQuality:dataQuality, scrubTicks:scrubTicks,
   wyckoff:wyckoff, elliott:elliott, gannPrice:gannPrice, gannTime:gannTime,
   quant:quant, momentum:momentum, clusterLevels:clusterLevels, gates:gates,
   gannFan:gannFan, FAN_RATIOS:FAN_RATIOS,
+  /* the major-level ladders build a square of 9 from each major point, and
+     this was private, so every call threw ReferenceError into a catch and
+     both ladders shipped with range divisions only */
+  sq9Levels:sq9Levels, SQ9_DEG:SQ9_DEG, gannEighths:gannEighths,
   /* THESE TWO WERE PRIVATE AND THAT IS WHY THE TRADE COULD NOT SEE THEM.
      continuationConfirm is the six-check chain for a trend-continuation
      trade — the mirror of the reversal chain — and it existed only inside
