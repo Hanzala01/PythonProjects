@@ -593,8 +593,9 @@ def mt5_status():
         "connected": bool(_MT5["ok"]),
         "login": _MT5["login"],
         "server": _MT5["server"],
-        "note": ("MetaTrader5 runs on Windows with the terminal installed. "
-                 "pip install MetaTrader5")
+        # the command is shown as its own copy-able block by the page, so
+        # repeating it here printed it twice in the same sentence
+        "note": "The bridge does not have the MetaTrader5 package yet."
         if mt5 is None else "read-only: the investor password cannot place orders",
     })
 

@@ -2704,6 +2704,25 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .m5-acc b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1)}
 .m5-acc s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:2px}
 .m5-btns{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.m5-steps{display:grid;gap:7px}
+.m5-s{display:flex;gap:10px;padding:9px 11px;border-radius:11px;
+  border:1px solid rgba(160,130,220,.13);background:rgba(10,5,28,.4)}
+.m5-s.done{border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.05)}
+.m5-s.now{border-color:rgba(251,191,36,.38);background:rgba(251,191,36,.06)}
+.m5-s.wait{opacity:.62}
+.m5-s > i{width:20px;height:20px;flex:none;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;font-style:normal;font-size:9px;font-weight:800;
+  color:var(--t3);background:rgba(160,130,220,.16)}
+.m5-s.done > i{color:#34D399;background:rgba(52,211,153,.18)}
+.m5-s.now > i{color:#FBBF24;background:rgba(251,191,36,.18)}
+.m5-s b{display:block;font-size:10px;font-weight:800;color:var(--t1);margin-bottom:3px}
+.m5-s s{display:block;text-decoration:none;font-size:8.5px;line-height:1.6;color:var(--t3)}
+.m5-s code{display:inline-block;margin:5px 0;padding:4px 9px;border-radius:7px;cursor:pointer;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9px;color:#C4B5FD;
+  border:1px solid rgba(160,130,220,.28);background:rgba(24,14,52,.7);transition:.16s}
+.m5-s code:hover{border-color:rgba(196,181,253,.6);color:var(--t1)}
+.m5-s code.ok{color:#34D399;border-color:rgba(52,211,153,.5)}
+.m5-s .btn{margin-top:6px}
 .m5-na b{display:block;font-family:'Space Grotesk';font-size:11px;font-weight:800;
   color:var(--t2);margin-bottom:3px}
 .m5-na span{font-size:9px;line-height:1.6;color:var(--t3)}
@@ -6516,7 +6535,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b73</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b74</div>
     <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
          The card was 236px of fixed height for a name, a build string, four
          lines of marketing and a large illustration — and the notifications
@@ -7480,25 +7499,14 @@ body{background:var(--bg0)}
             <div class="cb" id="reports_body"><div class="f11 dim italic tc" style="padding:14px">Reports build automatically as trades are logged.</div></div></div>
         </div>
 
-        <!-- ASSET TRACKER -->
-        <div style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r2);padding:14px">
-          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Portfolio Watchlist</div>
-          <div style="display:flex;gap:8px;margin-bottom:10px">
-            <input id="pinp" placeholder="Add asset..." style="flex:1" autocomplete="off">
-            <button class="btn btn-a btn-sm" onclick="addAsset()">Add</button>
-          </div>
-          <div class="flex fw g4 mb10">
-            <button class="btn btn-g btn-xs" onclick="qa('Bitcoin')">BTC</button>
-            <button class="btn btn-g btn-xs" onclick="qa('Gold')">Gold</button>
-            <button class="btn btn-g btn-xs" onclick="qa('Ethereum')">ETH</button>
-            <button class="btn btn-g btn-xs" onclick="qa('Solana')">SOL</button>
-            <button class="btn btn-g btn-xs" onclick="qa('Silver')">Silver</button>
-            <button class="btn btn-g btn-xs" onclick="qa('Oil')">Oil</button>
-            <button class="btn btn-g btn-xs" onclick="qa('EURUSD')">EUR/USD</button>
-          </div>
-          <table><thead><tr><th>#</th><th>Asset</th><th>Res#</th><th>Cycle</th><th>Day</th><th>Signal</th><th></th></tr></thead>
-          <tbody id="ptbl"><tr><td colspan="7" class="dim italic tc" style="padding:14px">No assets</td></tr></tbody></table>
-        </div>
+        <!-- THE PORTFOLIO WATCHLIST IS GONE FROM THIS TAB.
+             A journal is what you HAVE traded. A watchlist is what you might
+             trade next, which is the Analytics tab's question — "Elsewhere",
+             section 12, already scans every other instrument and ranks them by
+             which is closest to firing. Two lists of assets on two tabs, one of
+             them hand-maintained, is one more thing to keep in step for no
+             answer the other does not already give. The ptbl builders below are
+             left alone; they simply have nothing to draw into now. -->
       </div>
 
 <!-- removed a stray </div> that closed <main> early, dropping the Community and Reference panes out of the layout grid -->
@@ -22617,10 +22625,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b73';
+var CA_BUILD='b74';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Bell moved to the top right \u00b7 the risk calculator was off-screen '
-  +'and is fixed \u00b7 a separate alert when something big is close';
+var CA_WHATS_NEW='Watchlist removed from the journal \u00b7 MT5 setup is now a checklist that checks itself \u00b7 risk calculator visible';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -22949,8 +22956,9 @@ function calcFund(){
 /* ══════════════════════════════════════
    PORTFOLIO ASSETS
 ══════════════════════════════════════ */
-function addAsset(){var nm=document.getElementById('pinp').value.trim();if(!nm)return;var r=calcNN(nm),p=plByNum(r.f);PORT.push({n:nm.charAt(0).toUpperCase()+nm.slice(1),g:r.g,num:r.f,pl:p?p.n:'?',day:p?p.day:'?'});document.getElementById('pinp').value='';renderPort();notify('Added '+nm+' #'+r.f,'info');}
-function qa(n){document.getElementById('pinp').value=n;addAsset();}
+function addAsset(){var _pi=document.getElementById('pinp'); if(!_pi)return;
+  var nm=_pi.value.trim();if(!nm)return;var r=calcNN(nm),p=plByNum(r.f);PORT.push({n:nm.charAt(0).toUpperCase()+nm.slice(1),g:r.g,num:r.f,pl:p?p.n:'?',day:p?p.day:'?'});_pi.value='';renderPort();notify('Added '+nm+' #'+r.f,'info');}
+function qa(n){var e=document.getElementById('pinp'); if(!e)return; e.value=n; addAsset();}
 
 /* ══════════════════════════════════════════════════════════════════════
    THE TRADING JOURNAL BOARD
@@ -23010,9 +23018,52 @@ function mt5Paint(){
   var S=_mt5;
   var body;
   if(S.available===false){
-    body='<div class="m5-na"><b>MetaTrader 5 is not available on the bridge</b>'
-      +'<span>'+escHtml(S.note||'')+' Once it is installed, this panel connects '
-      +'read-only and pulls your closed trades straight into the journal.</span></div>';
+    /* ══ A CHECKLIST, NOT A SENTENCE ═══════════════════════════════════
+       "connect kaise hoga" has been asked four times, and each time I
+       answered with prose in the chat. The answer belongs here, in the
+       panel, checking itself: which step is done, which one is next, and
+       the exact command to paste — because "install the package and run the
+       bridge" is three unstated assumptions for anyone who has not run a
+       Python file before. Each step reports what is actually true right
+       now rather than telling you what ought to be. */
+    var bridgeUp=(S.reach!==false);
+    body='<div class="m5-steps">'
+      +'<div class="m5-s '+(bridgeUp?'done':'now')+'">'
+        +'<i>'+(bridgeUp?'\u2713':'1')+'</i>'
+        +'<div><b>Start the bridge</b>'
+          +'<s>'+(bridgeUp
+             ? 'Running \u2014 this page can reach it on '+escHtml(bridgeURL())+'.'
+             : 'Not answering on '+escHtml(bridgeURL())+'. Open a terminal in the folder '
+               +'that holds celestial_bridge.py and run this, then leave the window open.')
+          +'</s>'
+          +(bridgeUp?'':'<code onclick="m5Copy(this)" title="click to copy">'
+            +'python celestial_bridge.py</code>')
+        +'</div></div>'
+      +'<div class="m5-s '+(bridgeUp?'now':'wait')+'">'
+        +'<i>2</i>'
+        +'<div><b>Install the MetaTrader 5 package</b>'
+          +'<s>'+escHtml(S.note||'The bridge does not have it yet.')
+          +' Windows only \u2014 there is no Mac or Linux build.</s>'
+          +'<code onclick="m5Copy(this)" title="click to copy">'
+            +'pip install MetaTrader5</code>'
+          +'<s>Then stop the bridge (Ctrl+C) and start it again.</s>'
+        +'</div></div>'
+      +'<div class="m5-s wait"><i>3</i>'
+        +'<div><b>Open MT5 and log in to the account</b>'
+          +'<s>The package talks to your MT5 terminal, not to the broker directly, '
+            +'so the terminal has to be running and signed in.</s></div></div>'
+      +'<div class="m5-s wait"><i>4</i>'
+        +'<div><b>Find the investor password</b>'
+          +'<s>In MT5: Tools \u2192 Options \u2192 Server, or ask your broker for the '
+            +'\u201Cinvestor (read-only) password\u201D. It is not the one you log in '
+            +'with \u2014 it can read the account and nothing else.</s></div></div>'
+      +'<div class="m5-s wait"><i>5</i>'
+        +'<div><b>Come back here</b>'
+          +'<s>This panel turns into a form the moment steps 1 and 2 are done. '
+            +'Refresh the tab to re-check.</s>'
+          +'<button class="btn btn-g btn-sm" onclick="mt5Status()">Check again</button>'
+        +'</div></div>'
+    +'</div>';
   }else if(S.connected){
     body='<div class="m5-on">'
       +'<div class="m5-badge">Connected · read-only</div>'
@@ -23051,14 +23102,25 @@ function mt5Paint(){
   +'</div>';
 }
 
+function m5Copy(el){
+  var t=el.textContent;
+  try{ navigator.clipboard.writeText(t); }catch(e){
+    try{ var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
+         ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }catch(e2){} }
+  var was=el.textContent;
+  el.textContent='copied'; el.classList.add('ok');
+  setTimeout(function(){ el.textContent=was; el.classList.remove('ok'); },900);
+}
 function mt5Status(){
   fetch(bridgeURL()+'/mt5/status').then(function(r){return r.json();}).then(function(d){
-    _mt5.available=!!d.available; _mt5.connected=!!d.connected;
+    _mt5.available=!!d.available; _mt5.connected=!!d.connected; _mt5.reach=true;
     _mt5.login=d.login; _mt5.server=d.server; _mt5.note=d.note;
     mt5Paint();
   }).catch(function(){
-    _mt5.available=false;
-    _mt5.note='The bridge is not running. Start celestial_bridge.py and reopen this tab.';
+    /* the two failures are different and the fix is different: the bridge not
+       running at all, and the bridge running without the package */
+    _mt5.available=false; _mt5.reach=false;
+    _mt5.note='The bridge is not answering.';
     mt5Paint();
   });
 }
@@ -23717,7 +23779,10 @@ function jbPaint(){
 }
 
 function renderPort(){
+  /* the watchlist table is off the journal tab, so this has nowhere to draw.
+     It threw on a null innerHTML and took everything after it down with it. */
   var tb=document.getElementById('ptbl');
+  if(!tb)return;
   if(!PORT.length){tb.innerHTML='<tr><td colspan="7" class="dim italic tc" style="padding:20px">No assets</td></tr>';return;}
   tb.innerHTML=PORT.map(function(a,i){
     var sig='';
