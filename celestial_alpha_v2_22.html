@@ -2705,6 +2705,58 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .m5-ok{margin-top:9px;padding:8px 10px;border-radius:9px;font-size:9px;line-height:1.6;
   color:var(--t2);border:1px solid rgba(52,211,153,.32);background:rgba(52,211,153,.06)}
 .m5-note{margin-top:8px;font-size:8px;line-height:1.6;color:var(--t3);opacity:.85}
+/* .ch is a flex row of three — title, subtitle, button — with nothing
+   allowed to wrap. In a card that is half of a two-column grid inside a
+   column of the pane, all three shrink past their content and print on top
+   of each other; the AI Trade Review header was three overlapping lines with
+   the Generate button across them. The subtitle takes its own line here and
+   the button stays beside the title. */
+#pane_portfolio .ch{flex-wrap:wrap;gap:6px 10px}
+#pane_portfolio .ch > .ct{min-width:0;flex:1 1 auto}
+#pane_portfolio .ch > .cs{flex:1 1 100%;order:3;line-height:1.5}
+#pane_portfolio .ch > .btn{flex:none}
+
+/* ── THE REST OF THE TAB, IN THE BOARD'S LANGUAGE ─────────────────────
+   The blocks below the board — the calendar, best and worst day, the trade
+   counter, account setup, log trade, trade history — are older markup with
+   their colours written inline as var(--s1) and var(--rim). Rendered beside
+   the board they read as a different product bolted underneath it, which is
+   most of why the tab still looked like the old version even after the
+   duplicates were removed.
+
+   Rewriting all of that markup would touch a lot of working forms for a
+   purely visual result. Repainting it is scoped to this pane and reaches the
+   inline styles, which is the only thing that will override them. Structure,
+   ids and behaviour are untouched — only the surface. */
+#pane_portfolio > div[style*="--s1"],
+#pane_portfolio > div > div[style*="--s1"],
+#pane_portfolio .pf-wide,
+#pane_portfolio .pnl_charts,
+#pane_portfolio .g2 > .card,
+#pane_portfolio > .card{
+  background:rgba(20,11,46,.5) !important;
+  border:1px solid rgba(160,130,220,.14) !important;
+  border-radius:14px !important;
+}
+#pane_portfolio .cal-cell,
+#pane_portfolio div[style*="--s2"]{
+  background:rgba(10,5,28,.42) !important;
+  border-color:rgba(160,130,220,.1) !important;
+}
+/* the section headings inside those blocks */
+#pane_portfolio div[style*="text-transform:uppercase"]{
+  color:#C4B5FD !important;
+}
+.jb-wait{padding:12px 15px;border-radius:12px;margin-bottom:12px;
+  border:1px dashed rgba(196,181,253,.3);background:rgba(28,17,60,.45)}
+.jb-wait b{display:block;font-family:'Space Grotesk';font-size:12px;font-weight:800;
+  color:#C4B5FD;margin-bottom:4px}
+.jb-wait span{font-size:9px;line-height:1.65;color:var(--t3)}
+/* with nothing logged the figures are placeholders, so they read as quiet
+   structure rather than as results */
+.jb.is-empty .jb-h1 b,.jb.is-empty .jb-r3 b,.jb.is-empty .jb-s b,
+.jb.is-empty .jb-pr b{color:var(--t3);opacity:.65}
+.jb.is-empty .jb-split{opacity:.35}
 .jb{margin-bottom:14px}
 .jb-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:9px;
   margin-bottom:14px}
@@ -2808,11 +2860,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jb-mt i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.07em;
   text-transform:uppercase;color:var(--t3);margin-top:2px}
 .jb-mt s{display:block;text-decoration:none;font-size:8px;color:var(--t3);opacity:.8}
-/* ten statistics in four columns is two rows and a half-empty third; five
-   columns is exactly two, which is why the sheet's own grid is even */
-.jb-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-@media(max-width:1400px){.jb-stats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1040px){.jb-stats{grid-template-columns:1fr 1fr}}
+/* Ten statistics want a column count that divides ten. Five did on a wide
+   screen, but the panel is a third of the pane, so the middle breakpoint fell
+   to three — four rows with two empty cells and Expectancy stranded on its
+   own. Two divides ten at every width this panel is ever given. */
+.jb-stats{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+@media(min-width:1700px){.jb-stats{grid-template-columns:repeat(5,1fr)}}
 .jb-s{padding:6px 8px;border-radius:8px;background:rgba(10,5,28,.42)}
 .jb-s i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.07em;
   text-transform:uppercase;color:var(--t3);margin-top:3px}
@@ -6246,7 +6299,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b63</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b64</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7173,8 +7226,8 @@ body{background:var(--bg0)}
 
         <!-- AI REVIEW + REPORTS -->
         <div class="g2">
-          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>\u2726 AI Trade Review</div><div class="cs">Reads the trades you have logged and looks for what keeps costing you money.</div><button class="btn btn-a btn-xs" onclick="aiReview()">Generate</button></div>
-            <div class="cb" id="ai_review_body"><div class="f11 dim italic tc" style="padding:14px">Log a few trades, then generate your review \u2014 session performance, mistake patterns, and edge analysis.</div></div></div>
+          <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>✦ AI Trade Review</div><div class="cs">Reads the trades you have logged and looks for what keeps costing you money.</div><button class="btn btn-a btn-xs" onclick="aiReview()">Generate</button></div>
+            <div class="cb" id="ai_review_body"><div class="f11 dim italic tc" style="padding:14px">Log a few trades, then generate your review — session performance, mistake patterns, and edge analysis.</div></div></div>
           <div class="card"><div class="ch"><div class="ct"><div class="dot" style="background:var(--gold)"></div>Reports</div><div class="cs">Your results grouped by week, by month and by session.</div></div>
             <div class="cb" id="reports_body"><div class="f11 dim italic tc" style="padding:14px">Reports build automatically as trades are logged.</div></div></div>
         </div>
@@ -22588,11 +22641,15 @@ function jbBoardHtml(){
   var end=hasCur?curRaw:start+S.totalPnl;
   var withdrawn=hasCur?(start+S.totalPnl-curRaw):0;
 
-  if(!JRNL.length)
-    return '<div class="jb"><div class="jb-empty"><b>The journal is empty</b>'
-      +'<span>Every figure on this board is computed from trades you have logged — '
-      +'nothing here is a sample. Log a trade below, or let the bot log one, and the '
-      +'board fills in.</span></div></div>';
+  /* AN EMPTY JOURNAL USED TO COLLAPSE THE WHOLE BOARD TO ONE SMALL BOX.
+     Measured on a fresh file: jb_board 127px, and everything visible on the
+     tab below it was the older styling. So the answer to "the old version is
+     back" was that the new one was only 127 pixels tall and the reader never
+     saw it. A journal template shows its shape before it has data — that is
+     how you know what it will tell you once it does. The board draws in full
+     with every figure reading as a dash, and one line at the top says it is
+     waiting for the first trade rather than pretending to be broken. */
+  var empty=!JRNL.length;
 
   function stat(k,v,sub,tone){
     /* value first, label under it — the sheet reads as a grid of numbers with
@@ -22620,7 +22677,12 @@ function jbBoardHtml(){
   var best=S.byAsset.slice(0,3), worst=S.byAsset.slice(-3).reverse()
     .filter(function(x){return best.indexOf(x)<0;});
 
-  return '<div class="jb">'
+  return '<div class="jb'+(empty?' is-empty':'')+'">'
+   +(empty?'<div class="jb-wait"><b>Waiting for your first trade</b>'
+      +'<span>This is the shape of the board. Every figure on it is computed from '
+      +'trades you have logged — nothing is a sample and nothing is carried over from '
+      +'a template. Log one below, import from MetaTrader 5, or let the bot log one, '
+      +'and these fill in.</span></div>':'')
    +'<div class="jb-head">'+head+'</div>'
 
    +'<div class="jb-sec">Overall summary</div>'
