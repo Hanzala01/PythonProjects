@@ -39,6 +39,7 @@ import hashlib
 import hmac
 import json
 import os
+import urllib.parse
 import secrets
 import sqlite3
 import time
@@ -372,6 +373,21 @@ FRED_SERIES = {
     "DGS10": "US 10-year treasury yield",
     "DGS30": "US 30-year treasury yield",
     "DTWEXBGS": "Broad trade-weighted dollar index",
+    # THIS WHITELIST IS WHY CPI AND PAYROLLS WERE BLANK.
+    # The page walks EconPulse, then BLS, then DBnomics, then FMP, then FRED.
+    # EconPulse answers 522 (its origin is down), BLS refuses without a key
+    # because the anonymous quota is one shared exhausted pool, FMP is at its
+    # plan limit, and FRED sends no Access-Control-Allow-Origin so the browser
+    # drops it. The bridge could have served FRED — but only these five series
+    # were allowed through, and none of them is CPI or payrolls. So the one
+    # working route was closed for exactly the numbers that were missing.
+    "CPIAUCSL": "US CPI, all items, seasonally adjusted",
+    "PAYEMS": "US total non-farm payrolls",
+    "UNRATE": "US unemployment rate",
+    "DFF": "US effective federal funds rate",
+    "PPIFIS": "US PPI, final demand",
+    "PCEPI": "US PCE price index",
+    "GDPC1": "US real GDP",
 }
 _FRED_CACHE: dict[str, tuple[float, list]] = {}
 FRED_TTL = 6 * 3600
@@ -435,6 +451,115 @@ def calendar():
     return _public({"source": "forexfactory", "cached": False, "events": rows})
 
 
+# ── THE OTHER THREE FEEDS, FOR THE SAME REASON ────────────────────────────
+# Measured against each provider rather than assumed, with Origin: null —
+# which is what a page opened from a folder actually sends:
+#
+#   EODHD    200, real data (XAUUSD.FOREX priced 4526.51 on 2026-08-20),
+#            and NO Access-Control-Allow-Origin. It sends allow-credentials,
+#            allow-methods and allow-headers — everything except the one
+#            header that matters — so a browser refuses the response even
+#            though the request succeeded.
+#   GNews    200, articles returned, and again no Access-Control-Allow-Origin.
+#            (Its own payload also notes the free plan runs 12 hours behind.)
+#   BLS      Access-Control-Allow-Origin: * — the CORS is fine. It fails for
+#            a different reason: with no registration key the quota is a
+#            single shared anonymous pool, and the reply is
+#            "the daily threshold for total number of requests allocated to
+#            the user with registration key <blank> has been reached".
+#            A free key from bls.gov/developers is a per-user quota.
+#
+# CORS is a rule browsers apply. It is not a rule this process has to obey,
+# so all three are fetched here and handed back with the page's origin
+# allowed. Each is cached, because these are per-day numbers behind
+# per-day quotas and re-fetching them on every render is how a free key is
+# spent by lunchtime.
+#
+# EconPulse is NOT proxied. api.econpulse.io answers 522 and then 523 —
+# Cloudflare for "the origin server is down" — while econpulse.io itself
+# answers 200. The service is broken at source, and proxying a dead endpoint
+# only moves the failure. The page drops it and says so.
+
+_PX_CACHE: dict[str, tuple[float, object]] = {}
+
+
+def _px(key: str, ttl: int, build):
+    """Fetch through a small per-key cache, and serve a stale copy rather
+    than nothing when the upstream is having a bad day."""
+    import json as _json
+    import urllib.request
+
+    now = time.time()
+    hit = _PX_CACHE.get(key)
+    if hit and now - hit[0] < ttl:
+        return _public({"cached": True, "data": hit[1]})
+    url = build()
+    req = urllib.request.Request(url, headers={"User-Agent": "celestial-bridge"})
+    try:
+        with urllib.request.urlopen(req, timeout=25) as f:
+            data = _json.loads(f.read().decode("utf-8", "replace"))
+    except Exception as e:                      # noqa: BLE001
+        if hit:
+            return _public({"cached": True, "stale": True,
+                            "age_minutes": int((now - hit[0]) / 60),
+                            "data": hit[1]})
+        raise HTTPException(502, f"{key.split(':')[0]} unreachable: {e}")
+    _PX_CACHE[key] = (now, data)
+    return _public({"cached": False, "data": data})
+
+
+# The key travels from the page rather than living here, so this file stays
+# safe to share. Broker credentials are the opposite case and stay server-side.
+@app.get("/px/eodhd/{symbol}")
+def px_eodhd(symbol: str, token: str, days: int = 400):
+    import datetime as _dt
+    frm = (_dt.date.today() - _dt.timedelta(days=days)).isoformat()
+    return _px(
+        f"eodhd:{symbol}:{frm}", 3600,
+        lambda: ("https://eodhd.com/api/eod/"
+                 + urllib.parse.quote(symbol)
+                 + f"?period=d&from={frm}&api_token="
+                 + urllib.parse.quote(token) + "&fmt=json"))
+
+
+@app.get("/px/gnews")
+def px_gnews(q: str, token: str, max_results: int = 10):
+    return _px(
+        f"gnews:{q}", 900,
+        lambda: ("https://gnews.io/api/v4/search?q=" + urllib.parse.quote(q)
+                 + f"&in=title&lang=en&max={int(max_results)}"
+                 + "&sortby=publishedAt&apikey=" + urllib.parse.quote(token)))
+
+
+@app.get("/px/bls/{series}")
+def px_bls(series: str, token: str = ""):
+    # Six hours: these series print monthly. Asking more often than that
+    # spends a per-day quota on a number that cannot have changed.
+    return _px(
+        f"bls:{series}", 6 * 3600,
+        lambda: ("https://api.bls.gov/publicAPI/v2/timeseries/data/"
+                 + urllib.parse.quote(series)
+                 + (("?registrationkey=" + urllib.parse.quote(token)) if token else "")))
+
+
+@app.options("/px/{rest:path}")
+def px_preflight(rest: str):
+    return _public({"ok": True})
+
+
+# FRED SERVED PUBLIC MACRO DATA BEHIND A PRIVATE CORS POLICY.
+# This endpoint carries no user data — it is the St Louis Fed's own published
+# series, which anyone can download — but it was returning a bare dict, so the
+# CORS middleware applied the strict ORIGINS list and a file:// page (origin
+# null) had its response refused by the browser. The bridge fetched CPI
+# correctly and the page could not read it, which is the same failure the
+# calendar had. It gets the same allow-all header the calendar does; the
+# journal and trade endpoints keep the strict list and are untouched.
+@app.options("/fred/{series_id}")
+def fred_preflight(series_id: str):
+    return _public({"ok": True})
+
+
 @app.get("/fred/{series_id}")
 def fred(series_id: str, start: str = "2020-01-01"):
     if series_id not in FRED_SERIES:
@@ -442,8 +567,8 @@ def fred(series_id: str, start: str = "2020-01-01"):
     now = time.time()
     hit = _FRED_CACHE.get(series_id)
     if hit and now - hit[0] < FRED_TTL:
-        return {"series": series_id, "name": FRED_SERIES[series_id],
-                "cached": True, "observations": hit[1]}
+        return _public({"series": series_id, "name": FRED_SERIES[series_id],
+                        "cached": True, "observations": hit[1]})
     import urllib.request
 
     url = ("https://fred.stlouisfed.org/graph/fredgraph.csv"
@@ -470,8 +595,8 @@ def fred(series_id: str, start: str = "2020-01-01"):
         except ValueError:
             continue
     _FRED_CACHE[series_id] = (now, obs)
-    return {"series": series_id, "name": FRED_SERIES[series_id],
-            "cached": False, "observations": obs}
+    return _public({"series": series_id, "name": FRED_SERIES[series_id],
+                    "cached": False, "observations": obs})
 
 
 if __name__ == "__main__":

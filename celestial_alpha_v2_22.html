@@ -5972,7 +5972,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b58</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b59</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -5986,7 +5986,6 @@ body{background:var(--bg0)}
 
 <!-- ═══════════ MAIN ═══════════ -->
 <main class="main">
-<div id="ribbon" class="ribbon" aria-label="the four things worth knowing, on every tab"></div>
         <div class="pane" id="pane_dashboard">
   <div class="q-band" id="quote_band" style="display:none"></div>
   <!-- says why the board is empty or stale, and stays on screen; the toast that
@@ -9070,26 +9069,10 @@ function countUpAll(root){
    between makes the eye travel down the screen in the order the page wants
    to be read, which is the whole reason the order was chosen. */
 
-/* ══════════════════════════════════════════════════════════════════════
-   THE RIBBON — the four answers, on every tab, always
-
-   Everything this app knows is on some tab, and the tab you are on is
-   never the one the answer is on. The verdict lives in Analytics, the
-   clock in Timing, the next release in Market Intelligence, and the key
-   zone three sections down inside a window. Checking all four means four
-   navigations and a scroll, so in practice nobody checks all four.
-
-   Four segments, one strip, above every pane. Each is a live value with
-   the tab it came from behind it, so clicking one goes there. It updates
-   on its own — the countdown every second, the rest every thirty — and a
-   segment whose value has actually CHANGED flashes once, so a strip you
-   are not looking at can still tell you something moved.
-
-   Nothing is computed here. Every segment reads an engine that already
-   ran; if one has not run, the segment says so rather than guessing.
-   ══════════════════════════════════════════════════════════════════════ */
-var _ribTimer=null, _ribTick=null, _ribLast={};
-
+/* The nearest key zone and the next release, kept because the alert
+   watcher asks for both. The four-segment strip that used to sit above
+   every pane and read them is gone — it was a fixed bar nobody asked
+   for, and a permanent strip is a cost paid on every screen. */
 function ribNextEvent(){
   try{
     var evs=buildEconEvents(), now=new Date();
@@ -9109,75 +9092,6 @@ function ribKeyZone(){
     if(!Z)return null;
     return {px:Z.price,dist:Z.distATR,side:Z.side,strength:Z.strength};
   }catch(e){ return null; }
-}
-
-function ribbonPaint(){
-  var host=document.getElementById('ribbon');
-  if(!host)return;
-  var segs=[];
-
-  /* 1 · the verdict */
-  var v=null;
-  try{ if(window.CQE_LAST)v=cqeVerdict(window.CQE_LAST,window.CQE_LAST.price); }catch(e){}
-  segs.push({k:'rb-v', tab:'analytics', cap:'The call',
-    val: v?v.word:'—',
-    sub: v?String(v.why||''):'run an analysis',
-    tone: v?(v.tone==='go'?'go':v.tone==='out'?'out':'wait'):'na'});
-
-  /* 2 · the clock */
-  var E=null; try{ E=timEngine(); }catch(e){}
-  segs.push({k:'rb-t', tab:'timing', cap:'The clock',
-    val: E?E.state:'—',
-    sub: E?(E.cycle+' · '+(E.progress==null?'—':E.progress+'%')+' · next '+E.next.text):'no engine yet',
-    tone: E?(E.bias.k==='Reversal Watch'?'out':E.bias.k==='Continuation'?'go':'wait'):'na'});
-
-  /* 3 · the next release, ticking */
-  var ev=ribNextEvent();
-  segs.push({k:'rb-n', tab:'sentiment', cap:'Next release',
-    val: ev?fmtCountdown(ev.d-new Date()):'—',
-    sub: ev?(String(ev.t)+(ev.country?' · '+ev.country:'')):'nothing scheduled',
-    tone: ev?((ev.d-new Date())<6*3600000?'out':ev.impact==='High'?'wait':'go'):'na',
-    live: ev?+ev.d:null});
-
-  /* 4 · the nearest key zone */
-  var Z=ribKeyZone();
-  segs.push({k:'rb-z', tab:'analytics', cap:'Nearest key zone',
-    val: Z?tcFmt(Z.px,(window.CQE_LAST&&window.CQE_LAST.price<10)?4:2):'—',
-    sub: Z?((Z.dist!=null?Z.dist.toFixed(2)+' ATR '+(Z.side||''):'')
-            +' · '+Z.strength+'×'+Z.strength+' agreement'):'no zone on this data',
-    tone: Z?(Z.dist!=null&&Z.dist<=1?'go':Z.dist!=null&&Z.dist<=3?'wait':'na'):'na'});
-
-  host.innerHTML=segs.map(function(s,i){
-    var changed=(_ribLast[s.k]!=null&&_ribLast[s.k]!==s.val);
-    _ribLast[s.k]=s.val;
-    return '<button class="rb '+s.tone+(changed?' changed':'')+'" '
-      +'data-k="'+s.k+'" '+(s.live?'data-live="'+s.live+'" ':'')
-      +'style="animation-delay:'+(i*0.06).toFixed(2)+'s" '
-      +'onclick="goTab(\''+s.tab+'\',document.querySelector(\'.nav-item[onclick*=&quot;'
-        +s.tab+'&quot;]\'))" '
-      +'title="'+escHtml(s.cap+' — '+s.sub)+'">'
-      +'<i>'+escHtml(s.cap)+'</i>'
-      +'<b class="rb-val">'+escHtml(String(s.val))+'</b>'
-      +'<s>'+escHtml(s.sub)+'</s>'
-      +'<u class="rb-go">open</u></button>';
-  }).join('');
-  host.classList.add('on');
-}
-function ribbonStart(){
-  if(_ribTimer)clearInterval(_ribTimer);
-  if(_ribTick)clearInterval(_ribTick);
-  ribbonPaint();
-  /* the countdown alone every second; everything else every half minute,
-     because re-running the engines once a second to redraw four words is
-     how a page starts costing battery */
-  _ribTick=setInterval(function(){
-    var el=document.querySelector('#ribbon .rb[data-live]');
-    if(!el)return;
-    var t=+el.getAttribute('data-live');
-    var b=el.querySelector('.rb-val');
-    if(b)b.textContent=fmtCountdown(t-Date.now());
-  },1000);
-  _ribTimer=setInterval(ribbonPaint,30000);
 }
 
 
@@ -23101,7 +23015,6 @@ function goTab(name,btn){
   document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
   try{ revealPane(name); }catch(e){}
-  try{ ribbonPaint(); }catch(e){}
   try{ caReveal(document.getElementById('pane_'+name)); }catch(e){}
   try{ caCountAll(document.getElementById('pane_'+name)); }catch(e){}
   if(name==='reference')loadRefFrames();
@@ -23992,16 +23905,49 @@ var EOD_SYM={
      Gann/sigma engine. */
 };
 function eodhdSymbol(sym){return EOD_SYM[sym]||null;}
+/* ══ WHY EODHD NEVER WORKED IN THE BROWSER ═══════════════════════════
+   Measured with Origin: null, which is what a page opened from a folder
+   actually sends:
+
+     GET /api/eod/XAUUSD.FOREX  →  HTTP/2 200, real prices
+                                   (gold 4526.51 on 2026-08-20)
+     access-control-allow-credentials: true
+     access-control-allow-methods:     GET, POST, PUT, DELETE, OPTIONS
+     access-control-allow-headers:     Accept, Authorization, ...
+     access-control-allow-origin:      ABSENT
+
+   The key is fine and the data is there. EODHD sends every CORS header
+   except the one that decides whether the browser hands the body to the
+   script, so the fetch succeeds and the response is thrown away. No amount
+   of retrying changes that, and the public relays in front of it were
+   papering over a problem they cannot fix.
+
+   The bridge can: CORS is a rule browsers apply, not one a Python process
+   has to obey. /px/eodhd fetches it server-side, caches it for an hour and
+   returns it with this page's origin allowed. Tried first, because it is
+   the only route that actually works. */
 function eodhdFetch(path,cb){
   var direct='https://eodhd.com/api/'+path+(path.indexOf('?')>=0?'&':'?')+'api_token='+EODHD_KEY+'&fmt=json';
-  var routes=[direct,
+  var routes=[];
+  try{
+    var m=path.match(/^eod\/([^?]+)/);
+    if(m)routes.push(bridgeURL()+'/px/eodhd/'+encodeURIComponent(m[1])
+      +'?token='+encodeURIComponent(EODHD_KEY)+'&days=400');
+  }catch(e){}
+  routes=routes.concat([direct,
     'https://corsproxy.io/?url='+encodeURIComponent(direct),
-    'https://api.allorigins.win/raw?url='+encodeURIComponent(direct)];
+    'https://api.allorigins.win/raw?url='+encodeURIComponent(direct)]);
   var i=0;
   (function attempt(){
-    if(i>=routes.length){cb(null,'blocked');return;}
+    if(i>=routes.length){
+      cb(null,'EODHD answers 200 but sends no Access-Control-Allow-Origin, so a '
+        +'browser cannot read it. Start celestial_bridge.py and it goes through.');
+      return;
+    }
     var u=routes[i++];
     fetch(u).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      /* the bridge wraps its payload; every other route returns it bare */
+      if(d&&d.data!==undefined)d=d.data;
       if(d&&!d.error&&(Array.isArray(d)?d.length:true))cb(d);
       else attempt();
     }).catch(attempt);
@@ -25050,17 +24996,31 @@ function newsMoodOf(a){
 }
 /* GNews — quoted phrases restricted to the title give by far the cleanest
    market headlines of the three providers, so it leads the merge. */
+/* Same failure as EODHD, measured the same way: gnews.io answers 200 with
+   articles and sends no Access-Control-Allow-Origin, so the browser drops
+   the body. Its own payload also notes the free plan runs twelve hours
+   behind, which is worth knowing but is not why the panel was empty. */
 function fetchGnews(cb){
   var q='"gold price" OR "bitcoin" OR "federal reserve" OR "crude oil" OR "interest rate" OR "stock market"';
-  var url='https://gnews.io/api/v4/search?q='+encodeURIComponent(q)
+  var direct='https://gnews.io/api/v4/search?q='+encodeURIComponent(q)
     +'&in=title&lang=en&max=10&sortby=publishedAt&apikey='+GNEWS_KEY;
-  fetch(url).then(function(r){return r.json();}).then(function(d){
-    if(!d||!d.articles){cb([]);return;}
-    cb(d.articles.map(function(a){
-      return{title:a.title,url:a.url,source:(a.source&&a.source.name)||'GNews',
-             ts:a.publishedAt?new Date(a.publishedAt).getTime():0};
-    }));
-  }).catch(function(){cb([]);});
+  var routes=[];
+  try{ routes.push(bridgeURL()+'/px/gnews?q='+encodeURIComponent(q)
+        +'&token='+encodeURIComponent(GNEWS_KEY)+'&max_results=10'); }catch(e){}
+  routes.push(direct);
+  var i=0;
+  (function attempt(){
+    if(i>=routes.length){ cb([],'GNews sends no Access-Control-Allow-Origin — start '
+      +'celestial_bridge.py and the headlines come through.'); return; }
+    fetch(routes[i++]).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(d&&d.data!==undefined)d=d.data;
+      if(!d||!d.articles){ attempt(); return; }
+      cb(d.articles.map(function(a){
+        return{title:a.title,url:a.url,source:(a.source&&a.source.name)||'GNews',
+               ts:a.publishedAt?new Date(a.publishedAt).getTime():0};
+      }), null, (d.information&&d.information.realTimeArticles)?'free plan — 12 hours behind':null);
+    }).catch(function(){ attempt(); });
+  })();
 }
 var _newsLoaded=false;
 function escHtml(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -25189,12 +25149,36 @@ function setEpKey(v){
   _epCache=null;_epAt=0;_epKeyState=null;_macroCache={};
   try{renderSentiment();}catch(e){}
 }
+/* ══ ECONPULSE IS DOWN AT SOURCE, NOT MISCONFIGURED ═══════════════════
+   Measured just now, three ways:
+
+     https://api.econpulse.io/v1/macro?key=demo   →  522, then 523
+     https://api.econpulse.io/                    →  no response at all
+     https://econpulse.io/                        →  200
+
+   522 and 523 are Cloudflare's codes for "the origin server behind me is
+   not answering". The marketing site is up; the API is not. That is not a
+   key problem and not a CORS problem, and proxying it through the bridge
+   would only move the failure — the bridge would get the same 522.
+
+   So it is not retried on a loop any more. One attempt, and if the origin
+   is down the panel says so in those words and falls through to BLS, which
+   is the same data from the agency that publishes it. */
+var _epDown=false;
 function epFetch(cb){
   if(_epCache&&Date.now()-_epAt<5*60000){cb(_epCache);return;}
+  if(_epDown){ cb(null,'EconPulse is down at source — its API returns 522 from '
+    +'Cloudflare while econpulse.io itself is up. Nothing here can reach it; '
+    +'CPI and payrolls come from BLS instead.'); return; }
   var keys=EP_KEY?[EP_KEY,EP_DEMO]:[EP_DEMO];
   var i=0;
   (function attempt(){
-    if(i>=keys.length){cb(null,'no key accepted');return;}
+    if(i>=keys.length){
+      _epDown=true;
+      cb(null,'EconPulse is down at source — its API returns 522 from Cloudflare '
+        +'while econpulse.io itself is up. CPI and payrolls come from BLS instead.');
+      return;
+    }
     var k=keys[i++], mine=(k===EP_KEY&&EP_KEY);
     fetch('https://api.econpulse.io/v1/macro?key='+encodeURIComponent(k))
       .then(function(r){ return r.status===200?r.json():null; })
@@ -25307,11 +25291,41 @@ function macroDbnomics(code,cb){
 /* ── source 2: BLS, when a key is present — CORS-open and current ── */
 function macroBls(series,cb){
   if(!series||!BLS_KEY){cb(null,BLS_KEY?'not mapped':'no key');return;}
-  fetch('https://api.bls.gov/publicAPI/v2/timeseries/data/'+series+'?registrationkey='+encodeURIComponent(BLS_KEY))
+  /* BLS IS THE ODD ONE OUT AND IT IS NOT A CORS PROBLEM.
+     Measured: api.bls.gov returns Access-Control-Allow-Origin: * — the
+     browser is happy to read it. What comes back with no key is
+
+       "Request could not be serviced, as the daily threshold for total
+        number of requests allocated to the user with registration key
+        <blank> has been reached"
+
+     The anonymous quota is one shared pool for everybody on the internet
+     and it is exhausted daily. A free key from bls.gov/developers is a
+     private quota, which is why the panel asks for one. The bridge route
+     is offered first anyway, because it caches for six hours and these
+     series print monthly — re-asking on every render is how a fresh key
+     is spent before lunch. */
+  var _blsRoutes=[];
+  try{ _blsRoutes.push(bridgeURL()+'/px/bls/'+encodeURIComponent(series)
+        +(BLS_KEY?'?token='+encodeURIComponent(BLS_KEY):'')); }catch(e){}
+  _blsRoutes.push('https://api.bls.gov/publicAPI/v2/timeseries/data/'+series
+    +(BLS_KEY?'?registrationkey='+encodeURIComponent(BLS_KEY):''));
+  var _bi=0;
+  (function blsTry(){
+   if(_bi>=_blsRoutes.length){ cb(null,'no route answered'); return; }
+   fetch(_blsRoutes[_bi++])
     .then(function(r){return r.json();})
     .then(function(d){
+      if(d&&d.data!==undefined)d=d.data;
       if(!d||d.status!=='REQUEST_SUCCEEDED'){
-        cb(null,(d&&d.message&&d.message[0])?String(d.message[0]).slice(0,80):'refused');return;
+        if(_bi<_blsRoutes.length){ blsTry(); return; }
+        var msg=(d&&d.message&&d.message[0])?String(d.message[0]):'refused';
+        cb(null, /threshold/i.test(msg)&&!BLS_KEY
+          ? 'BLS has no key here, and its keyless quota is one pool shared by '
+            +'everyone and is used up. A free key from bls.gov/developers fixes '
+            +'it — paste it in Settings.'
+          : msg.slice(0,110));
+        return;
       }
       var s=d.Results&&d.Results.series&&d.Results.series[0];
       if(!s||!s.data||!s.data.length){cb(null,'empty');return;}
@@ -25321,7 +25335,8 @@ function macroBls(series,cb){
       cb({latest:parseFloat(rows[0].value),prev:rows[1]?parseFloat(rows[1].value):null,
           date:pad(rows[0]),src:'BLS'});
     })
-    .catch(function(){cb(null,'unreachable');});
+    .catch(function(){ if(_bi<_blsRoutes.length){blsTry();return;} cb(null,'unreachable'); });
+  })();
 }
 /* ── source 3: FMP — CORS-open, but this key is at its plan limit ── */
 function macroFmp(name,cb){
@@ -25346,16 +25361,34 @@ function macroFmp(name,cb){
       succeeds when the page is served behind your own proxy ── */
 function macroFred(id,cb){
   if(!id){cb(null,'not mapped');return;}
-  fetch('https://api.stlouisfed.org/fred/series/observations?series_id='+id
-        +'&api_key='+FRED_KEY+'&file_type=json&sort_order=desc&limit=2')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var o=d&&d.observations;
-      if(!o||!o.length){cb(null,'empty');return;}
+  /* THE BRIDGE FIRST, AND THIS IS THE ONE THAT FIXES CPI AND PAYROLLS.
+     FRED has both, correctly and free. It just sends no CORS header, so the
+     browser throws the answer away — which left the whole chain empty once
+     EconPulse went down and BLS ran out of anonymous quota. The bridge reads
+     it server-side and hands it back with this origin allowed, and it caches
+     for six hours because these series print monthly. */
+  var routes=[];
+  try{ routes.push({u:bridgeURL()+'/fred/'+encodeURIComponent(id),bridge:true}); }catch(e){}
+  routes.push({u:'https://api.stlouisfed.org/fred/series/observations?series_id='+id
+        +'&api_key='+FRED_KEY+'&file_type=json&sort_order=desc&limit=2'});
+  var i=0;
+  (function attempt(){
+    if(i>=routes.length){
+      cb(null,'FRED has this, but it sends no CORS header — start celestial_bridge.py '
+        +'and CPI and payrolls fill in.');
+      return;
+    }
+    var R=routes[i++];
+    fetch(R.u).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(!d){ attempt(); return; }
+      /* the bridge returns oldest-first observations under its own key */
+      var o=d.observations;
+      if(R.bridge&&Array.isArray(d.observations))o=d.observations.slice().reverse();
+      if(!o||!o.length){ attempt(); return; }
       cb({latest:parseFloat(o[0].value),prev:o[1]?parseFloat(o[1].value):null,
-          date:o[0].date,src:'FRED'});
-    })
-    .catch(function(){cb(null,'blocked by CORS');});
+          date:o[0].date,src:R.bridge?'FRED via bridge':'FRED'});
+    }).catch(function(){ attempt(); });
+  })();
 }
 /* Walk the chain, keep the freshest usable answer, and remember every failure
    so the panel can say what actually went wrong instead of "unavailable". */
@@ -25419,8 +25452,13 @@ function macroFailLine(label,log){
   var fix='';
   if(MACRO[label]&&MACRO[label].bls&&!BLS_KEY)
     fix=' A free BLS key (bls.gov/developers) unlocks current CPI and payrolls — paste it in Settings.';
-  else if(log.some(function(l){return /CORS/i.test(l.err||'');}))
-    fix=' FRED has the data but sends no CORS header, so it needs this page served behind your own proxy.';
+  else if(log.some(function(l){return /CORS|Access-Control/i.test(l.err||'');}))
+    fix=' The data exists — FRED, EODHD and GNews all answer 200 — but none of them sends '
+      +'an Access-Control-Allow-Origin header, so the browser refuses to hand it to the page. '
+      +'Start celestial_bridge.py and all three come through it.';
+  else if(log.some(function(l){return /522|down at source/i.test(l.err||'');}))
+    fix=' EconPulse is down at source (522 from Cloudflare), so the chain falls through to '
+      +'BLS and FRED — both reachable through celestial_bridge.py.';
   return 'No current source for '+label+'. '+why+'.'+fix;
 }
 function loadMacroForEvent(next,setT){
