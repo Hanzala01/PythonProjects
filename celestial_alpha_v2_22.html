@@ -2747,6 +2747,75 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #pane_portfolio div[style*="text-transform:uppercase"]{
   color:#C4B5FD !important;
 }
+/* ── the notification centre ─────────────────────────────────────────── */
+.ntf-wrap{position:relative;margin:0 0 6px}
+.ntf-bell{display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;
+  padding:9px 12px;border-radius:11px;font:inherit;text-align:left;
+  color:var(--t2);border:1px solid rgba(160,130,220,.14);background:rgba(24,14,52,.4);
+  transition:.18s cubic-bezier(.2,.9,.25,1)}
+.ntf-bell:hover{color:var(--t1);border-color:rgba(196,181,253,.4);background:rgba(34,20,70,.6)}
+.ntf-bell svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.ntf-bell span{font-size:11px;font-weight:600;flex:1}
+.ntf-count{font-style:normal;font-size:9px;font-weight:800;min-width:18px;text-align:center;
+  padding:2px 5px;border-radius:99px;color:#fff;background:#F87171;flex:none}
+.ntf-count.hide{display:none}
+.ntf-bell.ping svg{animation:ntfRing .7s cubic-bezier(.36,.07,.19,.97)}
+@keyframes ntfRing{0%,100%{transform:rotate(0)}15%{transform:rotate(14deg)}
+  30%{transform:rotate(-12deg)}45%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}}
+.ntf-bell.ping .ntf-count{animation:ntfPop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes ntfPop{0%{transform:scale(1)}45%{transform:scale(1.45)}100%{transform:scale(1)}}
+/* THE SIDEBAR CLIPS ITS OWN CHILDREN.
+   .side-nav carries overflow:auto so the nav can scroll, and an absolutely
+   positioned panel inside it is cut off at that edge — measured: the panel
+   had a real 320x128 box at x=223 and nothing of it was on screen. Fixed
+   positioning takes it out of that box entirely; the coordinates are set
+   from the bell each time it opens. */
+.ntf-panel{position:fixed;width:330px;z-index:9000;
+  border-radius:14px;padding:11px 12px;opacity:0;visibility:hidden;
+  transform:translateX(-8px) scale(.97);transform-origin:left top;
+  border:1px solid rgba(160,130,220,.24);background:rgba(16,9,38,.97);
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transition:opacity .2s,transform .22s cubic-bezier(.2,.9,.25,1),visibility .2s}
+.ntf-panel.open{opacity:1;visibility:visible;transform:none}
+@media(max-width:900px){.ntf-panel{width:min(330px,calc(100vw - 24px))}}
+.ntf-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.ntf-h b{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#C4B5FD}
+.ntf-h u{text-decoration:none;cursor:pointer;font-size:8px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3)}
+.ntf-h u:hover{color:var(--t1)}
+.ntf-list{display:grid;gap:6px;max-height:60vh;overflow-y:auto}
+.ntf-i{display:flex;gap:9px;padding:9px 10px;border-radius:11px;position:relative;
+  border:1px solid rgba(160,130,220,.14);background:rgba(24,14,52,.6);
+  opacity:0;transform:translateX(-8px);
+  animation:ntfIn .4s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes ntfIn{to{opacity:1;transform:none}}
+.ntf-i.seen{opacity:.5}
+.ntf-ic{width:24px;height:24px;flex:none;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;font-size:11px;font-weight:800;
+  color:#C4B5FD;background:rgba(160,130,220,.14)}
+.ntf-i.up{border-left:2px solid #34D399}
+.ntf-i.up .ntf-ic{color:#34D399;background:rgba(52,211,153,.14)}
+.ntf-i.dn{border-left:2px solid #F87171}
+.ntf-i.dn .ntf-ic{color:#F87171;background:rgba(248,113,113,.14)}
+.ntf-i.warn{border-left:2px solid #FBBF24}
+.ntf-i.warn .ntf-ic{color:#FBBF24;background:rgba(251,191,36,.14)}
+.ntf-b{flex:1;min-width:0}
+.ntf-b b{display:block;font-size:10px;font-weight:800;color:var(--t1);line-height:1.3}
+.ntf-b s{display:block;text-decoration:none;font-size:8.5px;line-height:1.5;color:var(--t3);
+  margin-top:3px}
+.ntf-a{display:flex;gap:5px;margin-top:7px}
+.ntf-x{position:absolute;top:6px;right:8px;text-decoration:none;cursor:pointer;
+  font-size:13px;line-height:1;color:var(--t3);opacity:0;transition:opacity .18s}
+.ntf-i:hover .ntf-x{opacity:.7}
+.ntf-x:hover{color:var(--t1);opacity:1 !important}
+.ntf-none{padding:14px 6px;text-align:center}
+.ntf-none b{display:block;font-size:10px;font-weight:800;color:var(--t2);margin-bottom:4px}
+.ntf-none span{font-size:8.5px;line-height:1.6;color:var(--t3)}
+@media(prefers-reduced-motion:reduce){
+  .ntf-i{animation:none;opacity:1;transform:none}
+  .ntf-bell.ping svg,.ntf-bell.ping .ntf-count{animation:none}
+}
 .jb-build{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:10px;
   font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
 .jb-build b{font-family:'Space Grotesk';font-size:13px;letter-spacing:0;color:#C4B5FD}
@@ -6318,10 +6387,21 @@ body{background:var(--bg0)}
               stroke-width="5.2" stroke-linecap="butt"/>
       </svg>
       <div class="t">CELESTIAL<span>ALPHA</span></div>
-      <!-- interface sounds. Muted state is remembered; the label is the state,
-           not the action, so it reads the same way the rest of the app does. -->
-      <button id="sfx_btn" type="button" onclick="sfxToggle()"
-              title="Interface sounds">♪</button>
+      <!-- The interface-sound toggle used to sit here, beside the wordmark.
+           A mute switch is a setting, not a piece of branding, and next to
+           the logo it read as decoration nobody could name. It is a row in
+           Settings now, where every other preference already lives. -->
+    </div>
+    <!-- the notification centre: one bell, every tab -->
+    <div id="ntf_wrap" class="ntf-wrap">
+      <button id="ntf_bell" class="ntf-bell" type="button" onclick="ntfToggle()"
+              title="Notifications">
+        <svg viewBox="0 0 24 24"><path d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
+          <path d="M10 20a2 2 0 004 0"/></svg>
+        <span>Notifications</span>
+        <i class="ntf-count hide">0</i>
+      </button>
+      <div id="ntf_panel" class="ntf-panel"></div>
     </div>
     <div class="nav-item on" onclick='goTab("dashboard",this)'><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Dashboard</div>
     <div class="nav-item" onclick='goTab("analytics",this)'><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
@@ -6341,7 +6421,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b67</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b68</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -9139,6 +9219,17 @@ function sfxToggle(){
   if(on)sfx('ok');
   notify('Interface sounds '+(on?'on':'off'),'info');
 }
+/* Plays the four sounds the app uses, spaced so they are distinguishable.
+   Switching a sound on without being able to hear it first is a setting you
+   change twice. */
+function sfxDemo(btn){
+  var order=['tap','ok','warn','no'];
+  if(btn){btn.disabled=true;btn.textContent='Playing…';}
+  order.forEach(function(n,i){
+    setTimeout(function(){ try{ sfx(n,true); }catch(e){} },i*420);
+  });
+  setTimeout(function(){ if(btn){btn.disabled=false;btn.textContent='Play';} },order.length*420+200);
+}
 function sfxPaint(){
   var b=document.getElementById('sfx_btn');
   if(!b)return;
@@ -9155,8 +9246,11 @@ var SFX_TONES={
   warn: {f:[400,300],     d:0.180, g:0.050, w:'sine'},
   alert:{f:[880,1320],    d:0.200, g:0.055, w:'triangle'}
 };
-function sfx(name){
-  if(!sfxOn())return;
+function sfx(name,force){
+  /* `force` is for the Settings preview only. Without it, "hear them" does
+     nothing while sounds are off, which is exactly when you want to hear
+     them — you are deciding whether to turn them on. */
+  if(!force&&!sfxOn())return;
   var T=SFX_TONES[name]; if(!T)return;
   try{
     var AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
@@ -11444,6 +11538,20 @@ function renderCelestialSettings(){
   el.innerHTML='<div class="cset-w">'
    +'<div class="cset-h"><b>Settings</b>'
      +'<span onclick="celestialSettingsClose()">&times;</span></div>'
+
+   +'<div class="cset-s"><i>Sound</i>'
+     +'<div class="cset-row">'
+       +'<div><b>Interface sounds</b><s>The short click when something is sent, confirmed or '
+         +'refused. Off by default on a quiet desk; the setting is remembered.</s></div>'
+       +'<button class="cset-t'+(sfxOn()?' on':'')+'" '
+         +'onclick="sfxToggle();renderCelestialSettings()">'+(sfxOn()?'On':'Off')+'</button>'
+     +'</div>'
+     +'<div class="cset-row">'
+       +'<div><b>Hear them</b><s>Plays the four the app actually uses, so you know what you are '
+         +'switching on before you switch it on.</s></div>'
+       +'<button class="cset-b" onclick="sfxDemo(this)">Play</button>'
+     +'</div>'
+   +'</div>'
 
    +'<div class="cset-s"><i>Celestial, by voice</i>'
      +'<div class="cset-row">'
@@ -20819,6 +20927,181 @@ function apprBadge(){
     e.textContent=n?String(n):''; e.style.display=n?'':'none';
   });
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE NOTIFICATION CENTRE
+
+   Approvals were a card on one tab. But an approval is a notification —
+   something happened, it needs you, and it will not wait — and so are the
+   other four things this app produces that are time-sensitive: an alert
+   that fired, a cycle arriving at completion, price walking into a key
+   zone, and a high-impact release inside two hours.
+
+   All four were scattered: one on the journal tab, one behind a browser
+   permission, two only visible if you happened to be on the right panel.
+   A thing that needs you now is worthless on a tab you are not looking at.
+
+   So there is one bell, in the sidebar, on every tab. It carries a count,
+   it pulses when the count goes up, and the panel behind it lists
+   everything outstanding newest first. Approvals keep their buttons inside
+   it, so a setup can be approved or passed without navigating anywhere.
+
+   Nothing here is a new source of truth. Every row is read from something
+   that already exists — APPR, the alert log, timEngine, majorLadders,
+   buildEconEvents — so the bell cannot say something the tab it came from
+   would not.
+   ══════════════════════════════════════════════════════════════════════ */
+var _ntfSeen={}, _ntfLast=0, _ntfOpen=false;
+try{ _ntfSeen=JSON.parse(localStorage.getItem('ca_ntf_seen')||'{}')||{}; }catch(e){ _ntfSeen={}; }
+function ntfSeenSave(){ try{ localStorage.setItem('ca_ntf_seen',JSON.stringify(_ntfSeen)); }catch(e){} }
+
+function ntfCollect(){
+  var out=[], now=Date.now();
+
+  /* 1 · approvals waiting — the only kind that carries actions */
+  try{
+    apprPending().forEach(function(a){
+      out.push({id:'appr:'+a.id, kind:'approval', at:a.ts||now,
+        icon:a.side==='buy'?'▲':'▼', tone:a.side==='buy'?'up':'dn',
+        title:String(a.side).toUpperCase()+' '+String(a.asset||'').toUpperCase(),
+        body:(a.style||'setup')+' · entry '+(+a.entry).toFixed(2)
+             +(a.rr!=null?' · '+(+a.rr).toFixed(1)+':1':''),
+        actions:[{t:'Approve',c:'btn-a',f:"apprApprove('"+a.id+"')"},
+                 {t:'Pass',c:'btn-g',f:"apprSkip('"+a.id+"')"}]});
+    });
+  }catch(e){}
+
+  /* 2 · the clock, when it is actually saying something */
+  try{
+    var E=window.TIM_ENGINE||timEngine();
+    if(E&&E.state==='Completion'&&E.confluence&&E.confluence.level!=='Low'){
+      out.push({id:'cyc:'+E.cycle+':'+E.next.text, kind:'cycle', at:now, icon:'◷', tone:'warn',
+        title:E.cycle+' cycle completing',
+        body:E.bias.k+' · '+E.confluence.count+' clocks agree · next window '+E.next.text});
+    }
+  }catch(e){}
+
+  /* 3 · price at a key zone */
+  try{
+    var Z=ribKeyZone();
+    if(Z&&Z.dist!=null&&Z.dist<=1)
+      out.push({id:'zone:'+Z.px.toFixed(2), kind:'zone', at:now, icon:'◈', tone:'up',
+        title:'Price is at a key zone',
+        body:tcFmt(Z.px,2)+' · '+Z.dist.toFixed(2)+' ATR '+(Z.side||'')
+             +' · '+Z.strength+' calculations from each side'});
+  }catch(e){}
+
+  /* 4 · a release close enough to matter */
+  try{
+    (buildEconEvents()||[]).forEach(function(e){
+      if(e.impact!=='High')return;
+      var mins=(e.d-now)/60000;
+      if(mins<0||mins>120)return;
+      out.push({id:'news:'+e.t+':'+(+e.d), kind:'news', at:now, icon:'!', tone:'dn',
+        title:String(e.t).slice(0,46),
+        body:(e.country||'')+' · in '+Math.round(mins)+' min'
+             +(e.fc&&e.fc!=='—'?' · forecast '+e.fc:'')});
+    });
+  }catch(e){}
+
+  out.sort(function(a,b){ return b.at-a.at; });
+  return out;
+}
+
+function ntfUnseen(list){
+  return (list||ntfCollect()).filter(function(n){ return !_ntfSeen[n.id]; });
+}
+
+function ntfPaint(){
+  var bell=document.getElementById('ntf_bell'), pan=document.getElementById('ntf_panel');
+  if(!bell)return;
+  var list=ntfCollect(), un=ntfUnseen(list);
+  var dot=bell.querySelector('.ntf-count');
+  if(dot){
+    dot.textContent=un.length>9?'9+':String(un.length);
+    dot.classList.toggle('hide',!un.length);
+  }
+  /* pulse only when the number actually goes up — a badge that animates on
+     every repaint is a badge nobody looks at */
+  if(un.length>_ntfLast){
+    bell.classList.remove('ping'); void bell.offsetWidth; bell.classList.add('ping');
+    try{ sfx('tap'); }catch(e){}
+  }
+  _ntfLast=un.length;
+
+  if(!pan)return;
+  pan.innerHTML='<div class="ntf-h"><b>Notifications</b>'
+    +(list.length?'<u onclick="ntfClearAll()">mark all read</u>':'')+'</div>'
+   +(list.length
+     ? '<div class="ntf-list">'+list.map(function(n,i){
+         return '<div class="ntf-i '+n.tone+(_ntfSeen[n.id]?' seen':'')+'" '
+           +'style="animation-delay:'+(i*0.045).toFixed(2)+'s">'
+           +'<span class="ntf-ic">'+n.icon+'</span>'
+           +'<div class="ntf-b"><b>'+escHtml(n.title)+'</b>'
+             +'<s>'+escHtml(n.body)+'</s>'
+             +(n.actions?'<div class="ntf-a">'+n.actions.map(function(a){
+                 return '<button class="btn '+a.c+' btn-sm" onclick="'+a.f+';ntfPaint()">'
+                   +a.t+'</button>'; }).join('')+'</div>':'')
+           +'</div>'
+           +(n.actions?'':'<u class="ntf-x" title="mark read" onclick="ntfDismiss(\''
+              +n.id.replace(/'/g,"\\'")+'\')">&times;</u>')
+         +'</div>';
+       }).join('')+'</div>'
+     : '<div class="ntf-none"><b>Nothing needs you</b>'
+       +'<span>Approvals, a cycle completing, price reaching a key zone and a high-impact '
+       +'release inside two hours all arrive here.</span></div>');
+}
+/* AN ANCESTOR'S STACKING CONTEXT BEAT z-index:9000.
+   Measured: the panel reported visibility:visible, opacity:1 and a real
+   294px box at x=232 — and none of it was on screen, because a fixed child
+   is still confined to the stacking context its ancestors create, and the
+   sidebar sits below the main column in that order. No z-index on the child
+   can escape that. Moving the node to <body> can: it is then a sibling of
+   everything else and its own z-index is the one that counts. Done once, on
+   first open, so the markup can stay where it reads sensibly. */
+function ntfDetach(){
+  var pan=document.getElementById('ntf_panel');
+  if(pan&&pan.parentElement!==document.body)document.body.appendChild(pan);
+}
+function ntfPlace(){
+  var b=document.getElementById('ntf_bell'), pan=document.getElementById('ntf_panel');
+  if(!b||!pan)return;
+  var r=b.getBoundingClientRect();
+  var left=r.right+10, top=r.top;
+  /* keep it on screen on a narrow window rather than off the right edge */
+  if(left+330>window.innerWidth-12)left=Math.max(12,window.innerWidth-342);
+  if(top+pan.offsetHeight>window.innerHeight-12)
+    top=Math.max(12,window.innerHeight-pan.offsetHeight-12);
+  pan.style.left=Math.round(left)+'px';
+  pan.style.top=Math.round(top)+'px';
+}
+function ntfToggle(){
+  var pan=document.getElementById('ntf_panel');
+  if(!pan)return;
+  ntfDetach();
+  _ntfOpen=!pan.classList.contains('open');
+  pan.classList.toggle('open',_ntfOpen);
+  if(_ntfOpen){ ntfPaint(); ntfPlace(); }
+}
+function ntfDismiss(id){ _ntfSeen[id]=1; ntfSeenSave(); ntfPaint(); }
+function ntfClearAll(){ ntfCollect().forEach(function(n){ _ntfSeen[n.id]=1; }); ntfSeenSave(); ntfPaint(); }
+function ntfStart(){
+  ntfPaint();
+  /* a minute is fast enough for a release two hours out and slow enough that
+     four engines are not re-run on a timer nobody is watching */
+  setInterval(ntfPaint,60000);
+  document.addEventListener('click',function(e){
+    var pan=document.getElementById('ntf_panel'), b=document.getElementById('ntf_bell');
+    if(!pan||!pan.classList.contains('open'))return;
+    if(pan.contains(e.target)||(b&&b.contains(e.target)))return;
+    pan.classList.remove('open');
+  });
+  window.addEventListener('resize',function(){
+    var pan=document.getElementById('ntf_panel');
+    if(pan&&pan.classList.contains('open'))ntfPlace();
+  });
+}
+
 function apprRow(a,dp){
   var side=String(a.side).toUpperCase();
   var col=a.side==='buy'?'var(--up)':'var(--dn)';
@@ -22000,7 +22283,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b67';
+var CA_BUILD='b68';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -31656,6 +31939,7 @@ setTimeout(loadSparklines,9000);
 try{dashCalendar();dashTiming();dashMember();}catch(e){}
 try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
+try{ntfStart();}catch(e){console.error("notifications:",e);}
 /* the curtain comes down once the init block has actually finished, rather
    than on the load event alone — this line is the last thing that runs */
 try{bootDone();}catch(e){console.error('boot:',e);}
