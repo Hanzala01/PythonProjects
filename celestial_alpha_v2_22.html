@@ -2839,6 +2839,23 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-size:13px;line-height:1;color:var(--t3);opacity:0;transition:opacity .18s}
 .ntf-i:hover .ntf-x{opacity:.7}
 .ntf-x:hover{color:var(--t1);opacity:1 !important}
+.ntf-waits{margin-top:9px;padding-top:8px;border-top:1px solid rgba(160,130,220,.14)}
+.ntf-waits>summary{cursor:pointer;list-style:none;font-size:8px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--t3);padding:3px 0}
+.ntf-waits>summary::-webkit-details-marker{display:none}
+.ntf-waits>summary:before{content:'▸ ';display:inline-block;transition:transform .2s}
+.ntf-waits[open]>summary:before{transform:rotate(90deg)}
+.ntf-waits>summary:hover{color:var(--t1)}
+.ntf-ws{display:grid;gap:3px;margin:5px 0 7px}
+.ntf-w{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:baseline;
+  padding:5px 8px;border-radius:8px;background:rgba(10,5,28,.45)}
+.ntf-w b{font-size:8.5px;font-weight:700;color:var(--t2)}
+.ntf-w s{text-decoration:none;font-size:8.5px;color:var(--t3);text-align:right;
+  font-family:'Space Grotesk';font-weight:700}
+.ntf-w i{grid-column:1/-1;font-style:normal;font-size:7.5px;color:var(--t3);opacity:.7}
+.ntf-w.armed{background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.3)}
+.ntf-w.armed s{color:#FBBF24}
+.ntf-wf{font-size:7.5px;line-height:1.6;color:var(--t3);opacity:.8;margin-bottom:7px}
 .ntf-none{padding:14px 6px;text-align:center}
 .ntf-none b{display:block;font-size:10px;font-weight:800;color:var(--t2);margin-bottom:4px}
 .ntf-none span{font-size:8.5px;line-height:1.6;color:var(--t3)}
@@ -6535,7 +6552,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b74</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b75</div>
     <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
          The card was 236px of fixed height for a name, a build string, four
          lines of marketing and a large illustration — and the notifications
@@ -21309,7 +21326,62 @@ function ntfPaint(){
        }).join('')+'</div>'
      : '<div class="ntf-none"><b>Nothing needs you</b>'
        +'<span>Approvals, a cycle completing, price reaching a key zone and a high-impact '
-       +'release inside two hours all arrive here.</span></div>');
+       +'release inside two hours all arrive here.</span></div>')
+   /* SILENCE HAS TO EXPLAIN ITSELF.
+      "alert aa hi nahi rahe" — and nothing was wrong: the next High-impact
+      release was two days out, the next window two hours, the cycle was Late
+      rather than Completing and no analysis had run to place a key zone. All
+      four were correctly quiet, and quiet is indistinguishable from broken
+      unless the panel says what it is waiting for. */
+   +ntfWaitingHtml();
+}
+function ntfWaitingHtml(){
+  var rows=[];
+  function row(name,state,detail,armed){
+    rows.push('<div class="ntf-w '+(armed?'armed':'')+'">'
+      +'<b>'+escHtml(name)+'</b><s>'+escHtml(state)+'</s>'
+      +(detail?'<i>'+escHtml(detail)+'</i>':'')+'</div>');
+  }
+  try{
+    var now=Date.now();
+    var high=(buildEconEvents()||[]).filter(function(e){return e.impact==='High'&&e.d>now;});
+    var n=high[0];
+    /* fmtIn takes whole minutes — handed a float it printed
+       "49h 37.570900000000165m", which is a number nobody can read */
+    row('High-impact news', n?fmtIn(Math.round((n.d-now)/60000)):'none scheduled',
+      n?String(n.t).slice(0,34):'', n?((n.d-now)/60000<=60):false);
+  }catch(e){ row('High-impact news','calendar unavailable',''); }
+  try{
+    var st=timState(), w=(timTodayWindows(st)||[]).filter(function(x){
+      return x.inMin!=null&&x.inMin>0&&x.best>=2; })[0];
+    row('Your cycle window', w?fmtIn(Math.round(w.inMin)):'none left today',
+      w?(fmtT(w.start)+'–'+fmtT(w.end%1440)):'', w?w.inMin<=30:false);
+  }catch(e){ row('Your cycle window','timing unavailable',''); }
+  try{
+    var E=window.TIM_ENGINE||timEngine();
+    row('Cycle completion', E.state+', '+E.confluence.count+' clock'
+      +(E.confluence.count===1?'':'s'), E.cycle+' at '+E.progress+'%',
+      E.state==='Completion'&&E.confluence.count>=2);
+  }catch(e){ row('Cycle completion','engine unavailable',''); }
+  try{
+    var Z=ribKeyZone();
+    row('Price at a key zone', Z?(Z.dist.toFixed(2)+' ATR away'):'run an analysis first',
+      Z?tcFmt(Z.px,2):'', Z?Z.dist<=0.5:false);
+  }catch(e){ row('Price at a key zone','run an analysis first',''); }
+
+  return '<details class="ntf-waits"><summary>What alerts are waiting for</summary>'
+    +'<div class="ntf-ws">'+rows.join('')+'</div>'
+    +'<div class="ntf-wf">These fire on their own — news at an hour and again at ten '
+      +'minutes, a window at thirty, a cycle on the day it completes, a zone at half an '
+      +'ATR. Nothing here is firing yet, which is the honest state and not a fault.</div>'
+    +'<button class="btn btn-g btn-sm" onclick="alertTest()">Send a test alert</button>'
+  +'</details>';
+}
+/* so "do alerts work" is one click rather than a two-day wait */
+function alertTest(){
+  alertSend('Test alert — this is what one looks like',
+    'It shows here for six seconds, then goes to the card in the sidebar. '
+    +'A real one names the event and what to do about it.');
 }
 /* AN ANCESTOR'S STACKING CONTEXT BEAT z-index:9000.
    Measured: the panel reported visibility:visible, opacity:1 and a real
@@ -21382,12 +21454,22 @@ function bigAlertCheck(){
     var now=Date.now();
     (buildEconEvents()||[]).forEach(function(e){
       if(e.impact!=='High')return;
+      /* TWO WARNINGS, NOT ONE, AND THE FIRST ONE IS EARLY.
+         A single alert thirty minutes out is no use to someone who is not
+         already at the screen — which is the entire reason for having
+         alerts. An hour is enough time to close something or decide not to
+         open it; ten minutes is the one that says it is now. Measured
+         against the live calendar, the next High-impact release was 2,979
+         minutes away, so a 30-minute window meant nothing fired for two
+         days and the feature looked dead. */
       var mins=(e.d-now)/60000;
-      if(mins<0||mins>30)return;
-      if(!bigAlertKey('news:'+e.t+':'+(+e.d)))return;
+      var stage = mins<=10 ? 'final' : mins<=60 ? 'early' : null;
+      if(!stage)return;
+      if(!bigAlertKey('news:'+stage+':'+e.t+':'+(+e.d)))return;
       alertSend(String(e.t)+' in '+Math.round(mins)+' minutes',
         (e.country||'')+(e.fc&&e.fc!=='—'?' · forecast '+e.fc:'')
-        +' · size down or stand aside through it');
+        +(stage==='final'?' · size down or stand aside through it'
+                         :' · high impact, plan the hour around it'));
     });
   }catch(e){}
 
@@ -21395,7 +21477,9 @@ function bigAlertCheck(){
   try{
     var st=timState();
     (timTodayWindows(st)||[]).forEach(function(w){
-      if(w.inMin==null||w.inMin<0||w.inMin>15)return;
+      /* thirty, not fifteen: a window you are told about with fifteen
+         minutes left is one you have already half missed */
+      if(w.inMin==null||w.inMin<0||w.inMin>30)return;
       if(w.best<2)return;                      /* only the asset's own number */
       if(!bigAlertKey('win:'+w.start))return;
       alertSend('Window opens in '+Math.round(w.inMin)+' minutes on '+asset,
@@ -22625,9 +22709,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b74';
+var CA_BUILD='b75';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Watchlist removed from the journal \u00b7 MT5 setup is now a checklist that checks itself \u00b7 risk calculator visible';
+var CA_WHATS_NEW='Alerts now warn an hour ahead, and the bell shows what each one is waiting for';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
