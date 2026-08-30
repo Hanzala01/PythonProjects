@@ -2498,6 +2498,38 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ld-r.hit{background:rgba(52,211,153,.1)}
 .ld-r.hit b{color:#34D399}
 .ld-na{font-size:9px;color:var(--t3);padding:4px 0}
+/* ── which asset moves, and which way ────────────────────────────────── */
+.evx{margin-top:8px;padding:9px 10px;border-radius:10px;position:relative;overflow:hidden;
+  border:1px solid rgba(160,130,220,.16);background:rgba(20,11,46,.6)}
+.evx.w-high{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.05)}
+.evx.w-medium{border-color:rgba(251,191,36,.26)}
+/* a slow sheen across the high-impact rows only, so the eye finds them
+   without every card competing for it */
+.evx.w-high:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:45%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.055),transparent);
+  animation:evxSheen 4.2s ease-in-out infinite}
+@keyframes evxSheen{0%{left:-60%}55%{left:120%}100%{left:120%}}
+.evx-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px}
+.evx-h b{font-family:'Space Grotesk';font-size:10.5px;font-weight:800;color:#C4B5FD;
+  letter-spacing:.02em}
+.evx-h i{font-style:normal;font-size:8px;color:var(--t3);text-align:right}
+.evx-r{display:grid;grid-template-columns:1fr auto auto auto;gap:7px;align-items:center;
+  padding:5px 7px;border-radius:8px;margin-bottom:4px;background:rgba(10,5,28,.5);
+  opacity:0;transform:translateX(-6px);animation:evxIn .45s cubic-bezier(.2,.9,.25,1) forwards}
+.evx-r.b{animation-delay:.1s}
+@keyframes evxIn{to{opacity:1;transform:none}}
+.evx-r u{text-decoration:none;font-size:8.5px;color:var(--t2)}
+.evx-c{font-size:8px;color:var(--t3);white-space:nowrap}
+.evx-c b{font-family:'Space Grotesk';font-size:9.5px;font-weight:800;margin-left:3px}
+.evx-c b.up{color:#34D399}
+.evx-c b.dn{color:#F87171}
+.evx-inv{margin-top:5px;padding:6px 8px;border-radius:7px;font-size:8.5px;line-height:1.55;
+  color:var(--t2);border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.07)}
+.evx-inv b{color:#FBBF24}
+.evx-f{margin-top:5px;font-size:8px;line-height:1.55;color:var(--t3);opacity:.85}
+.evx.none{color:var(--t3);font-size:9px;line-height:1.6}
+.evx.none b{display:block;font-family:'Space Grotesk';font-size:10px;color:#C4B5FD;margin-bottom:3px}
+.evx.none span{display:block}
 .te-strip2{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
 .te-strip2 span{flex:1 1 84px;padding:6px 9px;border-radius:9px;
   border:1px solid rgba(160,130,220,.15);background:rgba(24,14,52,.45)}
@@ -16642,7 +16674,15 @@ function cqeHypHtml(h,dp){
         +escHtml(ct?(long?'Relief rally':'Bounce lower'):(long?'Buy':'Sell'))+'</b>'
       +(ct?'<em>inside a '+escHtml(ct.majorDir.toLowerCase())+' trend</em>':'')+'</div>'
     +'<div class="hc-n">'
-      +'<div><i>buy between</i>'+f(h.entryZone.low)+'–'+f(h.entryZone.high)+'</div>'
+      /* THE LABEL SAID "BUY BETWEEN" ON A SELL.
+         It was hardcoded, so a short printed "Sell" one line above and
+         "buy between 4458.89-4483.17" directly under it, with the stop
+         ABOVE the entry and the target BELOW it — the arithmetic was a
+         short the whole time and only the word was wrong. It reads off the
+         same `long` the direction above it uses, so the two cannot part
+         company again. */
+      +'<div><i>'+(long?'buy':'sell')+' between</i>'
+        +f(h.entryZone.low)+'–'+f(h.entryZone.high)+'</div>'
       +'<div><i>R : R</i>'+(rr?rr.toFixed(2):'—')+'</div>'
       +'<div class="dn"><i>get out at</i>'+f(h.stop)+'</div>'
       +'<div class="up"><i>aiming for</i>'+f(h.target)+'</div>'
@@ -16822,13 +16862,20 @@ function cqeVerdictHtml(R,price,dp,asset){
       +'<u>'+(R&&R.core&&R.core.score!=null
         ? 'the five methods average '+R.core.score+' out of 100'
         : 'no overall score')+'</u></div>'
-    +(H?'<div class="cqv-n">'
-        +'<div><i>which way</i>'+escHtml(/Long/i.test(H.direction||'')?'Buy':'Sell')+'</div>'
-        +'<div><i>buy between</i>'+f(H.entryZone.low)+'–'+f(H.entryZone.high)+'</div>'
+    +(H?(function(){
+        /* SAME BUG, SAME FIX, AND THIS IS THE ONE ON SCREEN.
+           "WHICH WAY: Sell" with "BUY BETWEEN" beside it. One boolean now
+           feeds both, and the stop and target are named for what they are
+           on that side rather than left to be worked out. */
+        var lng=/Long/i.test(H.direction||'');
+        return '<div class="cqv-n">'
+        +'<div><i>which way</i>'+(lng?'Buy':'Sell')+'</div>'
+        +'<div><i>'+(lng?'buy':'sell')+' between</i>'
+          +f(H.entryZone.low)+'–'+f(H.entryZone.high)+'</div>'
         +'<div><i>get out at</i>'+f(H.stop)+'</div>'
         +'<div><i>aiming for</i>'+f(H.target)+'</div>'
         +'<div><i>reward : risk</i>'+(v.rr?v.rr.toFixed(2):'—')+'</div>'
-      +'</div>':'')
+      +'</div>'; })():'')
     +'<div class="cqv-w">'+escHtml(v.why)+'</div>'
     +'<div class="cqv-f">Measured agreement between methods, not a forecast. '
       +'How much to risk is decided under <a onclick="anaJump(5)">How much</a>, '
@@ -22868,7 +22915,7 @@ function buildEconEvents(){
     var nfp=nthWeekdayOfMonth(yy,mm,5,1);
     if(nfp){
       nfp=etDate(yy,mm,nfp.getDate(),8,30);
-      out.push({t:'Non-Farm Payrolls',d:nfp,prec:'rule',
+      out.push({t:'Non-Farm Payrolls',d:nfp,prec:'rule',country:'USD',
         note:'First Friday of the month, 08:30 Eastern, converted to your clock. '
           +'BLS shifts this around some holidays.',
         fc:'—',impact:'High'});
@@ -22877,11 +22924,11 @@ function buildEconEvents(){
        rule. Showing an exact day would be inventing one, so the midpoint of
        the real window is used for ordering and the window itself is shown. */
     var cpi=etDate(yy,mm,12,8,30);
-    out.push({t:'CPI (Inflation)',d:cpi,prec:'window',winFrom:10,winTo:15,
+    out.push({t:'CPI (Inflation)',d:cpi,prec:'window',country:'USD',winFrom:10,winTo:15,
       note:'BLS releases CPI mid-month, typically the 10th–15th. No fixed day of month — check the BLS schedule for the exact date.',
       fc:'—',impact:'High'});
     var ppi=etDate(yy,mm,15,8,30);
-    out.push({t:'PPI (Producer Prices)',d:ppi,prec:'window',winFrom:13,winTo:18,
+    out.push({t:'PPI (Producer Prices)',d:ppi,prec:'window',country:'USD',winFrom:13,winTo:18,
       note:'BLS releases PPI in the days around CPI, typically the 13th–18th. No fixed day of month.',
       fc:'—',impact:'Medium'});
   }
@@ -22894,7 +22941,7 @@ function buildEconEvents(){
   fomc.forEach(function(f){
     var d=etDate(FOMC_YEAR,f[0],f[1],14,0);
     if(d<=now)return;
-    out.push({t:'Federal Funds Rate',d:d,prec:'scheduled',
+    out.push({t:'Federal Funds Rate',d:d,prec:'scheduled',country:'USD',
       note:'Published FOMC meeting date. Decision at 14:00 Eastern on the second day, '
         +'converted to your clock.',
       fc:'—',impact:'High'});
@@ -22956,7 +23003,47 @@ function buildEconEvents(){
    say so, rather than disappearing if the feed is unreachable.
    ══════════════════════════════════════════════════════════════════════ */
 var FF_URL='https://nfs.faireconomy.media/ff_calendar_thisweek.json';
-var FF_KEY='ca_ff_cal', FF_CACHE=null, FF_STATE={at:null,src:null,err:null,n:0};
+
+/* ══ THE SNAPSHOT, BECAUSE THE FEED CANNOT REACH A file:// PAGE ═══════
+   Checked again against the live endpoint rather than assumed, and the
+   result is worse than "the relays are down":
+
+     HTTP/2 200 · content-type application/json · 110 events
+     access-control-allow-origin: ABSENT
+
+   The feed sends no cross-origin header at all. A page opened from
+   Downloads has the origin `null`, so the browser refuses to hand the
+   response to the script no matter how many times the parsing is fixed.
+   That is not a bug in this file and no amount of retrying changes it —
+   it is the reason the calendar has been empty every single time.
+
+   Two routes actually work: the local bridge, which fetches server-side
+   and allows this origin, and a copy shipped inside the file. The bridge
+   needs Python running. The copy does not, so the copy is here: the real
+   week as published, with the moment it was taken, and every panel that
+   depends on it now has rows to draw.
+
+   IT IS LABELLED AS WHAT IT IS. The panel says "snapshot" and how many
+   days old it is, and it never claims to be live. The live routes are
+   still tried on every load and the moment one answers, its rows replace
+   these and the label changes. A dated copy that says so beats an empty
+   panel that says nothing. */
+var FF_SEED_AT='2026-08-30T06:04:24Z';
+var FF_SEED=[{"title":"G20 Meetings","country":"All","date":"2026-08-30T11:15:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"Prelim Industrial Production m/m","country":"JPY","date":"2026-08-30T19:50:00-04:00","impact":"Low","forecast":"-0.7%","previous":"1.3%"},{"title":"Retail Sales y/y","country":"JPY","date":"2026-08-30T19:50:00-04:00","impact":"Low","forecast":"3.2%","previous":"0.5%"},{"title":"MI Inflation Gauge m/m","country":"AUD","date":"2026-08-30T21:00:00-04:00","impact":"Low","forecast":"","previous":"1.0%"},{"title":"ANZ Business Confidence","country":"NZD","date":"2026-08-30T21:00:00-04:00","impact":"Low","forecast":"","previous":"56.1"},{"title":"Company Operating Profits q/q","country":"AUD","date":"2026-08-30T21:30:00-04:00","impact":"Low","forecast":"2.0%","previous":"-1.3%"},{"title":"Private Sector Credit m/m","country":"AUD","date":"2026-08-30T21:30:00-04:00","impact":"Low","forecast":"0.7%","previous":"0.8%"},{"title":"Manufacturing PMI","country":"CNY","date":"2026-08-30T21:30:00-04:00","impact":"Low","forecast":"49.5","previous":"49.2"},{"title":"Non-Manufacturing PMI","country":"CNY","date":"2026-08-30T21:30:00-04:00","impact":"Low","forecast":"49.5","previous":"49.0"},{"title":"Housing Starts y/y","country":"JPY","date":"2026-08-31T01:00:00-04:00","impact":"Low","forecast":"7.5%","previous":"18.6%"},{"title":"German Prelim CPI m/m","country":"EUR","date":"2026-08-31T02:29:00-04:00","impact":"Medium","forecast":"0.3%","previous":"0.8%"},{"title":"Bank Holiday","country":"GBP","date":"2026-08-31T03:00:00-04:00","impact":"Holiday","forecast":"","previous":""},{"title":"G20 Meetings","country":"All","date":"2026-08-31T11:15:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"BRC Shop Price Index y/y","country":"GBP","date":"2026-08-31T19:01:00-04:00","impact":"Low","forecast":"0.9%","previous":"0.9%"},{"title":"Capital Spending q/y","country":"JPY","date":"2026-08-31T19:50:00-04:00","impact":"Low","forecast":"-0.2%","previous":"0.0%"},{"title":"Final Manufacturing PMI","country":"JPY","date":"2026-08-31T20:30:00-04:00","impact":"Low","forecast":"55.1","previous":"55.1"},{"title":"Building Approvals m/m","country":"AUD","date":"2026-08-31T21:30:00-04:00","impact":"Low","forecast":"-4.8%","previous":"7.2%"},{"title":"Current Account","country":"AUD","date":"2026-08-31T21:30:00-04:00","impact":"Low","forecast":"-29.7B","previous":"-27.1B"},{"title":"RatingDog Manufacturing PMI","country":"CNY","date":"2026-08-31T21:45:00-04:00","impact":"Low","forecast":"51.5","previous":"50.9"},{"title":"10-y Bond Auction","country":"JPY","date":"2026-08-31T23:35:00-04:00","impact":"Low","forecast":"","previous":"2.84|2.6"},{"title":"Consumer Confidence","country":"JPY","date":"2026-09-01T01:00:00-04:00","impact":"Low","forecast":"35.3","previous":"34.9"},{"title":"German Retail Sales m/m","country":"EUR","date":"2026-09-01T02:00:00-04:00","impact":"Low","forecast":"0.4%","previous":"-1.1%"},{"title":"Nationwide HPI m/m","country":"GBP","date":"2026-09-01T02:00:00-04:00","impact":"Low","forecast":"0.1%","previous":"0.1%"},{"title":"Commodity Prices y/y","country":"AUD","date":"2026-09-01T02:30:00-04:00","impact":"Low","forecast":"","previous":"15.4%"},{"title":"Retail Sales y/y","country":"CHF","date":"2026-09-01T02:30:00-04:00","impact":"Low","forecast":"1.3%","previous":"1.5%"},{"title":"Spanish Manufacturing PMI","country":"EUR","date":"2026-09-01T03:15:00-04:00","impact":"Low","forecast":"50.4","previous":"50.2"},{"title":"Manufacturing PMI","country":"CHF","date":"2026-09-01T03:30:00-04:00","impact":"Low","forecast":"54.1","previous":"53.2"},{"title":"Italian Manufacturing PMI","country":"EUR","date":"2026-09-01T03:45:00-04:00","impact":"Low","forecast":"51.6","previous":"51.3"},{"title":"French Final Manufacturing PMI","country":"EUR","date":"2026-09-01T03:50:00-04:00","impact":"Low","forecast":"51.5","previous":"51.5"},{"title":"German Final Manufacturing PMI","country":"EUR","date":"2026-09-01T03:55:00-04:00","impact":"Low","forecast":"54.1","previous":"54.1"},{"title":"Final Manufacturing PMI","country":"EUR","date":"2026-09-01T04:00:00-04:00","impact":"Low","forecast":"52.8","previous":"52.8"},{"title":"Italian Monthly Unemployment Rate","country":"EUR","date":"2026-09-01T04:30:00-04:00","impact":"Low","forecast":"5.6%","previous":"5.7%"},{"title":"Final Manufacturing PMI","country":"GBP","date":"2026-09-01T04:30:00-04:00","impact":"Low","forecast":"51.5","previous":"51.5"},{"title":"M4 Money Supply m/m","country":"GBP","date":"2026-09-01T04:30:00-04:00","impact":"Low","forecast":"0.9%","previous":"0.8%"},{"title":"Mortgage Approvals","country":"GBP","date":"2026-09-01T04:30:00-04:00","impact":"Low","forecast":"59K","previous":"58K"},{"title":"Net Lending to Individuals m/m","country":"GBP","date":"2026-09-01T04:30:00-04:00","impact":"Low","forecast":"9.2B","previous":"9.5B"},{"title":"Core CPI Flash Estimate y/y","country":"EUR","date":"2026-09-01T05:00:00-04:00","impact":"Medium","forecast":"2.5%","previous":"2.5%"},{"title":"CPI Flash Estimate y/y","country":"EUR","date":"2026-09-01T05:00:00-04:00","impact":"Medium","forecast":"3.3%","previous":"2.9%"},{"title":"Italian Prelim CPI m/m","country":"EUR","date":"2026-09-01T05:00:00-04:00","impact":"Low","forecast":"0.4%","previous":"0.2%"},{"title":"Unemployment Rate","country":"EUR","date":"2026-09-01T05:00:00-04:00","impact":"Low","forecast":"6.3%","previous":"6.3%"},{"title":"FOMC Member Barr Speaks","country":"USD","date":"2026-09-01T09:05:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"Manufacturing PMI","country":"CAD","date":"2026-09-01T09:30:00-04:00","impact":"Low","forecast":"","previous":"53.5"},{"title":"Final Manufacturing PMI","country":"USD","date":"2026-09-01T09:45:00-04:00","impact":"Low","forecast":"53.3","previous":"53.2"},{"title":"ISM Manufacturing PMI","country":"USD","date":"2026-09-01T10:00:00-04:00","impact":"High","forecast":"55.2","previous":"55.6"},{"title":"ISM Manufacturing Prices","country":"USD","date":"2026-09-01T10:00:00-04:00","impact":"Medium","forecast":"71.2","previous":"71.1"},{"title":"JOLTS Job Openings","country":"USD","date":"2026-09-01T10:00:00-04:00","impact":"Medium","forecast":"7.33M","previous":"7.36M"},{"title":"Construction Spending m/m","country":"USD","date":"2026-09-01T10:00:00-04:00","impact":"Low","forecast":"0.0%","previous":"-0.1%"},{"title":"RCM/TIPP Economic Optimism","country":"USD","date":"2026-09-01T10:10:00-04:00","impact":"Low","forecast":"46.2","previous":"45.1"},{"title":"Omdia Total Vehicle Sales","country":"USD","date":"2026-09-01T10:15:00-04:00","impact":"Low","forecast":"16.3M","previous":"16.3M"},{"title":"GDT Price Index","country":"NZD","date":"2026-09-01T10:50:00-04:00","impact":"Low","forecast":"","previous":"2.3%"},{"title":"G20 Meetings","country":"All","date":"2026-09-01T11:15:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"API Weekly Statistical Bulletin","country":"USD","date":"2026-09-01T16:30:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"Building Consents m/m","country":"NZD","date":"2026-09-01T18:45:00-04:00","impact":"Low","forecast":"","previous":"-3.6%"},{"title":"Monetary Base y/y","country":"JPY","date":"2026-09-01T19:50:00-04:00","impact":"Low","forecast":"-13.5%","previous":"-13.8%"},{"title":"German Buba President Nagel Speaks","country":"EUR","date":"2026-09-01T20:30:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"GDP q/q","country":"AUD","date":"2026-09-01T21:30:00-04:00","impact":"High","forecast":"0.3%","previous":"0.3%"},{"title":"Official Cash Rate","country":"NZD","date":"2026-09-01T22:00:00-04:00","impact":"High","forecast":"2.75%","previous":"2.50%"},{"title":"RBNZ Monetary Policy Statement","country":"NZD","date":"2026-09-01T22:00:00-04:00","impact":"High","forecast":"","previous":""},{"title":"RBNZ Rate Statement","country":"NZD","date":"2026-09-01T22:00:00-04:00","impact":"High","forecast":"","previous":""},{"title":"RBNZ Press Conference","country":"NZD","date":"2026-09-01T23:00:00-04:00","impact":"High","forecast":"","previous":""},{"title":"French Gov Budget Balance","country":"EUR","date":"2026-09-02T02:45:00-04:00","impact":"Low","forecast":"","previous":"-106.8B"},{"title":"Spanish Unemployment Change","country":"EUR","date":"2026-09-02T03:00:00-04:00","impact":"Low","forecast":"21.5K","previous":"19.5K"},{"title":"ADP Non-Farm Employment Change","country":"USD","date":"2026-09-02T08:15:00-04:00","impact":"Medium","forecast":"47K","previous":"44K"},{"title":"BOC Rate Statement","country":"CAD","date":"2026-09-02T09:45:00-04:00","impact":"High","forecast":"","previous":""},{"title":"Overnight Rate","country":"CAD","date":"2026-09-02T09:45:00-04:00","impact":"High","forecast":"2.25%","previous":"2.25%"},{"title":"Factory Orders m/m","country":"USD","date":"2026-09-02T10:00:00-04:00","impact":"Low","forecast":"0.6%","previous":"-0.3%"},{"title":"BOC Press Conference","country":"CAD","date":"2026-09-02T10:30:00-04:00","impact":"High","forecast":"","previous":""},{"title":"Crude Oil Inventories","country":"USD","date":"2026-09-02T10:30:00-04:00","impact":"Low","forecast":"","previous":"0.1M"},{"title":"Beige Book","country":"USD","date":"2026-09-02T14:00:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"Overseas Trade Index q/q","country":"NZD","date":"2026-09-02T18:45:00-04:00","impact":"Low","forecast":"-2.2%","previous":"-2.0%"},{"title":"ANZ Commodity Prices m/m","country":"NZD","date":"2026-09-02T21:00:00-04:00","impact":"Low","forecast":"","previous":"-3.9%"},{"title":"RBA Assist Gov Jones Speaks","country":"AUD","date":"2026-09-02T21:15:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"Goods Trade Balance","country":"AUD","date":"2026-09-02T21:30:00-04:00","impact":"Low","forecast":"1.39B","previous":"1.93B"},{"title":"RatingDog Services PMI","country":"CNY","date":"2026-09-02T21:45:00-04:00","impact":"Low","forecast":"50.6","previous":"50.4"},{"title":"30-y Bond Auction","country":"JPY","date":"2026-09-02T23:35:00-04:00","impact":"Low","forecast":"","previous":"3.94|3.9"},{"title":"RBA Assist Gov Hunter Speaks","country":"AUD","date":"2026-09-03T01:15:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"CPI m/m","country":"CHF","date":"2026-09-03T02:30:00-04:00","impact":"Medium","forecast":"0.0%","previous":"-0.1%"},{"title":"GDP q/q","country":"CHF","date":"2026-09-03T03:00:00-04:00","impact":"Low","forecast":"1.7%","previous":"0.7%"},{"title":"Spanish Services PMI","country":"EUR","date":"2026-09-03T03:15:00-04:00","impact":"Low","forecast":"58.8","previous":"58.3"},{"title":"Italian Services PMI","country":"EUR","date":"2026-09-03T03:45:00-04:00","impact":"Low","forecast":"53.3","previous":"52.5"},{"title":"French Final Services PMI","country":"EUR","date":"2026-09-03T03:50:00-04:00","impact":"Low","forecast":"48.4","previous":"48.4"},{"title":"German Final Services PMI","country":"EUR","date":"2026-09-03T03:55:00-04:00","impact":"Low","forecast":"48.5","previous":"48.5"},{"title":"Final Services PMI","country":"EUR","date":"2026-09-03T04:00:00-04:00","impact":"Low","forecast":"51.7","previous":"51.7"},{"title":"Final Services PMI","country":"GBP","date":"2026-09-03T04:30:00-04:00","impact":"Low","forecast":"52.8","previous":"52.8"},{"title":"PPI m/m","country":"EUR","date":"2026-09-03T05:00:00-04:00","impact":"Low","forecast":"1.3%","previous":"-0.3%"},{"title":"Spanish 10-y Bond Auction","country":"EUR","date":"2026-09-03T05:03:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"French 10-y Bond Auction","country":"EUR","date":"2026-09-03T05:18:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"Challenger Job Cuts y/y","country":"USD","date":"2026-09-03T05:30:00-04:00","impact":"Low","forecast":"","previous":"-46.1%"},{"title":"Labor Productivity q/q","country":"CAD","date":"2026-09-03T08:30:00-04:00","impact":"Low","forecast":"0.2%","previous":"-0.5%"},{"title":"Trade Balance","country":"CAD","date":"2026-09-03T08:30:00-04:00","impact":"Low","forecast":"3.2B","previous":"3.9B"},{"title":"Unemployment Claims","country":"USD","date":"2026-09-03T08:30:00-04:00","impact":"Medium","forecast":"205K","previous":"203K"},{"title":"FOMC Member Waller Speaks","country":"USD","date":"2026-09-03T08:30:00-04:00","impact":"Low","forecast":"","previous":""},{"title":"Revised Nonfarm Productivity q/q","country":"USD","date":"2026-09-03T08:30:00-04:00","impact":"Low","forecast":"1.4%","previous":"1.4%"},{"title":"Revised Unit Labor Costs q/q","country":"USD","date":"2026-09-03T08:30:00-04:00","impact":"Low","forecast":"1.3%","previous":"1.3%"},{"title":"Trade Balance","country":"USD","date":"2026-09-03T08:30:00-04:00","impact":"Low","forecast":"-86.4B","previous":"-73.3B"},{"title":"Final Services PMI","country":"USD","date":"2026-09-03T09:45:00-04:00","impact":"Low","forecast":"56.8","previous":"56.8"},{"title":"ISM Services PMI","country":"USD","date":"2026-09-03T10:00:00-04:00","impact":"Medium","forecast":"54.1","previous":"54.1"},{"title":"Natural Gas Storage","country":"USD","date":"2026-09-03T10:30:00-04:00","impact":"Low","forecast":"","previous":"15B"},{"title":"Household Spending y/y","country":"JPY","date":"2026-09-03T19:30:00-04:00","impact":"Low","forecast":"-1.6%","previous":"-3.3%"},{"title":"German Factory Orders m/m","country":"EUR","date":"2026-09-04T02:00:00-04:00","impact":"Low","forecast":"0.4%","previous":"3.1%"},{"title":"Italian Retail Sales m/m","country":"EUR","date":"2026-09-04T04:00:00-04:00","impact":"Low","forecast":"0.2%","previous":"-0.1%"},{"title":"Construction PMI","country":"GBP","date":"2026-09-04T04:30:00-04:00","impact":"Low","forecast":"45.9","previous":"44.7"},{"title":"BOE Gov Bailey Speaks","country":"GBP","date":"2026-09-04T04:50:00-04:00","impact":"High","forecast":"","previous":""},{"title":"Retail Sales m/m","country":"EUR","date":"2026-09-04T05:00:00-04:00","impact":"Low","forecast":"0.3%","previous":"-0.3%"},{"title":"Employment Change","country":"CAD","date":"2026-09-04T08:30:00-04:00","impact":"High","forecast":"15.8K","previous":"75.1K"},{"title":"Unemployment Rate","country":"CAD","date":"2026-09-04T08:30:00-04:00","impact":"High","forecast":"6.4%","previous":"6.4%"},{"title":"Average Hourly Earnings m/m","country":"USD","date":"2026-09-04T08:30:00-04:00","impact":"High","forecast":"0.3%","previous":"0.1%"},{"title":"Non-Farm Employment Change","country":"USD","date":"2026-09-04T08:30:00-04:00","impact":"High","forecast":"58K","previous":"-23K"},{"title":"Unemployment Rate","country":"USD","date":"2026-09-04T08:30:00-04:00","impact":"High","forecast":"4.1%","previous":"4.1%"},{"title":"Ivey PMI","country":"CAD","date":"2026-09-04T10:00:00-04:00","impact":"Medium","forecast":"56.2","previous":"55.1"}];
+
+/* THE SNAPSHOT IS THE STARTING VALUE, NOT A LATE ARRIVAL.
+   FF_CACHE started null and was only filled inside ffFetch, so anything that
+   ran before that call — and buildEconEvents runs on the very first render —
+   saw an empty feed and fell back to the four rule-derived rows. Measured
+   with the network fully blocked: 15 events, none from the feed, "feed not
+   loaded yet". Seeding the variable itself makes the week available to the
+   first caller, synchronously, with no network at all. */
+var FF_KEY='ca_ff_cal',
+    FF_CACHE=(typeof FF_SEED!=='undefined'&&FF_SEED&&FF_SEED.length)?FF_SEED:null,
+    FF_STATE=FF_CACHE
+      ? {at:Date.parse(FF_SEED_AT)||null,src:'snapshot',err:null,n:FF_CACHE.length,
+         seed:true,ageDays:null}
+      : {at:null,src:null,err:null,n:0};
 function ffLoadCache(){
   try{
     var raw=localStorage.getItem(FF_KEY); if(!raw)return null;
@@ -22971,11 +23058,27 @@ function ffLoadCache(){
 function ffSaveCache(rows,src){
   try{ localStorage.setItem(FF_KEY,JSON.stringify({at:Date.now(),rows:rows,src:src})); }catch(e){}
 }
+function ffSeedAgeDays(){
+  var t=Date.parse(FF_SEED_AT);
+  return isFinite(t)? Math.floor((Date.now()-t)/86400000) : null;
+}
 function ffFetch(cb){
   var cached=ffLoadCache();
   if(cached){ FF_CACHE=cached.rows;
     FF_STATE={at:cached.at,src:(cached.src||'feed')+', cached',err:null,n:cached.rows.length};
     cb(cached.rows); return; }
+  /* THE PANEL IS NEVER EMPTY WHILE A ROUTE IS BEING TRIED.
+     The snapshot is drawn first and synchronously, so every downstream
+     panel has rows immediately; the live routes then run and replace it if
+     one of them answers. The callback fires twice in that case, which is
+     what the render path already handles — it rebuilds from FF_CACHE. */
+  var usedSeed=false;
+  if(typeof FF_SEED!=='undefined'&&FF_SEED&&FF_SEED.length){
+    FF_CACHE=FF_SEED; usedSeed=true;
+    FF_STATE={at:Date.parse(FF_SEED_AT)||null,src:'snapshot',err:null,
+              n:FF_SEED.length,seed:true,ageDays:ffSeedAgeDays()};
+    try{ cb(FF_SEED); }catch(e){}
+  }
   /* ══ THE BRIDGE FIRST, BECAUSE NOTHING ELSE ACTUALLY WORKS ═══════
      Measured against the live feed rather than assumed:
 
@@ -22997,11 +23100,20 @@ function ffFetch(cb){
   var i=0, tried=[];
   (function attempt(){
     if(i>=urls.length){
+      /* FAILING MUST NOT DELETE WHAT IS ALREADY ON SCREEN.
+         This used to blank FF_STATE and call back with null, which threw
+         away the snapshot the panel had just drawn and left the calendar
+         empty again — the exact failure this was meant to end. */
+      if(usedSeed){
+        FF_STATE={at:Date.parse(FF_SEED_AT)||null,src:'snapshot',n:FF_SEED.length,
+          seed:true,ageDays:ffSeedAgeDays(),err:null,
+          liveErr:'no live route answered ('+tried.join(', ')+')'};
+        return;
+      }
       FF_STATE={at:null,src:null,n:0,
-        err:'every route failed ('+tried.join(', ')+'). The feed sends no '
-          +'cross-origin header and the public relays are down, so the only '
-          +'reliable route is the local bridge — start celestial_bridge.py '
-          +'and this fills in.'};
+        err:'every route failed ('+tried.join(', ')+'). The feed answers 200 but '
+          +'sends no Access-Control-Allow-Origin header, so a page opened from a '
+          +'folder cannot read it. Start celestial_bridge.py and this goes live.'};
       cb(null); return;
     }
     var step=urls[i++];
@@ -23037,6 +23149,13 @@ function ffEvents(){
 }
 function ffWhen(){
   if(FF_STATE.err)return 'feed unreachable — '+FF_STATE.err;
+  if(FF_STATE.seed){
+    var a=FF_STATE.ageDays;
+    return FF_STATE.n+' events from the snapshot shipped in this file'
+      +(a==null?'':a<=0?', taken today':', taken '+a+' day'+(a===1?'':'s')+' ago')
+      +'. Not live — start celestial_bridge.py for the live feed.'
+      +(FF_STATE.liveErr?' ('+FF_STATE.liveErr+')':'');
+  }
   if(!FF_STATE.at)return 'feed not loaded yet';
   var mins=Math.round((Date.now()-FF_STATE.at)/60000);
   return FF_STATE.n+' events from the feed ('+FF_STATE.src+')'
@@ -23205,6 +23324,170 @@ function econStudy(rows,dateSet){
    instruments the reader tagged it with and no measurement at all, which is
    the truthful thing to show for something with one occurrence.
    ══════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   WHICH ASSET MOVES, AND WHICH WAY — ASKED FOR TWICE AND NEVER DELIVERED
+
+   "isme kis asset me kya move aayega woh bhi show nahi ho raha hee ...
+    bais bhi batai rahe gaa dxy par or xau os news"
+
+   What was there: one measured study, for payrolls only, and the words
+   "No measured bias" on the other hundred and nine rows. True, and useless.
+
+   Two different questions were being conflated, and only one of them needs
+   history:
+
+     WHICH INSTRUMENT does this release belong to? That is not a forecast.
+     A German CPI print moves the euro; it is a fact about which market the
+     number is published into, and it can be answered for every row.
+
+     WHICH WAY does it push? Nobody knows, because the number is not out
+     yet. But the CONDITIONAL is knowable and is what a desk actually
+     works from: if it beats, the currency firms and gold gives way; if it
+     misses, the reverse. That is a sign convention, not a prediction, and
+     it is stated as a condition so it can never read as a call.
+
+   The one real trap is the inverted indicators. A HIGHER unemployment rate
+   or a HIGHER jobless-claims number is currency-NEGATIVE, so a "beat" on
+   the headline is a miss for the currency. Those are flagged explicitly
+   rather than swept into the same rule, because getting that backwards is
+   the single most common way this kind of panel misleads.
+
+   The measured payrolls study still runs and still outranks this — where
+   there is history, history wins and is shown above the conditional.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* the currency a release is published into, and what that currency drives */
+var EV_CCY={
+  USD:{pair:'DXY',    also:['XAU','US indices'], name:'the dollar'},
+  EUR:{pair:'EURUSD', also:['DAX','DXY'],        name:'the euro'},
+  GBP:{pair:'GBPUSD', also:['FTSE','DXY'],       name:'sterling'},
+  JPY:{pair:'USDJPY', also:['Nikkei','XAU'],     name:'the yen'},
+  CAD:{pair:'USDCAD', also:['Oil'],              name:'the Canadian dollar'},
+  AUD:{pair:'AUDUSD', also:['Copper','China proxies'], name:'the Aussie'},
+  NZD:{pair:'NZDUSD', also:[],                   name:'the kiwi'},
+  CHF:{pair:'USDCHF', also:['XAU'],              name:'the franc'},
+  CNY:{pair:'AUDUSD', also:['Copper','Oil','Iron ore'], name:'the yuan'}
+};
+/* HIGHER PRINT = WEAKER CURRENCY. Getting these the right way round is the
+   whole point of the panel, so they are listed rather than pattern-guessed
+   loosely: an unemployment RATE going up is bad for the currency, and so is
+   a claims number going up. */
+var EV_INVERTED=/unemploy|jobless|claims|misery|bankrupt|delinquen|foreclos/i;
+/* releases that move a currency at all, and how they are read */
+var EV_KIND=[
+  {re:/rate decision|federal funds|cash rate|bank rate|official cash|refinancing|policy rate|interest rate/i,
+   k:'the policy rate', w:'high'},
+  {re:/non-?farm|payroll|employment change|jobs? report/i, k:'jobs', w:'high'},
+  {re:/\bcpi\b|inflation|price index|\bppi\b|\bpce\b/i,    k:'inflation', w:'high'},
+  {re:/\bgdp\b|growth/i,                                    k:'growth', w:'high'},
+  {re:/retail sales|consumer spending/i,                    k:'spending', w:'medium'},
+  {re:/\bpmi\b|ism |manufacturing|services index|business activity/i, k:'activity', w:'medium'},
+  {re:/unemploy|jobless|claims/i,                           k:'the labour market', w:'medium'},
+  {re:/confidence|sentiment|expectations/i,                 k:'confidence', w:'low'},
+  {re:/trade balance|current account|exports|imports/i,      k:'trade', w:'low'},
+  {re:/housing|building permits|home sales|construction/i,   k:'housing', w:'low'}
+];
+/* things with no number at all — a speech, a summit, a holiday */
+var EV_NONUM=/speaks|speech|symposium|meetings?\b|summit|holiday|bank holiday|minutes|testimony|press conference/i;
+
+/* rule-derived rows are US releases by construction and carried no country
+   field, so every one of them mapped to no instrument at all */
+var EV_US_NAMES=/non-?farm|payroll|federal funds|fomc|\bcpi\b|\bppi\b|\bpce\b|ism |jackson hole|fed chair/i;
+function evRead(e){
+  var t=String((e&&e.t)||''), c=String((e&&e.country)||'').toUpperCase();
+  if(!c&&EV_US_NAMES.test(t))c='USD';
+  var ccy=EV_CCY[c]||null;
+  var kind=null;
+  for(var i=0;i<EV_KIND.length;i++) if(EV_KIND[i].re.test(t)){ kind=EV_KIND[i]; break; }
+  var inverted=EV_INVERTED.test(t);
+  var noNumber=EV_NONUM.test(t)||(!kind&&(!e.fc||e.fc==='—')&&!e.pvFeed);
+  return {
+    ccy:c, map:ccy, kind:kind, inverted:inverted, noNumber:noNumber,
+    /* a release only really moves things if it is a known kind AND the feed
+       marks it as carrying weight; everything else is background */
+    weight: (!ccy||noNumber) ? 'none'
+          : (e.impact==='High') ? 'high'
+          : (e.impact==='Medium') ? 'medium' : 'low'
+  };
+}
+
+/* which instruments to have on the screen when this prints */
+function evAssets(e){
+  var R=evRead(e);
+  if(!R.map)return [];
+  var out=[R.map.pair].concat(R.map.also);
+  /* gold trades against the dollar whatever the release, so a big USD number
+     belongs on the gold screen even though gold is not a US instrument */
+  if(R.ccy==='USD'&&out.indexOf('XAU')<0)out.push('XAU');
+  return out;
+}
+
+/* the conditional, both ways, for the dollar and for gold */
+function evBiasHtml(e){
+  var R=evRead(e);
+  /* A GLOBAL ROW IS NOT AN UNTIED ROW.
+     G20, a symposium, a holiday — the feed files these under "All", which
+     matched no currency, so the card shrugged. They have no single currency
+     precisely because they touch everything, and that is the sentence. */
+  if(!R.map&&(R.ccy==='ALL'||R.ccy==='')&&R.noNumber)
+    return '<div class="evx none"><b>Risk assets broadly</b><span>'
+      +escHtml(/holiday/i.test(e.t||'') ? 'A market holiday — thinner books, wider spreads, and '
+          +'moves that do not hold. No side is claimed.'
+        : 'A meeting or a speech with no number attached and no single currency behind it. '
+          +'It moves things on headlines rather than on a beat or a miss, which is a reason to '
+          +'be smaller, not a reason to have a side.')
+      +'</span></div>';
+  if(!R.map)
+    return '<div class="evx none">No instrument is tied to this row — the feed gives it no '
+      +'currency, so there is nothing to point it at.</div>';
+  if(R.noNumber){
+    var what = /speaks|speech|testimony|press conference/i.test(e.t||'') ? 'a speaker, not a print'
+             : /symposium|summit|meetings?\b/i.test(e.t||'') ? 'a meeting, not a print'
+             : /holiday/i.test(e.t||'') ? 'a market holiday' : 'no number is published';
+    return '<div class="evx none"><b>'+escHtml(evAssets(e).join(' · '))+'</b>'
+      +'<span>This is '+what+'. There is no beat or miss to react to, so no direction is '
+      +'claimed — what it can do is widen spreads and move price on a headline, which is a '
+      +'reason to be smaller, not a reason to have a side.</span></div>';
+  }
+
+  var usd = R.ccy==='USD';
+  var strong = R.inverted ? 'a HIGHER number' : 'a beat';
+  var weak   = R.inverted ? 'a LOWER number'  : 'a miss';
+  /* on an inverted indicator a higher print WEAKENS the currency */
+  var ccyUpOn = R.inverted ? weak : strong;
+  var ccyDnOn = R.inverted ? strong : weak;
+  /* R.kind is the whole matcher object, so this printed "a beat on
+     [object Object]" on every card. It is the label that was wanted. */
+  var kindTxt = (R.kind&&R.kind.k) ? R.kind.k : 'this reading';
+
+  function line(cond,ccyDir){
+    var dxy = usd ? ccyDir : (ccyDir==='up'?'down':'up');   /* a firmer EUR is a softer DXY */
+    var xau = dxy==='up' ? 'down' : 'up';
+    return '<div class="evx-r '+(ccyDir==='up'?'a':'b')+'">'
+      +'<u>'+escHtml(cond)+'</u>'
+      +'<span class="evx-c">'+escHtml(R.map.name)+' <b class="'+(ccyDir==='up'?'up':'dn')+'">'
+        +(ccyDir==='up'?'firmer':'softer')+'</b></span>'
+      +'<span class="evx-c">DXY <b class="'+(dxy==='up'?'up':'dn')+'">'+dxy+'</b></span>'
+      +'<span class="evx-c">XAU <b class="'+(xau==='up'?'up':'dn')+'">'+xau+'</b></span>'
+      +'</div>';
+  }
+  var h='<div class="evx w-'+R.weight+'">';
+  h+='<div class="evx-h"><b>'+escHtml(evAssets(e).join(' · '))+'</b>'
+    +'<i>'+escHtml(R.weight==='high'?'moves price on its own'
+      :R.weight==='medium'?'moves price when it surprises'
+      :'background — rarely moves price alone')+'</i></div>';
+  h+=line(ccyUpOn+' on '+kindTxt,'up');
+  h+=line(ccyDnOn+' on '+kindTxt,'down');
+  if(R.inverted)
+    h+='<div class="evx-inv">Inverted: a higher reading here is <b>bad</b> for '
+      +escHtml(R.map.name)+', not good. Reading it the ordinary way round gets the '
+      +'direction backwards.</div>';
+  h+='<div class="evx-f">A sign convention, not a forecast — the number is not out. '
+    +'Gold is quoted in dollars, so it takes the opposite side of DXY by construction.</div>';
+  return h+'</div>';
+}
+
 function econBiasChip(e){
   if(!e)return '';
   if(e.mine)
@@ -25306,7 +25589,10 @@ function renderSentimentV3(){
                       : 'Entered by you.')
             +' Nothing here is derived from a feed.'
           : senWhat(e.t,e))+'</div>'
-      +econBiasChip(e)+'</div>';
+      +econBiasChip(e)
+      /* the part that was missing: which instrument, and which way, both ways */
+      +(function(){ try{ return evBiasHtml(e); }catch(err){ return ''; } })()
+      +'</div>';
   }).join('');
 
   host.className='sn';
