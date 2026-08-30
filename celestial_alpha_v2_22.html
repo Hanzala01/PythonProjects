@@ -2678,6 +2678,33 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #jb_board{grid-column:1/-1}
 .nav-alt{display:block;font-size:7.5px;font-weight:700;letter-spacing:.09em;
   text-transform:uppercase;color:var(--t3);opacity:.7;margin-top:1px}
+/* ── MetaTrader 5, read-only ─────────────────────────────────────────── */
+.m5{padding:13px 15px;border-radius:14px;border:1px solid rgba(160,130,220,.16);
+  background:rgba(24,14,52,.5)}
+.m5-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  flex-wrap:wrap;margin-bottom:10px}
+.m5-h b{font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--t1)}
+.m5-h i{font-style:normal;font-size:8.5px;color:var(--t3)}
+.m5-form{display:grid;grid-template-columns:1fr 1.2fr 1.2fr auto;gap:9px;align-items:end}
+@media(max-width:760px){.m5-form{grid-template-columns:1fr 1fr}}
+.m5-warn{margin-top:9px;padding:8px 10px;border-radius:9px;font-size:8.5px;line-height:1.6;
+  color:var(--t2);border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.06)}
+.m5-warn b{display:block;color:#FBBF24;margin-bottom:2px}
+.m5-on{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.m5-badge{font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 9px;border-radius:99px;color:#34D399;
+  border:1px solid rgba(52,211,153,.45);background:rgba(52,211,153,.1)}
+.m5-acc b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1)}
+.m5-acc s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:2px}
+.m5-btns{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.m5-na b{display:block;font-family:'Space Grotesk';font-size:11px;font-weight:800;
+  color:var(--t2);margin-bottom:3px}
+.m5-na span{font-size:9px;line-height:1.6;color:var(--t3)}
+.m5-err{margin-top:9px;padding:8px 10px;border-radius:9px;font-size:9px;line-height:1.6;
+  color:var(--t2);border:1px solid rgba(248,113,113,.35);background:rgba(248,113,113,.07)}
+.m5-ok{margin-top:9px;padding:8px 10px;border-radius:9px;font-size:9px;line-height:1.6;
+  color:var(--t2);border:1px solid rgba(52,211,153,.32);background:rgba(52,211,153,.06)}
+.m5-note{margin-top:8px;font-size:8px;line-height:1.6;color:var(--t3);opacity:.85}
 .jb{margin-bottom:14px}
 .jb-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:9px;
   margin-bottom:14px}
@@ -6219,7 +6246,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b62</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b63</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7056,13 +7083,16 @@ body{background:var(--bg0)}
           </div>
         </div>
 
+        <!-- METATRADER 5 — read-only sync -->
+        <div id="mt5_panel" style="margin-bottom:10px"></div>
+
         <!-- ACCOUNT SETUP -->
         <div style="background:var(--s1);border:1px solid var(--rim);border-radius:var(--r2);padding:14px">
           <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Account Setup</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
             <div class="fg"><label>Starting Balance ($)</label><input type="number" id="port_start" placeholder="10000" onchange="updatePortStats()"></div>
             <div class="fg"><label>Current Balance ($)</label><input type="number" id="port_cur" placeholder="10500" onchange="updatePortStats()"></div>
-            <div class="fg"><label>Broker / Prop Firm</label><input id="port_broker" placeholder="Exness, FTMO..." onchange="document.getElementById('port_broker_lbl').textContent=this.value||'Manual mode'"></div>
+            <div class="fg"><label>Broker / Prop Firm</label><input id="port_broker" placeholder="Exness, FTMO..." onchange="var _e=document.getElementById('port_broker_lbl');if(_e)_e.textContent=this.value||'Manual mode'"></div>
             <div class="fg"><label>Account Type</label>
               <select id="port_acc_type"><option>Live</option><option>Demo</option><option>Prop Firm</option><option>Challenge</option></select>
             </div>
@@ -22155,6 +22185,168 @@ function qa(n){document.getElementById('pinp').value=n;addAsset();}
      colour never carries a value alone. Every green and every red sits
      beside a signed number or a word.
    ══════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   METATRADER 5 — READ-ONLY SYNC
+
+   The question was "account ka password login id daalo aur woh interconnect
+   hojai". This is that, with one deliberate narrowing.
+
+   MT5 accounts have two passwords. The MASTER password places orders and
+   moves money. The INVESTOR password does neither — it opens the same
+   account read-only, sees every position and every closed deal, and the
+   terminal itself refuses any order sent on it. A journal only ever reads,
+   so only the investor password is accepted, and the bridge verifies it:
+   if MT5 reports trade_allowed on the session, the master password was
+   pasted, and the connection is refused and closed rather than held.
+
+   WHERE THE PASSWORD GOES. Into celestial_bridge.py on your own machine,
+   over localhost, held in memory for the life of that process. It is never
+   put in this page, never in localStorage, never in the database, never
+   logged, and it does not survive a bridge restart. That last part is a
+   feature: a credential that outlives the session it was needed for is a
+   credential waiting to leak.
+
+   This panel therefore never stores what you type. The field is cleared the
+   moment the bridge answers.
+   ══════════════════════════════════════════════════════════════════════ */
+var _mt5={available:null,connected:false,login:null,server:null,busy:false,msg:null,err:null};
+
+function mt5Paint(){
+  var el=document.getElementById('mt5_panel');
+  if(!el)return;
+  var S=_mt5;
+  var body;
+  if(S.available===false){
+    body='<div class="m5-na"><b>MetaTrader 5 is not available on the bridge</b>'
+      +'<span>'+escHtml(S.note||'')+' Once it is installed, this panel connects '
+      +'read-only and pulls your closed trades straight into the journal.</span></div>';
+  }else if(S.connected){
+    body='<div class="m5-on">'
+      +'<div class="m5-badge">Connected · read-only</div>'
+      +'<div class="m5-acc"><b>'+escHtml(String(S.login||''))+'</b>'
+        +'<s>'+escHtml(S.server||'')+(S.name?' · '+escHtml(S.name):'')
+        +(S.balance!=null?' · balance '+escHtml(String(S.balance))
+          +(S.currency?' '+escHtml(S.currency):''):'')+'</s></div>'
+      +'<div class="m5-btns">'
+        +'<button class="btn btn-a btn-sm" onclick="mt5Import(this)">Import closed trades</button>'
+        +'<button class="btn btn-g btn-sm" onclick="mt5Disconnect()">Disconnect</button>'
+      +'</div></div>';
+  }else{
+    body='<div class="m5-form">'
+      +'<div class="fg"><label>Account number</label>'
+        +'<input id="m5_login" inputmode="numeric" placeholder="12345678"></div>'
+      +'<div class="fg"><label>Server</label>'
+        +'<input id="m5_server" placeholder="Exness-MT5Real8"></div>'
+      +'<div class="fg"><label>Investor password</label>'
+        +'<input id="m5_pass" type="password" autocomplete="off" placeholder="read-only password"></div>'
+      +'<button class="btn btn-a btn-sm" onclick="mt5Connect(this)">Connect</button>'
+    +'</div>'
+    +'<div class="m5-warn"><b>Use the investor password, not the master one.</b>'
+      +'It opens the same account read-only — it cannot place an order or move money, '
+      +'and the bridge checks that and refuses the master password if you paste it by '
+      +'mistake. Your broker or MT5 itself can show it.</div>';
+  }
+  el.innerHTML='<div class="m5">'
+    +'<div class="m5-h"><b>MetaTrader 5</b>'
+      +'<i>pull your closed trades in instead of typing them</i></div>'
+    +body
+    +(S.err?'<div class="m5-err">'+escHtml(S.err)+'</div>':'')
+    +(S.msg?'<div class="m5-ok">'+escHtml(S.msg)+'</div>':'')
+    +'<div class="m5-note">The password goes to celestial_bridge.py on this machine and '
+      +'stays in its memory — never into this page, never saved, and gone when the bridge '
+      +'stops.</div>'
+  +'</div>';
+}
+
+function mt5Status(){
+  fetch(bridgeURL()+'/mt5/status').then(function(r){return r.json();}).then(function(d){
+    _mt5.available=!!d.available; _mt5.connected=!!d.connected;
+    _mt5.login=d.login; _mt5.server=d.server; _mt5.note=d.note;
+    mt5Paint();
+  }).catch(function(){
+    _mt5.available=false;
+    _mt5.note='The bridge is not running. Start celestial_bridge.py and reopen this tab.';
+    mt5Paint();
+  });
+}
+
+function mt5Connect(btn){
+  var L=document.getElementById('m5_login'), Sv=document.getElementById('m5_server'),
+      P=document.getElementById('m5_pass');
+  if(!L||!Sv||!P)return;
+  var payload={login:L.value.trim(),server:Sv.value.trim(),password:P.value};
+  if(!payload.login||!payload.server||!payload.password){
+    _mt5.err='Account number, server and investor password are all needed.'; mt5Paint(); return;
+  }
+  if(btn){btn.disabled=true;btn.textContent='Connecting…';}
+  _mt5.err=null; _mt5.msg=null;
+  fetch(bridgeURL()+'/mt5/connect',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+   .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+   .then(function(x){
+      /* the field is cleared whichever way this went — a password left in a
+         DOM node is a password sitting in the page */
+      payload.password=''; if(P)P.value='';
+      if(!x.ok){ _mt5.err=(x.d&&x.d.detail)||'The bridge refused the connection.';
+        mt5Paint(); return; }
+      _mt5.connected=true; _mt5.login=x.d.login; _mt5.server=x.d.server;
+      _mt5.name=x.d.name; _mt5.balance=x.d.balance; _mt5.currency=x.d.currency;
+      _mt5.msg='Connected read-only. Import to bring the closed trades in.';
+      /* the account's own balance is a better starting figure than a guess */
+      try{ var ps=document.getElementById('port_start');
+           if(ps&&!ps.value&&x.d.balance!=null)ps.value=x.d.balance; }catch(e){}
+      mt5Paint();
+   })
+   .catch(function(){ if(P)P.value='';
+     _mt5.err='Could not reach the bridge on '+bridgeURL()+'.'; mt5Paint(); });
+}
+
+function mt5Disconnect(){
+  fetch(bridgeURL()+'/mt5/disconnect',{method:'POST'}).then(function(){
+    _mt5.connected=false; _mt5.msg=null; _mt5.err=null; mt5Paint();
+  }).catch(function(){ _mt5.err='Could not reach the bridge.'; mt5Paint(); });
+}
+
+function mt5Import(btn){
+  if(btn){btn.disabled=true;btn.textContent='Importing…';}
+  _mt5.err=null; _mt5.msg=null;
+  fetch(bridgeURL()+'/mt5/history?days=365')
+   .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+   .then(function(x){
+      if(!x.ok){ _mt5.err=(x.d&&x.d.detail)||'The bridge could not read the history.';
+        mt5Paint(); return; }
+      var deals=x.d.deals||[];
+      /* IMPORTING TWICE MUST NOT DOUBLE THE JOURNAL.
+         Every deal carries an MT5 ticket, which is unique for the life of the
+         account, so it is the key. A row already in the journal is skipped
+         rather than added again — otherwise a second import would double the
+         trade count and halve every average on the board. */
+      var seen={};
+      JRNL.forEach(function(j){ if(j.mt5)seen[j.mt5]=1; });
+      var added=0;
+      deals.forEach(function(d){
+        if(!d.ticket||seen[d.ticket])return;
+        seen[d.ticket]=1; added++;
+        JRNL.unshift({d:d.date, a:(d.symbol||'').toUpperCase(),
+          t:'mt5', dir:d.dir, en:d.price, ex:d.price, lots:d.lots,
+          move:'0.00%', pnl:d.pnl, r:d.pnl>0?'win':d.pnl<0?'loss':'be',
+          mt5:d.ticket, session:'MT5', note:d.comment||''});
+      });
+      if(added)jrnlSave();
+      _mt5.msg = added
+        ? added+' trade'+(added===1?'':'s')+' imported from '+deals.length
+          +' closed deal'+(deals.length===1?'':'s')+'. '
+          +(deals.length-added)+' were already in the journal.'
+        : deals.length
+          ? 'Nothing new — all '+deals.length+' closed deals are already in the journal.'
+          : 'MT5 reported no closed deals in the last year.';
+      try{ jbPaint(); renderJ(); updatePortStats(); renderPnlCalendar(); }catch(e){}
+      mt5Paint();
+   })
+   .catch(function(){ _mt5.err='Could not reach the bridge.'; mt5Paint(); });
+}
+
 function jbClosed(){ return JRNL.filter(function(j){return j.r!=='open';}); }
 function jbNum(v){ var n=parseFloat(v); return isFinite(n)?n:0; }
 function jbMoney(v,dp){
@@ -23686,7 +23878,8 @@ function goTab(name,btn){
   }
   if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashMember();}catch(e){console.error('dash:',e);}}
   if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();renderApprovals();
-    try{jbPaint();}catch(e){console.error('journal board:',e);}}
+    try{jbPaint();}catch(e){console.error('journal board:',e);}
+    try{mt5Status();}catch(e){}}
   if(name==='bot'){renderBot();renderBroker();}
 }
 /* ══ ECONOMIC CALENDAR — recurring high-impact events, live countdown ══ */

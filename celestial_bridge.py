@@ -547,6 +547,182 @@ def px_preflight(rest: str):
     return _public({"ok": True})
 
 
+# ── METATRADER 5, READ ONLY ───────────────────────────────────────────────
+# Asked for as "account ka password login id dalo aur woh interconnect hojai".
+# The honest version of that is narrower than it sounds, and the narrowing is
+# the whole point.
+#
+# MT5 accounts have TWO passwords. The master password can place orders and
+# move money. The INVESTOR password can do neither — it opens the same
+# account in read-only mode, sees positions and history, and every order
+# attempt is refused by the terminal itself. A journal only ever needs to
+# read, so only the investor password is accepted here, and the trade-sending
+# call is not implemented at all rather than left present and unused.
+#
+# It lives in this process because this process is on the user's own machine.
+# It is never sent to the page, never written to the database, and never
+# logged: it is held in memory for the life of the run and is gone when the
+# bridge stops. Restarting the bridge means entering it again, which is the
+# correct trade-off for a credential.
+#
+# MetaTrader5 is Windows-only and is an optional import. Where it is missing
+# the endpoint says so plainly instead of failing in a way that reads like a
+# wrong password.
+
+_MT5: dict = {"login": None, "server": None, "password": None, "ok": False}
+
+
+def _mt5_mod():
+    try:
+        import MetaTrader5 as mt5           # noqa: N813
+        return mt5
+    except Exception:                        # noqa: BLE001
+        return None
+
+
+@app.options("/mt5/{rest:path}")
+def mt5_preflight(rest: str):
+    return _public({"ok": True})
+
+
+@app.get("/mt5/status")
+def mt5_status():
+    mt5 = _mt5_mod()
+    return _public({
+        "available": mt5 is not None,
+        "connected": bool(_MT5["ok"]),
+        "login": _MT5["login"],
+        "server": _MT5["server"],
+        "note": ("MetaTrader5 runs on Windows with the terminal installed. "
+                 "pip install MetaTrader5")
+        if mt5 is None else "read-only: the investor password cannot place orders",
+    })
+
+
+@app.post("/mt5/connect")
+def mt5_connect(body: dict = Body(...)):
+    """Open a read-only MT5 session. The password stays in this process."""
+    mt5 = _mt5_mod()
+    if mt5 is None:
+        raise HTTPException(501, "MetaTrader5 is not installed here. It is a Windows "
+                                 "package and needs the MT5 terminal: pip install MetaTrader5")
+    try:
+        login = int(str(body.get("login", "")).strip())
+    except ValueError:
+        raise HTTPException(400, "login must be the numeric account number")
+    server = str(body.get("server", "")).strip()
+    password = str(body.get("password", ""))
+    if not server or not password:
+        raise HTTPException(400, "server and investor password are both required")
+
+    if not mt5.initialize():
+        raise HTTPException(502, f"could not start the MT5 terminal: {mt5.last_error()}")
+    if not mt5.login(login, password=password, server=server):
+        err = mt5.last_error()
+        mt5.shutdown()
+        raise HTTPException(401, f"MT5 refused the login: {err}")
+
+    # Prove it is the investor password rather than trusting the label on it.
+    # trade_allowed comes back False for a read-only session; if it is True the
+    # master password was pasted, and that is a credential this tool must not
+    # hold. Refuse, disconnect, and say why.
+    info = mt5.account_info()
+    if info is not None and getattr(info, "trade_allowed", False):
+        mt5.shutdown()
+        raise HTTPException(
+            403,
+            "That is the MASTER password — it can place orders and move money. "
+            "Use the INVESTOR password instead: same account, read-only. Your "
+            "broker or the MT5 terminal (Tools > Options > Server) can show it.")
+
+    _MT5.update({"login": login, "server": server, "password": password, "ok": True})
+    return _public({"connected": True, "login": login, "server": server,
+                    "name": getattr(info, "name", None),
+                    "currency": getattr(info, "currency", None),
+                    "balance": getattr(info, "balance", None),
+                    "equity": getattr(info, "equity", None),
+                    "read_only": True})
+
+
+@app.post("/mt5/disconnect")
+def mt5_disconnect():
+    mt5 = _mt5_mod()
+    if mt5 is not None:
+        try:
+            mt5.shutdown()
+        except Exception:                    # noqa: BLE001
+            pass
+    _MT5.update({"login": None, "server": None, "password": None, "ok": False})
+    return _public({"connected": False})
+
+
+@app.get("/mt5/history")
+def mt5_history(days: int = 365):
+    """Closed deals, in the shape the journal already stores."""
+    import datetime as _dt
+
+    mt5 = _mt5_mod()
+    if mt5 is None:
+        raise HTTPException(501, "MetaTrader5 is not installed here")
+    if not _MT5["ok"]:
+        raise HTTPException(409, "not connected — POST /mt5/connect first")
+
+    to = _dt.datetime.now()
+    frm = to - _dt.timedelta(days=max(1, min(days, 3650)))
+    deals = mt5.history_deals_get(frm, to)
+    if deals is None:
+        raise HTTPException(502, f"MT5 returned no history: {mt5.last_error()}")
+
+    # DEAL_ENTRY_OUT is the leg that CLOSES a position, and it is the only leg
+    # that carries the realised result. Counting the opening leg as well would
+    # double the trade count and halve every average on the board.
+    rows = []
+    for d in deals:
+        if getattr(d, "entry", None) != getattr(mt5, "DEAL_ENTRY_OUT", 1):
+            continue
+        profit = float(getattr(d, "profit", 0.0)) \
+            + float(getattr(d, "swap", 0.0)) + float(getattr(d, "commission", 0.0))
+        rows.append({
+            "ticket": getattr(d, "ticket", None),
+            "position": getattr(d, "position_id", None),
+            "date": _dt.datetime.fromtimestamp(getattr(d, "time", 0)).strftime("%Y-%m-%d"),
+            "symbol": getattr(d, "symbol", ""),
+            # a closing SELL closes a BUY, so the reported side is inverted to
+            # describe the trade rather than the leg
+            "dir": "sell" if getattr(d, "type", 0) == 0 else "buy",
+            "lots": float(getattr(d, "volume", 0.0)),
+            "price": float(getattr(d, "price", 0.0)),
+            "pnl": round(profit, 2),
+            "comment": getattr(d, "comment", ""),
+        })
+    rows.sort(key=lambda r: r["date"])
+    return _public({"count": len(rows), "from": frm.strftime("%Y-%m-%d"), "deals": rows})
+
+
+@app.get("/mt5/open")
+def mt5_open():
+    mt5 = _mt5_mod()
+    if mt5 is None:
+        raise HTTPException(501, "MetaTrader5 is not installed here")
+    if not _MT5["ok"]:
+        raise HTTPException(409, "not connected — POST /mt5/connect first")
+    pos = mt5.positions_get()
+    out = []
+    for pp in (pos or []):
+        out.append({
+            "ticket": getattr(pp, "ticket", None),
+            "symbol": getattr(pp, "symbol", ""),
+            "dir": "buy" if getattr(pp, "type", 0) == 0 else "sell",
+            "lots": float(getattr(pp, "volume", 0.0)),
+            "open": float(getattr(pp, "price_open", 0.0)),
+            "now": float(getattr(pp, "price_current", 0.0)),
+            "sl": float(getattr(pp, "sl", 0.0)) or None,
+            "tp": float(getattr(pp, "tp", 0.0)) or None,
+            "pnl": round(float(getattr(pp, "profit", 0.0)), 2),
+        })
+    return _public({"count": len(out), "positions": out})
+
+
 # FRED SERVED PUBLIC MACRO DATA BEHIND A PRIVATE CORS POLICY.
 # This endpoint carries no user data — it is the St Louis Fed's own published
 # series, which anyone can download — but it was returning a bare dict, so the
