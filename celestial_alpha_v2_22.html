@@ -2816,6 +2816,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .ntf-i{animation:none;opacity:1;transform:none}
   .ntf-bell.ping svg,.ntf-bell.ping .ntf-count{animation:none}
 }
+.jb-appr{display:flex;align-items:center;gap:9px;cursor:pointer;flex-wrap:wrap;
+  padding:8px 12px;border-radius:11px;margin-bottom:11px;
+  border:1px solid rgba(251,191,36,.34);background:rgba(251,191,36,.07);
+  transition:.18s cubic-bezier(.2,.9,.25,1)}
+.jb-appr:hover{border-color:rgba(251,191,36,.6);background:rgba(251,191,36,.12)}
+.jb-appr i{width:7px;height:7px;border-radius:50%;background:#FBBF24;flex:none;
+  animation:apprPulse 1.9s ease-in-out infinite}
+@keyframes apprPulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(251,191,36,.5)}
+  60%{opacity:.75;box-shadow:0 0 0 7px rgba(251,191,36,0)}}
+.jb-appr b{font-size:10px;font-weight:800;color:#FBBF24}
+.jb-appr s{text-decoration:none;font-size:9px;color:var(--t3)}
+.jb-appr u{margin-left:auto;text-decoration:none;font-size:8px;font-weight:800;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--t3)}
+.jb-appr:hover u{color:#FBBF24}
+@media(prefers-reduced-motion:reduce){.jb-appr i{animation:none}}
 .jb-build{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:10px;
   font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
 .jb-build b{font-family:'Space Grotesk';font-size:13px;letter-spacing:0;color:#C4B5FD}
@@ -6421,7 +6436,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b68</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b69</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -7195,11 +7210,15 @@ body{background:var(--bg0)}
       </div>
 
       <div class="pane hidden" id="pane_portfolio">
-        <div class="card" style="margin-bottom:10px">
-          <div class="ch"><div class="ct"><div class="dot" style="background:var(--acc2)"></div>Approvals<span class="apr-badge" data-appr-badge></span></div>
-            <div class="cs">Setups waiting on your decision — nothing here has been placed.</div></div>
-          <div class="cb" id="appr_body"></div>
-        </div>
+        <!-- THE APPROVALS CARD IS GONE FROM THIS TAB.
+             It moved into the notification bell, where an approval belongs —
+             and leaving a copy here meant the same queue rendered twice and
+             cost this tab a card's worth of height to say, most days, that
+             nothing was waiting. When something IS waiting the journal board
+             shows a single line at the top and the bell holds the buttons.
+             The container stays, empty and hidden, because renderApprovals
+             and the badge both look for it. -->
+        <div id="appr_body" hidden></div>
         <!-- THE JOURNAL BOARD — the layout from the reference sheet, in this
              app's own theme, every figure computed from JRNL -->
         <div id="jb_board"></div>
@@ -20863,6 +20882,11 @@ function apprSave(){
   try{ localStorage.setItem(APPR_KEY,JSON.stringify(APPR.slice(0,200))); }catch(e){}
   try{ renderApprovals(); }catch(e){}
   try{ apprBadge(); }catch(e){}
+  /* the queue is shown in two more places now — the bell's count and the one
+     line at the top of the journal board — and both are stale the moment a
+     setup is approved or passed */
+  try{ if(typeof ntfPaint==='function')ntfPaint(); }catch(e){}
+  try{ if(typeof jbPaint==='function')jbPaint(); }catch(e){}
 }
 function apprPending(){ return APPR.filter(function(x){return x.state==='pending';}); }
 /* one queue, whatever produced the setup */
@@ -20881,6 +20905,19 @@ function apprApprove(id){
   var a=apprFind(id);
   if(!a||a.state!=='pending')return;
   if(a.source==='bot'){
+    /* A BOT APPROVAL WITHOUT ITS ORDER THREW ON APPROVE.
+       botSend and the journal row both read a.order.lots, and an entry that
+       reached storage without one — an older build's queue, a partial write —
+       made pressing Approve throw before anything was recorded, leaving the
+       setup stuck as pending with no way to clear it. It is refused with a
+       reason now, which is a state the queue can get out of. */
+    if(!a.order){
+      a.state='failed';
+      a.note='the order this approval was queued with is missing, so nothing could be sent';
+      apprSave();
+      try{ notify('Cannot send — this queued setup has no order attached','bear'); }catch(e){}
+      return;
+    }
     /* the order the bot wanted to place, sent only now that a person said so */
     botSend(a.order,function(res){
       if(!res.ok){ botStatus('Order rejected — '+res.err,'bad');
@@ -22283,7 +22320,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b68';
+var CA_BUILD='b69';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -23176,6 +23213,16 @@ function jbBoardHtml(){
   return '<div class="jb'+(empty?' is-empty':'')+(isDemo?' is-demo':'')+'">'
    +'<div class="jb-build">Trading Journal <b>'+CA_BUILD+'</b>'
      +'<i>if this does not say the newest build, an older download is open</i></div>'
+   /* the approvals queue, as one line — the card it replaces was a header, a
+      subtitle and a body spending real height to say a queue is empty. This
+      appears only when it is not, and the buttons live in the bell. */
+   +(function(){
+      var n=0; try{ n=apprPending().length; }catch(e){}
+      if(!n)return '';
+      return '<div class="jb-appr" onclick="ntfToggle()">'
+        +'<i></i><b>'+n+' setup'+(n===1?'':'s')+' waiting on you</b>'
+        +'<s>nothing has been placed</s><u>open</u></div>';
+    })()
    +(isDemo?'<div class="jb-demo"><b>Demo data</b>'
       +'<span>These are generated sample trades, not yours. Everything below is '
       +'computed from them exactly as it would be from real ones.</span>'
