@@ -11,6 +11,11 @@ celestial-backup-*.json
 # be mistaken for the current one. The source file is tracked; the copies are
 # 2MB each and the history already holds every build.
 celestial_alpha_b*.html
+# The single delivered copy. Same name every time, so downloading a new one
+# REPLACES the old one in Downloads instead of sitting beside it. Four rounds
+# were lost to "nothing changed" when the file on screen was an older build —
+# there is only ever one now, and the tab prints its build number.
+celestial_alpha.html
 
 __pycache__/
 *.pyc

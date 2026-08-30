@@ -2747,6 +2747,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #pane_portfolio div[style*="text-transform:uppercase"]{
   color:#C4B5FD !important;
 }
+.jb-build{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:10px;
+  font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.jb-build b{font-family:'Space Grotesk';font-size:13px;letter-spacing:0;color:#C4B5FD}
+.jb-build i{font-style:normal;font-weight:600;letter-spacing:0;text-transform:none;
+  font-size:8.5px;opacity:.7}
+.apr-quiet{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:2px 0}
+.apr-quiet b{font-size:11px;font-weight:800;color:var(--t2)}
+.apr-quiet span{font-size:9px;color:var(--t3);flex:1 1 200px}
+.apr-more{margin-top:6px;flex:1 1 100%}
+.apr-more>summary{cursor:pointer;list-style:none;font-size:8.5px;font-weight:800;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:3px 0}
+.apr-more>summary::-webkit-details-marker{display:none}
+.apr-more>summary:before{content:'▸ ';display:inline-block;transition:transform .2s}
+.apr-more[open]>summary:before{transform:rotate(90deg)}
+.apr-more>summary:hover{color:var(--t1)}
 .jb-demo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:10px 14px;border-radius:12px;margin-bottom:12px;
   border:1px solid rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
@@ -6308,7 +6323,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b65</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b66</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -20820,18 +20835,35 @@ function renderApprovals(){
   var done=APPR.filter(function(x){return x.state!=='pending';}).slice(0,8);
   var nApp=APPR.filter(function(x){return x.state==='approved';}).length;
   var nSkip=APPR.filter(function(x){return x.state==='skipped';}).length;
-  host.innerHTML=
-    '<div class="apr-lead">Nothing here has been placed, and nothing here has cost you a slot in '
-    +'the monthly budget — that is only spent when a trade is actually taken. What you pass on is '
-    +'kept too: turning a setup down is a decision worth being able to look back at. The bot queues '
-    +'here instead of sending whenever approval is required for its mode.</div>'
-    +'<div class="apr-sum"><span><b>'+pend.length+'</b> waiting</span>'
+  /* WITH NOTHING WAITING THIS WAS 243 PIXELS OF EXPLANATION.
+     Four lines about what approvals are, a counter reading 0 0 0, and two
+     more lines saying nothing was waiting — all above the board, every time
+     the tab opened. The explanation is worth reading once, not on every
+     visit, so it is behind a summary line when the queue is empty. With
+     something actually waiting the card opens itself and shows the rows,
+     because then it is the reason you came to the tab. */
+  var counts='<div class="apr-sum"><span><b>'+pend.length+'</b> waiting</span>'
       +'<span><b>'+nApp+'</b> approved</span><span><b>'+nSkip+'</b> passed on</span>'
-      +(done.length?'<u onclick="apprClearDecided()">clear decided</u>':'')+'</div>'
+      +(done.length?'<u onclick="apprClearDecided()">clear decided</u>':'')+'</div>';
+  var lead='<div class="apr-lead">Nothing here has been placed, and nothing here has cost you a '
+    +'slot in the monthly budget — that is only spent when a trade is actually taken. What you '
+    +'pass on is kept too: turning a setup down is a decision worth being able to look back at. '
+    +'The bot queues here instead of sending whenever approval is required for its mode.</div>';
+
+  if(!pend.length&&!done.length){
+    host.innerHTML='<div class="apr-quiet">'
+      +'<b>Nothing waiting</b>'
+      +'<span>Send a call here from the analytics board, or let the bot queue one.</span>'
+      +'<details class="apr-more"><summary>What is this?</summary>'+lead+'</details>'
+    +'</div>';
+    return;
+  }
+  host.innerHTML=
+    counts
     +(pend.length?pend.map(function(a){return apprRow(a,dp);}).join('')
-       :'<div class="apr-none">Nothing waiting. Send a call here from the analytics board, or let '
-        +'the bot queue one when its mode needs approval, and it will appear for a decision.</div>')
-    +(done.length?'<div class="apr-hh">Decided</div>'+done.map(function(a){return apprRow(a,dp);}).join(''):'');
+       :'<div class="apr-none">Nothing waiting.</div>')
+    +(done.length?'<div class="apr-hh">Decided</div>'+done.map(function(a){return apprRow(a,dp);}).join(''):'')
+    +'<details class="apr-more"><summary>What is this?</summary>'+lead+'</details>';
 }
 var BOT={
   on:false, mode:'paper',
@@ -21942,6 +21974,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
+var CA_BUILD='b66';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -22803,7 +22836,14 @@ function jbBoardHtml(){
     .filter(function(x){return best.indexOf(x)<0;});
 
   var isDemo=jbHasDemo();
+  /* THE BUILD NUMBER, WHERE IT CANNOT BE MISSED.
+     Four rounds were spent on "nothing changed" when the file on screen was
+     an older download — there are ten of them in a Downloads folder and they
+     all look alike. The sidebar corner was not enough. It is on the board
+     itself now, so the first thing this tab says is which copy you opened. */
   return '<div class="jb'+(empty?' is-empty':'')+(isDemo?' is-demo':'')+'">'
+   +'<div class="jb-build">Trading Journal <b>'+CA_BUILD+'</b>'
+     +'<i>if this does not say the newest build, an older download is open</i></div>'
    +(isDemo?'<div class="jb-demo"><b>Demo data</b>'
       +'<span>These are generated sample trades, not yours. Everything below is '
       +'computed from them exactly as it would be from real ones.</span>'
