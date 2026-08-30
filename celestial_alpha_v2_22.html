@@ -2983,14 +2983,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    through the illustration. It is boxed, and the rows are opaque. */
 /* smaller and rounder, as asked, and no fixed height so an empty card is
    genuinely small and a full one grows to hold the rows */
-.side-card{border-radius:16px !important;padding:12px 13px !important;min-height:0 !important}
-.side-card .sc-badge{margin-bottom:7px}
-.side-card .sc-badge .b{width:24px;height:24px;font-size:8px}
-.side-card .sc-badge .n{font-size:11px}
-.side-card .sc-lines{font-size:8.5px;line-height:1.6;margin-top:7px;color:var(--t3);opacity:.8}
-.side-card .sc-build{margin-top:4px}
+/* the original card, unchanged — the notifications that needed room in it
+   have gone to the bell, so nothing here has to be traded away */
 /* the illustration was the reason the card had to be 236px tall */
-.side-card > svg{opacity:.35;width:86px !important;height:110px !important;bottom:6px !important}
+/* I SHRANK THE ARTWORK WHEN I SHRANK THE CARD, AND THAT WAS NOT ASKED FOR.
+   The request was a smaller card holding the notifications, not a smaller
+   picture — and at 86x110 and 35% opacity the figure lost its shape and the
+   stars scattered over the text. The notifications have gone to the bell, so
+   the card does not need the room any more and the picture goes back to what
+   it was. */
+.side-card > svg{opacity:1}
 .side-ntf{display:none;margin-top:10px;position:relative;z-index:2;
   max-width:100%;overflow:hidden}
 .side-ntf.has{display:block}
@@ -6636,20 +6638,20 @@ body{background:var(--bg0)}
     <div class="nav-item" onclick="celestialSettings()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</div>
     <div class="nav-item" onclick='goTab("reference",this)'><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v18H6a2 2 0 01-2-2zM19 17H6a2 2 0 000 4"/></svg>Reference</div>
   </nav>
-  <div class="side-card rise" style="animation-delay:.1s;overflow:hidden">
+  <div class="side-card rise" style="animation-delay:.1s;min-height:236px;overflow:hidden">
     <div class="sc-badge"><div class="b">CA</div><div class="n">Celestial Alpha</div></div>
     <!-- A VISIBLE BUILD MARKER.
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b79</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b80</div>
     <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
          The card was 236px of fixed height for a name, a build string, four
          lines of marketing and a large illustration — and the notifications
          had to fit underneath all of it. The four lines are on one line now
          and the height is whatever the content needs, so the stack is what
          the card is mostly for. -->
-    <div class="sc-lines">Private &middot; Precision in Timing &middot; Built for the Few</div>
+    <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- The retired-notification stack used to sit here. It has moved to
          where notifications belong — the bell — and alerts have a column of
          their own. A member card is a member card. -->
@@ -23167,9 +23169,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b79';
+var CA_BUILD='b80';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Alerts has a column of its own \u00b7 notifications live in the bell, not the member card';
+var CA_WHATS_NEW='The sidebar picture is back to how it was';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
