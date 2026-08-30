@@ -2839,6 +2839,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-size:13px;line-height:1;color:var(--t3);opacity:0;transition:opacity .18s}
 .ntf-i:hover .ntf-x{opacity:.7}
 .ntf-x:hover{color:var(--t1);opacity:1 !important}
+.tc-calc{margin-top:7px}
+.tc-calc>summary{cursor:pointer;list-style:none;font-size:8px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--t3);padding:3px 0}
+.tc-calc>summary::-webkit-details-marker{display:none}
+.tc-calc>summary:before{content:'▸ ';display:inline-block;transition:transform .2s}
+.tc-calc[open]>summary:before{transform:rotate(90deg)}
+.tc-calc>summary:hover{color:var(--t1)}
+.tc-rows{display:grid;gap:4px;margin-top:5px}
+.tc-r{display:grid;grid-template-columns:128px 112px 1fr;gap:10px;align-items:baseline;
+  padding:6px 9px;border-radius:8px;background:rgba(10,5,28,.45)}
+/* .tdir sets a large display size on its own b and i, and these rows sit
+   inside it — so the working printed at hero size and the labels came out
+   shouting. Scoped past it rather than fought with !important. */
+.tdir .tc-r i{font-style:normal;font-size:8.5px;font-weight:700;color:var(--t2);
+  text-transform:none;letter-spacing:0;display:block}
+.tdir .tc-r b{font-family:'Space Grotesk';font-size:11px;font-weight:800;color:#C4B5FD;
+  letter-spacing:0;display:block;line-height:1.25}
+.tdir .tc-r s{text-decoration:none;font-size:8.5px;line-height:1.55;color:var(--t3);
+  display:block}
+@media(max-width:760px){.tc-r{grid-template-columns:1fr;gap:2px}}
 .tdir-ctx{grid-column:1/-1;display:grid;gap:5px;margin-top:10px;padding-top:9px;
   border-top:1px solid rgba(160,130,220,.14)}
 .tc-p{font-size:9.5px;color:var(--t2)}
@@ -6561,7 +6581,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b76</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b77</div>
     <!-- "MAKE THAT COLUMN SMALLER AND ROUNDER, PUT THE NOTIFICATIONS THERE."
          The card was 236px of fixed height for a name, a build string, four
          lines of marketing and a large illustration — and the notifications
@@ -20198,6 +20218,32 @@ function timDirHtml(st){
            +(run>=6?' \u2014 and the same word can hold for two or three weeks when the '
               +'slow bodies do not move':'')+'</span>'
          : '')
+       /* the working, one click away — the same treatment the Analytics
+          readout got, on the reading it is derived from */
+       +'<details class="tc-calc"><summary>View calculation</summary>'
+         +'<div class="tc-rows">'
+           +'<div class="tc-r"><i>Score today</i><b>'+A.bull+'% bull</b>'
+             +'<s>from '+(A.factors?A.factors.length:0)+' factors \u2014 the ruling bodies\u2019 '
+             +'signs and the angles between them, weighted and summed</s></div>'
+           +'<div class="tc-r"><i>This asset\u2019s own year</i><b>'
+             +(A.calib?A.calib.lo+' \u2013 '+A.calib.hi:'\u2014')+'</b>'
+             +'<s>the 30th and 70th percentiles of 365 daily readings around today. Bull needs '
+             +(A.calib?A.calib.hi:'\u2014')+' or more, bear '+(A.calib?A.calib.lo:'\u2014')
+             +' or less \u2014 not a fixed 50, because an asset whose ordinary day is 61 would '
+             +'otherwise read bull most of the time</s></div>'
+           +'<div class="tc-r"><i>Where today falls</i><b>'+pctile+'th percentile</b>'
+             +'<s>'+A.bull+' beats '+pctile+'% of the last 365 readings for '+escHtml(a)+'</s></div>'
+           +'<div class="tc-r"><i>Result</i><b>'+lab+'</b>'
+             +'<s>'+(A.dir==='neutral'
+               ? A.bull+' sits between the two cuts, so no direction is claimed'
+               : A.bull+' is '+(A.dir==='bull'?'at or above ':'at or below ')
+                 +(A.dir==='bull'?A.calib.hi:A.calib.lo)+', this asset\u2019s own '
+                 +(A.dir==='bull'?'top':'bottom')+' third')+'</s></div>'
+           +(split?'<div class="tc-r"><i>Sanity check</i><b>'+split.bull+'/'+split.bear
+             +'/'+split.flat+'</b><s>bull, bear and neutral over that same year. Roughly a '
+             +'third each means the cuts are right \u2014 if one were 60% they would be wrong</s>'
+             +'</div>':'')
+         +'</div></details>'
      +'</div>'
      : '')
    +'</div>';
@@ -22779,7 +22825,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b76';
+var CA_BUILD='b77';
 /* one line, rewritten with the build, so the toast says something real */
 var CA_WHATS_NEW='The day\u2019s lean now shows its percentile and the year\u2019s own bull/bear/neutral split';
 var JRNL_KEY='ca_journal';
