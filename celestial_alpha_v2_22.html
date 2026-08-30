@@ -2600,6 +2600,76 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     transform:none !important}
   .evx.w-high:after,.ca-sk-l{animation:none !important}
 }
+/* ── the macro board: a KPI row, not a chart and not prose ───────────── */
+.mb{margin:0 0 16px}
+.mb-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  margin-bottom:9px;flex-wrap:wrap}
+.mb-h b{font-family:'Space Grotesk';font-size:13px;font-weight:800;color:var(--t1);
+  letter-spacing:.01em}
+.mb-h i{font-style:normal;font-size:9px;color:var(--t3)}
+.mb-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:9px}
+.mb-t{position:relative;padding:13px 15px 12px;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(160,130,220,.16);background:rgba(24,14,52,.55);
+  opacity:0;transform:translateY(9px);
+  animation:revIn .5s cubic-bezier(.22,1,.36,1) forwards}
+.mb-t:before{content:'';position:absolute;top:0;bottom:0;left:0;width:3px;
+  background:rgba(160,130,220,.3)}
+.mb-t.d-up:before{background:#34D399}
+.mb-t.d-down:before{background:#F87171}
+.mb-t.na{opacity:.62}
+.mb-n{font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--t2)}
+.mb-n em{display:block;font-style:normal;font-size:7.5px;font-weight:600;letter-spacing:.04em;
+  text-transform:none;color:var(--t3);margin-top:2px}
+/* the point of the whole panel: the number, large */
+.mb-v{font-family:'Space Grotesk';font-size:29px;font-weight:800;line-height:1.05;
+  color:var(--t1);margin:8px 0 5px;letter-spacing:-.01em}
+.mb-t.na .mb-v{font-size:22px;color:var(--t3)}
+/* the word does the work; the colour only agrees with it */
+.mb-d{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.mb-d b{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--t3)}
+.mb-t.d-up .mb-d b{color:#34D399}
+.mb-t.d-down .mb-d b{color:#F87171}
+.mb-d s{text-decoration:none;font-size:9px;color:var(--t2)}
+.mb-s{margin-top:7px;padding-top:7px;border-top:1px solid rgba(160,130,220,.1);
+  font-size:8px;line-height:1.5;color:var(--t3)}
+
+/* ── the event card, rebuilt around its two figures ──────────────────── */
+.evc-key{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:8px 16px;padding:11px 14px;border-radius:12px;margin-bottom:2px;
+  border:1px solid rgba(160,130,220,.13);background:rgba(18,10,42,.45)}
+.evc-key span{font-size:8.5px;line-height:1.6;color:var(--t3)}
+.evc-key b{display:block;font-size:8px;font-weight:800;letter-spacing:.08em;
+  text-transform:uppercase;color:#C4B5FD;margin-bottom:2px}
+.evc-top{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.evc-imp2{font-size:7.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  padding:2px 7px;border-radius:99px;color:var(--t3);border:1px solid rgba(160,130,220,.28)}
+.evc-imp2.ihigh{color:#F87171;border-color:rgba(248,113,113,.45);background:rgba(248,113,113,.1)}
+.evc-imp2.imedium{color:#FBBF24;border-color:rgba(251,191,36,.4)}
+.evc-cd{margin-left:auto;font-size:8.5px;font-weight:700;color:var(--t3)}
+.sn-evc.i-high{border-color:rgba(248,113,113,.28)}
+.sn-evc.i-medium{border-color:rgba(251,191,36,.22)}
+/* previous → forecast, the two numbers the card exists for */
+.evn{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;
+  margin:11px 0 4px;padding:11px 12px;border-radius:11px;background:rgba(10,5,28,.5)}
+.evn-c i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:3px}
+.evn-c b{font-family:'Space Grotesk';font-size:20px;font-weight:800;line-height:1.1;
+  color:var(--t2)}
+.evn-c.fc{text-align:right}
+.evn-c.fc b{color:var(--t1)}
+.evn-g{text-align:center;min-width:56px}
+.evn-g u{display:block;text-decoration:none;font-size:7.5px;font-weight:800;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--t3)}
+.evn-g s{display:block;text-decoration:none;font-family:'Space Grotesk';font-size:11px;
+  font-weight:800;color:var(--t2);margin-top:2px}
+.evn-g.up u,.evn-g.up s{color:#34D399}
+.evn-g.down u,.evn-g.down s{color:#F87171}
+.evn.none{display:block;font-size:9px;color:var(--t3);text-align:center;padding:9px}
+@media(max-width:560px){.evn{grid-template-columns:1fr;gap:6px;text-align:left}
+  .evn-c.fc{text-align:left}.evn-g{text-align:left}}
+@media(prefers-reduced-motion:reduce){.mb-t{animation:none;opacity:1;transform:none}}
 .te-strip2{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
 .te-strip2 span{flex:1 1 84px;padding:6px 9px;border-radius:9px;
   border:1px solid rgba(160,130,220,.15);background:rgba(24,14,52,.45)}
@@ -5972,7 +6042,7 @@ body{background:var(--bg0)}
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b59</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b60</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
@@ -23030,6 +23100,8 @@ function goTab(name,btn){
     try{ ffFetch(function(){ try{ renderSentiment(); }catch(e){} }); }catch(e){}
     renderSentiment();
     try{ senMacroPaint(); }catch(e){}
+    /* the five headline numbers, at the top, filling in as the chain answers */
+    try{ macroBoardLoad(); }catch(e){}
     /* the previous prints arrive asynchronously; repaint once they have */
     econLoadAll(function(){try{renderSentiment();}catch(e){}});
   }
@@ -23736,8 +23808,9 @@ function evBiasHtml(e){
     h+='<div class="evx-inv">Inverted: a higher reading here is <b>bad</b> for '
       +escHtml(R.map.name)+', not good. Reading it the ordinary way round gets the '
       +'direction backwards.</div>';
-  h+='<div class="evx-f">A sign convention, not a forecast — the number is not out. '
-    +'Gold is quoted in dollars, so it takes the opposite side of DXY by construction.</div>';
+  /* This sentence is in the legend above the list now. Printing it under
+     every card too was the same three lines eight times, which is what
+     pushed the actual figures off the top of the card in the first place. */
   return h+'</div>';
 }
 
@@ -25871,6 +25944,120 @@ function senMacroHtml(){
     +'lengths disagree the honest answer is that there is nothing to read.</div>'
   +'</div>';
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE MACRO BOARD — the numbers themselves, at the top, in large type
+
+   "data clear show hona chiyee bruhh waze nazar"
+
+   The tab had the data and buried it. Rendered and measured: every event
+   card printed its forecast and its previous print in the SMALLEST type on
+   the card, under three lines of boilerplate that were identical on all
+   eight cards. The reader's eye landed on "No measured bias — this one has
+   no rule that rebuilds its past dates", eight times, and never on -0.7%
+   against 1.3%, which is the only part that is data.
+
+   And the five numbers that were just repaired — CPI, payrolls,
+   unemployment, Fed funds, PPI — appeared nowhere at all.
+
+   A handful of headline numbers is a KPI row of stat tiles, not a chart and
+   not prose: value large, the change beside it, the date it belongs to and
+   where it came from underneath. One tile per series, in a fixed order, so
+   the row reads the same way every time.
+
+   COLOUR CARRIES NOTHING ON ITS OWN. Green and red are the app's existing
+   status colours and they clear 3:1 against this surface, but every one of
+   them is printed next to a word — "up", "down", "beat", "miss" — so the
+   tile is readable with no colour vision at all, in print, and in forced
+   colours.
+   ══════════════════════════════════════════════════════════════════════ */
+var MACRO_TILES=[
+  {k:'CPI (Inflation)',      n:'CPI',           sub:'all items, SA',      fmt:'idx'},
+  {k:'Non-Farm Payrolls',    n:'Payrolls',      sub:'total non-farm',     fmt:'jobs'},
+  {k:'Federal Funds Rate',   n:'Fed funds',     sub:'effective rate',     fmt:'pct'},
+  {k:'PPI (Producer Prices)',n:'PPI',           sub:'final demand',       fmt:'idx'}
+];
+function macroFmtVal(v,fmt){
+  if(v==null||!isFinite(v))return '—';
+  if(fmt==='jobs')return (v/1000).toFixed(2)+'M';
+  if(fmt==='pct') return v.toFixed(2)+'%';
+  return v.toFixed(3);
+}
+function macroFmtDelta(cur,prev,fmt){
+  if(cur==null||prev==null||!isFinite(cur)||!isFinite(prev))return null;
+  var d=cur-prev;
+  /* "flat +0.00 pts on the month" is the number saying nothing twice */
+  if(d===0)return {d:0, txt:'unchanged on the month', dir:'flat', flat:true};
+  var txt = fmt==='jobs' ? (d>=0?'+':'')+Math.round(d)+'K jobs'
+          : fmt==='pct'  ? (d>=0?'+':'')+d.toFixed(2)+' pts'
+          : (d>=0?'+':'')+d.toFixed(3)+' ('+(d/prev*100>=0?'+':'')+(d/prev*100).toFixed(2)+'%)';
+  return {d:d, txt:txt, dir:d>0?'up':d<0?'down':'flat'};
+}
+function macroMonth(s){
+  if(!s)return '';
+  var d=new Date(String(s).length===7?s+'-01':s);
+  return isNaN(d)?String(s):d.toLocaleDateString('en',{month:'short',year:'numeric'});
+}
+function macroBoardHtml(state){
+  var tiles=MACRO_TILES.map(function(T,i){
+    var R=state[T.k];
+    if(!R||!R.res){
+      return '<div class="mb-t na" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'
+        +'<div class="mb-n">'+escHtml(T.n)+'</div>'
+        +'<div class="mb-v">—</div>'
+        +'<div class="mb-s">'+escHtml(R&&R.why?R.why:'not loaded yet')+'</div></div>';
+    }
+    var r=R.res, D=macroFmtDelta(r.latest,r.prev,T.fmt);
+    var stale=r.stale||(R.ageDays!=null&&R.ageDays>70);
+    return '<div class="mb-t'+(D?' d-'+D.dir:'')+'" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'
+      +'<div class="mb-n">'+escHtml(T.n)+'<em>'+escHtml(T.sub)+'</em></div>'
+      +'<div class="mb-v ca-num">'+macroFmtVal(r.latest,T.fmt)+'</div>'
+      +(D?'<div class="mb-d"><b>'+(D.dir==='up'?'up':D.dir==='down'?'down':'flat')+'</b>'
+          +'<s>'+escHtml(D.flat?D.txt:D.txt+' on the month')+'</s></div>'
+        :'<div class="mb-d"><s>no prior month to compare</s></div>')
+      +'<div class="mb-s">'+escHtml(macroMonth(r.date))+' · '+escHtml(r.src||'')
+        +(stale?' · older than usual':'')+'</div>'
+    +'</div>';
+  }).join('');
+  return '<div class="mb">'
+    +'<div class="mb-h"><b>The numbers</b>'
+      +'<i>the last print of each, and how it moved from the month before</i></div>'
+    +'<div class="mb-row">'+tiles+'</div>'
+  +'</div>';
+}
+/* fills the tiles in place, so the tab draws immediately and the numbers
+   arrive when the chain answers rather than the tab waiting on the network */
+var _macroState={};
+function macroBoardPaint(){
+  var el=document.getElementById('macro_board');
+  if(!el)return;
+  el.innerHTML=macroBoardHtml(_macroState);
+  try{ caCountAll(el); }catch(e){}
+}
+var _macroBoardStarted=false;
+function macroBoardLoad(){
+  var el=document.getElementById('macro_board');
+  if(!el)return;
+  if(_macroBoardStarted){ macroBoardPaint(); return; }
+  _macroBoardStarted=true;
+  MACRO_TILES.forEach(function(T){ _macroState[T.k]={res:null,why:'loading…'}; });
+  macroBoardPaint();
+  MACRO_TILES.forEach(function(T){
+    try{
+      macroFetch(T.k,function(best,log){
+        _macroState[T.k]= best
+          ? {res:best, ageDays:ageDays(best.date)}
+          : {res:null, why:(function(){
+              var l=(log||[]).filter(function(x){return !x.ok;});
+              /* name the source that failed, not "unavailable" */
+              return l.length? String(l[l.length-1].err||'no source answered').slice(0,88)
+                             : 'no source answered'; })()};
+        macroBoardPaint();
+      });
+    }catch(e){ _macroState[T.k]={res:null,why:String(e.message||e).slice(0,80)}; macroBoardPaint(); }
+  });
+}
+
 function senMacroPaint(){
   /* THE SLOT WAS BEING WIPED BY A SECOND innerHTML ON THE SAME HOST.
      This page assigns host.innerHTML twice — once for the hero and again
@@ -25942,43 +26129,108 @@ function renderSentimentV3(){
   }
 
   /* ── the next four releases, each with what it actually moves ── */
-  var cards=evs.slice(0,8).map(function(e,i){
+  /* ══ THE CARD, REBUILT AROUND ITS NUMBERS ══════════════════════════
+     Rendered and measured before touching it. On every card the forecast
+     and the previous print — the only two figures on it — were set in the
+     smallest type present, below three lines that were WORD FOR WORD
+     identical on all eight cards:
+
+       "Low impact on the calendar. Worth knowing it is there; not usually
+        worth changing a plan for."
+       "No measured bias — this one has no rule that rebuilds its past
+        dates, so there is nothing to measure against."
+       "A sign convention, not a forecast — the number is not out..."
+
+     Repeating a sentence eight times does not make it eight times as true;
+     it makes the eight numbers underneath it invisible. Each of those now
+     appears once, in a legend above the list, and the card carries what is
+     specific to it: the two figures, large, with the gap between them.
+
+     HIGH IMPACT SORTS FIRST. The list was in date order, so eight Low rows
+     filled the screen and the release that can actually move price was
+     below them. Date still orders within an impact band. */
+  var _impRank={High:0,Medium:1,Low:2,Holiday:3};
+  var _sorted=evs.slice(0,40).sort(function(a,b){
+    var ra=_impRank[a.impact]==null?2:_impRank[a.impact];
+    var rb=_impRank[b.impact]==null?2:_impRank[b.impact];
+    return ra-rb || (a.d-b.d);
+  }).slice(0,8);
+
+  /* the numbers, as the card's headline rather than its footnote */
+  function evNums(e){
+    var fc=(e.fc&&e.fc!=='—')?String(e.fc):null;
+    var pv=e.pvFeed?String(e.pvFeed):null;
+    if(!fc&&!pv)return '<div class="evn none">No figure is published for this one.</div>';
+    /* one side missing is not a comparison — say which side is absent
+       instead of drawing an arrow to an em-dash */
+    if(!fc||!pv)
+      return '<div class="evn">'
+        +'<div class="evn-c"><i>'+(pv?'Previous':'Forecast')+'</i><b>'
+          +escHtml(pv||fc)+'</b></div>'
+        +'<div class="evn-g"><u>'+(fc?'no prior print':'no forecast yet')+'</u></div>'
+        +'<div class="evn-c fc"><i>&nbsp;</i><b>&nbsp;</b></div>'
+      +'</div>';
+    /* a numeric pair gets a measured gap; a non-numeric one just shows both */
+    var f=parseFloat(String(fc).replace(/[^\d.\-]/g,''));
+    var p=parseFloat(String(pv).replace(/[^\d.\-]/g,''));
+    var gap=null;
+    if(fc&&pv&&isFinite(f)&&isFinite(p)){
+      var d=f-p, unit=(String(fc).match(/[%KMB]/)||[''])[0];
+      gap={dir:d>0?'up':d<0?'down':'flat',
+           txt:(d>0?'+':'')+(Math.abs(d)<1?d.toFixed(2):d.toFixed(1))+unit};
+    }
+    return '<div class="evn">'
+      +'<div class="evn-c"><i>Previous</i><b>'+escHtml(pv||'—')+'</b></div>'
+      +(gap?'<div class="evn-g '+gap.dir+'"><u>'
+          +(gap.dir==='up'?'higher':gap.dir==='down'?'lower':'unchanged')
+          +'</u><s>'+escHtml(gap.txt)+'</s></div>'
+        :'<div class="evn-g"><u>&rarr;</u></div>')
+      +'<div class="evn-c fc"><i>Forecast</i><b>'+escHtml(fc||'—')+'</b></div>'
+    +'</div>';
+  }
+
+  var cards=_sorted.map(function(e,i){
     var days=Math.ceil((e.d-new Date())/86400000);
-    return '<div class="sn-evc" style="animation-delay:'+(i*0.05).toFixed(2)+'s">'
-      +'<div class="cd">'+(days<=0?'today':'in '+days+'d')+'</div>'
-      +'<div class="n">'+escHtml(e.t)+'</div>'
-      +'<div class="w">'
+    var imp=String(e.impact||'Low');
+    return '<div class="sn-evc i-'+imp.toLowerCase()+'" style="animation-delay:'
+        +(i*0.05).toFixed(2)+'s">'
+      +'<div class="evc-top">'
+        +'<span class="evc-imp2 i'+imp.toLowerCase()+'">'+escHtml(imp)+'</span>'
         +(e.country?'<span class="evc-cur '+(e.country==='USD'?'usd':'')+'">'
             +escHtml(e.country)+'</span>':'')
-        +'<span class="evc-imp i'+String(e.impact||'').toLowerCase()+'"></span>'
-        +econWhen(e)+' · '+econPrecLabel(e)+' · '+e.impact+' impact</div>'
-      /* the feed carries a forecast and the last print on the row itself,
-         which is the pair a reader actually compares */
-      +((e.fc&&e.fc!=='—')||e.pvFeed
-        ? '<div class="evc-nums">'
-          +(e.fc&&e.fc!=='—'?'<span><i>Forecast</i>'+escHtml(e.fc)+'</span>':'')
-          +(e.pvFeed?'<span><i>Previous</i>'+escHtml(e.pvFeed)+'</span>':'')
-        +'</div>' : '')
-      /* senWhat matches four known releases and falls through to a generic
-         line about a print. A symposium has no print, and a speaker is not a
-         release, so a hand-entered event says what it is instead. */
-      +'<div class="x">'+escHtml(e.mine
-          ? (e.affects? 'Entered by you, watching '+e.affects+'.'
-                      : 'Entered by you.')
-            +' Nothing here is derived from a feed.'
-          : senWhat(e.t,e))+'</div>'
-      +econBiasChip(e)
-      /* the part that was missing: which instrument, and which way, both ways */
+        +'<span class="evc-cd">'+(days<=0?'today':'in '+days+'d')+'</span>'
+      +'</div>'
+      +'<div class="n">'+escHtml(e.t)+'</div>'
+      +'<div class="w">'+econWhen(e)+' · '+econPrecLabel(e)+'</div>'
+      +evNums(e)
+      +(e.mine?'<div class="x">'+escHtml((e.affects
+          ? 'Entered by you, watching '+e.affects+'.' : 'Entered by you.'))+'</div>':'')
       +(function(){ try{ return evBiasHtml(e); }catch(err){ return ''; } })()
       +'</div>';
   }).join('');
+
+  /* said once, above the list, instead of eight times inside it */
+  var _legend='<div class="evc-key">'
+    +'<span><b>Impact</b> High moves price on its own · Medium moves it when it '
+      +'surprises · Low is background</span>'
+    +'<span><b>The two figures</b> what the last print was, and what is expected '
+      +'this time. The gap between them is what the market has already priced.</span>'
+    +'<span><b>The direction rows</b> a sign convention, not a forecast — the number '
+      +'is not out. Gold is quoted in dollars, so it takes the opposite side of DXY '
+      +'by construction.</span>'
+    +'<span><b>Measured bias</b> only shown where a rule can rebuild a release’s past '
+      +'dates, which on this feed is payrolls. Everywhere else there is no history to '
+      +'measure and none is claimed.</span>'
+  +'</div>';
+  cards=_legend+cards;
 
   host.className='sn';
   /* the dollar and the curve belong on the sentiment page, not only inside
      the analytics divergence panel — they are what moves this asset, and
      they arrive asynchronously, so they get a slot and fill in */
   host.innerHTML=
-   '<div id="sen_macro"></div>'
+   '<div id="macro_board"></div>'
+   +'<div id="sen_macro"></div>'
    +'<div class="sn-hero2 '+risk.lv+'">'
     +'<div class="sn-h2top">'
       +'<span class="sn-pill" style="color:'+risk.col+';border-color:'+risk.col+'">'+risk.word+'</span>'
@@ -26037,6 +26289,14 @@ function renderSentimentV3(){
   senPaintNews();
   senPaintMacro();
   senPaintSources();
+  /* THE BOARD WAS BEING WIPED BY ITS OWN TAB.
+     macroBoardLoad ran once on tab open and filled the tiles, but the feed
+     callback and econLoadAll both call renderSentiment again, and this
+     function rewrites host.innerHTML — which contains the board's div. So
+     the numbers landed and were then replaced by an empty container.
+     Measured: macro_board 0px. Painting from the stored state at the end of
+     every render means a repaint restores it instead of erasing it. */
+  try{ macroBoardPaint(); }catch(e){}
   if(next)_senTimer=setInterval(senTick,1000);
 }
 
