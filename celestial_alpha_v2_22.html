@@ -2816,6 +2816,73 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .ntf-i{animation:none;opacity:1;transform:none}
   .ntf-bell.ping svg,.ntf-bell.ping .ntf-count{animation:none}
 }
+/* ── the toast, and where it retires to ─────────────────────────────── */
+.ttop{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10000;
+  display:flex;flex-direction:column;gap:7px;align-items:center;pointer-events:none;
+  width:min(420px,calc(100vw - 28px))}
+.ttop-i{display:flex;align-items:center;gap:10px;width:100%;pointer-events:auto;cursor:pointer;
+  padding:10px 12px;border-radius:13px;opacity:0;transform:translateY(-14px) scale(.96);
+  border:1px solid rgba(160,130,220,.3);background:rgba(18,10,42,.97);
+  box-shadow:0 16px 44px rgba(0,0,0,.55);
+  transition:opacity .3s,transform .38s cubic-bezier(.2,.9,.25,1)}
+.ttop-i.in{opacity:1;transform:none}
+/* it does not fade out where it stands — it travels towards the sidebar
+   stack it is about to become a row in */
+.ttop-i.go{opacity:0;transform:translate(-38vw,42vh) scale(.55)}
+.ttop-d{width:8px;height:8px;border-radius:50%;flex:none;background:#C4B5FD}
+.ttop-i.up .ttop-d{background:#34D399}
+.ttop-i.dn .ttop-d{background:#F87171}
+.ttop-i.warn .ttop-d{background:#FBBF24}
+.ttop-b{flex:1;min-width:0}
+.ttop-b b{display:block;font-size:11px;font-weight:800;color:var(--t1);line-height:1.3}
+.ttop-b s{display:block;text-decoration:none;font-size:9px;line-height:1.5;color:var(--t3);
+  margin-top:2px}
+.ttop-i u{text-decoration:none;font-size:15px;line-height:1;color:var(--t3);flex:none;
+  padding:0 2px;transition:color .18s}
+.ttop-i u:hover{color:var(--t1)}
+/* the stack under the member card */
+/* the member card has artwork bleeding out of its right edge and no
+   overflow rule, so a row laid on top of it ran past the card and read
+   through the illustration. It is boxed, and the rows are opaque. */
+.side-ntf{display:none;margin-top:10px;position:relative;z-index:2;
+  max-width:100%;overflow:hidden}
+.side-ntf.has{display:block}
+.side-ntf .sn-h{display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:5px}
+.side-ntf .sn-h b{font-size:7.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--t3)}
+.side-ntf .sn-h u{text-decoration:none;cursor:pointer;font-size:7.5px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--t3);opacity:.7}
+.side-ntf .sn-h u:hover{opacity:1;color:#C4B5FD}
+.sn-r{display:flex;align-items:center;gap:7px;padding:5px 9px;border-radius:99px;
+  margin-bottom:4px;cursor:pointer;max-width:100%;
+  background:rgba(12,6,32,.92);backdrop-filter:blur(3px);
+  border:1px solid rgba(160,130,220,.18);
+  opacity:0;transform:translateY(5px);
+  animation:snIn .4s cubic-bezier(.22,1,.36,1) forwards;transition:border-color .18s}
+@keyframes snIn{to{opacity:1;transform:none}}
+.sn-r:hover{border-color:rgba(196,181,253,.4)}
+.sn-d{width:5px;height:5px;border-radius:50%;flex:none;background:rgba(196,181,253,.7)}
+.sn-r.up .sn-d{background:#34D399}
+.sn-r.dn .sn-d{background:#F87171}
+.sn-r.warn .sn-d{background:#FBBF24}
+.sn-t{flex:1;min-width:0}
+.sn-t b{display:block;font-size:8.5px;font-weight:700;color:var(--t2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sn-t s{display:block;text-decoration:none;font-size:7px;color:var(--t3);opacity:.75}
+@media(prefers-reduced-motion:reduce){
+  .ttop-i{transition:opacity .2s}.ttop-i.go{transform:none}
+  .sn-r{animation:none;opacity:1;transform:none}
+}
+.jpg{display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:10px 2px 2px}
+.jpg-b{font:inherit;font-size:10px;font-weight:700;min-width:26px;padding:4px 7px;
+  border-radius:8px;cursor:pointer;color:var(--t3);
+  border:1px solid rgba(160,130,220,.18);background:transparent;transition:.16s}
+.jpg-b:hover:not(.off){color:var(--t1);border-color:rgba(196,181,253,.45)}
+.jpg-b.on{color:#C4B5FD;background:rgba(160,130,220,.16);border-color:rgba(196,181,253,.5)}
+.jpg-b.off{opacity:.32;cursor:default}
+.jpg-g{font-size:10px;color:var(--t3);padding:0 2px}
+.jpg-n{margin-left:auto;font-size:9px;color:var(--t3)}
 .jb-appr{display:flex;align-items:center;gap:9px;cursor:pointer;flex-wrap:wrap;
   padding:8px 12px;border-radius:11px;margin-bottom:11px;
   border:1px solid rgba(251,191,36,.34);background:rgba(251,191,36,.07);
@@ -6430,14 +6497,17 @@ body{background:var(--bg0)}
     <div class="nav-item" onclick="celestialSettings()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Settings</div>
     <div class="nav-item" onclick='goTab("reference",this)'><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v18H6a2 2 0 01-2-2zM19 17H6a2 2 0 000 4"/></svg>Reference</div>
   </nav>
-  <div class="side-card rise" style="animation-delay:.1s;min-height:236px">
+  <div class="side-card rise" style="animation-delay:.1s;min-height:236px;overflow:hidden">
     <div class="sc-badge"><div class="b">CA</div><div class="n">Celestial Alpha</div></div>
     <!-- A VISIBLE BUILD MARKER.
          Downloaded copies pile up as "file (63).html", "file (64).html", and
          then a feature that was added is reported missing because an older
          copy is the one open. Now you can read the build off the page. -->
-    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b69</div>
+    <div class="sc-build" title="Which copy of the file this is — quote this if something looks missing">build 2026-08-30 · b70</div>
     <div class="sc-lines">Private. Exclusive.<br>Precision in Timing.<br>Not for Everyone.<br>Built for the Few.</div>
+    <!-- where a notification goes to live once its few seconds at the top are
+         up. Empty it costs nothing; it only takes height when it holds something. -->
+    <div id="side_ntf" class="side-ntf"></div>
     <!-- the orbit ring now passes behind the figure's head rather than clipping
          its shoulder, so it reads as a ring around the bust -->
     <!-- the drawn orbit ring is gone: the artwork carries its own halo -->
@@ -7360,6 +7430,7 @@ body{background:var(--bg0)}
               </tr></thead>
               <tbody id="jtbl"><tr><td colspan="10" style="padding:24px;text-align:center;color:var(--muted);font-size:12px;font-style:italic">No trades yet. Add your first trade above.</td></tr></tbody>
             </table>
+            <div id="jpager"></div>
           </div>
         </div>
 
@@ -12578,7 +12649,18 @@ function alertSend(title,body){
     }
   }catch(e){}
   try{ if(typeof jvSpeak==='function'&&jvPrefs&&jvPrefs().voice)jvSpeak(title+'. '+body); }catch(e){}
-  try{ notify(title+' — '+body,'bull'); }catch(e){}
+  /* ON THE SCREEN AS WELL AS ON THE PHONE.
+     A system notification only arrives if the browser was granted permission,
+     and on a laptop with the tab in front of you it is the least useful of
+     the three. This is the one that always happens: a toast at the top for a
+     few seconds, which then retires into the sidebar stack and stays there
+     until it is read. `notify` wrote into the page flow and moved what was
+     under it, which is exactly what was asked not to happen. */
+  var tone=/reversal|completing|refused|failed|stop|loss|warn/i.test(title+' '+body)?'warn'
+          :/sell|bear|down/i.test(title)?'dn':'up';
+  var tab=/cycle|clock|window|astro|moon|planet/i.test(title+' '+body)?'timing'
+         :/release|payroll|cpi|news/i.test(title+' '+body)?'sentiment':'analytics';
+  try{ caToast(title,body,tone,tab); }catch(e){ try{ notify(title+' — '+body,'bull'); }catch(e2){} }
   return done;
 }
 /* ask on a click, never on load */
@@ -20988,6 +21070,93 @@ function apprBadge(){
    buildEconEvents — so the bell cannot say something the tab it came from
    would not.
    ══════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   A NOTIFICATION APPEARS, THEN GOES AND LIVES SOMEWHERE
+
+   Asked for precisely: nothing is to be added into the scrolling page. A
+   notification should show at the top for a few seconds, and then move into
+   the column beside the member card and stay there — the way Instagram
+   drops one in and then keeps it in a list.
+
+   So a notification has two lives. First a toast, fixed at the top centre,
+   over the page and never inside it, so nothing below moves and no scroll
+   position changes. It holds for six seconds. Then it animates DOWN INTO the
+   sidebar and becomes a row in a compact stack under the member card, which
+   is where it stays until it is read.
+
+   The stack is capped at six and the card is only as tall as it needs to be
+   — an empty stack takes no space at all.
+   ══════════════════════════════════════════════════════════════════════ */
+var _sideNtf=[], SIDE_NTF_MAX=6, TOAST_MS=6000;
+
+function sideNtfPaint(){
+  var host=document.getElementById('side_ntf');
+  if(!host)return;
+  if(!_sideNtf.length){ host.innerHTML=''; host.classList.remove('has'); return; }
+  host.classList.add('has');
+  host.innerHTML='<div class="sn-h"><b>Recent</b>'
+      +'<u onclick="sideNtfClear()">clear</u></div>'
+    +_sideNtf.map(function(n,i){
+      /* the tab is carried as data and wired below — building an onclick
+         string with three levels of quoting is how a row stops being
+         clickable and nobody notices */
+      return '<div class="sn-r '+(n.tone||'')+'" style="animation-delay:'+(i*0.05).toFixed(2)+'s" '
+        +'title="'+escHtml(n.title+' \u2014 '+(n.body||''))+'"'
+        +(n.tab?' data-tab="'+escHtml(n.tab)+'"':'')+'>'
+        +'<span class="sn-d"></span>'
+        +'<div class="sn-t"><b>'+escHtml(n.title)+'</b>'
+          +'<s>'+escHtml(n.when||'')+'</s></div>'
+      +'</div>';
+    }).join('');
+  host.querySelectorAll('.sn-r[data-tab]').forEach(function(el){
+    el.onclick=function(){
+      var t=el.getAttribute('data-tab');
+      try{ goTab(t,document.querySelector('.nav-item[onclick*="'+t+'"]')); }catch(e){}
+    };
+  });
+}
+function sideNtfClear(){ _sideNtf=[]; sideNtfPaint(); }
+function sideNtfPush(n){
+  _sideNtf.unshift(n);
+  if(_sideNtf.length>SIDE_NTF_MAX)_sideNtf.length=SIDE_NTF_MAX;
+  sideNtfPaint();
+}
+
+/* the toast: over the page, never in it */
+function caToast(title,body,tone,tab){
+  var host=document.getElementById('toast_top');
+  if(!host){ host=document.createElement('div'); host.id='toast_top';
+             host.className='ttop'; document.body.appendChild(host); }
+  var el=document.createElement('div');
+  el.className='ttop-i '+(tone||'');
+  el.innerHTML='<span class="ttop-d"></span>'
+    +'<div class="ttop-b"><b>'+escHtml(title)+'</b>'
+      +(body?'<s>'+escHtml(body)+'</s>':'')+'</div>'
+    +'<u title="dismiss">&times;</u>';
+  var when=new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+  var moved=false;
+  function retire(){
+    if(moved)return; moved=true;
+    /* it does not vanish — it goes to the stack, and the animation says so
+       by travelling towards it rather than fading in place */
+    el.classList.add('go');
+    setTimeout(function(){
+      if(el.parentNode)el.parentNode.removeChild(el);
+      sideNtfPush({title:title,body:body,tone:tone,tab:tab,when:when});
+    },420);
+  }
+  el.querySelector('u').onclick=function(e){ e.stopPropagation(); retire(); };
+  if(tab)el.onclick=function(){
+    try{ goTab(tab,document.querySelector('.nav-item[onclick*="'+tab+'"]')); }catch(e){}
+    retire();
+  };
+  host.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add('in'); });
+  setTimeout(retire,TOAST_MS);
+  try{ sfx(tone==='dn'?'warn':'ok'); }catch(e){}
+}
+
 var _ntfSeen={}, _ntfLast=0, _ntfOpen=false;
 try{ _ntfSeen=JSON.parse(localStorage.getItem('ca_ntf_seen')||'{}')||{}; }catch(e){ _ntfSeen={}; }
 function ntfSeenSave(){ try{ localStorage.setItem('ca_ntf_seen',JSON.stringify(_ntfSeen)); }catch(e){} }
@@ -22320,7 +22489,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b69';
+var CA_BUILD='b70';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -22514,11 +22683,59 @@ function addJ(){
 
 function importCSV(){notify('Connect via MT5 bridge or paste CSV data','info');}
 
+/* ══ TRADE HISTORY, IN PAGES ══════════════════════════════════════════
+   Every trade in one list is fine at ten and unusable at a hundred and
+   nineteen — the demo alone makes this table longer than the rest of the tab
+   put together, and the journal only grows. Twenty-five a page, numbered.
+
+   THE INDEX HAS TO BE THE REAL ONE. Close, share and delete were all written
+   as onclick="...(i)" against the position in the rendered list, so on page
+   two, row one would have deleted JRNL[0] — the newest trade — instead of
+   the row under the cursor. The page offset is added, so the number in the
+   handler is the trade's actual index whatever page it is on. */
+var _jPage=1, J_PER=25;
+function jPages(){ return Math.max(1,Math.ceil(JRNL.length/J_PER)); }
+function jGo(n){
+  _jPage=Math.max(1,Math.min(jPages(),n));
+  renderJ();
+  try{ var t=document.getElementById('jtbl');
+       if(t&&t.closest)t.closest('.pf-wide').scrollIntoView({block:'nearest'}); }catch(e){}
+}
+function jPagerHtml(){
+  var P=jPages();
+  if(P<2)return '';
+  var cur=Math.min(_jPage,P), out='<div class="jpg">';
+  out+='<button class="jpg-b'+(cur===1?' off':'')+'" '
+    +(cur===1?'disabled':'onclick="jGo('+(cur-1)+')"')+'>‹</button>';
+  /* a window of pages around the current one, with the ends always reachable
+     — a hundred pages of buttons is not navigation */
+  var from=Math.max(1,cur-2), to=Math.min(P,from+4);
+  from=Math.max(1,to-4);
+  if(from>1){ out+='<button class="jpg-b" onclick="jGo(1)">1</button>';
+              if(from>2)out+='<span class="jpg-g">…</span>'; }
+  for(var i=from;i<=to;i++)
+    out+='<button class="jpg-b'+(i===cur?' on':'')+'" onclick="jGo('+i+')">'+i+'</button>';
+  if(to<P){ if(to<P-1)out+='<span class="jpg-g">…</span>';
+            out+='<button class="jpg-b" onclick="jGo('+P+')">'+P+'</button>'; }
+  out+='<button class="jpg-b'+(cur===P?' off':'')+'" '
+    +(cur===P?'disabled':'onclick="jGo('+(cur+1)+')"')+'>›</button>';
+  var a=(cur-1)*J_PER+1, b=Math.min(JRNL.length,cur*J_PER);
+  out+='<span class="jpg-n">'+a+'–'+b+' of '+JRNL.length+'</span>';
+  return out+'</div>';
+}
 function renderJ(){
   var el=document.getElementById('jtbl');
-  document.getElementById('trade_count').textContent=JRNL.length+' trades';
-  if(!JRNL.length){el.innerHTML='<tr><td colspan="10" style="padding:24px;text-align:center;color:var(--muted);font-size:12px;font-style:italic">No trades yet. Add your first trade above.</td></tr>';return;}
-  el.innerHTML=JRNL.map(function(j,i){
+  var cnt=document.getElementById('trade_count');
+  if(cnt)cnt.textContent=JRNL.length+' trades';
+  if(!el)return;
+  if(!JRNL.length){el.innerHTML='<tr><td colspan="10" style="padding:24px;text-align:center;color:var(--muted);font-size:12px;font-style:italic">No trades yet. Add your first trade above.</td></tr>';
+    var pg0=document.getElementById('jpager'); if(pg0)pg0.innerHTML=''; return;}
+  if(_jPage>jPages())_jPage=jPages();
+  var off=(_jPage-1)*J_PER;
+  var pg=document.getElementById('jpager');
+  if(pg)pg.innerHTML=jPagerHtml();
+  el.innerHTML=JRNL.slice(off,off+J_PER).map(function(j,k){
+    var i=off+k;
     var isOpen=j.r==='open';
     var pc=isOpen?'color:var(--muted)':j.pnl>0?'color:var(--green)':' color:var(--red)';
     var rc=isOpen?'tb':j.r==='win'?'tg':j.r==='loss'?'tr':'ta';
