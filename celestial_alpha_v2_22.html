@@ -3355,6 +3355,35 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ms-x i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:2px;
   letter-spacing:.03em}
 .ms-note{margin-top:8px;font-size:9.5px;color:var(--t3);line-height:1.6}
+/* the major-levels window: combined range on the face, both ladders inside */
+.ms-range.open{cursor:pointer;position:relative;transition:border-color .15s,background .15s}
+.ms-range.open:hover{border-color:var(--p3);background:rgba(83,51,153,.16)}
+.ms-open{position:absolute;top:9px;right:12px;font-size:8.5px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--p3);
+  border:1px solid rgba(168,85,247,.4);border-radius:99px;padding:2px 9px}
+.ms-range.open:hover .ms-open{background:rgba(168,85,247,.2);color:var(--t1)}
+.mjw-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);
+  backdrop-filter:blur(5px);z-index:10000;align-items:center;justify-content:center;padding:22px}
+.mjw-bg.on{display:flex}
+.mjw-box{background:var(--s2,#0b0628);border:1px solid var(--b1);border-radius:18px;
+  width:min(1240px,96vw);max-height:92vh;display:flex;flex-direction:column;
+  box-shadow:0 36px 90px rgba(0,0,0,.75);animation:mjwIn .22s cubic-bezier(.2,.9,.3,1)}
+@keyframes mjwIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.mjw-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;
+  padding:17px 20px 14px;border-bottom:1px solid var(--b1)}
+.mjw-top b{display:block;font-size:12px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--t1)}
+.mjw-top span{display:block;font-size:10px;color:var(--t3);line-height:1.65;margin-top:5px;
+  max-width:82ch}
+.mjw-x{flex:0 0 auto;padding:7px 15px;border-radius:8px;border:1px solid var(--b1);
+  background:transparent;color:var(--t2);font-size:10px;font-weight:800;letter-spacing:.09em;
+  cursor:pointer}
+.mjw-x:hover{color:var(--t1);border-color:var(--p3)}
+.mjw-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 20px;
+  overflow:auto}
+@media (max-width:900px){.mjw-body{grid-template-columns:1fr}}
+.mjw-foot{padding:11px 20px 14px;border-top:1px solid var(--b1);font-size:10px;color:var(--t3)}
+
 /* set your own MH and ML — the detector only suggests */
 .mhml{margin-top:11px;padding:12px 14px;border:1px dashed var(--b1);border-radius:11px;
   background:rgba(11,6,40,.5)}
@@ -12565,8 +12594,12 @@ function anaMjBlock(title,sub,origin,price,dp,tone){
           +tag(hd,dp)+'</div>'
         +'<div class="mj-track"><span class="mid"></span>'
           +'<span class="fill" style="--w:'+(w!=null?(w/maxW*100).toFixed(0):'0')+'%"></span></div>'
+        /* the up rung is not always above price — from the LOW anchor the
+           first few land underneath it — and a hardcoded plus produced
+           "+-4.34%" the moment that happened */
         +'<div class="mj-up'+(hu.hits.length?' hit':'')+'"><b>'+r.up.toFixed(dp)+'</b>'
-          +'<i>+'+upPct.toFixed(2)+'% · '+(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i>'
+          +'<i>'+(upPct>=0?'+':'')+upPct.toFixed(2)+'% · '
+          +(Math.abs(r.up-price)/(price*sig.v)).toFixed(1)+'σ</i>'
           +tag(hu,dp)+'</div>'
         +'<div class="mj-w">'+(w!=null?w.toFixed(dp):'—')+'</div>'
         +'</div>';
@@ -13789,27 +13822,45 @@ function majorLadders(rows,M,price,a){
      is the identity this whole design exists to avoid */
   var degenerate = sH&&sL&&sH.dir==='fallback'&&sL.dir==='fallback';
 
+  /* ── THE LADDER IS THE SQUARE-ROOT ONE, THE ÷100 CALCULATION ─────────
+     Asked for directly: use the calculation already in this app for major
+     levels, the one that takes the square root of the anchor over a hundred.
+     It is anaLadderFrom, and it is what the Major Levels board on this tab
+     has always drawn:
+
+         root = sqrt(anchor / 100)
+         up   = (root + step)^2 * 100
+         down = (root - step)^2 * 100
+
+     with the steps being the Gann degrees in CRIT_STEPS — 90, 135, 180, 225,
+     256, 270 and 360.
+
+     What was here before was swing divisions plus a separate square-of-9
+     call, which is a different method and not the one that was asked for.
+     The anchor itself stays on the ladder: a rung from one anchor landing on
+     the other anchor is the strongest agreement the board can show.
+
+     BOTH DIRECTIONS FROM BOTH ANCHORS. The old build took only the rungs
+     below the high and above the low, so the two ladders could barely reach
+     each other and the crossings were whatever survived at the edges. The
+     square-root rungs are a geometry around the anchor, not a projection
+     toward price, so both sides of each anchor count. */
   function build(anchor,swing,dir,tag){
     var L=[];
-    if(!anchor)return L;
-    if(swing&&swing.range>0)
-      LADDER_DIV.forEach(function(D){
-        var px = dir<0 ? anchor.px-swing.range*D.f : anchor.px+swing.range*D.f;
-        if(px>0)L.push({px:px,label:D.l+' of the '+tag+' swing',kind:'division',
-                        from:tag,f:D.f});
-      });
-    var sq=null;
-    try{ sq=(window.CQE&&CQE.sq9Levels)
-           ? CQE.sq9Levels(anchor.px,price,a,{maxATR:8}) : null; }catch(e){}
-    if(sq){
-      sq.forEach(function(x){
-        var below=x.price<anchor.px;
-        if(dir<0?below:!below)
-          L.push({px:x.price,label:(x.deg>0?'+':'')+x.deg+'\u00B0 on the square of 9',
-                  kind:'sq9',from:tag,deg:x.deg});
-      });
-    }else out.notes.push('The square of 9 could not be read, so the '+tag
-      +' ladder is range divisions only.');
+    if(!anchor||!(anchor.px>0))return L;
+    var rungs=null;
+    try{ rungs=anaLadderFrom(anchor.px); }catch(e){ rungs=null; }
+    if(!rungs||!rungs.length){
+      out.notes.push('The square-root ladder could not be built from the major '+tag+'.');
+      return L;
+    }
+    rungs.forEach(function(r){
+      if(r.up>0)L.push({px:r.up,label:'+'+r.d+'\u00B0 above the major '+tag,
+                        kind:'root',from:tag,deg:r.d,step:r.i,dirn:'up'});
+      if(r.dn!=null&&r.dn>0)
+        L.push({px:r.dn,label:'\u2212'+r.d+'\u00B0 below the major '+tag,
+                kind:'root',from:tag,deg:r.d,step:r.i,dirn:'dn'});
+    });
     L.push({px:anchor.px,label:'the major '+(tag==='high'?'high':'low')+' itself',
             kind:'anchor',from:tag});
     L.sort(function(x,y){return x.px-y.px;});
@@ -13900,6 +13951,68 @@ function majorLadders(rows,M,price,a){
   return out;
 }
 
+/* ══ THE TWO LADDERS, IN A WINDOW ═══════════════════════════════════════
+   Asked for this shape: the combined range on the face of the panel, and
+   both ladders behind one click, the way a settings window opens.
+
+   The rows are anaMjBlock, unchanged — the degree, the level below, the
+   width track, the level above and the span. That block already draws the
+   square-root ladder this panel now uses, so the window is the same design
+   twice rather than a third one invented for it. */
+var _mjWin=null;
+function mjWinBuild(){
+  if(_mjWin)return _mjWin;
+  var d=document.createElement('div');
+  d.id='mj_win'; d.className='mjw-bg';
+  d.onclick=function(e){ if(e.target===d)mjWinClose(); };
+  document.body.appendChild(d);   /* on the body: a fixed child is still
+                                     trapped by any ancestor that makes a
+                                     stacking context, which is what put the
+                                     notification panel off-screen earlier */
+  _mjWin=d;
+  return d;
+}
+function mjWinClose(){
+  if(_mjWin)_mjWin.classList.remove('on');
+  document.removeEventListener('keydown',mjWinEsc);
+}
+function mjWinEsc(e){ if(e.key==='Escape')mjWinClose(); }
+function mjWinOpen(){
+  var S=window._mjState;
+  if(!S||!S.M||!S.M.MH||!S.M.ML)return;
+  var M=S.M, price=S.price, dp=S.dp;
+  var d=mjWinBuild();
+  var hi='',lo='';
+  try{
+    hi=anaMjBlock('Major high · '+tcFmt(M.MH.px,dp),
+      (M.MH.manual?'the high you set':'detected')
+      +(M.MH.date?' · '+M.MH.date:'')+' \u00b7 \u221a(A\u00f7100) ladder',
+      M.MH.px,price,dp,'hi');
+    lo=anaMjBlock('Major low · '+tcFmt(M.ML.px,dp),
+      (M.ML.manual?'the low you set':'detected')
+      +(M.ML.date?' · '+M.ML.date:'')+' \u00b7 \u221a(A\u00f7100) ladder',
+      M.ML.px,price,dp,'lo');
+  }catch(e){
+    hi='<div class="mj-none">The ladder could not be drawn \u2014 '+escHtml(e.message||'')+'</div>';
+  }
+  d.innerHTML='<div class="mjw-box">'
+    +'<div class="mjw-top"><div><b>Major levels</b>'
+      +'<span>Both ladders, each squared from its own anchor \u2014 '
+      +'root = \u221a(anchor \u00f7 100), then \u00b190\u00b0 through \u00b1360\u00b0, '
+      +'squared back and \u00d7100.</span></div>'
+      +'<button class="mjw-x" onclick="mjWinClose()">Close</button></div>'
+    +'<div class="mjw-body">'
+      +'<div class="mjw-col">'+hi+'</div>'
+      +'<div class="mjw-col">'+lo+'</div>'
+    +'</div>'
+    +'<div class="mjw-foot">Price now '+tcFmt(price,dp)
+      +(M.range?' \u00b7 '+M.range.pct.toFixed(0)+'% up the range \u00b7 '
+        +escHtml(M.range.where):'')+'</div>'
+  +'</div>';
+  d.classList.add('on');
+  document.addEventListener('keydown',mjWinEsc);
+}
+
 /* the major level, and everything that has to line up on it */
 function majorStackHtml(price,dp){
   dp=dp||2;
@@ -13962,9 +14075,13 @@ function majorStackHtml(price,dp){
      MH and ML on their own are two prices. What they are FOR is telling you
      whether price is at an edge or stranded in the middle with nothing to
      trade against, and that is one number the panel never printed. */
+  /* the window is opened from the strip below, so it needs the same numbers
+     the panel was just drawn from rather than recomputing them on a click */
+  try{ window._mjState={M:M,price:price,dp:dp}; }catch(e){}
   if(M.range){
     var pc=M.range.pct;
-    h+='<div class="ms-range">'
+    h+='<div class="ms-range open" onclick="mjWinOpen()" title="Open both ladders">'
+      +'<div class="ms-open">Both ladders \u2192</div>'
       +'<div class="ms-rt"><span>'+tcFmt(M.range.lo,dp)+'</span>'
         +'<em>'+escHtml(M.range.where)+' — '+pc.toFixed(0)+'% up the range</em>'
         +'<span>'+tcFmt(M.range.hi,dp)+'</span></div>'
@@ -24555,9 +24672,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b85';
+var CA_BUILD='b86';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='You can set the major high and low yourself now \u2014 two boxes on the major-level panel, per asset. The detector only suggests.';
+var CA_WHATS_NEW='Major levels now use the \u221a(anchor\u00f7100) ladder. The panel shows the combined range \u2014 click it and both ladders, high and low, open in their own window.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
