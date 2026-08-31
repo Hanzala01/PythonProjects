@@ -5747,6 +5747,9 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 .tf:hover{background:rgba(139,92,246,.12);color:var(--t1)}
 .tf.on{background:linear-gradient(90deg,#29115E,#160B32);color:var(--t1)}
 
+.ts-bias-note{font-size:8.5px;color:var(--t3,#8b86a8);line-height:1.45;margin-top:3px}
+.ts-bias-note.drift{color:var(--warn,#f59e0b)}
+
 #v_side{font-family:'Space Grotesk';font-size:15px;font-weight:800;letter-spacing:.04em}
 .ts-row.side{border-bottom:1px solid var(--rim,rgba(255,255,255,.08));padding-bottom:7px;
   margin-bottom:3px}
@@ -7031,6 +7034,7 @@ body{background:var(--bg0)}
             <div class="ts-cyc" id="v_cyc_lbl">&mdash;</div>
             <div class="ts-k" style="margin-top:12px">Bias</div>
             <div class="ts-bias" id="v_bias">&mdash;</div>
+            <div class="ts-bias-note" id="v_bias_note"></div>
           </div>
           <div class="ring-wrap">
             <svg width="92" height="92" viewBox="0 0 92 92"><circle cx="46" cy="46" r="37" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="7"/>
@@ -24445,9 +24449,6 @@ function runAI(){
     var combined=calcCombinedBias(astro,priceBias,price,HIST_ROWS);
     window._lastBias={time:astro,price:priceBias,combined:combined};
     window._lastSig=sig;
-    /* the candles were drawn before this line ran; repaint them so the entry
-       band, stop and targets on the chart are THIS setup's */
-    try{ chartRedraw(); }catch(e){}
     try{ botConsider(sig,assetName,trend); }catch(e){ console.error("bot:",e); }
     rndTrend(trend,price);
     rndBiasStack(astro,priceBias,combined,assetName);
@@ -24457,13 +24458,21 @@ function runAI(){
     try{renderAnalytics();}catch(e){console.error('analytics v3:',e);}
     try{qvRefresh();}catch(e){console.error('QV refresh:',e);}
     setTimeout(function(){rollNumbers();},60);
-    rndZones(levels,price);
-    rndTrades(sig,risk);
-    renderMajorLevels(price);
-    renderProDash(astro,sig,levels,price);
-    renderWheelPlus(price);
-    renderDualEngines(levels,price);
-    renderJrnlSnap();
+    /* EVERY ONE OF THESE USED TO BE UNGUARDED, AND renderDashLive IS LAST.
+       One of them throwing takes the Trade Setup card down with it and
+       leaves the header showing while the entry, stop and targets never get
+       written — which is exactly what a blank card under a filled-in heading
+       looks like. This is the same fault that took out updatePortStats
+       earlier in this branch; the fix is the same. Each failure is named in
+       the console so the next report has something to point at. */
+    var _step=function(n,f){ try{ f(); }catch(e){ console.error('dash step '+n+':',e); } };
+    _step('rndZones',function(){ rndZones(levels,price); });
+    _step('rndTrades',function(){ rndTrades(sig,risk); });
+    _step('renderMajorLevels',function(){ renderMajorLevels(price); });
+    _step('renderProDash',function(){ renderProDash(astro,sig,levels,price); });
+    _step('renderWheelPlus',function(){ renderWheelPlus(price); });
+    _step('renderDualEngines',function(){ renderDualEngines(levels,price); });
+    _step('renderJrnlSnap',function(){ renderJrnlSnap(); });
     /* redraw with the setup on it — drawCandles runs when history arrives,
        which is before buildSignal has produced anything to draw */
     try{if(HIST_ROWS&&HIST_ROWS.length>1)drawCandles(HIST_ROWS,assetName+' \u00b7 daily');}catch(e){}
@@ -24833,9 +24842,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b92';
+var CA_BUILD='b93';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Trade Setup is back \u2014 a missing price was making every setup read as finished. The chart now repaints onto the new setup instead of keeping the old one.';
+var CA_WHATS_NEW='The bias is now one reading per day and says when it was set. The Trade Setup card can no longer be blanked by another panel failing.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -30996,6 +31005,26 @@ function dashVol(rows){
   if(ratio>=0.8) return{label:'Moderate',col:'var(--amber)',ratio:ratio};
   return{label:'Low',col:'var(--green)',ratio:ratio};
 }
+/* ══ ONE BIAS PER ASSET PER DAY ═════════════════════════════════════════
+   Held in this browser, keyed on the asset and the calendar date, so a
+   reload during the day gets the same answer rather than a fresh one. A new
+   date replaces it. Nothing else in the app is changed by this — the live
+   combined bias still drives everything that wants the current reading; only
+   the number printed on the Trade Setup card is the day's. */
+var DAYBIAS_KEY='ca_daybias';
+function dayBias(asset,live){
+  var today=new Date().toISOString().slice(0,10);
+  var key=String(asset||'?');
+  var all={};
+  try{ all=JSON.parse(localStorage.getItem(DAYBIAS_KEY)||'{}')||{}; }catch(e){ all={}; }
+  var got=all[key];
+  if(got&&got.d===today&&got.dir)return {label:got.label,dir:got.dir,bull:got.bull,at:got.d,held:true};
+  if(!live||!live.dir)return {label:(got&&got.label)||'—',dir:(got&&got.dir)||'neutral',
+                              bull:(got&&got.bull)||50,at:(got&&got.d)||today,held:false};
+  all[key]={d:today,label:live.label,dir:live.dir,bull:live.bull};
+  try{ localStorage.setItem(DAYBIAS_KEY,JSON.stringify(all)); }catch(e){}
+  return {label:live.label,dir:live.dir,bull:live.bull,at:today,held:false};
+}
 function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
   /* a run that got here has real numbers behind it; if the notice was raised
      by a failed fetch and the price has since arrived, it no longer applies */
@@ -31012,8 +31041,25 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
     dashSet('v_ts_asset',assetName+' · '+f(price));
     dashSet('v_cyc_lbl',cyc?(cyc.n+' #'+vibNum+' · '+cyc.day):'#'+vibNum,'var(--acc2)');
     if(cb){
-      dashSet('v_bias',cb.label+(cb.dir==='bull'?' ↗':cb.dir==='bear'?' ↘':' →'),dirCol(cb.dir));
-      dashRing('v_ring_cyc','v_cyc_t',cb.bull,dirCol(cb.dir));
+      /* ── THE BIAS IS A DAY'S READING, SO IT IS FIXED FOR THE DAY ────────
+         calcCombinedBias recomputes on every run, so the bias could read
+         bullish at nine and bearish at eleven off the same daily bars — and
+         a reader who set up a trade on the morning number had no way to know
+         it had moved. It is now taken once per asset per calendar day and
+         held: the first run of the day sets it, every later run that day
+         shows the same thing, and the card says when it was set. The live
+         recomputation is not thrown away — when it has drifted to the other
+         side the card says so underneath rather than silently switching. */
+      var DB=dayBias(assetName,cb);
+      dashSet('v_bias',DB.label+(DB.dir==='bull'?' ↗':DB.dir==='bear'?' ↘':' →'),dirCol(DB.dir));
+      dashRing('v_ring_cyc','v_cyc_t',DB.bull,dirCol(DB.dir));
+      var bl=document.getElementById('v_bias_note');
+      if(bl){
+        var drift=(cb.dir&&DB.dir&&cb.dir!==DB.dir);
+        bl.textContent='today\u2019s reading, set '+DB.at
+          +(drift?' \u2014 live it now reads '+cb.dir+', which is a change inside the day':'');
+        bl.className='ts-bias-note'+(drift?' drift':'');
+      }
     }
     var conf=sig&&sig.conf!=null?sig.conf:0;
     dashSet('v_conf',conf+'%',conf>=80?'var(--green)':conf>=65?'var(--amber)':'var(--ts)');
@@ -31160,7 +31206,24 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
     renderDashNews();
     var ca=document.getElementById('ch_asset');if(ca)ca.textContent=assetName;
     dashCalendar();dashAiLine();dashTiming();
-  }catch(e){console.error('dash live:',e);}
+  }catch(e){
+    console.error('dash live:',e);
+    /* A CARD THAT FAILS HALFWAY MUST NOT LOOK LIKE A CARD WITH NOTHING IN IT.
+       The heading, the bias and the confidence are written before the setup
+       rows, so a throw in between leaves a filled-in header over empty rows
+       with no way to tell that from "no setup today". */
+    try{
+      var w=document.getElementById('v_mismatch');
+      if(w){ w.style.display='';
+        w.innerHTML='<b>This card did not finish drawing.</b> '+escHtml(e.message||'')
+          +' \u2014 everything above the break is good, the rows below it were never written. '
+          +'Run the analysis again; the console names the step that failed.'; }
+      ['v_ez','v_sl','v_tp1','v_tp2','v_tp3','v_rr'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el&&(!el.textContent||el.textContent==='\u2014'))el.textContent='not drawn';
+      });
+    }catch(e2){}
+  }
 }
 /* the two nearest releases, shown with the same risk wording as the Sentiment tab */
 function renderDashNews(){
