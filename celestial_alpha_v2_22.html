@@ -14233,6 +14233,14 @@ function mjWinOpen(){
   document.addEventListener('keydown',mjWinEsc);
 }
 
+/* redraw the chart from whatever it was last drawn with — used when the
+   signal changes after the candles have already been painted */
+function chartRedraw(){
+  try{
+    var L=window._chartLast;
+    if(L&&L.rows&&L.rows.length)drawCandles(L.rows,L.label);
+  }catch(e){}
+}
 function majorStackHtml(price,dp){
   dp=dp||2;
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
@@ -15448,7 +15456,12 @@ function sigGateHtml(G,dp){
    and say so. */
 function sigOutcome(sig,price){
   if(!sig||!sig.style)return {k:'none'};
-  if(price==null||!isFinite(price))return {k:'unknown'};
+  /* ZERO IS NOT A PRICE. The guard tested null and isFinite, and 0 passes
+     both — so before the feed answers, every long reads as stopped out and
+     every short as target reached. Once the cards started acting on this
+     answer that turned into the whole Trade Setup vanishing behind a
+     FINISHED banner on load. */
+  if(price==null||!isFinite(price)||price<=0)return {k:'unknown'};
   var long=!!sig.isBull;
   var hitTp = long ? price>=sig.tp : price<=sig.tp;
   var hitSl = long ? price<=sig.sl : price>=sig.sl;
@@ -15502,6 +15515,7 @@ function sigDoneHtml(S,price,dp){
   +'</div>';
 }
 function sigIsDone(S,price){
+  if(!(price>0))return false;          /* no price, no verdict */
   var OC=null; try{ OC=sigOutcome(S,price); }catch(e){}
   return !!(OC&&(OC.k==='tp'||OC.k==='sl'));
 }
@@ -24162,7 +24176,8 @@ function rndTrades(sig,risk){
   }
 
   /* same question, same answer: a reached target is not an entry to take */
-  var _px=(sig&&sig.curPrice!=null)?sig.curPrice:(window._lastPrice||0);
+  var _px=[sig&&sig.curPrice, window._lastPrice,
+           (window.CQE_LAST&&CQE_LAST.price)].filter(function(v){return v>0;})[0]||0;
   var _dp=_px&&_px<10?4:2;
   if(sigIsDone(sig,_px)){
     el.innerHTML='<div class="sig-card done"><div style="padding:16px">'
@@ -24430,6 +24445,9 @@ function runAI(){
     var combined=calcCombinedBias(astro,priceBias,price,HIST_ROWS);
     window._lastBias={time:astro,price:priceBias,combined:combined};
     window._lastSig=sig;
+    /* the candles were drawn before this line ran; repaint them so the entry
+       band, stop and targets on the chart are THIS setup's */
+    try{ chartRedraw(); }catch(e){}
     try{ botConsider(sig,assetName,trend); }catch(e){ console.error("bot:",e); }
     rndTrend(trend,price);
     rndBiasStack(astro,priceBias,combined,assetName);
@@ -24815,9 +24833,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b91';
+var CA_BUILD='b92';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Trade Setup card now says whether the setup is a buy or a sell, and warns when that disagrees with the bias above it.';
+var CA_WHATS_NEW='Trade Setup is back \u2014 a missing price was making every setup read as finished. The chart now repaints onto the new setup instead of keeping the old one.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -28110,6 +28128,9 @@ function drawCandles(rows,label){
   /* the setup drawn on the chart itself — entry band, stop and the three
      targets. A trading chart with no plan on it is just a picture. */
   var S=window._lastSig, xL=padL, xR=W-padR;
+  /* a setup whose target or stop has been reached is history; its lines
+     coming back on every repaint is the same complaint in another place */
+  try{ if(S&&sigIsDone(S,+data[data.length-1].close))S=null; }catch(e){}
   if(S&&S.style&&isFinite(S.entry)&&S.entry>lo&&S.entry<hi){
     var band=Math.abs(S.entry-S.sl)*0.28||span*0.004;
     var eTop=Y(S.entry+band), eBot=Y(S.entry-band);
@@ -28216,6 +28237,14 @@ function loadHistory(assetName,cb){
        in `rows`. In quiet mode the data lands and nothing is painted. */
     if(window.SCAN_QUIET){ if(cb)cb(null); return; }
     try{renderFng();}catch(e){}
+    /* THE CHART IS PAINTED BEFORE THE SIGNAL EXISTS.
+       drawCandles runs from this history callback, which lands whenever the
+       feed answers; window._lastSig is assigned later, in the analysis pass.
+       So the entry band and the three targets on the chart were the PREVIOUS
+       setup's, and nothing ever came back to repaint them — the card and the
+       chart showed two different trades. The arguments are kept so the
+       analysis can ask for a redraw the moment it has the new signal. */
+    window._chartLast={rows:rows,label:assetName+' \u00b7 '+src};
     drawCandles(rows,assetName+' \u00b7 '+src);
     var rng=applyMonthlyRange(rows);
     if(cb)cb(rng);
