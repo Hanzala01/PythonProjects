@@ -3358,10 +3358,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* the major-levels window: combined range on the face, both ladders inside */
 .ms-range.open{cursor:pointer;position:relative;transition:border-color .15s,background .15s}
 .ms-range.open:hover{border-color:var(--p3);background:rgba(83,51,153,.16)}
-.ms-open{position:absolute;top:9px;right:12px;font-size:8.5px;font-weight:800;
+.ms-rn{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.ms-rn-t{flex:1 1 auto}
+.ms-open{flex:0 0 auto;white-space:nowrap;font-size:9px;font-weight:800;
   letter-spacing:.1em;text-transform:uppercase;color:var(--p3);
-  border:1px solid rgba(168,85,247,.4);border-radius:99px;padding:2px 9px}
-.ms-range.open:hover .ms-open{background:rgba(168,85,247,.2);color:var(--t1)}
+  border:1px solid rgba(168,85,247,.45);border-radius:99px;padding:5px 12px}
+.ms-range.open:hover .ms-open{background:rgba(168,85,247,.22);color:var(--t1)}
+@media (max-width:700px){.ms-rn{flex-direction:column;align-items:flex-start;gap:9px}}
 .mjw-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);
   backdrop-filter:blur(5px);z-index:10000;align-items:center;justify-content:center;padding:22px}
 .mjw-bg.on{display:flex}
@@ -3379,9 +3382,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:transparent;color:var(--t2);font-size:10px;font-weight:800;letter-spacing:.09em;
   cursor:pointer}
 .mjw-x:hover{color:var(--t1);border-color:var(--p3)}
-.mjw-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 20px;
-  overflow:auto}
-@media (max-width:900px){.mjw-body{grid-template-columns:1fr}}
+.mjw-body{display:grid;grid-template-columns:1fr minmax(210px,.62fr) 1fr;gap:14px;
+  padding:16px 20px;overflow:auto;align-items:start}
+@media (max-width:1100px){.mjw-body{grid-template-columns:1fr}}
+.mjw-mid{border:1px solid rgba(168,85,247,.34);border-radius:13px;padding:12px 13px;
+  background:linear-gradient(160deg,rgba(83,51,153,.22),rgba(11,6,40,.7))}
+.mjz-h{font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--t2);margin-bottom:10px}
+.mjz-h s{display:block;text-decoration:none;font-size:9px;font-weight:400;letter-spacing:.02em;
+  text-transform:none;color:var(--t3);margin-top:4px;line-height:1.55}
+.mjz-r{border:1px solid var(--b1);border-radius:10px;padding:9px 11px;margin-bottom:7px;
+  background:rgba(11,6,40,.62)}
+.mjz-r.near{border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.09)}
+.mjz-r b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--t1);
+  font-variant-numeric:tabular-nums}
+.mjz-r i{display:block;font-style:normal;font-size:9px;color:var(--p3);margin-top:2px}
+.mjz-r.near i{color:var(--up)}
+.mjz-r s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:4px;
+  line-height:1.45}
+.mjz-r u{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:5px;
+  padding-top:5px;border-top:1px solid var(--b1)}
+.mjz-none{font-size:10px;color:var(--t3);line-height:1.6}
+.mjz-more{font-size:9px;color:var(--t3);text-align:center;padding-top:4px}
 .mjw-foot{padding:11px 20px 14px;border-top:1px solid var(--b1);font-size:10px;color:var(--t3)}
 
 /* set your own MH and ML — the detector only suggests */
@@ -3418,7 +3440,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:linear-gradient(90deg,rgba(34,197,94,.45),rgba(255,255,255,.1),rgba(239,68,68,.45))}
 .ms-rb u{position:absolute;top:-4px;width:3px;height:14px;border-radius:2px;background:var(--t1);
   text-decoration:none;transform:translateX(-1.5px);box-shadow:0 0 9px rgba(255,255,255,.55)}
-.ms-rn{font-size:9.5px;color:var(--t3);line-height:1.6}
+.ms-rn{font-size:9.5px;color:var(--t3);line-height:1.6;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
 .ms-rows{margin-top:9px;display:grid;gap:3px}
 .ms-r{display:grid;grid-template-columns:64px 92px 1fr;gap:8px;align-items:baseline;
   padding:6px 9px;border-radius:8px;font-size:10px;border:1px solid transparent;
@@ -13995,14 +14018,52 @@ function mjWinOpen(){
   }catch(e){
     hi='<div class="mj-none">The ladder could not be drawn \u2014 '+escHtml(e.message||'')+'</div>';
   }
+  /* ── AND THE ZONE IN BETWEEN, WHICH IS THE POINT OF HAVING TWO ────────
+     Two ladders side by side is two lists. What was asked for is the place
+     they MEET, sitting between them — a rung measured down from the major
+     high landing on a rung measured up from the major low. That is the only
+     thing on this window that two independent calculations agree on. */
+  var LD=null;
+  try{ LD=majorLadders((typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||[],M,price,M.atr); }catch(e){}
+  var mid='';
+  if(LD&&LD.zones&&LD.zones.length){
+    /* six, because seven ran taller than the seven-rung ladders either side
+       and the last card was clipped by the bottom of the window */
+    mid=LD.zones.slice(0,6).map(function(Z,i){
+      var d=Z.distATR;
+      return '<div class="mjz-r'+(i===0?' near':'')+'">'
+        +'<b>'+tcFmt(Z.price,dp)+'</b>'
+        +'<i>'+(d!=null?d.toFixed(2)+' ATR '+(Z.side||''):'')+'</i>'
+        +'<s>'+escHtml((Z.hiParts||[]).slice(0,1).join(''))+'</s>'
+        +'<s>'+escHtml((Z.loParts||[]).slice(0,1).join(''))+'</s>'
+        +'<u>'+Z.tightest.gap.toFixed(2)+' apart</u>'
+      +'</div>';
+    }).join('')
+      +(LD.zones.length>6
+        ? '<div class="mjz-more">'+(LD.zones.length-6)+' more further from price</div>' : '');
+  }else{
+    mid='<div class="mjz-none">'
+      +escHtml((LD&&LD.notes&&LD.notes[0])||'The two ladders do not meet anywhere close enough.')
+      +'</div>';
+  }
+
   d.innerHTML='<div class="mjw-box">'
     +'<div class="mjw-top"><div><b>Major levels</b>'
       +'<span>Both ladders, each squared from its own anchor \u2014 '
       +'root = \u221a(anchor \u00f7 100), then \u00b190\u00b0 through \u00b1360\u00b0, '
-      +'squared back and \u00d7100.</span></div>'
+      +'squared back and \u00d7100. The middle column is where the two meet.</span></div>'
       +'<button class="mjw-x" onclick="mjWinClose()">Close</button></div>'
     +'<div class="mjw-body">'
       +'<div class="mjw-col">'+hi+'</div>'
+      +'<div class="mjw-mid">'
+        +'<div class="mjz-h">Where they meet<s>'
+          +(LD&&LD.zones&&LD.zones.length
+             ? LD.zones.length+' price'+(LD.zones.length===1?'':'s')+' both ladders land on, '
+               +'inside '+(LD.tol?LD.tol.toFixed(2):'')
+             : 'nothing inside '+(LD&&LD.tol?LD.tol.toFixed(2):'the tolerance'))
+          +'</s></div>'
+        +mid
+      +'</div>'
       +'<div class="mjw-col">'+lo+'</div>'
     +'</div>'
     +'<div class="mjw-foot">Price now '+tcFmt(price,dp)
@@ -14081,12 +14142,11 @@ function majorStackHtml(price,dp){
   if(M.range){
     var pc=M.range.pct;
     h+='<div class="ms-range open" onclick="mjWinOpen()" title="Open both ladders">'
-      +'<div class="ms-open">Both ladders \u2192</div>'
       +'<div class="ms-rt"><span>'+tcFmt(M.range.lo,dp)+'</span>'
         +'<em>'+escHtml(M.range.where)+' — '+pc.toFixed(0)+'% up the range</em>'
         +'<span>'+tcFmt(M.range.hi,dp)+'</span></div>'
       +'<div class="ms-rb"><u style="left:'+pc.toFixed(1)+'%"></u></div>'
-      +'<div class="ms-rn">'+tcFmt(M.range.width,dp)+' wide'
+      +'<div class="ms-rn"><span class="ms-rn-t">'+tcFmt(M.range.width,dp)+' wide'
         +(M.range.atr?' — '+M.range.atr.toFixed(1)+' ATR from floor to ceiling':'')
         +'. '
         +(M.manual
@@ -14105,6 +14165,8 @@ function majorStackHtml(price,dp){
                +'on where the line for "major" is drawn — read them as the current range, not as '
                +'fixed prices.')
           : ''))
+      +'</span>'
+      +'<span class="ms-open">Open both ladders \u2192</span>'
       +'</div>'
     +'</div>';
   }
@@ -24672,9 +24734,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b86';
+var CA_BUILD='b87';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Major levels now use the \u221a(anchor\u00f7100) ladder. The panel shows the combined range \u2014 click it and both ladders, high and low, open in their own window.';
+var CA_WHATS_NEW='The major-levels window opens from the range strip: high ladder, the zone where they meet, low ladder.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
