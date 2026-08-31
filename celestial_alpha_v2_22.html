@@ -3355,56 +3355,108 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ms-x i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:2px;
   letter-spacing:.03em}
 .ms-note{margin-top:8px;font-size:9.5px;color:var(--t3);line-height:1.6}
-/* the major-levels window: combined range on the face, both ladders inside */
-.ms-range.open{cursor:pointer;position:relative;transition:border-color .15s,background .15s}
-.ms-range.open:hover{border-color:var(--p3);background:rgba(83,51,153,.16)}
-.ms-rn{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
-.ms-rn-t{flex:1 1 auto}
-.ms-open{flex:0 0 auto;white-space:nowrap;font-size:9px;font-weight:800;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--p3);
-  border:1px solid rgba(168,85,247,.45);border-radius:99px;padding:5px 12px}
-.ms-range.open:hover .ms-open{background:rgba(168,85,247,.22);color:var(--t1)}
-@media (max-width:700px){.ms-rn{flex-direction:column;align-items:flex-start;gap:9px}}
+/* ══ MAJOR LEVELS — one window on the face, two inside ══════════════════ */
+.mjl{margin:0 0 12px;border:1px solid var(--b1);border-radius:14px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(83,51,153,.15),rgba(11,6,40,.9));cursor:pointer;
+  transition:border-color .15s,box-shadow .15s}
+.mjl:hover{border-color:var(--p3);box-shadow:0 0 0 1px rgba(168,85,247,.22)}
+.mjl-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:13px 15px;border-bottom:1px solid var(--b1)}
+.mjl-t{flex:1 1 240px}
+.mjl-t b{display:block;font-size:11px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--t1)}
+.mjl-t span{display:block;font-size:9.5px;color:var(--t3);margin-top:4px;line-height:1.55}
+.mjl-anc{display:flex;gap:7px}
+.mjl-anc span{font-family:'Space Grotesk';font-size:11px;font-weight:700;padding:4px 10px;
+  border-radius:99px;border:1px solid var(--b1);font-variant-numeric:tabular-nums}
+.mjl-anc .hi{color:var(--dn);border-color:rgba(239,68,68,.4)}
+.mjl-anc .lo{color:var(--up);border-color:rgba(34,197,94,.4)}
+.mjl-go{flex:0 0 auto;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--p3);border:1px solid rgba(168,85,247,.45);border-radius:99px;padding:5px 12px}
+.mjl:hover .mjl-go{background:rgba(168,85,247,.22);color:var(--t1)}
+.mjl-col{padding:8px 10px}
+.mjl-r{display:grid;grid-template-columns:112px 52px 1fr auto;gap:10px;align-items:baseline;
+  padding:6px 9px;border-radius:8px;border-left:2px solid transparent}
+.mjl-r.up{border-left-color:rgba(239,68,68,.35)}
+.mjl-r.dn{border-left-color:rgba(34,197,94,.35)}
+.mjl-r.both{background:rgba(168,85,247,.12);border-left-color:var(--p3)}
+.mjl-r b{font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--t1);
+  font-variant-numeric:tabular-nums}
+.mjl-r.both b{color:var(--p3)}
+.mjl-r em{font-style:normal;font-size:8px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;text-align:center;border-radius:99px;padding:2px 0;
+  border:1px solid var(--b1);color:var(--t3)}
+.mjl-r em.mjl-b{color:var(--p3);border-color:rgba(168,85,247,.55);background:rgba(168,85,247,.16)}
+.mjl-r em.mjl-h{color:var(--dn);border-color:rgba(239,68,68,.35)}
+.mjl-r em.mjl-l{color:var(--up);border-color:rgba(34,197,94,.35)}
+.mjl-r s{text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.4}
+.mjl-r u{text-decoration:none;font-size:9px;color:var(--t2);font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.mjl-now{display:grid;grid-template-columns:112px 52px 1fr;gap:10px;align-items:baseline;
+  margin:7px 0;padding:8px 9px;border-radius:8px;background:rgba(255,255,255,.07);
+  border-left:2px solid var(--t1)}
+.mjl-now b{font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--t1);
+  font-variant-numeric:tabular-nums}
+.mjl-now em{font-style:normal;font-size:8px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--t2);text-align:center}
+.mjl-now s{text-decoration:none;font-size:9.5px;color:var(--t2)}
+.mjl-foot{padding:9px 15px 11px;border-top:1px solid var(--b1);font-size:9.5px;
+  color:var(--t3);line-height:1.6}
+@media (max-width:760px){
+  .mjl-r,.mjl-now{grid-template-columns:1fr auto}
+  .mjl-r s{grid-column:1/-1}
+}
+
+/* the window: two anchors, side by side, each on its own */
 .mjw-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);
   backdrop-filter:blur(5px);z-index:10000;align-items:center;justify-content:center;padding:22px}
 .mjw-bg.on{display:flex}
 .mjw-box{background:var(--s2,#0b0628);border:1px solid var(--b1);border-radius:18px;
-  width:min(1240px,96vw);max-height:92vh;display:flex;flex-direction:column;
+  width:min(1180px,96vw);max-height:92vh;display:flex;flex-direction:column;
   box-shadow:0 36px 90px rgba(0,0,0,.75);animation:mjwIn .22s cubic-bezier(.2,.9,.3,1)}
 @keyframes mjwIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
 .mjw-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;
   padding:17px 20px 14px;border-bottom:1px solid var(--b1)}
-.mjw-top b{display:block;font-size:12px;font-weight:800;letter-spacing:.13em;
+.mjw-top b{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;
   text-transform:uppercase;color:var(--t1)}
 .mjw-top span{display:block;font-size:10px;color:var(--t3);line-height:1.65;margin-top:5px;
-  max-width:82ch}
+  max-width:84ch}
 .mjw-x{flex:0 0 auto;padding:7px 15px;border-radius:8px;border:1px solid var(--b1);
   background:transparent;color:var(--t2);font-size:10px;font-weight:800;letter-spacing:.09em;
   cursor:pointer}
 .mjw-x:hover{color:var(--t1);border-color:var(--p3)}
-.mjw-body{display:grid;grid-template-columns:1fr minmax(210px,.62fr) 1fr;gap:14px;
-  padding:16px 20px;overflow:auto;align-items:start}
-@media (max-width:1100px){.mjw-body{grid-template-columns:1fr}}
-.mjw-mid{border:1px solid rgba(168,85,247,.34);border-radius:13px;padding:12px 13px;
-  background:linear-gradient(160deg,rgba(83,51,153,.22),rgba(11,6,40,.7))}
-.mjz-h{font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--t2);margin-bottom:10px}
-.mjz-h s{display:block;text-decoration:none;font-size:9px;font-weight:400;letter-spacing:.02em;
-  text-transform:none;color:var(--t3);margin-top:4px;line-height:1.55}
-.mjz-r{border:1px solid var(--b1);border-radius:10px;padding:9px 11px;margin-bottom:7px;
-  background:rgba(11,6,40,.62)}
-.mjz-r.near{border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.09)}
-.mjz-r b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--t1);
-  font-variant-numeric:tabular-nums}
-.mjz-r i{display:block;font-style:normal;font-size:9px;color:var(--p3);margin-top:2px}
-.mjz-r.near i{color:var(--up)}
-.mjz-r s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:4px;
-  line-height:1.45}
-.mjz-r u{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:5px;
-  padding-top:5px;border-top:1px solid var(--b1)}
-.mjz-none{font-size:10px;color:var(--t3);line-height:1.6}
-.mjz-more{font-size:9px;color:var(--t3);text-align:center;padding-top:4px}
+.mjw-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 20px;overflow:auto;
+  align-items:start}
+@media (max-width:860px){.mjw-body{grid-template-columns:1fr}}
+.mjw-col{border:1px solid var(--b1);border-radius:13px;overflow:hidden}
+.mjw-col.hi{border-color:rgba(239,68,68,.32)}
+.mjw-col.lo{border-color:rgba(34,197,94,.32)}
+.mjw-ch{padding:10px 13px;font-size:10px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t2);border-bottom:1px solid var(--b1);
+  background:rgba(255,255,255,.03)}
 .mjw-foot{padding:11px 20px 14px;border-top:1px solid var(--b1);font-size:10px;color:var(--t3)}
+.mjs{padding:11px 12px}
+.mjs-top{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.mjs-a{border:1px solid var(--b1);border-radius:9px;padding:8px 10px;background:rgba(11,6,40,.6)}
+.mjs-a i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.mjs-a b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--t1);
+  margin-top:3px;font-variant-numeric:tabular-nums}
+.mjs-a s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:4px;
+  line-height:1.45}
+.mjs-hd{display:grid;grid-template-columns:66px 1fr 1fr;gap:9px;padding:0 9px 6px}
+.mjs-hd span{font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3)}
+.mjs-r{display:grid;grid-template-columns:66px 1fr 1fr;gap:9px;align-items:center;
+  padding:7px 9px;border-top:1px solid var(--b1)}
+.mjs-d b{display:block;font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--p3)}
+.mjs-d i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:1px}
+.mjs-c b{display:block;font-family:'Space Grotesk';font-size:14px;font-weight:700;
+  font-variant-numeric:tabular-nums}
+.mjs-c.up b{color:var(--up)} .mjs-c.dn b{color:var(--dn)}
+.mjs-c.na{color:var(--t3);font-size:12px}
+.mjs-c s{display:block;text-decoration:none;font-size:8.5px;color:var(--t3);margin-top:2px}
+.mjs-none{padding:14px;font-size:10px;color:var(--t3)}
 
 /* set your own MH and ML — the detector only suggests */
 .mhml{margin-top:11px;padding:12px 14px;border:1px dashed var(--b1);border-radius:11px;
@@ -13974,24 +14026,140 @@ function majorLadders(rows,M,price,a){
   return out;
 }
 
-/* ══ THE TWO LADDERS, IN A WINDOW ═══════════════════════════════════════
-   Asked for this shape: the combined range on the face of the panel, and
-   both ladders behind one click, the way a settings window opens.
+/* ══════════════════════════════════════════════════════════════════════
+   MAJOR LEVELS — ONE WINDOW ON THE FACE, TWO INSIDE IT
 
-   The rows are anaMjBlock, unchanged — the degree, the level below, the
-   width track, the level above and the span. That block already draws the
-   square-root ladder this panel now uses, so the window is the same design
-   twice rather than a third one invented for it. */
+   The shape asked for, in the words it was asked in: on the first screen one
+   window carrying the levels of BOTH ranges together; click it and two
+   windows sit side by side, one calculating from the major high and one from
+   the major low, so the individual levels can be read on their own.
+
+   Both ladders are the ÷100 square-root calculation this app already had:
+
+       root = sqrt(anchor / 100)
+       up   = (root + step)^2 * 100
+       down = (root - step)^2 * 100
+
+   with the steps being the Gann degrees in CRIT_STEPS. Nothing else is
+   mixed in. The front window merges the two into one price-ordered column
+   with price sitting in its true place, and marks the rows where a rung from
+   the high and a rung from the low land on the same price — those are the
+   only rows on the board that two separate calculations agree on.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* every rung both anchors produce, merged, with agreement marked */
+function mjlBuild(M,price,atr){
+  var out={hi:[],lo:[],all:[],tol:null,agree:0};
+  if(!M)return out;
+  function rungs(anchor,tag){
+    var L=[];
+    if(!anchor||!(anchor.px>0))return L;
+    var r=null; try{ r=anaLadderFrom(anchor.px); }catch(e){ return L; }
+    (r||[]).forEach(function(x){
+      if(x.up>0)L.push({px:x.up,deg:x.d,dirn:'up',from:tag});
+      if(x.dn!=null&&x.dn>0)L.push({px:x.dn,deg:x.d,dirn:'dn',from:tag});
+    });
+    L.push({px:anchor.px,deg:0,dirn:'anchor',from:tag});
+    return L;
+  }
+  out.hi=rungs(M.MH,'high');
+  out.lo=rungs(M.ML,'low');
+  var tol=(atr>0)?atr/3:(price>0?price*0.002:0);
+  out.tol=tol;
+
+  /* merge: a high rung and a low rung within tolerance are ONE row that both
+     produced, which is the whole reason for having two anchors */
+  var used={}, all=[];
+  out.hi.forEach(function(h){
+    var mate=null,best=Infinity;
+    out.lo.forEach(function(l,i){
+      if(used[i])return;
+      var g=Math.abs(h.px-l.px);
+      if(g<=tol&&g<best){ best=g; mate=i; }
+    });
+    if(mate!=null){
+      used[mate]=1;
+      all.push({px:(h.px+out.lo[mate].px)/2,both:true,h:h,l:out.lo[mate],gap:best});
+      out.agree++;
+    }else all.push({px:h.px,both:false,h:h,l:null});
+  });
+  out.lo.forEach(function(l,i){ if(!used[i])all.push({px:l.px,both:false,h:null,l:l}); });
+
+  all.forEach(function(x){
+    x.atrAway=(atr>0&&price>0)?Math.abs(x.px-price)/atr:null;
+    x.pct=(price>0)?(x.px-price)/price*100:null;
+    x.side=(price>0)?(x.px>price?'above':'below'):null;
+  });
+  all.sort(function(x,y){return y.px-x.px;});     /* highest first, like a chart */
+  out.all=all;
+  return out;
+}
+function mjlDegTxt(r){
+  if(!r)return '';
+  if(r.dirn==='anchor')return 'the major '+r.from+' itself';
+  return (r.dirn==='up'?'+':'−')+r.deg+'° from the major '+r.from;
+}
+/* one row of the merged column */
+function mjlRow(x,dp){
+  var cls='mjl-r'+(x.both?' both':'')+(x.side==='above'?' up':' dn');
+  var tag=x.both
+    ? '<em class="mjl-b">both</em>'
+    : '<em class="mjl-'+(x.h?'h':'l')+'">'+(x.h?'high':'low')+'</em>';
+  var why=x.both
+    ? mjlDegTxt(x.h)+' &middot; '+mjlDegTxt(x.l)+' &middot; '+x.gap.toFixed(2)+' apart'
+    : mjlDegTxt(x.h||x.l);
+  return '<div class="'+cls+'">'
+    +'<b>'+tcFmt(x.px,dp)+'</b>'
+    +tag
+    +'<s>'+why+'</s>'
+    +'<u>'+(x.atrAway!=null?x.atrAway.toFixed(2)+' ATR':'')
+      +(x.pct!=null?' &middot; '+(x.pct>=0?'+':'')+x.pct.toFixed(2)+'%':'')+'</u>'
+  +'</div>';
+}
+/* one anchor's own ladder, for the two windows inside */
+function mjlSideHtml(anchor,tag,price,dp,atr){
+  if(!anchor||!(anchor.px>0))
+    return '<div class="mjs-none">No major '+tag+' to calculate from.</div>';
+  var r=null; try{ r=anaLadderFrom(anchor.px); }catch(e){}
+  if(!r||!r.length)return '<div class="mjs-none">The ladder could not be built.</div>';
+  var root=Math.sqrt(anchor.px/100);
+  var rows=r.map(function(x){
+    function cell(px,dirn){
+      if(px==null)return '<div class="mjs-c na">—</div>';
+      var aa=(atr>0)?Math.abs(px-price)/atr:null;
+      var pc=(price>0)?(px-price)/price*100:null;
+      return '<div class="mjs-c '+(px>price?'up':'dn')+'">'
+        +'<b>'+tcFmt(px,dp)+'</b>'
+        +'<s>'+(pc!=null?(pc>=0?'+':'')+pc.toFixed(2)+'%':'')
+        +(aa!=null?' &middot; '+aa.toFixed(1)+' ATR':'')+'</s></div>';
+    }
+    return '<div class="mjs-r">'
+      +'<div class="mjs-d"><b>'+x.d+'°</b><i>&plusmn;'+x.i+'</i></div>'
+      +cell(x.dn,'dn')+cell(x.up,'up')
+    +'</div>';
+  }).join('');
+  return '<div class="mjs">'
+    +'<div class="mjs-top">'
+      +'<div class="mjs-a"><i>Anchor</i><b>'+tcFmt(anchor.px,dp)+'</b>'
+        +'<s>'+(anchor.manual?'the '+tag+' you set':'detected'+(anchor.date?' '+anchor.date:''))+'</s></div>'
+      +'<div class="mjs-a"><i>√(A÷100)</i><b>'+root.toFixed(5)+'</b>'
+        +'<s>every level below is this root stepped, squared and ×100</s></div>'
+    +'</div>'
+    +'<div class="mjs-hd"><span>Degree</span><span>Below</span><span>Above</span></div>'
+    +rows
+  +'</div>';
+}
+
+/* the two windows inside, opened from the one on the face */
 var _mjWin=null;
 function mjWinBuild(){
   if(_mjWin)return _mjWin;
   var d=document.createElement('div');
   d.id='mj_win'; d.className='mjw-bg';
   d.onclick=function(e){ if(e.target===d)mjWinClose(); };
-  document.body.appendChild(d);   /* on the body: a fixed child is still
-                                     trapped by any ancestor that makes a
-                                     stacking context, which is what put the
-                                     notification panel off-screen earlier */
+  /* on the body: a fixed child is still trapped by any ancestor that makes a
+     stacking context, which is what put the notification panel off-screen */
+  document.body.appendChild(d);
   _mjWin=d;
   return d;
 }
@@ -14002,92 +14170,44 @@ function mjWinClose(){
 function mjWinEsc(e){ if(e.key==='Escape')mjWinClose(); }
 function mjWinOpen(){
   var S=window._mjState;
-  if(!S||!S.M||!S.M.MH||!S.M.ML)return;
-  var M=S.M, price=S.price, dp=S.dp;
+  if(!S||!S.M)return;
+  var M=S.M, price=S.price, dp=S.dp, atr=S.atr;
   var d=mjWinBuild();
-  var hi='',lo='';
-  try{
-    hi=anaMjBlock('Major high · '+tcFmt(M.MH.px,dp),
-      (M.MH.manual?'the high you set':'detected')
-      +(M.MH.date?' · '+M.MH.date:'')+' \u00b7 \u221a(A\u00f7100) ladder',
-      M.MH.px,price,dp,'hi');
-    lo=anaMjBlock('Major low · '+tcFmt(M.ML.px,dp),
-      (M.ML.manual?'the low you set':'detected')
-      +(M.ML.date?' · '+M.ML.date:'')+' \u00b7 \u221a(A\u00f7100) ladder',
-      M.ML.px,price,dp,'lo');
-  }catch(e){
-    hi='<div class="mj-none">The ladder could not be drawn \u2014 '+escHtml(e.message||'')+'</div>';
-  }
-  /* ── AND THE ZONE IN BETWEEN, WHICH IS THE POINT OF HAVING TWO ────────
-     Two ladders side by side is two lists. What was asked for is the place
-     they MEET, sitting between them — a rung measured down from the major
-     high landing on a rung measured up from the major low. That is the only
-     thing on this window that two independent calculations agree on. */
-  var LD=null;
-  try{ LD=majorLadders((typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||[],M,price,M.atr); }catch(e){}
-  var mid='';
-  if(LD&&LD.zones&&LD.zones.length){
-    /* six, because seven ran taller than the seven-rung ladders either side
-       and the last card was clipped by the bottom of the window */
-    mid=LD.zones.slice(0,6).map(function(Z,i){
-      var d=Z.distATR;
-      return '<div class="mjz-r'+(i===0?' near':'')+'">'
-        +'<b>'+tcFmt(Z.price,dp)+'</b>'
-        +'<i>'+(d!=null?d.toFixed(2)+' ATR '+(Z.side||''):'')+'</i>'
-        +'<s>'+escHtml((Z.hiParts||[]).slice(0,1).join(''))+'</s>'
-        +'<s>'+escHtml((Z.loParts||[]).slice(0,1).join(''))+'</s>'
-        +'<u>'+Z.tightest.gap.toFixed(2)+' apart</u>'
-      +'</div>';
-    }).join('')
-      +(LD.zones.length>6
-        ? '<div class="mjz-more">'+(LD.zones.length-6)+' more further from price</div>' : '');
-  }else{
-    mid='<div class="mjz-none">'
-      +escHtml((LD&&LD.notes&&LD.notes[0])||'The two ladders do not meet anywhere close enough.')
-      +'</div>';
-  }
-
   d.innerHTML='<div class="mjw-box">'
-    +'<div class="mjw-top"><div><b>Major levels</b>'
-      +'<span>Both ladders, each squared from its own anchor \u2014 '
-      +'root = \u221a(anchor \u00f7 100), then \u00b190\u00b0 through \u00b1360\u00b0, '
-      +'squared back and \u00d7100. The middle column is where the two meet.</span></div>'
-      +'<button class="mjw-x" onclick="mjWinClose()">Close</button></div>'
+    +'<div class="mjw-top">'
+      +'<div><b>Major levels &mdash; each anchor on its own</b>'
+        +'<span>Left is calculated from the major high, right from the major low. '
+        +'Same calculation both sides: root = √(anchor ÷ 100), then the Gann degrees '
+        +'added and subtracted, squared back and ×100.</span></div>'
+      +'<button class="mjw-x" onclick="mjWinClose()">Close</button>'
+    +'</div>'
     +'<div class="mjw-body">'
-      +'<div class="mjw-col">'+hi+'</div>'
-      +'<div class="mjw-mid">'
-        +'<div class="mjz-h">Where they meet<s>'
-          +(LD&&LD.zones&&LD.zones.length
-             ? LD.zones.length+' price'+(LD.zones.length===1?'':'s')+' both ladders land on, '
-               +'inside '+(LD.tol?LD.tol.toFixed(2):'')
-             : 'nothing inside '+(LD&&LD.tol?LD.tol.toFixed(2):'the tolerance'))
-          +'</s></div>'
-        +mid
-      +'</div>'
-      +'<div class="mjw-col">'+lo+'</div>'
+      +'<div class="mjw-col hi"><div class="mjw-ch">From the major high &middot; '
+        +(M.MH?tcFmt(M.MH.px,dp):'—')+'</div>'
+        +mjlSideHtml(M.MH,'high',price,dp,atr)+'</div>'
+      +'<div class="mjw-col lo"><div class="mjw-ch">From the major low &middot; '
+        +(M.ML?tcFmt(M.ML.px,dp):'—')+'</div>'
+        +mjlSideHtml(M.ML,'low',price,dp,atr)+'</div>'
     +'</div>'
     +'<div class="mjw-foot">Price now '+tcFmt(price,dp)
-      +(M.range?' \u00b7 '+M.range.pct.toFixed(0)+'% up the range \u00b7 '
+      +(M.range?' &middot; '+M.range.pct.toFixed(0)+'% up the range &middot; '
         +escHtml(M.range.where):'')+'</div>'
   +'</div>';
   d.classList.add('on');
   document.addEventListener('keydown',mjWinEsc);
 }
 
-/* the major level, and everything that has to line up on it */
 function majorStackHtml(price,dp){
   dp=dp||2;
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
   var M=majorPair(rows,price);
-  if(!M.secondH&&!M.secondL)
-    return '<div class="lm-na">No confirmed high or low to work from yet — '
+  if(!M.MH&&!M.ML)
+    return '<div class="lm-na">No major high or low to work from yet — '
       +escHtml((M.required[0]||'not enough confirmed swings'))+'.</div>';
   var C=window.CQE_LAST;
-  /* majorPair measures its own ATR off the same bars. Falling back to it
-     matters: with CQE_LAST unpopulated the ladders were being handed null,
-     their tolerance fell back, and a run that finds four key zones reported
-     one single crossing and none. */
   var atr=(C&&C.atr)||M.atr||null;
+  var LV=mjlBuild(M,price,atr);
+  try{ window._mjState={M:M,price:price,dp:dp,atr:atr}; }catch(e){}
 
   function row(lab,v,note,ok){
     return '<div class="ms-r'+(ok===true?' yes':ok===false?' no':'')+'">'
@@ -14095,94 +14215,46 @@ function majorStackHtml(price,dp){
   }
   var h='<div class="mstack">';
 
-  /* the two extremes and the two levels that come off them */
-  /* EVERY NUMBER ON THIS PAIR NOW CARRIES ITS DISTANCE. The old card printed
-     an extreme and a level with dates and nothing else, so a price twenty
-     ATR away looked exactly like a price one ATR away. */
-  function far(x){ return (x&&x.atrAway!=null)?x.atrAway.toFixed(1)+' ATR away':''; }
-  function ext(x,word){
-    return '<div class="ms-x">extreme '+(x?tcFmt(x.px,dp):'—')
-      +(x&&x.date?' · '+x.date:'')
-      +(x&&x.atrAway!=null?' · <em>'+far(x)+'</em>':'')
-      +'<i>where price already '+word+'</i></div>';
-  }
-  function lvlSay(x,side){
-    if(!x)return side==='high'?'no major high above price':'no major low below price';
-    var t=[];
-    t.push(x.cleared
-      ? (side==='high'?'price has already cleared it — support now, not resistance'
-                     :'price is already under it — resistance now, not support')
-      : (side==='high'?'the top of the range price is trading in'
-                     :'the bottom of the range price is trading in'));
-    if(x.manual)t.push('your number');
-    else if(x.date)t.push('set '+x.date);
-    if(x.atrAway!=null)t.push(far(x));
-    if(x.tested>1)t.push('defended '+x.tested+' times');
-    else if(x.tested===1)t.push('touched once');
-    return t.join(' · ');
-  }
-  h+='<div class="ms-pair">'
-    +'<div class="ms-side hi"><u>Major high</u>'
-      +'<b>'+(M.MH?tcFmt(M.MH.px,dp):'—')+'</b>'
-      +'<s>'+escHtml(lvlSay(M.MH,'high'))+'</s>'
-      +ext(M.topH,'failed')+'</div>'
-    +'<div class="ms-side lo"><u>Major low</u>'
-      +'<b>'+(M.ML?tcFmt(M.ML.px,dp):'—')+'</b>'
-      +'<s>'+escHtml(lvlSay(M.ML,'low'))+'</s>'
-      +ext(M.bottomL,'failed')+'</div>'
+  /* ── THE ONE WINDOW ON THE FACE ──────────────────────────────────────
+     Both ranges' levels together, in price order, with price standing in
+     its own place in the column so "above me / below me" is read off the
+     shape rather than worked out from a sign. */
+  var above=LV.all.filter(function(x){return x.side==='above';});
+  var below=LV.all.filter(function(x){return x.side!=='above';});
+  h+='<div class="mjl" onclick="mjWinOpen()" title="Open both anchors on their own">'
+    +'<div class="mjl-top">'
+      +'<div class="mjl-t"><b>Major levels</b>'
+        +'<span>both ranges together &mdash; '+LV.all.length+' levels, '
+        +LV.agree+' that the high and the low both land on</span></div>'
+      +'<div class="mjl-anc">'
+        +'<span class="hi">high '+(M.MH?tcFmt(M.MH.px,dp):'—')+'</span>'
+        +'<span class="lo">low '+(M.ML?tcFmt(M.ML.px,dp):'—')+'</span>'
+      +'</div>'
+      +'<div class="mjl-go">Open both →</div>'
+    +'</div>'
+    +'<div class="mjl-col">'
+      +above.slice(-7).map(function(x){return mjlRow(x,dp);}).join('')
+      +'<div class="mjl-now"><b>'+tcFmt(price,dp)+'</b><em>price now</em>'
+        +'<s>'+(M.range?M.range.pct.toFixed(0)+'% up the range &middot; '
+          +escHtml(M.range.where):'')+'</s></div>'
+      +below.slice(0,7).map(function(x){return mjlRow(x,dp);}).join('')
+    +'</div>'
+    +'<div class="mjl-foot">'
+      +(above.length>7||below.length>7
+        ? 'Nearest seven each side. '+(LV.all.length-Math.min(7,above.length)-Math.min(7,below.length))
+          +' further out are in the two windows. '
+        : '')
+      +'Click anywhere on this panel to see the high and the low calculated separately.</div>'
   +'</div>';
 
-  /* ── WHERE IN THE RANGE, WHICH IS THE READ THE TWO NUMBERS EXIST FOR ──
-     MH and ML on their own are two prices. What they are FOR is telling you
-     whether price is at an edge or stranded in the middle with nothing to
-     trade against, and that is one number the panel never printed. */
-  /* the window is opened from the strip below, so it needs the same numbers
-     the panel was just drawn from rather than recomputing them on a click */
-  try{ window._mjState={M:M,price:price,dp:dp}; }catch(e){}
-  if(M.range){
-    var pc=M.range.pct;
-    h+='<div class="ms-range open" onclick="mjWinOpen()" title="Open both ladders">'
-      +'<div class="ms-rt"><span>'+tcFmt(M.range.lo,dp)+'</span>'
-        +'<em>'+escHtml(M.range.where)+' — '+pc.toFixed(0)+'% up the range</em>'
-        +'<span>'+tcFmt(M.range.hi,dp)+'</span></div>'
-      +'<div class="ms-rb"><u style="left:'+pc.toFixed(1)+'%"></u></div>'
-      +'<div class="ms-rn"><span class="ms-rn-t">'+tcFmt(M.range.width,dp)+' wide'
-        +(M.range.atr?' — '+M.range.atr.toFixed(1)+' ATR from floor to ceiling':'')
-        +'. '
-        +(M.manual
-          ? 'These two are yours — fixed until you change them, so there is no detector setting '
-            +'behind them and nothing to test for stability.'
-          : 'A turn counts as major at '+(M.majorAtr||'—')+' ATR, which leaves '
-            +M.majorN+' of them in the loaded bars. '
-          +(M.stable&&M.stable.of
-          ? (M.stable.n===M.stable.of
-             ? 'Re-run at '+M.stable.at.join(', ')+' ATR the same two boundaries come back every '
-               +'time — structure, not a setting.'
-             : M.stable.n
-             ? 'Re-run at 5, 6 and 7 ATR they come back '+M.stable.n+' times out of '+M.stable.of
-               +', so treat the pair as approximate rather than exact.'
-             : 'Re-run at 5, 6 and 7 ATR a different pair comes back, so these boundaries depend '
-               +'on where the line for "major" is drawn — read them as the current range, not as '
-               +'fixed prices.')
-          : ''))
-      +'</span>'
-      +'<span class="ms-open">Open both ladders \u2192</span>'
-      +'</div>'
-    +'</div>';
-  }
-  /* ── SET THEM YOURSELF ───────────────────────────────────────────────
-     Which swing is "major" is a judgement about the chart, not a fact in the
-     bars — the detector returns 4,773, 4,889 or 5,597 for the same gold
-     series depending only on where the line for major is drawn. So the
-     detector suggests and a typed-in pair overrides, per asset, kept in this
-     browser. Everything under here rebuilds from whichever is in force. */
+  /* ── SET THEM YOURSELF ─────────────────────────────────────────────── */
   var SG=M.suggest||{};
   h+='<div class="mhml">'
     +'<div class="mhml-h">'+(M.manual?'Your major high and low'
         :'Set the major high and low yourself')
       +'<s>'+(M.manual
-        ? 'In force since '+escHtml(M.manualAt||'you set them')+'. Everything below is built '
-          +'from these — both ladders, the zones and the alert.'
+        ? 'In force since '+escHtml(M.manualAt||'you set them')+'. Every level above is built '
+          +'from these.'
         : 'The pair above is detected. If your chart says otherwise, type yours and it wins.')
       +'</s></div>'
     +'<div class="mhml-row">'
@@ -14198,111 +14270,24 @@ function majorStackHtml(price,dp){
     +'<div class="mhml-msg" id="mhml_msg"></div>'
     +(M.manual&&SG.MH&&SG.ML
       ? '<div class="mhml-sg">The detector would have said '+tcFmt(SG.MH.px,dp)+' and '
-        +tcFmt(SG.ML.px,dp)+(SG.MH.date?' (from '+SG.MH.date+' and '+(SG.ML.date||'—')+')':'')
-        +'. Shown so a level you set months ago cannot quietly drift away from the structure '
-        +'without you noticing.</div>'
+        +tcFmt(SG.ML.px,dp)+'. Shown so a level you set months ago cannot quietly drift away '
+        +'from the structure without you noticing.</div>'
       : '')
   +'</div>';
   if(M.notes&&M.notes.length)
     h+='<div class="ms-note">'+escHtml(M.notes.join(' '))+'</div>';
 
-  if(!M.level)return h+'</div>';
-  var L=M.level.v.px, side=M.level.side;
-  var dAway=M.level.v.atrAway;
-  /* A LEVEL FIVE ATR AWAY IS NOT "IN FORCE". The old line asserted one
-     whatever the distance, which is how a 2024 price twenty ATR under the
-     market came to be presented as the line everything hangs off. */
-  h+='<div class="ms-live'+(M.inPlay?'':' off')+'">'
-    +(M.inPlay
-      ? 'In force now: <b>'+tcFmt(L,dp)+'</b> — the major '+(side==='high'?'high above':'low below')
-        +', '+(dAway!=null?dAway.toFixed(2)+' ATR ':'')+(L>price?'above':'below')+' price. '
-        +'Price is at an edge of its range, which is where these two numbers earn their keep.'
-      : 'Neither boundary is in force. The nearer is <b>'+tcFmt(L,dp)+'</b>, '
-        +(dAway!=null?dAway.toFixed(1)+' ATR ':'')+(L>price?'above':'below')
-        +' price — real, but too far to be trading against today. Mid-range, the lines that '
-        +'matter are the key zones below, not the boundaries.')
-    +'</div>';
+  /* ── WHAT LINES UP ON THE NEAREST LEVEL ────────────────────────────── */
+  var near=LV.all.slice().sort(function(x,y){
+    return (x.atrAway==null?9e9:x.atrAway)-(y.atrAway==null?9e9:y.atrAway); })[0];
+  var L=near?near.px:(M.level?M.level.v.px:price);
+  h+='<div class="ms-live">Nearest level: <b>'+tcFmt(L,dp)+'</b>'
+    +(near&&near.atrAway!=null?' &mdash; '+near.atrAway.toFixed(2)+' ATR '
+      +(near.side==='above'?'above':'below')+' price':'')
+    +(near&&near.both?', and the high and the low both land on it':'')
+    +'. Everything below is measured against that level.</div>';
 
-  /* ── THE TWO LADDERS AND WHERE THEY MEET ─────────────────────────────
-     The major high and the major low each throw a ladder of levels, and a
-     price both ladders land on is a key zone. Zones come first because that
-     is the answer; the ladders are underneath, closed, because they are the
-     working. */
-  var LD=null; try{ LD=majorLadders(rows,M,price,atr); }catch(e){}
-  if(LD){
-    if(LD.zones&&LD.zones.length){
-      h+='<div class="kz-h">Key zones — where the two ladders meet</div>';
-      h+='<div class="kz">';
-      LD.zones.slice(0,5).forEach(function(Z,i){
-        var st=Z.strength>=3?'s3':Z.strength===2?'s2':'s1';
-        h+='<div class="kz-r '+st+'" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'
-          +'<div class="kz-p"><b>'+tcFmt(Z.price,dp)+'</b>'
-            +'<s>'+(Z.width>0?'band '+tcFmt(Z.lo,dp)+'–'+tcFmt(Z.hiP,dp)
-                            :'a single price')+'</s></div>'
-          +'<div class="kz-m">'
-            +'<span class="kz-tag '+st+'">'+Z.strength+' × '+Z.strength+'</span>'
-            +'<s>'+(Z.distATR!=null?Z.distATR.toFixed(2)+' ATR '+(Z.side||''):'')+'</s>'
-          +'</div>'
-          +'<div class="kz-w">'
-            +'<u>from the high</u> '+escHtml(Z.hiParts.slice(0,2).join(', '))
-              +(Z.hiParts.length>2?' and '+(Z.hiParts.length-2)+' more':'')
-            +'<br><u>from the low</u> '+escHtml(Z.loParts.slice(0,2).join(', '))
-              +(Z.loParts.length>2?' and '+(Z.loParts.length-2)+' more':'')
-            +'<i>closest pair '+tcFmt(Z.tightest.h.px,dp)+' and '
-              +tcFmt(Z.tightest.l.px,dp)+', '+Z.tightest.gap.toFixed(2)+' apart</i>'
-          +'</div></div>';
-      });
-      h+='</div>';
-      var MZ=LD.chance&&LD.chance.measured;
-      h+='<div class="kz-note">A zone is a price where a level built DOWN from the major high '
-        +'and a level built UP from the major low land within '+LD.tol.toFixed(2)
-        +' of each other — a third of an ATR. The two ladders divide two different legs and '
-        +'square their own roots, so a match is two calculations agreeing rather than one '
-        +'identity written twice.'
-        +(MZ?' <b>How much of that is arithmetic:</b> the anchors were replaced with random '
-          +'prices in the same band, '+MZ.trials+' times on each of '+MZ.assets+' instruments. '
-          +'One-against-one came out '+MZ.one.real+' real against '+MZ.one.nul+' by chance — '
-          +'about twice chance, which is worth marking on a chart and is not worth taking a '
-          +'trade on by itself. Two-against-two came out '+MZ.two.real+' real against '
-          +MZ.two.nul+' by chance, BELOW chance, so stacked zones are not treated as stronger '
-          +'evidence than single ones — they are shown, and the count beside each is a '
-          +'description, not a score.':'')
-        +'</div>';
-    }else{
-      h+='<div class="kz-none">No key zone. '
-        +escHtml((LD.notes[0]||'The two ladders do not meet anywhere close enough.'))+'</div>';
-    }
-    if(LD.notes.length&&LD.zones.length)
-      h+='<div class="kz-note">'+escHtml(LD.notes.join(' '))+'</div>';
-
-    function ladderCol(list,ttl,sw,cls){
-      if(!list||!list.length)return '<div class="ld-col '+cls+'"><u>'+ttl+'</u>'
-        +'<div class="ld-na">nothing to build from</div></div>';
-      var inZone={};
-      (LD.zones||[]).forEach(function(Z){ Z.members.forEach(function(m){
-        inZone[m.h.px.toFixed(4)]=1; inZone[m.l.px.toFixed(4)]=1; }); });
-      var body=list.slice().sort(function(a2,b2){return b2.px-a2.px;}).map(function(x){
-        return '<div class="ld-r'+(x.kind==='anchor'?' anc':'')
-          +(inZone[x.px.toFixed(4)]?' hit':'')+'">'
-          +'<b>'+tcFmt(x.px,dp)+'</b><s>'+escHtml(x.label)+'</s></div>';
-      }).join('');
-      return '<div class="ld-col '+cls+'"><u>'+ttl+'</u>'
-        +'<em>'+(sw?'dividing a '+tcFmt(sw.range,dp)+' swing'
-                  +(sw.dir==='fallback'?' (fallback range)':''):'square of 9 only')+'</em>'
-        +body+'</div>';
-    }
-    h+='<details class="ld-more"><summary>Both ladders in full — '
-      +((LD.hi||[]).length+(LD.lo||[]).length)+' levels</summary>'
-      +'<div class="ld-grid">'
-      +ladderCol(LD.hi,'Down from the major high',LD.swingH,'hi')
-      +ladderCol(LD.lo,'Up from the major low',LD.swingL,'lo')
-      +'</div></details>';
-  }
-
-  /* ── what lines up on it ────────────────────────────────────────── */
   h+='<div class="ms-rows">';
-
-  /* volume profile */
   var P=null; try{ P=vpBuild(rows,'',VP_WIN,VP_BINS); }catch(e){}
   if(P&&P.ok){
     var cand=[{p:P.poc,l:'the busiest price'},
@@ -14311,21 +14296,19 @@ function majorStackHtml(price,dp){
       .filter(function(x){ return isFinite(x.p); })
       .sort(function(a,b){ return Math.abs(a.p-L)-Math.abs(b.p-L); })[0];
     if(cand){
-      var d=Math.abs(cand.p-L)/L*100;
-      h+=row('Volume',tcFmt(cand.p,dp),cand.l+' — '+d.toFixed(2)+'% from the level',d<=0.6);
+      var d2=Math.abs(cand.p-L)/L*100;
+      h+=row('Volume',tcFmt(cand.p,dp),cand.l+' — '+d2.toFixed(2)+'% from the level',d2<=0.6);
     }else h+=row('Volume','—','profile has no comparable level',null);
   }else h+=row('Volume','—',(P&&P.why)||'no profile built',null);
 
-  /* sigma band */
   if(C&&C.quant&&C.quant.sd&&C.quant.mean!=null&&C.quant.sd>0){
-    var z=Math.abs(Math.log(L/price))/ (C.quant.sd||1);
+    var z=Math.abs(Math.log(L/price))/(C.quant.sd||1);
     h+=row('Sigma',z.toFixed(2)+'σ',
       'the level sits '+z.toFixed(2)+' daily sigma from price', z<=3);
   }else if(C&&C.quant&&C.quant.sigmaBands){
     h+=row('Sigma','—','bands computed, no comparable z',null);
   }else h+=row('Sigma','—','statistics not computed',null);
 
-  /* wave */
   if(C&&C.elliott&&C.elliott.best){
     var E=C.elliott;
     h+=row('Wave',(E.best.label||E.best.dir||'count'),
@@ -14333,7 +14316,6 @@ function majorStackHtml(price,dp){
       E.score>=40);
   }else h+=row('Wave','—','no valid count',null);
 
-  /* the confirmation: divergence, or a cycle date on it */
   var dv=C&&C.divergence, tHits=(C&&C.time&&C.time.hits)||[];
   var tight=tHits.filter(function(x){return x.tolerance>0&&x.error/x.tolerance<=0.10;});
   var conf=null;
@@ -14349,12 +14331,10 @@ function majorStackHtml(price,dp){
   h+=row('Confirm',conf.t,conf.w,conf.ok);
   h+='</div>';
 
-  h+='<div class="ms-note">The major high and the major low are the boundaries of the range '
-    +'price is trading in — the most recent major turn standing above it and the most recent '
-    +'standing below it. They are not the extremes: an extreme is where price failed once and '
-    +'can sit ten or twenty ATR away, which is why it is printed underneath in small with its '
-    +'distance rather than presented as a level. Everything under the pair has to agree before '
-    +'either boundary is worth trading.</div>';
+  h+='<div class="ms-note">Every level on this panel is the same calculation: the square root '
+    +'of the anchor over a hundred, stepped by the Gann degrees, squared back and multiplied by '
+    +'a hundred. The high runs it and the low runs it, and a row marked <b>both</b> is a price '
+    +'the two arrived at separately.</div>';
   return h+'</div>';
 }
 
@@ -24734,9 +24714,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b87';
+var CA_BUILD='b88';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The major-levels window opens from the range strip: high ladder, the zone where they meet, low ladder.';
+var CA_WHATS_NEW='Major levels redesigned: one window on the face with both ranges together, and inside it two windows side by side \u2014 the high on its own and the low on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
