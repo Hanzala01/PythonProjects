@@ -3357,9 +3357,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ms-note{margin-top:8px;font-size:9.5px;color:var(--t3);line-height:1.6}
 /* ══ MAJOR LEVELS — one window on the face, two inside ══════════════════ */
 .mjl{margin:0 0 12px;border:1px solid var(--b1);border-radius:14px;overflow:hidden;
-  background:linear-gradient(160deg,rgba(83,51,153,.15),rgba(11,6,40,.9));cursor:pointer;
-  transition:border-color .15s,box-shadow .15s}
-.mjl:hover{border-color:var(--p3);box-shadow:0 0 0 1px rgba(168,85,247,.22)}
+  background:linear-gradient(160deg,rgba(83,51,153,.15),rgba(11,6,40,.9))}
 .mjl-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
   padding:13px 15px;border-bottom:1px solid var(--b1)}
 .mjl-t{flex:1 1 240px}
@@ -3371,12 +3369,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border-radius:99px;border:1px solid var(--b1);font-variant-numeric:tabular-nums}
 .mjl-anc .hi{color:var(--dn);border-color:rgba(239,68,68,.4)}
 .mjl-anc .lo{color:var(--up);border-color:rgba(34,197,94,.4)}
-.mjl-go{flex:0 0 auto;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--p3);border:1px solid rgba(168,85,247,.45);border-radius:99px;padding:5px 12px}
-.mjl:hover .mjl-go{background:rgba(168,85,247,.22);color:var(--t1)}
+.mjl-open{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;
+  padding:14px 16px;border:0;border-top:1px solid var(--b1);
+  background:linear-gradient(90deg,rgba(168,85,247,.2),rgba(168,85,247,.08));
+  transition:background .15s}
+.mjl-open:hover{background:linear-gradient(90deg,rgba(168,85,247,.34),rgba(168,85,247,.14))}
+.mjl-ob{flex:0 0 auto;font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1)}
+.mjl-os{flex:1 1 auto;font-size:9.5px;color:var(--t3);line-height:1.5}
+.mjl-oa{flex:0 0 auto;font-size:20px;color:var(--p3);line-height:1}
+@media (max-width:760px){.mjl-open{flex-wrap:wrap;gap:6px}.mjl-os{flex:1 1 100%}}
 .mjl-col{padding:8px 10px}
-.mjl-r{display:grid;grid-template-columns:112px 52px 1fr auto;gap:10px;align-items:baseline;
-  padding:6px 9px;border-radius:8px;border-left:2px solid transparent}
+.mjl-r{display:grid;grid-template-columns:118px 56px 1fr auto;gap:12px;align-items:baseline;
+  padding:8px 10px;border-radius:8px;border-left:2px solid transparent}
 .mjl-r.up{border-left-color:rgba(239,68,68,.35)}
 .mjl-r.dn{border-left-color:rgba(34,197,94,.35)}
 .mjl-r.both{background:rgba(168,85,247,.12);border-left-color:var(--p3)}
@@ -3389,9 +3393,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .mjl-r em.mjl-b{color:var(--p3);border-color:rgba(168,85,247,.55);background:rgba(168,85,247,.16)}
 .mjl-r em.mjl-h{color:var(--dn);border-color:rgba(239,68,68,.35)}
 .mjl-r em.mjl-l{color:var(--up);border-color:rgba(34,197,94,.35)}
-.mjl-r s{text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.4}
-.mjl-r u{text-decoration:none;font-size:9px;color:var(--t2);font-variant-numeric:tabular-nums;
-  white-space:nowrap}
+.mjl-r s{text-decoration:none;font-size:10px;color:var(--t3);line-height:1.4}
+.mjl-r u{text-decoration:none;font-size:11px;color:var(--t2);font-variant-numeric:tabular-nums;
+  white-space:nowrap;font-weight:600}
 .mjl-now{display:grid;grid-template-columns:112px 52px 1fr;gap:10px;align-items:baseline;
   margin:7px 0;padding:8px 9px;border-radius:8px;background:rgba(255,255,255,.07);
   border-left:2px solid var(--t1)}
@@ -14099,21 +14103,23 @@ function mjlDegTxt(r){
   if(r.dirn==='anchor')return 'the major '+r.from+' itself';
   return (r.dirn==='up'?'+':'−')+r.deg+'° from the major '+r.from;
 }
-/* one row of the merged column */
+/* ONE ROW ON THE FACE, AND ONLY WHAT IS NEEDED TO READ IT.
+   The first version put the full degree sentence on every row — "−225° from
+   the major high · +135° from the major low · 4.50 apart" — fourteen times
+   over. That is the working, and the working belongs in the window. Out here
+   a row needs three things: the price, whether one anchor or both produced
+   it, and how far away it is. */
 function mjlRow(x,dp){
   var cls='mjl-r'+(x.both?' both':'')+(x.side==='above'?' up':' dn');
   var tag=x.both
     ? '<em class="mjl-b">both</em>'
     : '<em class="mjl-'+(x.h?'h':'l')+'">'+(x.h?'high':'low')+'</em>';
-  var why=x.both
-    ? mjlDegTxt(x.h)+' &middot; '+mjlDegTxt(x.l)+' &middot; '+x.gap.toFixed(2)+' apart'
-    : mjlDegTxt(x.h||x.l);
   return '<div class="'+cls+'">'
     +'<b>'+tcFmt(x.px,dp)+'</b>'
     +tag
-    +'<s>'+why+'</s>'
-    +'<u>'+(x.atrAway!=null?x.atrAway.toFixed(2)+' ATR':'')
-      +(x.pct!=null?' &middot; '+(x.pct>=0?'+':'')+x.pct.toFixed(2)+'%':'')+'</u>'
+    +'<s>'+(x.atrAway!=null?x.atrAway.toFixed(1)+' ATR '
+        +(x.side==='above'?'above':'below'):'')+'</s>'
+    +'<u>'+(x.pct!=null?(x.pct>=0?'+':'')+x.pct.toFixed(1)+'%':'')+'</u>'
   +'</div>';
 }
 /* one anchor's own ladder, for the two windows inside */
@@ -14221,30 +14227,35 @@ function majorStackHtml(price,dp){
      shape rather than worked out from a sign. */
   var above=LV.all.filter(function(x){return x.side==='above';});
   var below=LV.all.filter(function(x){return x.side!=='above';});
-  h+='<div class="mjl" onclick="mjWinOpen()" title="Open both anchors on their own">'
+  /* THREE EACH SIDE, NOT SEVEN. Fourteen rows of levels with a degree
+     sentence on each was a wall, and the thing it was hiding was the button.
+     What a person needs on the face is the handful of prices either side of
+     where they are standing; everything else is one click away. */
+  var NEAR=3;
+  var shownA=above.slice(-NEAR), shownB=below.slice(0,NEAR);
+  var restN=LV.all.length-shownA.length-shownB.length;
+  h+='<div class="mjl">'
     +'<div class="mjl-top">'
       +'<div class="mjl-t"><b>Major levels</b>'
-        +'<span>both ranges together &mdash; '+LV.all.length+' levels, '
-        +LV.agree+' that the high and the low both land on</span></div>'
+        +'<span>the nearest '+NEAR+' either side, from both anchors together</span></div>'
       +'<div class="mjl-anc">'
         +'<span class="hi">high '+(M.MH?tcFmt(M.MH.px,dp):'—')+'</span>'
         +'<span class="lo">low '+(M.ML?tcFmt(M.ML.px,dp):'—')+'</span>'
       +'</div>'
-      +'<div class="mjl-go">Open both →</div>'
     +'</div>'
     +'<div class="mjl-col">'
-      +above.slice(-7).map(function(x){return mjlRow(x,dp);}).join('')
+      +shownA.map(function(x){return mjlRow(x,dp);}).join('')
       +'<div class="mjl-now"><b>'+tcFmt(price,dp)+'</b><em>price now</em>'
-        +'<s>'+(M.range?M.range.pct.toFixed(0)+'% up the range &middot; '
-          +escHtml(M.range.where):'')+'</s></div>'
-      +below.slice(0,7).map(function(x){return mjlRow(x,dp);}).join('')
+        +'<s>'+(M.range?M.range.pct.toFixed(0)+'% up the range':'')+'</s></div>'
+      +shownB.map(function(x){return mjlRow(x,dp);}).join('')
     +'</div>'
-    +'<div class="mjl-foot">'
-      +(above.length>7||below.length>7
-        ? 'Nearest seven each side. '+(LV.all.length-Math.min(7,above.length)-Math.min(7,below.length))
-          +' further out are in the two windows. '
-        : '')
-      +'Click anywhere on this panel to see the high and the low calculated separately.</div>'
+    +'<button class="mjl-open" onclick="mjWinOpen()">'
+      +'<span class="mjl-ob">Open the two windows</span>'
+      +'<span class="mjl-os">the major high on its own and the major low on its own &mdash; '
+        +'all '+LV.all.length+' levels, '+LV.agree+' of them landed on by both'
+        +(restN>0?', including the '+restN+' not shown here':'')+'</span>'
+      +'<span class="mjl-oa">&rarr;</span>'
+    +'</button>'
   +'</div>';
 
   /* ── SET THEM YOURSELF ─────────────────────────────────────────────── */
@@ -24714,9 +24725,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b88';
+var CA_BUILD='b89';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Major levels redesigned: one window on the face with both ranges together, and inside it two windows side by side \u2014 the high on its own and the low on its own.';
+var CA_WHATS_NEW='Major levels panel cut to the nearest three either side, with one big button that opens the two windows.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
