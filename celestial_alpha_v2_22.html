@@ -5747,20 +5747,58 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 .tf:hover{background:rgba(139,92,246,.12);color:var(--t1)}
 .tf.on{background:linear-gradient(90deg,#29115E,#160B32);color:var(--t1)}
 
-.ts-bias-note{font-size:8.5px;color:var(--t3,#8b86a8);line-height:1.45;margin-top:3px}
+/* ── the setup's direction, in the card header ────────────────────────
+   A badge here costs no vertical space, which matters because the row this
+   card sits in is a fixed 380px by design. */
+/* THE HEADER TRUNCATES, so the badge is pinned to the right edge and the
+   asset text gives way instead — otherwise "GOLD · $4,432.7…" ate the badge
+   and the direction vanished, which is the one thing it exists to say. */
+.chd:has(.ts-side-badge){display:flex;align-items:center;gap:6px}
+.chd:has(.ts-side-badge) #v_ts_asset{min-width:0;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.ts-side-badge{display:none;margin-left:auto;flex:0 0 auto;padding:2px 9px;border-radius:99px;
+  font-family:'Space Grotesk';font-size:10px;font-weight:800;letter-spacing:.09em;
+  vertical-align:middle;border:1px solid var(--b1);
+  animation:tsPop .32s cubic-bezier(.2,.9,.3,1) both}
+.ts-side-badge.buy,.ts-side-badge.sell,.ts-side-badge.done{display:inline-block}
+.ts-side-badge.buy{color:var(--up,#22c55e);border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.12)}
+.ts-side-badge.sell{color:var(--dn,#ef4444);border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.12)}
+.ts-side-badge.done{color:var(--t3,#8b86a8)}
+@keyframes tsPop{from{opacity:0;transform:translateY(-4px) scale(.9)}to{opacity:1;transform:none}}
+
+.ts-bias-note{font-size:8px;font-weight:500;letter-spacing:0;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;color:var(--t3,#8b86a8);line-height:1.3;margin-top:1px}
 .ts-bias-note.drift{color:var(--warn,#f59e0b)}
 
-#v_side{font-family:'Space Grotesk';font-size:15px;font-weight:800;letter-spacing:.04em}
-/* NOT ".side". That is the left sidebar's class — sticky, and
-   height:calc(100vh - 36px) — so a row wearing it became 732px tall inside a
-   351px card body and shoved the entry, stop and targets out of sight. The
-   card looked empty and then looked like it needed scrolling; it was one
-   stolen class name both times. */
-.ts-row.ts-side{border-bottom:1px solid var(--rim,rgba(255,255,255,.08));padding-bottom:6px;
-  margin-bottom:2px}
-.ts-warn{margin-top:10px;padding:9px 11px;border-radius:9px;font-size:10px;line-height:1.6;
-  color:var(--t2,#c9c4e0);border:1px solid rgba(245,158,11,.45);background:rgba(245,158,11,.1)}
+/* one line, and it slides in rather than appearing */
+.ts-warn{margin-top:8px;padding:6px 10px;border-radius:8px;font-size:9.5px;line-height:1.45;
+  color:var(--t2,#c9c4e0);border:1px solid rgba(245,158,11,.45);background:rgba(245,158,11,.1);
+  animation:tsSlide .3s ease both}
 .ts-warn b{color:var(--warn,#f59e0b)}
+@keyframes tsSlide{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+
+/* ── the looking-at feature: the setup rows answer the pointer ─────────
+   Each row lifts and lights its own accent on hover, and the three targets
+   read as one ladder when any of them is under the cursor. Nothing moves
+   the layout — transform and colour only, so the fixed height holds. */
+.ts-rows .ts-row,.ts-rows .ts-tp{border-radius:6px;padding-left:5px;padding-right:5px;
+  transition:background .16s ease,transform .16s ease,box-shadow .16s ease}
+.ts-rows .ts-row:hover,.ts-rows .ts-tp:hover{background:rgba(139,92,246,.14);
+  transform:translateX(2px)}
+.ts-rows .ts-tp:hover{box-shadow:inset 2px 0 0 var(--up,#22c55e)}
+.ts-rows .ts-row:hover .v{text-shadow:0 0 12px currentColor}
+.ts-rows:hover .ts-tp{opacity:.62}
+.ts-rows:hover .ts-tp:hover{opacity:1}
+
+/* the click feature: a row copies its number */
+.ts-rows .ts-row .v,.ts-rows .ts-tp b{cursor:copy}
+.ts-copied{position:relative}
+/* in the gap between the label and the number, not on top of either */
+.ts-copied:after{content:'copied';position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);font-size:8px;font-weight:800;letter-spacing:.1em;
+  color:var(--up,#22c55e);animation:tsFade 1s ease both;pointer-events:none}
+.ts-copied{background:rgba(34,197,94,.14)!important}
+@keyframes tsFade{0%{opacity:0}20%{opacity:1}70%{opacity:1}100%{opacity:0}}
 
 /* ── TRADE SETUP ── */
 .ts-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
@@ -5898,15 +5936,10 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 #pane_dashboard{padding:12px;height:100%}
 /* 365 predates the Moon strip, which is 57px inside the chart card and left
    it overflowing its own track by 14px. Measured at 1280 and 1536. */
-/* THE ROW WAS LOCKED AT 380px AND THE CARD BODIES SET TO overflow:auto, so
-   the Trade Setup card could never grow — it just scrolled. Measured at
-   1366 wide its content is 626px in a 351px body, and it was already 501px
-   before the direction row and the disagreement note were added. A setup you
-   have to scroll inside to read is the one card on this board that must not
-   need scrolling. The row grows to whatever the tallest card needs now; the
-   chart and market pulse stretch to match, which is what they did before at
-   a fixed height anyway. */
-.drow-a{min-height:380px}
+/* The fixed row height is the design and it stays. Growing it to fit made
+   the whole dashboard taller, which is not a fix — the card was only
+   overflowing because a row inside it had stolen the sidebar's height. */
+.drow-a{min-height:0;height:380px}
 .drow-b{min-height:0;height:166px}
 .drow-c{min-height:0;height:193px}
 .drow-a>.card,.drow-b>.card,.drow-c>.card{height:100%;overflow:hidden}
@@ -5977,8 +6010,7 @@ body{background:var(--bg0)}
 .mp-nl{font-size:10px;line-height:1.75;margin-top:3px}
 .drow-a>.card:nth-child(3) .cta{margin-top:auto}
 /* trade setup: keep every row inside 365 */
-.drow-a>.card:nth-child(2)>.cbd{display:flex;flex-direction:column;padding:12px 14px;
-  overflow:visible}
+.drow-a>.card:nth-child(2)>.cbd{display:flex;flex-direction:column;padding:12px 14px}
 .ts-top{margin-bottom:8px}
 .ts-bias{font-size:15px}
 .ts-conf{font-size:15px;margin:2px 0 5px}
@@ -7040,13 +7072,18 @@ body{background:var(--bg0)}
     </div>
 
     <div class="card">
-      <div class="chd">Trade Setup <span id="v_ts_asset"></span></div>
+      <!-- the setup's own direction rides in the header rather than as a row
+           of its own: same information, no extra height in a fixed-height card -->
+      <div class="chd">Trade Setup <span id="v_ts_asset"></span>
+        <span class="ts-side-badge" id="v_side"></span></div>
       <div class="cbd">
         <div class="ts-top">
           <div class="ts-tl">
             <div class="ts-k">Cycle Alignment</div>
             <div class="ts-cyc" id="v_cyc_lbl">&mdash;</div>
             <div class="ts-k" style="margin-top:12px">Bias</div>
+            <!-- a SIBLING, not a child: dashSet writes textContent, so a note
+                 nested inside #v_bias is deleted the moment the bias is set -->
             <div class="ts-bias" id="v_bias">&mdash;</div>
             <div class="ts-bias-note" id="v_bias_note"></div>
           </div>
@@ -7066,7 +7103,6 @@ body{background:var(--bg0)}
                when they did the card showed sell numbers - stop above price,
                targets below it - under a heading reading BULLISH, with
                nothing anywhere saying the setup was a sell. -->
-          <div class="ts-row ts-side"><span class="k">This setup is</span><span class="v" id="v_side">&mdash;</span></div>
           <div class="ts-row"><span class="k acc">Entry Zone</span><span class="v" id="v_ez">&mdash;</span></div>
           <div class="ts-row"><span class="k red">Stop Loss</span><span class="v" id="v_sl">&mdash;</span></div>
           <div class="ts-row"><span class="k grn">Take Profit</span><span class="v" id="v_tps"></span></div>
@@ -24856,9 +24892,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b94';
+var CA_BUILD='b95';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Trade Setup card no longer needs scrolling \u2014 a stolen CSS class was making one row 732px tall, and the card can grow to fit now.';
+var CA_WHATS_NEW='Dashboard format is back to the fixed layout. BUY/SELL sits in the card header, rows respond to the pointer, and clicking a price copies it.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -31039,6 +31075,25 @@ function dayBias(asset,live){
   try{ localStorage.setItem(DAYBIAS_KEY,JSON.stringify(all)); }catch(e){}
   return {label:live.label,dir:live.dir,bull:live.bull,at:today,held:false};
 }
+/* CLICK A PRICE ON THE SETUP AND IT IS ON THE CLIPBOARD.
+   Entry, stop and the three targets are numbers that get typed into a broker
+   in the next thirty seconds, and copying them by hand off a screen is where
+   a digit goes missing. Bound once, on the container, so re-rendering the
+   rows never loses it. */
+function tsCopyBind(){
+  var box=document.querySelector('.ts-rows');
+  if(!box||box._copyBound)return;
+  box._copyBound=true;
+  box.addEventListener('click',function(e){
+    var el=e.target.closest('.v,.ts-tp b'); if(!el)return;
+    var raw=(el.textContent||'').replace(/[^0-9.\-]/g,'');
+    if(!raw)return;
+    try{ navigator.clipboard.writeText(raw); }catch(err){}
+    var row=el.closest('.ts-row,.ts-tp')||el;
+    row.classList.remove('ts-copied'); void row.offsetWidth; row.classList.add('ts-copied');
+    setTimeout(function(){ row.classList.remove('ts-copied'); },1000);
+  });
+}
 function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
   /* a run that got here has real numbers behind it; if the notice was raised
      by a failed fetch and the price has since arrived, it no longer applies */
@@ -31070,8 +31125,9 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
       var bl=document.getElementById('v_bias_note');
       if(bl){
         var drift=(cb.dir&&DB.dir&&cb.dir!==DB.dir);
-        bl.textContent='today\u2019s reading, set '+DB.at
-          +(drift?' \u2014 live it now reads '+cb.dir+', which is a change inside the day':'');
+        bl.textContent='set '+DB.at+(drift?' \u2014 live now '+cb.dir:'');
+        bl.title='The bias is taken once a day and held. Set '+DB.at
+          +(drift?'; the live combined reading has since moved to '+cb.dir+'.':'.');
         bl.className='ts-bias-note'+(drift?' drift':'');
       }
     }
@@ -31083,6 +31139,7 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
       /* finished. Showing the old numbers as if they were still live is the
          one thing this card must not do. */
       dashSet('v_side','FINISHED','var(--ts)');
+      try{ document.getElementById('v_side').className='ts-side-badge done'; }catch(e){}
       dashSet('v_ez',OC.word,OC.k==='tp'?'var(--green)':'var(--red)');
       dashSet('v_sl','—');
       dashSet('v_tps','run the analysis for the next setup');
@@ -31090,8 +31147,9 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
       dashSet('v_tp1','—');dashSet('v_tp2','—');dashSet('v_tp3','—');
       dashSet('v_rr','—');
     }else if(sig&&sig.style){
-      dashSet('v_side',sig.isBull?'A BUY':'A SELL',
-        sig.isBull?'var(--green)':'var(--red)');
+      dashSet('v_side',sig.isBull?'BUY':'SELL','');
+      try{ document.getElementById('v_side').className='ts-side-badge '
+        +(sig.isBull?'buy':'sell'); }catch(e){}
       /* the entry is a band, not a line — the same width the chart draws */
       var eb=Math.abs(sig.entry-sig.sl)*0.28||price*0.0008;
       dashSet('v_ez',f(sig.entry-eb)+' – '+f(sig.entry+eb),sig.isBull?'var(--green)':'var(--red)');
@@ -31107,7 +31165,8 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
          the row shows the number, the sentence stays on the tooltip */
       var why=sig&&sig.reason?sig.reason:'Confidence below the entry threshold';
       var shortWhy=(sig&&sig.conf!=null)?(68-sig.conf>0?(68-sig.conf)+'% short of Intraday':'blocked'):'—';
-      dashSet('v_side','—','var(--ts)');
+      dashSet('v_side','','');
+      try{ document.getElementById('v_side').className='ts-side-badge'; }catch(e){}
       dashSet('v_ez','No setup','var(--ts)');
       dashSet('v_sl','—');dashSet('v_tps',shortWhy);
       var wy=document.getElementById('v_tps');if(wy)wy.title=why;
@@ -31129,9 +31188,9 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
           &&((sig.isBull&&bd==='bear')||(!sig.isBull&&bd==='bull'));
         if(clash){
           mm.style.display='';
-          /* three lines, not eleven — this sits inside a 351px card body */
-          mm.innerHTML='<b>Bias '+escHtml(bd)+', setup '+(sig.isBull?'buy':'sell')+'.</b> '
-            +'They disagree. Size down, or wait for them to line up.';
+          /* one line — this sits inside a fixed-height card body */
+          mm.innerHTML='<b>Bias '+escHtml(bd)+' vs setup '+(sig.isBull?'buy':'sell')
+            +'</b> \u2014 size down or wait';
         }else mm.style.display='none';
       }
     }catch(e){}
@@ -31216,6 +31275,7 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
     }
     renderDashNews();
     var ca=document.getElementById('ch_asset');if(ca)ca.textContent=assetName;
+    try{ tsCopyBind(); }catch(e){}
     dashCalendar();dashAiLine();dashTiming();
   }catch(e){
     console.error('dash live:',e);
