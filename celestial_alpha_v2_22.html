@@ -3355,6 +3355,30 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ms-x i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:2px;
   letter-spacing:.03em}
 .ms-note{margin-top:8px;font-size:9.5px;color:var(--t3);line-height:1.6}
+/* set your own MH and ML — the detector only suggests */
+.mhml{margin-top:11px;padding:12px 14px;border:1px dashed var(--b1);border-radius:11px;
+  background:rgba(11,6,40,.5)}
+.mhml-h{font-size:10px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--t2)}
+.mhml-h s{display:block;text-decoration:none;font-size:9.5px;font-weight:400;letter-spacing:.02em;
+  text-transform:none;color:var(--t3);margin-top:4px;line-height:1.6}
+.mhml-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:10px}
+.mhml-row label{display:block;font-size:8.5px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.mhml-row input{display:block;margin-top:4px;width:130px;padding:7px 10px;border-radius:8px;
+  border:1px solid var(--b1);background:rgba(11,6,40,.85);color:var(--t1);
+  font-family:'Space Grotesk';font-size:14px;font-variant-numeric:tabular-nums}
+.mhml-row input:focus{outline:none;border-color:var(--p3);box-shadow:0 0 0 2px rgba(168,85,247,.2)}
+.mhml-go,.mhml-rs{padding:8px 14px;border-radius:8px;font-size:10px;font-weight:800;
+  letter-spacing:.08em;cursor:pointer;border:1px solid var(--b1);background:rgba(168,85,247,.16);
+  color:var(--t1)}
+.mhml-go:hover{background:rgba(168,85,247,.3)}
+.mhml-rs{background:transparent;color:var(--t3)}
+.mhml-rs:hover{color:var(--t1)}
+.mhml-msg{font-size:10px;color:var(--t3);margin-top:7px;min-height:0}
+.mhml-msg.bad{color:var(--dn)}
+.mhml-sg{font-size:9.5px;color:var(--t3);line-height:1.6;margin-top:8px;
+  padding-top:8px;border-top:1px solid var(--b1)}
+
 .ms-range{margin-top:11px;padding:11px 13px;border:1px solid var(--b1);border-radius:10px;
   background:rgba(11,6,40,.55)}
 .ms-rt{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
@@ -13416,6 +13440,69 @@ function plainWordsHtml(price,dp,asset){
    knowing — but as context, with their distance attached, not as the level.
    ══════════════════════════════════════════════════════════════════════ */
 
+/* ══ YOUR OWN MH AND ML, WHICH OVERRIDE EVERYTHING BELOW ════════════════
+   The rule for "major" was rewritten three times and each rewrite produced
+   different prices, because the strictness is a judgement and not a fact in
+   the data. Measured on one gold series the major high is 4,773 at two ATR,
+   4,889 at four and 5,597 at eight — three different answers from one
+   setting, with nothing in the bars to say which is right. A person looking
+   at the chart knows instantly; the detector never can.
+
+   So the detector's answer is a SUGGESTION, and a typed-in pair beats it.
+   Set once per asset, kept in this browser, and everything downstream — both
+   ladders, the key zones, the range position, the alert — is built from
+   whatever is in force. ════════════════════════════════════════════════ */
+var MHML_KEY='ca_mhml';
+function mhmlAll(){
+  try{ return JSON.parse(localStorage.getItem(MHML_KEY)||'{}')||{}; }catch(e){ return {}; }
+}
+function mhmlAsset(){
+  var a='';
+  try{ a=(typeof _lastAsset!=='undefined'&&_lastAsset)||''; }catch(e){}
+  if(!a){ try{ a=timAsset(); }catch(e){} }
+  return String(a||'Gold');
+}
+function mhmlGet(asset){
+  var v=mhmlAll()[String(asset||mhmlAsset())];
+  if(!v)return null;
+  var h=+v.h, l=+v.l;
+  if(!isFinite(h)||!isFinite(l)||h<=l)return null;
+  return {h:h,l:l,at:v.at||null};
+}
+/* Returns a message rather than throwing, because the two most likely typos
+   — the pair the wrong way round, and a stray character — both need saying
+   out loud rather than silently ignoring. */
+function mhmlSet(h,l,asset){
+  var H=parseFloat(String(h).replace(/[^0-9.\-]/g,''));
+  var L=parseFloat(String(l).replace(/[^0-9.\-]/g,''));
+  if(!isFinite(H)||!isFinite(L))return 'Both boxes need a number.';
+  if(H===L)return 'The high and the low cannot be the same price.';
+  if(H<L){ var t=H; H=L; L=t; }
+  var all=mhmlAll();
+  all[String(asset||mhmlAsset())]={h:H,l:L,at:new Date().toISOString().slice(0,10)};
+  try{ localStorage.setItem(MHML_KEY,JSON.stringify(all)); }catch(e){ return 'This browser refused to save it.'; }
+  return null;
+}
+function mhmlClear(asset){
+  var all=mhmlAll();
+  delete all[String(asset||mhmlAsset())];
+  try{ localStorage.setItem(MHML_KEY,JSON.stringify(all)); }catch(e){}
+}
+/* wired to the two boxes on the panel */
+function mhmlApply(){
+  var hi=document.getElementById('mhml_h'), lo=document.getElementById('mhml_l'),
+      msg=document.getElementById('mhml_msg');
+  if(!hi||!lo)return;
+  var err=mhmlSet(hi.value,lo.value);
+  if(err){ if(msg){ msg.textContent=err; msg.className='mhml-msg bad'; } return; }
+  if(msg){ msg.textContent=''; msg.className='mhml-msg'; }
+  try{ renderAnalytics(); }catch(e){ try{ location.reload(); }catch(e2){} }
+}
+function mhmlReset(){
+  mhmlClear();
+  try{ renderAnalytics(); }catch(e){ try{ location.reload(); }catch(e2){} }
+}
+
 /* the strictness at which a pivot stops being a wiggle. Adaptive rather than
    fixed, because 200 bars and 700 bars do not have the same number of
    structural turns in them. */
@@ -13546,9 +13633,29 @@ function majorPair(rows,price){
                 tested:defended(MH.px),cleared:!!out.hiCleared};
   if(ML)out.ML={px:ML.px,date:dstr(ML),atrAway:away(ML.px),
                 tested:defended(ML.px),cleared:!!out.loCleared};
+
+  /* ── AND IF YOU HAVE TYPED YOUR OWN, THOSE WIN ───────────────────────
+     The detected pair is kept alongside so the panel can show what it would
+     have said, which is the only way to notice that a typed-in level has
+     drifted away from the structure months later. */
+  out.suggest={MH:out.MH,ML:out.ML};
+  var own=null; try{ own=mhmlGet(); }catch(e){}
+  if(own){
+    out.manual=true; out.manualAt=own.at;
+    out.hiCleared=(price!=null&&price>own.h);
+    out.loCleared=(price!=null&&price<own.l);
+    out.MH={px:own.h,date:null,atrAway:away(own.h),tested:defended(own.h),
+            cleared:out.hiCleared,manual:true};
+    out.ML={px:own.l,date:null,atrAway:away(own.l),tested:defended(own.l),
+            cleared:out.loCleared,manual:true};
+    out.notes=[];                 /* the detector's breakout notes are not about these */
+    if(out.hiCleared)out.notes.push('Price is above the high you set, so it reads as support now.');
+    if(out.loCleared)out.notes.push('Price is below the low you set, so it reads as resistance now.');
+    out.stable=null;
+  }
+  out.secondH=out.MH; out.secondL=out.ML;
   /* the ladders and every older caller read secondH/secondL; those ARE the
      anchors, so the two names point at one object rather than at two rules */
-  out.secondH=out.MH; out.secondL=out.ML;
   out.pv=pv; out.mpv=mpv;
 
   /* ── 4 · WHERE INSIDE THE RANGE PRICE ACTUALLY IS ───────────────────── */
@@ -13833,7 +13940,8 @@ function majorStackHtml(price,dp){
                      :'price is already under it — resistance now, not support')
       : (side==='high'?'the top of the range price is trading in'
                      :'the bottom of the range price is trading in'));
-    if(x.date)t.push('set '+x.date);
+    if(x.manual)t.push('your number');
+    else if(x.date)t.push('set '+x.date);
     if(x.atrAway!=null)t.push(far(x));
     if(x.tested>1)t.push('defended '+x.tested+' times');
     else if(x.tested===1)t.push('touched once');
@@ -13863,9 +13971,13 @@ function majorStackHtml(price,dp){
       +'<div class="ms-rb"><u style="left:'+pc.toFixed(1)+'%"></u></div>'
       +'<div class="ms-rn">'+tcFmt(M.range.width,dp)+' wide'
         +(M.range.atr?' — '+M.range.atr.toFixed(1)+' ATR from floor to ceiling':'')
-        +'. A turn counts as major at '+(M.majorAtr||'—')+' ATR, which leaves '
-        +M.majorN+' of them in the loaded bars. '
-        +(M.stable&&M.stable.of
+        +'. '
+        +(M.manual
+          ? 'These two are yours — fixed until you change them, so there is no detector setting '
+            +'behind them and nothing to test for stability.'
+          : 'A turn counts as major at '+(M.majorAtr||'—')+' ATR, which leaves '
+            +M.majorN+' of them in the loaded bars. '
+          +(M.stable&&M.stable.of
           ? (M.stable.n===M.stable.of
              ? 'Re-run at '+M.stable.at.join(', ')+' ATR the same two boundaries come back every '
                +'time — structure, not a setting.'
@@ -13875,10 +13987,43 @@ function majorStackHtml(price,dp){
              : 'Re-run at 5, 6 and 7 ATR a different pair comes back, so these boundaries depend '
                +'on where the line for "major" is drawn — read them as the current range, not as '
                +'fixed prices.')
-          : '')
+          : ''))
       +'</div>'
     +'</div>';
   }
+  /* ── SET THEM YOURSELF ───────────────────────────────────────────────
+     Which swing is "major" is a judgement about the chart, not a fact in the
+     bars — the detector returns 4,773, 4,889 or 5,597 for the same gold
+     series depending only on where the line for major is drawn. So the
+     detector suggests and a typed-in pair overrides, per asset, kept in this
+     browser. Everything under here rebuilds from whichever is in force. */
+  var SG=M.suggest||{};
+  h+='<div class="mhml">'
+    +'<div class="mhml-h">'+(M.manual?'Your major high and low'
+        :'Set the major high and low yourself')
+      +'<s>'+(M.manual
+        ? 'In force since '+escHtml(M.manualAt||'you set them')+'. Everything below is built '
+          +'from these — both ladders, the zones and the alert.'
+        : 'The pair above is detected. If your chart says otherwise, type yours and it wins.')
+      +'</s></div>'
+    +'<div class="mhml-row">'
+      +'<label>Major high<input id="mhml_h" type="text" inputmode="decimal" '
+        +'value="'+(M.manual?tcFmt(M.MH.px,dp).replace(/,/g,''):'')+'" '
+        +'placeholder="'+(SG.MH?tcFmt(SG.MH.px,dp).replace(/,/g,''):'')+'"></label>'
+      +'<label>Major low<input id="mhml_l" type="text" inputmode="decimal" '
+        +'value="'+(M.manual?tcFmt(M.ML.px,dp).replace(/,/g,''):'')+'" '
+        +'placeholder="'+(SG.ML?tcFmt(SG.ML.px,dp).replace(/,/g,''):'')+'"></label>'
+      +'<button class="mhml-go" onclick="mhmlApply()">Use these</button>'
+      +(M.manual?'<button class="mhml-rs" onclick="mhmlReset()">Back to detected</button>':'')
+    +'</div>'
+    +'<div class="mhml-msg" id="mhml_msg"></div>'
+    +(M.manual&&SG.MH&&SG.ML
+      ? '<div class="mhml-sg">The detector would have said '+tcFmt(SG.MH.px,dp)+' and '
+        +tcFmt(SG.ML.px,dp)+(SG.MH.date?' (from '+SG.MH.date+' and '+(SG.ML.date||'—')+')':'')
+        +'. Shown so a level you set months ago cannot quietly drift away from the structure '
+        +'without you noticing.</div>'
+      : '')
+  +'</div>';
   if(M.notes&&M.notes.length)
     h+='<div class="ms-note">'+escHtml(M.notes.join(' '))+'</div>';
 
@@ -24410,9 +24555,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b84';
+var CA_BUILD='b85';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The panel now takes MH and ML \u2014 the boundaries of the range price is trading in \u2014 and says where inside that range price actually sits';
+var CA_WHATS_NEW='You can set the major high and low yourself now \u2014 two boxes on the major-level panel, per asset. The detector only suggests.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
