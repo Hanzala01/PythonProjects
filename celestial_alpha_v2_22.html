@@ -5751,8 +5751,13 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 .ts-bias-note.drift{color:var(--warn,#f59e0b)}
 
 #v_side{font-family:'Space Grotesk';font-size:15px;font-weight:800;letter-spacing:.04em}
-.ts-row.side{border-bottom:1px solid var(--rim,rgba(255,255,255,.08));padding-bottom:7px;
-  margin-bottom:3px}
+/* NOT ".side". That is the left sidebar's class — sticky, and
+   height:calc(100vh - 36px) — so a row wearing it became 732px tall inside a
+   351px card body and shoved the entry, stop and targets out of sight. The
+   card looked empty and then looked like it needed scrolling; it was one
+   stolen class name both times. */
+.ts-row.ts-side{border-bottom:1px solid var(--rim,rgba(255,255,255,.08));padding-bottom:6px;
+  margin-bottom:2px}
 .ts-warn{margin-top:10px;padding:9px 11px;border-radius:9px;font-size:10px;line-height:1.6;
   color:var(--t2,#c9c4e0);border:1px solid rgba(245,158,11,.45);background:rgba(245,158,11,.1)}
 .ts-warn b{color:var(--warn,#f59e0b)}
@@ -5893,7 +5898,15 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 #pane_dashboard{padding:12px;height:100%}
 /* 365 predates the Moon strip, which is 57px inside the chart card and left
    it overflowing its own track by 14px. Measured at 1280 and 1536. */
-.drow-a{min-height:0;height:380px}
+/* THE ROW WAS LOCKED AT 380px AND THE CARD BODIES SET TO overflow:auto, so
+   the Trade Setup card could never grow — it just scrolled. Measured at
+   1366 wide its content is 626px in a 351px body, and it was already 501px
+   before the direction row and the disagreement note were added. A setup you
+   have to scroll inside to read is the one card on this board that must not
+   need scrolling. The row grows to whatever the tallest card needs now; the
+   chart and market pulse stretch to match, which is what they did before at
+   a fixed height anyway. */
+.drow-a{min-height:380px}
 .drow-b{min-height:0;height:166px}
 .drow-c{min-height:0;height:193px}
 .drow-a>.card,.drow-b>.card,.drow-c>.card{height:100%;overflow:hidden}
@@ -5964,7 +5977,8 @@ body{background:var(--bg0)}
 .mp-nl{font-size:10px;line-height:1.75;margin-top:3px}
 .drow-a>.card:nth-child(3) .cta{margin-top:auto}
 /* trade setup: keep every row inside 365 */
-.drow-a>.card:nth-child(2)>.cbd{display:flex;flex-direction:column;padding:12px 14px}
+.drow-a>.card:nth-child(2)>.cbd{display:flex;flex-direction:column;padding:12px 14px;
+  overflow:visible}
 .ts-top{margin-bottom:8px}
 .ts-bias{font-size:15px}
 .ts-conf{font-size:15px;margin:2px 0 5px}
@@ -7052,7 +7066,7 @@ body{background:var(--bg0)}
                when they did the card showed sell numbers - stop above price,
                targets below it - under a heading reading BULLISH, with
                nothing anywhere saying the setup was a sell. -->
-          <div class="ts-row side"><span class="k">This setup is</span><span class="v" id="v_side">&mdash;</span></div>
+          <div class="ts-row ts-side"><span class="k">This setup is</span><span class="v" id="v_side">&mdash;</span></div>
           <div class="ts-row"><span class="k acc">Entry Zone</span><span class="v" id="v_ez">&mdash;</span></div>
           <div class="ts-row"><span class="k red">Stop Loss</span><span class="v" id="v_sl">&mdash;</span></div>
           <div class="ts-row"><span class="k grn">Take Profit</span><span class="v" id="v_tps"></span></div>
@@ -24842,9 +24856,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b93';
+var CA_BUILD='b94';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The bias is now one reading per day and says when it was set. The Trade Setup card can no longer be blanked by another panel failing.';
+var CA_WHATS_NEW='The Trade Setup card no longer needs scrolling \u2014 a stolen CSS class was making one row 732px tall, and the card can grow to fit now.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -31115,12 +31129,9 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
           &&((sig.isBull&&bd==='bear')||(!sig.isBull&&bd==='bull'));
         if(clash){
           mm.style.display='';
-          mm.innerHTML='<b>These two disagree.</b> The bias above reads '+escHtml(bd)
-            +' from the combined engine, and this setup is a '+(sig.isBull?'buy':'sell')
-            +' — stop '+(sig.isBull?'below':'above')+' price, targets '
-            +(sig.isBull?'above':'below')+' it. They answer different questions: the bias is '
-            +'where the market is leaning, the setup is one trade off a level. Take it smaller, '
-            +'or wait for them to line up.';
+          /* three lines, not eleven — this sits inside a 351px card body */
+          mm.innerHTML='<b>Bias '+escHtml(bd)+', setup '+(sig.isBull?'buy':'sell')+'.</b> '
+            +'They disagree. Size down, or wait for them to line up.';
         }else mm.style.display='none';
       }
     }catch(e){}
