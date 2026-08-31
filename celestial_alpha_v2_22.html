@@ -3350,6 +3350,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ms-live{margin-top:10px;padding:9px 11px;border-radius:9px;font-size:11px;line-height:1.55;
   background:rgba(139,92,246,.1);border:1px solid rgba(157,77,255,.28);color:var(--t2)}
 .ms-live b{font-family:'Space Grotesk';font-size:13px;color:var(--t1)}
+.ms-live.off{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.35)}
+.ms-x em{font-style:normal;color:var(--warn)}
+.ms-x i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:2px;
+  letter-spacing:.03em}
+.ms-note{margin-top:8px;font-size:9.5px;color:var(--t3);line-height:1.6}
 .ms-rows{margin-top:9px;display:grid;gap:3px}
 .ms-r{display:grid;grid-template-columns:64px 92px 1fr;gap:8px;align-items:baseline;
   padding:6px 9px;border-radius:8px;font-size:10px;border:1px solid transparent;
@@ -13280,10 +13285,18 @@ function plainWordsHtml(price,dp,asset){
   try{
     var M=majorPair((typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||[],price);
     if(M.level)
-      say('The level that matters','The line to watch is '+tcFmt(M.level.v.px,dp)+' — the second '
-        +(M.level.side==='high'?'high':'low')+', not the extreme at '
-        +tcFmt((M.level.side==='high'?M.topH:M.bottomL).px,dp)+'. '
-        +'The extreme is where price already failed; this is where it was defended.');
+      say('The level that matters', M.inPlay
+        ? 'The line to watch is '+tcFmt(M.level.v.px,dp)+' — the nearest confirmed '
+          +(M.level.side==='high'?'high above price':'low below price')+', '
+          +(M.level.v.atrAway!=null?M.level.v.atrAway.toFixed(1)+' ATR away':'')
+          +(M.level.v.tested>1?', defended '+M.level.v.tested+' times':'')
+          +'. Not the extreme at '+tcFmt((M.level.side==='high'?M.topH:M.bottomL).px,dp)
+          +' — that is where price already failed, and it is '
+          +((M.level.side==='high'?M.topH:M.bottomL).atrAway!=null
+            ?(M.level.side==='high'?M.topH:M.bottomL).atrAway.toFixed(1)+' ATR off.':'far off.')
+        : 'Neither level is in play. The nearest is '+tcFmt(M.level.v.px,dp)+', '
+          +(M.level.v.atrAway!=null?M.level.v.atrAway.toFixed(1)+' ATR away':'a long way off')
+          +' — true, but not a line price is trading against today.');
   }catch(e){}
 
   /* 5 · price and time */
@@ -13354,8 +13367,46 @@ function plainWordsHtml(price,dp,asset){
    to it, the sigma band it sits in, the wave it belongs to, and finally a
    confirmation — divergence, or a cycle date landing on it.
    ══════════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════
+   THE MAJOR LEVEL — REWRITTEN, BECAUSE THE OLD RULE PICKED DEAD PRICES
+
+   The card has always said the right thing in words: "the extreme is where
+   price already failed; the second one is where it was defended, and it is
+   what has to hold before the extreme is even in play." The code did not do
+   that. It sorted every pivot by PRICE and took the second-largest, which on
+   620 bars of gold produced this, with price at 4,454 and ATR at 96.55:
+
+     extreme low   2,485  from 2024-09-06   20.4 ATR away
+     second low    2,537  from 2024-11-14   19.9 ATR away
+
+   Two-year-old prices, forty percent below the market, presented as the line
+   everything hangs off. Nothing "has to hold" at 2,537. Worse, the sort ran
+   over pivots only, so the actual lowest low in the loaded bars — 1,964.99
+   on 2025-11-23 — was never even the extreme, because no pivot printed on
+   it. The panel was naming an extreme that was not the extreme and a level
+   that was 20 ATR from anything.
+
+   Both are fixed here, and neither fix is a change of intent — it is the
+   sentence on the card, implemented:
+
+     THE EXTREME comes from the BARS, not from the pivot list, so it cannot
+     miss the real high or low. It is where price failed, and its distance in
+     ATR is carried with it so an extreme eleven ATR away cannot read as
+     though it were in play.
+
+     THE LEVEL is the nearest confirmed swing on each side of price — the
+     first ceiling above and the first floor below. That is precisely "what
+     has to hold before the extreme is in play", and measured across every
+     lookback from 120 bars to 620 it lands 0.6 to 1.3 ATR from price instead
+     of 5 to 20. It is also stable: the same two levels appear whether the
+     window is 120 bars or 620, which the price-ranked rule never was.
+
+     HOW OFTEN IT WAS DEFENDED is counted rather than asserted — the number
+     of confirmed pivots sitting within a third of an ATR of the level. The
+     card used the word "defended" for something it had never checked.
+   ══════════════════════════════════════════════════════════════════════ */
 function majorPair(rows,price){
-  var out={topH:null,secondH:null,bottomL:null,secondL:null,required:[]};
+  var out={topH:null,secondH:null,bottomL:null,secondL:null,required:[],notes:[],atr:null};
   if(!rows||rows.length<60){ out.required.push('at least 60 bars'); return out; }
   var pv=null;
   try{ pv=CQE.pivots(CQE.scrubTicks(rows).rows||rows,{}); }catch(e){}
@@ -13375,33 +13426,76 @@ function majorPair(rows,price){
     var d=r.t!=null?new Date(+r.t):new Date(r.date||r.time);
     return isNaN(d)?null:d.toISOString().slice(0,10);
   }
-  var his=pv.filter(function(p){return p.kind==='H';})
-            .sort(function(a,b){return b.px-a.px;});
-  var los=pv.filter(function(p){return p.kind==='L';})
-            .sort(function(a,b){return a.px-b.px;});
-  if(his[0])out.topH={px:his[0].px,date:dstr(his[0])};
-  if(los[0])out.bottomL={px:los[0].px,date:dstr(los[0])};
-  /* the second one has to be a DIFFERENT price, not the same swing counted
-     twice — pivots half a dollar apart are one high, not two */
-  function nextDistinct(arr,firstPx){
-    for(var i=1;i<arr.length;i++){
-      if(Math.abs(arr[i].px-firstPx)/firstPx>0.005)return arr[i];
-    }
-    return null;
+  function rdate(r){
+    var d=r.t!=null?new Date(+r.t):new Date(r.date||r.time);
+    return isNaN(d)?null:d.toISOString().slice(0,10);
   }
-  if(his.length>1){ var h2=nextDistinct(his,his[0].px);
-    if(h2)out.secondH={px:h2.px,date:dstr(h2)}; }
-  if(los.length>1){ var l2=nextDistinct(los,los[0].px);
-    if(l2)out.secondL={px:l2.px,date:dstr(l2)}; }
-  /* the level in force is the one on the side price is not already past */
-  /* the ladders need to know WHICH swing produced each major point, so the
-     pivot list travels with the answer instead of being rebuilt */
+  var atr=null; try{ atr=CQE.atr(rows,14,rows.length-1); }catch(e){}
+  if(!(atr>0))atr=null;
+  out.atr=atr;
+  function away(px){ return (atr&&price!=null&&px!=null)?Math.abs(px-price)/atr:null; }
+
+  /* ── 1 · THE EXTREMES, STRAIGHT OFF THE BARS ─────────────────────────
+     Read from high and low rather than from the pivot list, because a
+     pivot only prints where the zigzag turned and the true extreme of a
+     window is frequently not one of them. */
+  var bh=null,bl=null,i,r,hv,lv;
+  for(i=0;i<rows.length;i++){
+    r=rows[i]; hv=+r.high; lv=+r.low;
+    if(isFinite(hv)&&(!bh||hv>bh.px))bh={px:hv,date:rdate(r),i:i};
+    if(isFinite(lv)&&(!bl||lv<bl.px))bl={px:lv,date:rdate(r),i:i};
+  }
+  if(bh)out.topH={px:bh.px,date:bh.date,atrAway:away(bh.px)};
+  if(bl)out.bottomL={px:bl.px,date:bl.date,atrAway:away(bl.px)};
+
+  /* ── 2 · HOW MANY TIMES A PRICE WAS ACTUALLY DEFENDED ───────────────── */
+  var tol=atr?atr/3:null;
+  function defended(px){
+    if(tol==null)return null;
+    var n=0;
+    for(var k=0;k<pv.length;k++)if(Math.abs(pv[k].px-px)<=tol)n++;
+    return n;
+  }
+
+  /* ── 3 · THE LEVEL: THE FIRST THING PRICE MEETS ON EACH SIDE ───────── */
+  var his=pv.filter(function(p){return p.kind==='H';});
+  var los=pv.filter(function(p){return p.kind==='L';});
+  var ceil=null, floor=null;
+  if(price!=null){
+    ceil =his.filter(function(p){return p.px>price;}).sort(function(a,b){return a.px-b.px;})[0]||null;
+    floor=los.filter(function(p){return p.px<price;}).sort(function(a,b){return b.px-a.px;})[0]||null;
+  }
+  /* A BREAKOUT IS A REAL STATE, NOT A MISSING VALUE. When price has cleared
+     every confirmed high there is no ceiling left; the highest high is now
+     underneath as support, and saying so is more use than printing a dash. */
+  if(!ceil&&his.length){
+    ceil=his.slice().sort(function(a,b){return b.px-a.px;})[0];
+    out.notes.push('Price has cleared every confirmed high in the loaded bars — the high-side '
+      +'level is behind it now and reads as support, not resistance.');
+    out.hiCleared=true;
+  }
+  if(!floor&&los.length){
+    floor=los.slice().sort(function(a,b){return a.px-b.px;})[0];
+    out.notes.push('Price is below every confirmed low in the loaded bars — the low-side level '
+      +'is above it now and reads as resistance, not support.');
+    out.loCleared=true;
+  }
+  if(ceil)out.secondH={px:ceil.px,date:dstr(ceil),atrAway:away(ceil.px),
+                       tested:defended(ceil.px),cleared:!!out.hiCleared};
+  if(floor)out.secondL={px:floor.px,date:dstr(floor),atrAway:away(floor.px),
+                        tested:defended(floor.px),cleared:!!out.loCleared};
+
   out.pv=pv;
+
+  /* ── 4 · WHICH ONE IS IN FORCE, AND WHETHER IT IS IN PLAY AT ALL ───── */
   out.level = (price!=null&&out.secondH&&out.secondL)
     ? (Math.abs(out.secondH.px-price)<=Math.abs(price-out.secondL.px)
         ? {side:'high',v:out.secondH} : {side:'low',v:out.secondL})
     : (out.secondH?{side:'high',v:out.secondH}
       :out.secondL?{side:'low',v:out.secondL}:null);
+  /* three ATR is the line: beyond it a level is true and not tradeable
+     today, and the card has to say the second part as well as the first */
+  out.inPlay = !!(out.level&&out.level.v.atrAway!=null&&out.level.v.atrAway<=3);
   return out;
 }
 
@@ -13607,10 +13701,14 @@ function majorStackHtml(price,dp){
   var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)?HIST_ROWS:[];
   var M=majorPair(rows,price);
   if(!M.secondH&&!M.secondL)
-    return '<div class="lm-na">No second high or low yet — '
+    return '<div class="lm-na">No confirmed high or low to work from yet — '
       +escHtml((M.required[0]||'not enough confirmed swings'))+'.</div>';
   var C=window.CQE_LAST;
-  var atr=(C&&C.atr)||null;
+  /* majorPair measures its own ATR off the same bars. Falling back to it
+     matters: with CQE_LAST unpopulated the ladders were being handed null,
+     their tolerance fell back, and a run that finds four key zones reported
+     one single crossing and none. */
+  var atr=(C&&C.atr)||M.atr||null;
 
   function row(lab,v,note,ok){
     return '<div class="ms-r'+(ok===true?' yes':ok===false?' no':'')+'">'
@@ -13619,27 +13717,57 @@ function majorStackHtml(price,dp){
   var h='<div class="mstack">';
 
   /* the two extremes and the two levels that come off them */
+  /* EVERY NUMBER ON THIS PAIR NOW CARRIES ITS DISTANCE. The old card printed
+     an extreme and a level with dates and nothing else, so a price twenty
+     ATR away looked exactly like a price one ATR away. */
+  function far(x){ return (x&&x.atrAway!=null)?x.atrAway.toFixed(1)+' ATR away':''; }
+  function ext(x,word){
+    return '<div class="ms-x">extreme '+(x?tcFmt(x.px,dp):'—')
+      +(x&&x.date?' · '+x.date:'')
+      +(x&&x.atrAway!=null?' · <em>'+far(x)+'</em>':'')
+      +'<i>where price already '+word+'</i></div>';
+  }
+  function lvlSay(x,side){
+    if(!x)return side==='high'?'no confirmed high above price':'no confirmed low below price';
+    var t=[];
+    t.push(x.cleared
+      ? (side==='high'?'the highest confirmed high — price has already cleared it, so it is support now'
+                     :'the lowest confirmed low — price is already under it, so it is resistance now')
+      : (side==='high'?'the nearest confirmed high ABOVE price'
+                     :'the nearest confirmed low BELOW price'));
+    if(x.date)t.push('set '+x.date);
+    if(x.atrAway!=null)t.push(far(x));
+    if(x.tested>1)t.push('defended '+x.tested+' times');
+    else if(x.tested===1)t.push('touched once');
+    return t.join(' · ');
+  }
   h+='<div class="ms-pair">'
     +'<div class="ms-side hi"><u>High side</u>'
-      +'<div class="ms-x">extreme '+(M.topH?tcFmt(M.topH.px,dp):'—')
-        +(M.topH&&M.topH.date?' · '+M.topH.date:'')+'</div>'
+      +ext(M.topH,'failed')
       +'<b>'+(M.secondH?tcFmt(M.secondH.px,dp):'—')+'</b>'
-      +'<s>'+(M.secondH?'the second high'+(M.secondH.date?' of '+M.secondH.date:'')
-              +' — this is the level':'no second high yet')+'</s></div>'
+      +'<s>'+escHtml(lvlSay(M.secondH,'high'))+'</s></div>'
     +'<div class="ms-side lo"><u>Low side</u>'
-      +'<div class="ms-x">extreme '+(M.bottomL?tcFmt(M.bottomL.px,dp):'—')
-        +(M.bottomL&&M.bottomL.date?' · '+M.bottomL.date:'')+'</div>'
+      +ext(M.bottomL,'failed')
       +'<b>'+(M.secondL?tcFmt(M.secondL.px,dp):'—')+'</b>'
-      +'<s>'+(M.secondL?'the second low'+(M.secondL.date?' of '+M.secondL.date:'')
-              +' — this is the level':'no second low yet')+'</s></div>'
+      +'<s>'+escHtml(lvlSay(M.secondL,'low'))+'</s></div>'
   +'</div>';
+  if(M.notes&&M.notes.length)
+    h+='<div class="ms-note">'+escHtml(M.notes.join(' '))+'</div>';
 
   if(!M.level)return h+'</div>';
   var L=M.level.v.px, side=M.level.side;
-  h+='<div class="ms-live">In force now: <b>'+tcFmt(L,dp)+'</b> — the second '
-    +(side==='high'?'high':'low')+', '
-    +(atr?(Math.abs(L-price)/atr).toFixed(2)+' ATR ':'')
-    +(L>price?'above':'below')+' price.</div>';
+  var dAway=M.level.v.atrAway;
+  /* A LEVEL FIVE ATR AWAY IS NOT "IN FORCE". The old line asserted one
+     whatever the distance, which is how a 2024 price twenty ATR under the
+     market came to be presented as the line everything hangs off. */
+  h+='<div class="ms-live'+(M.inPlay?'':' off')+'">'
+    +(M.inPlay
+      ? 'In force now: <b>'+tcFmt(L,dp)+'</b> — the '+(side==='high'?'ceiling above':'floor below')
+        +', '+(dAway!=null?dAway.toFixed(2)+' ATR ':'')+(L>price?'above':'below')+' price.'
+      : 'Nothing is in force. The nearest of the two is <b>'+tcFmt(L,dp)+'</b>, '
+        +(dAway!=null?dAway.toFixed(1)+' ATR ':'')+(L>price?'above':'below')
+        +' price — too far to be a line price is trading against today.')
+    +'</div>';
 
   /* ── THE TWO LADDERS AND WHERE THEY MEET ─────────────────────────────
      The major high and the major low each throw a ladder of levels, and a
@@ -13766,9 +13894,11 @@ function majorStackHtml(price,dp){
   h+=row('Confirm',conf.t,conf.w,conf.ok);
   h+='</div>';
 
-  h+='<div class="ms-note">The level is the second high or low, never the extreme — '
-    +'the extreme is where price already failed, the second one is where it was defended. '
-    +'Everything under it has to agree before the level is worth trading.</div>';
+  h+='<div class="ms-note">The level is never the extreme. The extreme is where price already '
+    +'failed and it can sit ten or twenty ATR away; the level is the first confirmed swing price '
+    +'meets on each side, which is what actually has to hold. Both are printed with their '
+    +'distance so neither can be mistaken for the other. Everything under it has to agree '
+    +'before the level is worth trading.</div>';
   return h+'</div>';
 }
 
@@ -19243,11 +19373,14 @@ function trendInvalidHtml(T,price,dp,asset){
 
    +act(6,'The major level','The one line everything hangs off')
            +'<div class="wins">'
-+says('Not the extreme — the SECOND high and the SECOND low. The extreme is where price '
-        +'already failed; the second one is where it was defended, and it is what has to break '
-        +'before the extreme is even in play. Underneath it: the volume shelf nearest to it, '
-        +'the sigma band it sits in, the wave it belongs to, and what would confirm it.')
-   +win('major','The second high and the second low',majorStackHtml(price,dp))
++says('Not the extreme — the nearest defended level on each side. The extreme is where price '
+        +'already failed and it is usually a long way off; the level is the first confirmed high '
+        +'above price and the first confirmed low below it, and that is what has to break before '
+        +'the extreme is even in play. Every price here carries how far it is in ATR, so one that '
+        +'is true but out of reach cannot read as though it were in play. Underneath it: the '
+        +'volume shelf nearest to it, the sigma band it sits in, the wave it belongs to, and what '
+        +'would confirm it.')
+   +win('major','The level above and the level below',majorStackHtml(price,dp))
    +win('ladder','The trade ladder',anaLadder(pts,price,lo,hi,dp,S,dir),{shut:true})
    +'</div>'
 
@@ -24145,9 +24278,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b82';
+var CA_BUILD='b83';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Timing Engine now says its answer in words first \u2014 is a turn due, what to do, and whether it has ever worked on this asset';
+var CA_WHATS_NEW='The major level was picking two-year-old prices twenty ATR from the market \u2014 it now takes the nearest defended level on each side, and every price carries how far away it is';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
