@@ -3355,6 +3355,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ms-x i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:2px;
   letter-spacing:.03em}
 .ms-note{margin-top:8px;font-size:9.5px;color:var(--t3);line-height:1.6}
+/* a setup that has finished: shown as a record, never as an entry */
+.sig-done{border:1px solid rgba(245,158,11,.45);border-radius:11px;padding:12px 14px;
+  background:rgba(245,158,11,.08)}
+.sig-done.tp{border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.09)}
+.sig-done.sl{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.09)}
+.sig-done b{display:block;font-family:'Space Grotesk';font-size:17px;font-weight:800;color:var(--t1)}
+.sig-done.tp b{color:var(--up)} .sig-done.sl b{color:var(--dn)}
+.sig-done s{display:block;text-decoration:none;font-size:11px;color:var(--t2);margin-top:5px;
+  line-height:1.6}
+.sig-done u{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:8px;
+  padding-top:8px;border-top:1px solid var(--b1);line-height:1.55}
+.sgc.done{border-color:rgba(245,158,11,.4)}
+
 /* ══ MAJOR LEVELS — one window on the face, two inside ══════════════════ */
 .mjl{margin:0 0 12px;border:1px solid var(--b1);border-radius:14px;overflow:hidden;
   background:linear-gradient(160deg,rgba(83,51,153,.15),rgba(11,6,40,.9))}
@@ -4277,8 +4290,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tmg-lb{position:relative;height:5px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:7px}
 .tmg-lb span{position:absolute;left:0;top:0;height:5px;border-radius:99px;background:var(--p3)}
 .tmg-l.on .tmg-lb span{background:var(--up);box-shadow:0 0 8px rgba(34,197,94,.45)}
-.tmg-lx{grid-column:1/-1;font-size:10px;color:var(--t3);line-height:1.65;
-  padding-top:9px;margin-top:3px;border-top:1px solid var(--b1)}
+.tmg-wys{margin-top:12px;display:grid;gap:8px}
+.tmg-wy{border-left:2px solid var(--b1);padding-left:11px}
+.tmg-wy b{display:block;font-size:10.5px;font-weight:700;color:var(--t2)}
+.tmg-wy s{display:block;text-decoration:none;font-size:10px;color:var(--t3);line-height:1.65;
+  margin-top:3px}
 
 /* the working */
 .tmg-calc{margin-top:14px;border-top:1px solid var(--b1);padding-top:11px}
@@ -15447,6 +15463,35 @@ function sigOutcome(sig,price){
   return {k:'pending', word:'Waiting',
     say:'Price has not reached the entry band yet.'};
 }
+/* ══ A FINISHED SETUP MUST NOT BE DRAWN AS A LIVE ONE ══════════════════
+   sigOutcome existed and only the dashboard asked it. The two cards that
+   actually carry the entry, the stop and the target — the trade card on
+   Analytics and the signal card underneath the chart — drew them straight
+   from the signal, so a setup whose target had already been reached kept
+   showing an entry to take and a "Take it" button. Reported as: the setup
+   changed on XAU but the previous one was still on screen with its target
+   filled.
+
+   buildSignal is deterministic from the current price and levels, so it will
+   happily regenerate a setup that is already over; nothing was stale, the
+   card simply never asked whether the thing had finished. One banner, asked
+   for in one place, used by both. */
+function sigDoneHtml(S,price,dp){
+  var OC=null; try{ OC=sigOutcome(S,price); }catch(e){}
+  if(!OC||(OC.k!=='tp'&&OC.k!=='sl'))return '';
+  return '<div class="sig-done '+OC.k+'">'
+    +'<b>'+escHtml(OC.word)+'</b>'
+    +'<s>'+escHtml(OC.say)+'</s>'
+    +'<u>Entry '+tcFmt(S.entry,dp)+' &middot; stop '+tcFmt(S.sl,dp)
+      +' &middot; target '+tcFmt(S.tp,dp)+' &mdash; kept here so you can see what it was, '
+      +'not as a trade to take.</u>'
+  +'</div>';
+}
+function sigIsDone(S,price){
+  var OC=null; try{ OC=sigOutcome(S,price); }catch(e){}
+  return !!(OC&&(OC.k==='tp'||OC.k==='sl'));
+}
+
 /* ══ SWITCHING THE INSTRUMENT FROM THE CHART ═══════════════════════════
    The chart could only show whatever the last analysis happened to run on.
    Everything needed to change that already existed — ASSETS, the asset box
@@ -15549,6 +15594,17 @@ function tradeCardHtml(){
      nothing. The gate runs the same six checks the board runs, for this
      direction, and can hold the setup back. */
   var GT=sigGate(S), held=(GT.state==='wait');
+  /* the target or the stop has already been reached: this is history, and
+     the buttons that offer it as a trade have to go with the numbers */
+  if(sigIsDone(S,px))
+    return '<div class="sgc done">'
+      +'<div class="sgc-w">FINISHED<em>this setup is over</em></div>'
+      +'<div class="sgc-tags"><span>'+escHtml(S.style)+'</span><span class="on">'
+        +escHtml(String(asset).toUpperCase())+'</span></div>'
+      +sigDoneHtml(S,px,dp)
+      +'<div class="sgc-act"><button class="btn btn-a btn-sm" onclick="anaRun()">'
+        +'Run it again for the next setup</button></div>'
+    +'</div>';
   return '<div class="sgc '+(held?'held':(buy?'buy':'sell'))+'">'
    +'<div class="sgc-w">'+(held?'WAIT':(buy?'BUY':'SELL'))
      +(held?'<em>'+(buy?'buy':'sell')+' setup, not yet confirmed</em>':'')+'</div>'
@@ -21845,7 +21901,8 @@ function tmgHtml(){
     var state = x.fired
       ? (w>0?'on its date today':'on its date today · not counted')
       : 'not on its date today';
-    return '<div class="tmg-l'+(x.fired&&w>0?' on':'')+(w===0?' zero':'')+'">'
+    return '<div class="tmg-l'+(x.fired&&w>0?' on':'')+(w===0?' zero':'')
+      +'" title="'+escHtml(x.why)+'">'
       +'<div class="tmg-ln"><b>'+escHtml(P.n)+'</b><i>'+escHtml(P.d)+'</i></div>'
       +'<div class="tmg-lm">'
         +'<em class="'+(x.fired&&w>0?'f':x.fired?'q':'')+'">'+state+'</em>'
@@ -21853,8 +21910,17 @@ function tmgHtml(){
       +'</div>'
       +'<div class="tmg-lw"><b>'+w+'%</b>'
         +'<div class="tmg-lb"><span style="width:'+w+'%"></span></div></div>'
-      +'<div class="tmg-lx">'+escHtml(x.why)+'</div>'
     +'</div>';
+  }).join('');
+  /* THE PARAGRAPH UNDER EVERY ROW WAS THE WALL.
+     Five clocks each carrying three or four lines of reasoning is fifteen
+     lines of prose on a card whose job is to say whether a turn is due. The
+     reasoning has not gone anywhere — it is in the working below, where the
+     rest of the arithmetic already lives — and each row still carries it on
+     hover. */
+  var whys=E.layers.map(function(x){
+    var P=TMG_PLAIN[x.id]||{n:x.name};
+    return '<div class="tmg-wy"><b>'+escHtml(P.n)+'</b><s>'+escHtml(x.why)+'</s></div>';
   }).join('');
 
   var base=E.test&&E.test.base!=null?Math.round(E.test.base*100):null;
@@ -21877,13 +21943,12 @@ function tmgHtml(){
    +'<div class="tmg-stats">'
      +'<div class="tmg-st"><i>Next turn</i><b>'+escHtml(dueTxt)+'</b>'
        +'<s>'+escHtml(dueSub)+'</s></div>'
-     +'<div class="tmg-st"><i>How often this asset turns</i>'
+     +'<div class="tmg-st"><i>This asset turns</i>'
        +'<b>'+(E.len?'every '+Math.round(E.len)+' days':'—')+'</b>'
-       +'<s>'+(E.band?'give or take '+Math.round(E.band)+' days, measured on its own bars'
-                    :'no cycle could be measured')+'</s></div>'
-     +'<div class="tmg-st"><i>Day’s lean (the other card)</i>'
+       +'<s>'+(E.band?'give or take '+Math.round(E.band):'not measurable')+'</s></div>'
+     +'<div class="tmg-st"><i>Day’s lean</i>'
        +'<b class="d-'+(E.dir||'na')+'">'+escHtml(E.dir?E.dir.toUpperCase():'—')+'</b>'
-       +'<s>up or down comes from there, not from here</s></div>'
+       +'<s>up or down comes from the other card</s></div>'
    +'</div>'
 
    /* ── 3 · HAS THIS EVER WORKED HERE ────────────────────────────────── */
@@ -21908,10 +21973,9 @@ function tmgHtml(){
        +(E.test.why?' — '+escHtml(E.test.why):'')+'.</span></div>')
 
    /* ── 4 · THE FIVE CLOCKS ──────────────────────────────────────────── */
-   +'<div class="tmg-ls-h">The five clocks — and which ones are allowed to count</div>'
-   +'<div class="tmg-note">A clock only counts if it beat a random day on this asset’s own '
-     +'past. Most of them do not, on most assets, and a 0% here means exactly that — not '
-     +'that something is broken.</div>'
+   +'<div class="tmg-ls-h">The five clocks</div>'
+   +'<div class="tmg-note">A 0% means the clock was tested on this asset and did not beat a '
+     +'random day. That is the test working, not something broken.</div>'
    +'<div class="tmg-list">'+rows+'</div>'
 
    /* ── 5 · THE WORKING, ONE CLICK DOWN ──────────────────────────────── */
@@ -21943,6 +22007,7 @@ function tmgHtml(){
        +'own date is. It is a weight of evidence, not a probability: 100 means every clock that '
        +'earned weight points at today, not that a turn is certain. What it has actually meant '
        +'here is the measured line above.</p>'
+     +'<div class="tmg-wys">'+whys+'</div>'
      +'<p class="tmg-mono">'
        +Object.keys(E.test.layers).map(function(k){
           var m=E.test.layers[k];
@@ -24082,6 +24147,17 @@ function rndTrades(sig,risk){
     return;
   }
 
+  /* same question, same answer: a reached target is not an entry to take */
+  var _px=(sig&&sig.curPrice!=null)?sig.curPrice:(window._lastPrice||0);
+  var _dp=_px&&_px<10?4:2;
+  if(sigIsDone(sig,_px)){
+    el.innerHTML='<div class="sig-card done"><div style="padding:16px">'
+      +sigDoneHtml(sig,_px,_dp)
+      +'<div style="margin-top:12px"><button onclick="anaRun()" class="btn btn-a btn-sm" '
+        +'style="width:100%">Run it again for the next setup</button></div>'
+      +'</div></div>';
+    return;
+  }
   var dir=sig.isBull,col=dir?'var(--green)':'var(--red)';
   var C1=256,C2=188;
   var eF=sig.eDistPct/(sig.eDistPct+sig.tDistPct+0.001);
@@ -24725,9 +24801,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b89';
+var CA_BUILD='b90';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Major levels panel cut to the nearest three either side, with one big button that opens the two windows.';
+var CA_WHATS_NEW='A setup whose target or stop was already hit now says so instead of offering an entry. Timing card trimmed.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
