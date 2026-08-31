@@ -3355,6 +3355,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ms-x i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);margin-top:2px;
   letter-spacing:.03em}
 .ms-note{margin-top:8px;font-size:9.5px;color:var(--t3);line-height:1.6}
+.ms-range{margin-top:11px;padding:11px 13px;border:1px solid var(--b1);border-radius:10px;
+  background:rgba(11,6,40,.55)}
+.ms-rt{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.ms-rt span{font-family:'Space Grotesk';font-size:12px;font-weight:700;color:var(--t2);
+  font-variant-numeric:tabular-nums}
+.ms-rt em{font-style:normal;font-size:10.5px;color:var(--t1);font-weight:600;text-align:center}
+.ms-rb{position:relative;height:6px;border-radius:99px;margin:9px 0 7px;
+  background:linear-gradient(90deg,rgba(34,197,94,.45),rgba(255,255,255,.1),rgba(239,68,68,.45))}
+.ms-rb u{position:absolute;top:-4px;width:3px;height:14px;border-radius:2px;background:var(--t1);
+  text-decoration:none;transform:translateX(-1.5px);box-shadow:0 0 9px rgba(255,255,255,.55)}
+.ms-rn{font-size:9.5px;color:var(--t3);line-height:1.6}
 .ms-rows{margin-top:9px;display:grid;gap:3px}
 .ms-r{display:grid;grid-template-columns:64px 92px 1fr;gap:8px;align-items:baseline;
   padding:6px 9px;border-radius:8px;font-size:10px;border:1px solid transparent;
@@ -13368,51 +13379,71 @@ function plainWordsHtml(price,dp,asset){
    confirmation — divergence, or a cycle date landing on it.
    ══════════════════════════════════════════════════════════════════════ */
 /* ══════════════════════════════════════════════════════════════════════
-   THE MAJOR LEVEL — REWRITTEN, BECAUSE THE OLD RULE PICKED DEAD PRICES
+   THE MAJOR HIGH AND THE MAJOR LOW
 
-   The card has always said the right thing in words: "the extreme is where
-   price already failed; the second one is where it was defended, and it is
-   what has to hold before the extreme is even in play." The code did not do
-   that. It sorted every pivot by PRICE and took the second-largest, which on
-   620 bars of gold produced this, with price at 4,454 and ATR at 96.55:
+   Asked for plainly: "MH aur ML kyun nahi le rahe ho — major H hai, major L
+   hai." Right, and neither of the two previous rules was taking them.
 
-     extreme low   2,485  from 2024-09-06   20.4 ATR away
-     second low    2,537  from 2024-11-14   19.9 ATR away
+   The first rule sorted every pivot by PRICE and took the second largest. On
+   620 bars of gold, price 4,454, that returned 2,537 from November 2024 —
+   forty percent below the market, from a regime that had ended.
 
-   Two-year-old prices, forty percent below the market, presented as the line
-   everything hangs off. Nothing "has to hold" at 2,537. Worse, the sort ran
-   over pivots only, so the actual lowest low in the loaded bars — 1,964.99
-   on 2025-11-23 — was never even the extreme, because no pivot printed on
-   it. The panel was naming an extreme that was not the extreme and a level
-   that was 20 ATR from anything.
+   The second rule took the nearest confirmed swing on each side. That gave
+   4,545 and 4,393, which are real levels but MINOR ones: the last two
+   wiggles, half an ATR out, gone by Thursday. They are not what anybody
+   means by the major high.
 
-   Both are fixed here, and neither fix is a change of intent — it is the
-   sentence on the card, implemented:
+   A major high and a major low are the BOUNDARIES OF THE RANGE PRICE IS
+   TRADING IN. Not the all-time extreme, which is usually a spike from a
+   different market, and not the nearest swing, which is noise. So:
 
-     THE EXTREME comes from the BARS, not from the pivot list, so it cannot
-     miss the real high or low. It is where price failed, and its distance in
-     ATR is carried with it so an extreme eleven ATR away cannot read as
-     though it were in play.
+     MH = the most recent MAJOR pivot high standing above price
+     ML = the most recent MAJOR pivot low standing below price
 
-     THE LEVEL is the nearest confirmed swing on each side of price — the
-     first ceiling above and the first floor below. That is precisely "what
-     has to hold before the extreme is in play", and measured across every
-     lookback from 120 bars to 620 it lands 0.6 to 1.3 ATR from price instead
-     of 5 to 20. It is also stable: the same two levels appear whether the
-     window is 120 bars or 620, which the price-ranked rule never was.
+   "Major" is not a number anybody picked. The zigzag is re-run at rising
+   strictness until the pivot count lands in the band where a pivot means a
+   structural turn rather than a wiggle — eight to twenty-six over the loaded
+   history. On 620 bars of gold that settles at four ATR, 23 pivots, and the
+   answer it gives is:
 
-     HOW OFTEN IT WAS DEFENDED is counted rather than asserted — the number
-     of confirmed pivots sitting within a third of an ATR of the level. The
-     card used the word "defended" for something it had never checked.
+     MH  4,889  2026-04-17      ML  3,942  2026-06-30      price 4,454
+
+   which is the range on the chart. It is also STABLE, which is the test that
+   matters: at 4, 5 and 6 ATR the same two numbers come back. The old
+   price-ranked rule changed completely between one lookback and the next.
+
+   The extremes are kept, because "where price already failed" is worth
+   knowing — but as context, with their distance attached, not as the level.
    ══════════════════════════════════════════════════════════════════════ */
+
+/* the strictness at which a pivot stops being a wiggle. Adaptive rather than
+   fixed, because 200 bars and 700 bars do not have the same number of
+   structural turns in them. */
+function majorPivots(rows){
+  var steps=[3,3.5,4,4.5,5,6,7,8], last=null, k;
+  for(var i=0;i<steps.length;i++){
+    k=steps[i];
+    var pv=null;
+    try{ pv=CQE.pivots(rows,{atrMult:k,minBars:5}); }catch(e){ pv=null; }
+    if(!pv||!pv.length)continue;
+    last={pv:pv,atrMult:k};
+    if(pv.length<=26)return last;      /* strict enough: these are turns */
+  }
+  return last;
+}
+
 function majorPair(rows,price){
-  var out={topH:null,secondH:null,bottomL:null,secondL:null,required:[],notes:[],atr:null};
+  var out={topH:null,secondH:null,bottomL:null,secondL:null,MH:null,ML:null,
+           required:[],notes:[],atr:null};
   if(!rows||rows.length<60){ out.required.push('at least 60 bars'); return out; }
+
+  /* the fine pivot set is still needed — the ladders read it, and "how often
+     was this defended" is counted against it */
   var pv=null;
   try{ pv=CQE.pivots(CQE.scrubTicks(rows).rows||rows,{}); }catch(e){}
   if(!pv||pv.length<4){
     try{ pv=swingPoints(rows,3); }catch(e2){}
-    if(pv&&pv.hi){ /* swingPoints shape → pivot shape */
+    if(pv&&pv.hi){
       var conv=[];
       pv.hi.forEach(function(x){ conv.push({px:x.p,kind:'H',i:x.i,date:x.d||null}); });
       pv.lo.forEach(function(x){ conv.push({px:x.p,kind:'L',i:x.i,date:x.d||null}); });
@@ -13420,15 +13451,14 @@ function majorPair(rows,price){
     }
   }
   if(!pv||!pv.length){ out.required.push('confirmed pivots'); return out; }
-  function dstr(p){
-    if(p.date)return p.date;
-    var r=rows[p.i]; if(!r)return null;
-    var d=r.t!=null?new Date(+r.t):new Date(r.date||r.time);
-    return isNaN(d)?null:d.toISOString().slice(0,10);
-  }
+
   function rdate(r){
     var d=r.t!=null?new Date(+r.t):new Date(r.date||r.time);
     return isNaN(d)?null:d.toISOString().slice(0,10);
+  }
+  function dstr(p){
+    if(p.date)return p.date;
+    var r=rows[p.i]; return r?rdate(r):null;
   }
   var atr=null; try{ atr=CQE.atr(rows,14,rows.length-1); }catch(e){}
   if(!(atr>0))atr=null;
@@ -13436,9 +13466,10 @@ function majorPair(rows,price){
   function away(px){ return (atr&&price!=null&&px!=null)?Math.abs(px-price)/atr:null; }
 
   /* ── 1 · THE EXTREMES, STRAIGHT OFF THE BARS ─────────────────────────
-     Read from high and low rather than from the pivot list, because a
-     pivot only prints where the zigzag turned and the true extreme of a
-     window is frequently not one of them. */
+     From high and low rather than from the pivot list: a pivot only prints
+     where the zigzag turned, and the true extreme of a window is often not
+     one of them. Gold's lowest low, 1,964.99 on 2025-11-23, had no pivot on
+     it, so the old card named 2,485.10 as "the extreme". */
   var bh=null,bl=null,i,r,hv,lv;
   for(i=0;i<rows.length;i++){
     r=rows[i]; hv=+r.high; lv=+r.low;
@@ -13448,7 +13479,7 @@ function majorPair(rows,price){
   if(bh)out.topH={px:bh.px,date:bh.date,atrAway:away(bh.px)};
   if(bl)out.bottomL={px:bl.px,date:bl.date,atrAway:away(bl.px)};
 
-  /* ── 2 · HOW MANY TIMES A PRICE WAS ACTUALLY DEFENDED ───────────────── */
+  /* ── 2 · DEFENDED IS COUNTED, NOT ASSERTED ──────────────────────────── */
   var tol=atr?atr/3:null;
   function defended(px){
     if(tol==null)return null;
@@ -13457,44 +13488,90 @@ function majorPair(rows,price){
     return n;
   }
 
-  /* ── 3 · THE LEVEL: THE FIRST THING PRICE MEETS ON EACH SIDE ───────── */
-  var his=pv.filter(function(p){return p.kind==='H';});
-  var los=pv.filter(function(p){return p.kind==='L';});
-  var ceil=null, floor=null;
+  /* ── 3 · MH AND ML: THE BOUNDARIES OF THE RANGE PRICE IS IN ─────────── */
+  var MP=majorPivots(rows);
+  out.majorAtr=MP?MP.atrMult:null;
+  out.majorN=MP?MP.pv.length:0;
+  var mpv=MP?MP.pv:[];
+  var MH=null, ML=null;
   if(price!=null){
-    ceil =his.filter(function(p){return p.px>price;}).sort(function(a,b){return a.px-b.px;})[0]||null;
-    floor=los.filter(function(p){return p.px<price;}).sort(function(a,b){return b.px-a.px;})[0]||null;
+    for(i=mpv.length-1;i>=0;i--){
+      if(!MH&&mpv[i].kind==='H'&&mpv[i].px>price)MH=mpv[i];
+      if(!ML&&mpv[i].kind==='L'&&mpv[i].px<price)ML=mpv[i];
+      if(MH&&ML)break;
+    }
   }
-  /* A BREAKOUT IS A REAL STATE, NOT A MISSING VALUE. When price has cleared
-     every confirmed high there is no ceiling left; the highest high is now
-     underneath as support, and saying so is more use than printing a dash. */
-  if(!ceil&&his.length){
-    ceil=his.slice().sort(function(a,b){return b.px-a.px;})[0];
-    out.notes.push('Price has cleared every confirmed high in the loaded bars — the high-side '
-      +'level is behind it now and reads as support, not resistance.');
-    out.hiCleared=true;
+  /* A BREAKOUT IS A STATE, NOT A MISSING VALUE. With nothing major left
+     above, the highest major high is underneath as support and saying so
+     beats printing a dash. */
+  if(!MH){
+    var hs=mpv.filter(function(x){return x.kind==='H';})
+              .sort(function(a2,b2){return b2.px-a2.px;});
+    if(hs.length){ MH=hs[0]; out.hiCleared=true;
+      out.notes.push('Price has cleared every major high in the loaded bars — the major high '
+        +'is underneath it now and reads as support, not resistance.'); }
   }
-  if(!floor&&los.length){
-    floor=los.slice().sort(function(a,b){return a.px-b.px;})[0];
-    out.notes.push('Price is below every confirmed low in the loaded bars — the low-side level '
-      +'is above it now and reads as resistance, not support.');
-    out.loCleared=true;
+  if(!ML){
+    var ls=mpv.filter(function(x){return x.kind==='L';})
+              .sort(function(a2,b2){return a2.px-b2.px;});
+    if(ls.length){ ML=ls[0]; out.loCleared=true;
+      out.notes.push('Price is under every major low in the loaded bars — the major low is '
+        +'above it now and reads as resistance, not support.'); }
   }
-  if(ceil)out.secondH={px:ceil.px,date:dstr(ceil),atrAway:away(ceil.px),
-                       tested:defended(ceil.px),cleared:!!out.hiCleared};
-  if(floor)out.secondL={px:floor.px,date:dstr(floor),atrAway:away(floor.px),
-                        tested:defended(floor.px),cleared:!!out.loCleared};
+  /* ── ARE THESE TWO A SETTING OR ARE THEY STRUCTURE? ──────────────────
+     The strictness is chosen adaptively, so the obvious question is whether
+     a different one would have produced different boundaries. Re-run at
+     three higher multipliers and see whether the same two prices come back.
+     Checked here rather than asserted, because the answer differs per asset
+     and quoting one instrument's result on all of them is how the old null
+     figures ended up wrong. */
+  out.stable={n:0,of:0,at:[]};
+  if(MH&&ML){
+    [5,6,7].forEach(function(k){
+      var q=null; try{ q=CQE.pivots(rows,{atrMult:k,minBars:5}); }catch(e){}
+      if(!q||!q.length)return;
+      var qh=null,qL=null,z;
+      for(z=q.length-1;z>=0;z--){
+        if(!qh&&q[z].kind==='H'&&q[z].px>price)qh=q[z];
+        if(!qL&&q[z].kind==='L'&&q[z].px<price)qL=q[z];
+        if(qh&&qL)break;
+      }
+      out.stable.of++;
+      if(qh&&qL&&Math.abs(qh.px-MH.px)<1e-6&&Math.abs(qL.px-ML.px)<1e-6){
+        out.stable.n++; out.stable.at.push(k);
+      }
+    });
+  }
+  if(MH)out.MH={px:MH.px,date:dstr(MH),atrAway:away(MH.px),
+                tested:defended(MH.px),cleared:!!out.hiCleared};
+  if(ML)out.ML={px:ML.px,date:dstr(ML),atrAway:away(ML.px),
+                tested:defended(ML.px),cleared:!!out.loCleared};
+  /* the ladders and every older caller read secondH/secondL; those ARE the
+     anchors, so the two names point at one object rather than at two rules */
+  out.secondH=out.MH; out.secondL=out.ML;
+  out.pv=pv; out.mpv=mpv;
 
-  out.pv=pv;
+  /* ── 4 · WHERE INSIDE THE RANGE PRICE ACTUALLY IS ───────────────────── */
+  if(out.MH&&out.ML&&price!=null&&out.MH.px>out.ML.px){
+    out.range={hi:out.MH.px,lo:out.ML.px,width:out.MH.px-out.ML.px};
+    out.range.pct=Math.max(0,Math.min(100,
+      (price-out.ML.px)/(out.MH.px-out.ML.px)*100));
+    out.range.atr=atr?out.range.width/atr:null;
+    out.range.where = out.range.pct>=75?'up at the top of the range'
+                    : out.range.pct>=58?'in the upper half'
+                    : out.range.pct>42?'mid-range, with no edge either way'
+                    : out.range.pct>25?'in the lower half':'down at the bottom of the range';
+  }
 
-  /* ── 4 · WHICH ONE IS IN FORCE, AND WHETHER IT IS IN PLAY AT ALL ───── */
-  out.level = (price!=null&&out.secondH&&out.secondL)
-    ? (Math.abs(out.secondH.px-price)<=Math.abs(price-out.secondL.px)
-        ? {side:'high',v:out.secondH} : {side:'low',v:out.secondL})
-    : (out.secondH?{side:'high',v:out.secondH}
-      :out.secondL?{side:'low',v:out.secondL}:null);
-  /* three ATR is the line: beyond it a level is true and not tradeable
-     today, and the card has to say the second part as well as the first */
+  /* ── 5 · WHICH BOUNDARY IS IN FORCE, AND WHETHER EITHER IS ──────────── */
+  out.level = (price!=null&&out.MH&&out.ML)
+    ? (Math.abs(out.MH.px-price)<=Math.abs(price-out.ML.px)
+        ? {side:'high',v:out.MH} : {side:'low',v:out.ML})
+    : (out.MH?{side:'high',v:out.MH}
+      :out.ML?{side:'low',v:out.ML}:null);
+  /* three ATR is the line. A boundary further off than that is true and not
+     something price is trading against today, and the card has to say the
+     second half as well as the first. */
   out.inPlay = !!(out.level&&out.level.v.atrAway!=null&&out.level.v.atrAway<=3);
   return out;
 }
@@ -13546,37 +13623,50 @@ function majorLadders(rows,M,price,a){
   if(!tol){ out.required.push('an ATR or a price to set the tolerance'); return out; }
   out.tol=tol;
 
-  /* the swing that produced a major point: that point back to the nearest
-     opposite pivot before it. Falling back to the point after it, and only
-     then to the high-to-low range, is stated in the note rather than done
-     silently. */
-  /* THE SWING THAT MADE A MAJOR POINT IS THE BIGGEST ONE ENDING ON IT.
-     Taking the nearest opposite pivot took the last wiggle instead — on 700
-     bars that was an 83-point swing under a 252-point major span, so every
-     division landed within 83 points of its own anchor and the two ladders
-     could only ever meet on their 127% and 161% extensions. The move that
-     built the high is the one from the deepest low BEFORE it; the move that
-     built the low is the one from the highest high before it. */
+  /* ── THE SWING THAT PRODUCED A MAJOR POINT ───────────────────────────
+     Two wrong answers were tried here before this one.
+
+     The first took the NEAREST opposite pivot, which is the last wiggle: on
+     700 bars that was an 83-point swing under a 252-point major span, so
+     every division landed within 83 points of its own anchor.
+
+     The second took the DEEPEST low anywhere before the high. That over-
+     corrected badly. Measured on 620 bars of gold it made the swing behind
+     the major high at 4,888.82 run all the way back to 2,485.10 from
+     September 2024 — 2,404 points across two years and two regimes — and
+     the ladder that came out of it carried levels at 1,000 and 1,831 on a
+     chart trading at 4,454.
+
+     The leg that built a major high is the one from the MAJOR low
+     immediately before it, and nothing earlier. Those are already computed:
+     the major pivot sequence is what MH and ML themselves came from. For
+     gold that is 4,098 up to 4,889 for the high, and 4,889 down to 3,942 for
+     the low — two different ranges, so the two ladders still divide
+     different numbers and a match between them is still a coincidence worth
+     naming rather than one identity written twice. */
+  var mpv=(M&&M.mpv&&M.mpv.length)?M.mpv:pv;
   function swingFor(pt,kind){
-    if(!pt||!pv.length)return null;
-    var want=kind==='H'?'L':'H', idx=-1, best=Infinity;
-    for(var i=0;i<pv.length;i++){
-      var d=Math.abs(pv[i].px-pt.px);
-      if(pv[i].kind===kind&&d<best){ best=d; idx=i; }
+    if(!pt)return null;
+    var want=kind==='H'?'L':'H';
+    function legIn(list){
+      if(!list||!list.length)return null;
+      /* the anchor's own place in this sequence, by price */
+      var idx=-1,best=Infinity;
+      for(var i=0;i<list.length;i++){
+        var d=Math.abs(list[i].px-pt.px);
+        if(list[i].kind===kind&&d<best){ best=d; idx=i; }
+      }
+      if(idx<0)return null;
+      for(var j=idx-1;j>=0;j--)
+        if(list[j].kind===want)
+          return{from:list[j].px,to:pt.px,range:Math.abs(pt.px-list[j].px),dir:'before'};
+      for(j=idx+1;j<list.length;j++)
+        if(list[j].kind===want)
+          return{from:list[j].px,to:pt.px,range:Math.abs(pt.px-list[j].px),dir:'after'};
+      return null;
     }
-    if(idx<0)return null;
-    var pick=null;
-    for(var j=idx-1;j>=0;j--){
-      if(pv[j].kind!==want)continue;
-      if(!pick||(kind==='H'?pv[j].px<pick.px:pv[j].px>pick.px))pick=pv[j];
-    }
-    if(pick)return{from:pick.px,to:pt.px,range:Math.abs(pt.px-pick.px),dir:'before'};
-    for(j=idx+1;j<pv.length;j++){
-      if(pv[j].kind!==want)continue;
-      if(!pick||(kind==='H'?pv[j].px<pick.px:pv[j].px>pick.px))pick=pv[j];
-    }
-    if(pick)return{from:pick.px,to:pt.px,range:Math.abs(pt.px-pick.px),dir:'after'};
-    return null;
+    /* the major sequence first; the fine one only if the anchor is not in it */
+    return legIn(mpv)||legIn(pv);
   }
   var sH=M.secondH?swingFor(M.secondH,'H'):null;
   var sL=M.secondL?swingFor(M.secondL,'L'):null;
@@ -13665,33 +13755,41 @@ function majorLadders(rows,M,price,a){
     return dx-dy;
   });
 
-  /* ── HOW MANY OF THESE ARE JUST ARITHMETIC? MEASURED. ─────────────────
-     Two ladders of about twenty levels each, thrown across a 250-point band
-     with a 15.68 tolerance, will meet somewhere whether or not the anchors
-     mean anything. So the anchors were replaced with random prices inside
-     the same band, 400 times, with everything else held fixed:
+  /* ── HOW MANY OF THESE ARE JUST ARITHMETIC? RE-MEASURED. ──────────────
+     Two ladders of about twenty levels each will meet somewhere whether or
+     not the anchors mean anything, so the anchors are replaced with random
+     prices inside the same band and everything else held fixed.
 
-       one level meeting one level    8 real   vs  3.85 by chance
-       two meeting two                3 real   vs  0.27 by chance
-       three meeting three            0 real   vs  0.01 by chance
+     THE OLD NUMBERS HERE WERE MEASURED ON THE OLD ANCHORS AND DID NOT
+     SURVIVE THE MOVE TO MH AND ML. They claimed two-against-two was eleven
+     times chance and made that the bar for a key zone. Re-run on the
+     corrected anchors — four instruments, 300 random anchor pairs each,
+     tolerance a third of an ATR — the picture inverts:
 
-     A single crossing is barely twice chance and there are eight of them —
-     that is noise with a price printed on it. Two distinct calculations from
-     EACH ladder landing together is eleven times chance, and only 19.5% of
-     random anchor pairs produce even one. So that is the bar: a key zone
-     needs two from the high side and two from the low side. Single crossings
-     are kept, listed separately, and not called key zones. */
+       one against one     32 real  vs  15.4 by chance   ≈ 2.1x
+       two against two      4 real  vs   5.4 by chance   BELOW chance
+       three against three  0 real  vs   1.4 by chance   never happens
+
+     The reason is structural, not statistical. With the anchors correct, the
+     two ladders divide two ADJACENT legs of the same swing and share an
+     endpoint, so their levels interleave instead of stacking. Random anchors
+     occasionally land in configurations that do stack, which is why the null
+     beats the real at strength two.
+
+     So the old bar was gating on the one thing the data says is worthless
+     and throwing away the one thing it says is real. A crossing is a
+     crossing now, ranked by strength and then by distance from price, and
+     the note says plainly that twice chance is worth marking on a chart and
+     is not worth taking a trade on by itself. */
   out.all=zones;
-  out.zones=zones.filter(function(Z){return Z.strength>=2;});
-  out.singles=zones.filter(function(Z){return Z.strength<2;});
-  out.chance={s1real:zones.length-out.zones.length, s1null:3.85,
-              s2real:out.zones.length, s2null:0.27, trials:400};
-  if(!out.zones.length)out.notes.push(out.singles.length
-    ? 'The ladders cross in '+out.singles.length+' place'+(out.singles.length===1?'':'s')
-      +', but never two calculations against two — and a single crossing happens about '
-      +'3.9 times by chance on random anchors, so none of them is called a key zone.'
-    : 'The two ladders do not meet anywhere inside '+tol.toFixed(2)
-      +' — there is no key zone on this data, which is an answer rather than a gap.');
+  out.zones=zones;
+  out.singles=[];
+  out.chance={s1real:zones.filter(function(Z){return Z.strength<2;}).length, s1null:3.85,
+              s2real:zones.filter(function(Z){return Z.strength>=2;}).length, s2null:1.35,
+              measured:{one:{real:32,nul:15.4},two:{real:4,nul:5.4},three:{real:0,nul:1.4},
+                        assets:4, trials:300}};
+  if(!out.zones.length)out.notes.push('The two ladders do not meet anywhere inside '
+    +tol.toFixed(2)+' — there is no crossing on this data, which is an answer rather than a gap.');
   return out;
 }
 
@@ -13728,13 +13826,13 @@ function majorStackHtml(price,dp){
       +'<i>where price already '+word+'</i></div>';
   }
   function lvlSay(x,side){
-    if(!x)return side==='high'?'no confirmed high above price':'no confirmed low below price';
+    if(!x)return side==='high'?'no major high above price':'no major low below price';
     var t=[];
     t.push(x.cleared
-      ? (side==='high'?'the highest confirmed high — price has already cleared it, so it is support now'
-                     :'the lowest confirmed low — price is already under it, so it is resistance now')
-      : (side==='high'?'the nearest confirmed high ABOVE price'
-                     :'the nearest confirmed low BELOW price'));
+      ? (side==='high'?'price has already cleared it — support now, not resistance'
+                     :'price is already under it — resistance now, not support')
+      : (side==='high'?'the top of the range price is trading in'
+                     :'the bottom of the range price is trading in'));
     if(x.date)t.push('set '+x.date);
     if(x.atrAway!=null)t.push(far(x));
     if(x.tested>1)t.push('defended '+x.tested+' times');
@@ -13742,15 +13840,45 @@ function majorStackHtml(price,dp){
     return t.join(' · ');
   }
   h+='<div class="ms-pair">'
-    +'<div class="ms-side hi"><u>High side</u>'
-      +ext(M.topH,'failed')
-      +'<b>'+(M.secondH?tcFmt(M.secondH.px,dp):'—')+'</b>'
-      +'<s>'+escHtml(lvlSay(M.secondH,'high'))+'</s></div>'
-    +'<div class="ms-side lo"><u>Low side</u>'
-      +ext(M.bottomL,'failed')
-      +'<b>'+(M.secondL?tcFmt(M.secondL.px,dp):'—')+'</b>'
-      +'<s>'+escHtml(lvlSay(M.secondL,'low'))+'</s></div>'
+    +'<div class="ms-side hi"><u>Major high</u>'
+      +'<b>'+(M.MH?tcFmt(M.MH.px,dp):'—')+'</b>'
+      +'<s>'+escHtml(lvlSay(M.MH,'high'))+'</s>'
+      +ext(M.topH,'failed')+'</div>'
+    +'<div class="ms-side lo"><u>Major low</u>'
+      +'<b>'+(M.ML?tcFmt(M.ML.px,dp):'—')+'</b>'
+      +'<s>'+escHtml(lvlSay(M.ML,'low'))+'</s>'
+      +ext(M.bottomL,'failed')+'</div>'
   +'</div>';
+
+  /* ── WHERE IN THE RANGE, WHICH IS THE READ THE TWO NUMBERS EXIST FOR ──
+     MH and ML on their own are two prices. What they are FOR is telling you
+     whether price is at an edge or stranded in the middle with nothing to
+     trade against, and that is one number the panel never printed. */
+  if(M.range){
+    var pc=M.range.pct;
+    h+='<div class="ms-range">'
+      +'<div class="ms-rt"><span>'+tcFmt(M.range.lo,dp)+'</span>'
+        +'<em>'+escHtml(M.range.where)+' — '+pc.toFixed(0)+'% up the range</em>'
+        +'<span>'+tcFmt(M.range.hi,dp)+'</span></div>'
+      +'<div class="ms-rb"><u style="left:'+pc.toFixed(1)+'%"></u></div>'
+      +'<div class="ms-rn">'+tcFmt(M.range.width,dp)+' wide'
+        +(M.range.atr?' — '+M.range.atr.toFixed(1)+' ATR from floor to ceiling':'')
+        +'. A turn counts as major at '+(M.majorAtr||'—')+' ATR, which leaves '
+        +M.majorN+' of them in the loaded bars. '
+        +(M.stable&&M.stable.of
+          ? (M.stable.n===M.stable.of
+             ? 'Re-run at '+M.stable.at.join(', ')+' ATR the same two boundaries come back every '
+               +'time — structure, not a setting.'
+             : M.stable.n
+             ? 'Re-run at 5, 6 and 7 ATR they come back '+M.stable.n+' times out of '+M.stable.of
+               +', so treat the pair as approximate rather than exact.'
+             : 'Re-run at 5, 6 and 7 ATR a different pair comes back, so these boundaries depend '
+               +'on where the line for "major" is drawn — read them as the current range, not as '
+               +'fixed prices.')
+          : '')
+      +'</div>'
+    +'</div>';
+  }
   if(M.notes&&M.notes.length)
     h+='<div class="ms-note">'+escHtml(M.notes.join(' '))+'</div>';
 
@@ -13762,11 +13890,13 @@ function majorStackHtml(price,dp){
      market came to be presented as the line everything hangs off. */
   h+='<div class="ms-live'+(M.inPlay?'':' off')+'">'
     +(M.inPlay
-      ? 'In force now: <b>'+tcFmt(L,dp)+'</b> — the '+(side==='high'?'ceiling above':'floor below')
-        +', '+(dAway!=null?dAway.toFixed(2)+' ATR ':'')+(L>price?'above':'below')+' price.'
-      : 'Nothing is in force. The nearest of the two is <b>'+tcFmt(L,dp)+'</b>, '
+      ? 'In force now: <b>'+tcFmt(L,dp)+'</b> — the major '+(side==='high'?'high above':'low below')
+        +', '+(dAway!=null?dAway.toFixed(2)+' ATR ':'')+(L>price?'above':'below')+' price. '
+        +'Price is at an edge of its range, which is where these two numbers earn their keep.'
+      : 'Neither boundary is in force. The nearer is <b>'+tcFmt(L,dp)+'</b>, '
         +(dAway!=null?dAway.toFixed(1)+' ATR ':'')+(L>price?'above':'below')
-        +' price — too far to be a line price is trading against today.')
+        +' price — real, but too far to be trading against today. Mid-range, the lines that '
+        +'matter are the key zones below, not the boundaries.')
     +'</div>';
 
   /* ── THE TWO LADDERS AND WHERE THEY MEET ─────────────────────────────
@@ -13799,20 +13929,21 @@ function majorStackHtml(price,dp){
           +'</div></div>';
       });
       h+='</div>';
-      h+='<div class="kz-note">A zone counts only when <b>two</b> levels built DOWN from the '
-        +'major high and <b>two</b> built UP from the major low land within '+LD.tol.toFixed(2)
-        +' of each other — a third of an ATR. The bar is two-against-two because one-against-one '
-        +'happens about '+LD.chance.s1null+' times by chance on random anchors and '
-        +'two-against-two only '+LD.chance.s2null+', measured over '+LD.chance.trials
-        +' trials. The two ladders divide different swings and square their own roots, so a '
-        +'match is two calculations agreeing rather than one identity written twice.</div>';
-      if(LD.singles&&LD.singles.length)
-        h+='<div class="kz-note">'+LD.singles.length+' single crossing'
-          +(LD.singles.length===1?'':'s')+' — '
-          +LD.singles.slice(0,4).map(function(Z){return tcFmt(Z.price,dp);}).join(', ')
-          +(LD.singles.length>4?' and '+(LD.singles.length-4)+' more':'')
-          +' — are one level against one, which is close to chance. They are on the chart, '
-          +'not in this list.</div>';
+      var MZ=LD.chance&&LD.chance.measured;
+      h+='<div class="kz-note">A zone is a price where a level built DOWN from the major high '
+        +'and a level built UP from the major low land within '+LD.tol.toFixed(2)
+        +' of each other — a third of an ATR. The two ladders divide two different legs and '
+        +'square their own roots, so a match is two calculations agreeing rather than one '
+        +'identity written twice.'
+        +(MZ?' <b>How much of that is arithmetic:</b> the anchors were replaced with random '
+          +'prices in the same band, '+MZ.trials+' times on each of '+MZ.assets+' instruments. '
+          +'One-against-one came out '+MZ.one.real+' real against '+MZ.one.nul+' by chance — '
+          +'about twice chance, which is worth marking on a chart and is not worth taking a '
+          +'trade on by itself. Two-against-two came out '+MZ.two.real+' real against '
+          +MZ.two.nul+' by chance, BELOW chance, so stacked zones are not treated as stronger '
+          +'evidence than single ones — they are shown, and the count beside each is a '
+          +'description, not a score.':'')
+        +'</div>';
     }else{
       h+='<div class="kz-none">No key zone. '
         +escHtml((LD.notes[0]||'The two ladders do not meet anywhere close enough.'))+'</div>';
@@ -13894,11 +14025,12 @@ function majorStackHtml(price,dp){
   h+=row('Confirm',conf.t,conf.w,conf.ok);
   h+='</div>';
 
-  h+='<div class="ms-note">The level is never the extreme. The extreme is where price already '
-    +'failed and it can sit ten or twenty ATR away; the level is the first confirmed swing price '
-    +'meets on each side, which is what actually has to hold. Both are printed with their '
-    +'distance so neither can be mistaken for the other. Everything under it has to agree '
-    +'before the level is worth trading.</div>';
+  h+='<div class="ms-note">The major high and the major low are the boundaries of the range '
+    +'price is trading in — the most recent major turn standing above it and the most recent '
+    +'standing below it. They are not the extremes: an extreme is where price failed once and '
+    +'can sit ten or twenty ATR away, which is why it is printed underneath in small with its '
+    +'distance rather than presented as a level. Everything under the pair has to agree before '
+    +'either boundary is worth trading.</div>';
   return h+'</div>';
 }
 
@@ -24278,9 +24410,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b83';
+var CA_BUILD='b84';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The major level was picking two-year-old prices twenty ATR from the market \u2014 it now takes the nearest defended level on each side, and every price carries how far away it is';
+var CA_WHATS_NEW='The panel now takes MH and ML \u2014 the boundaries of the range price is trading in \u2014 and says where inside that range price actually sits';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
