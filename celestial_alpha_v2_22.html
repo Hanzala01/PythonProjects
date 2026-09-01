@@ -3386,6 +3386,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qam-moon b{display:block;font-family:'Space Grotesk';font-size:22px;font-weight:800;color:var(--t1);
   font-variant-numeric:tabular-nums;line-height:1.1}
 
+/* the full 360 circle laid flat: twelve signs, each adding thirty */
+.qgr{margin-top:14px;padding:13px 15px;border:1px solid rgba(168,85,247,.34);border-radius:13px;
+  background:linear-gradient(150deg,rgba(83,51,153,.2),rgba(11,6,40,.72))}
+.qgr-bar{position:relative;height:26px;margin:12px 0 5px;border-radius:7px;overflow:hidden;
+  background:rgba(255,255,255,.05)}
+.qgr-s{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;
+  border-right:1px solid rgba(11,6,40,.85);overflow:hidden;
+  background:color-mix(in srgb, var(--el) 14%, transparent)}
+.qgr-s:last-child{border-right:0}
+.qgr-s.done{background:color-mix(in srgb, var(--el) 34%, transparent)}
+.qgr-s.on{background:color-mix(in srgb, var(--el) 78%, transparent)}
+.qgr-s em{font-style:normal;font-size:7.5px;font-weight:700;letter-spacing:.06em;color:var(--t3)}
+.qgr-s.done em{color:var(--t2)}
+.qgr-s.on em{color:#0b0628;font-weight:800}
+.qgr-bar u{position:absolute;top:-3px;width:3px;height:32px;border-radius:2px;background:#fff;
+  text-decoration:none;transform:translateX(-1.5px);box-shadow:0 0 9px rgba(255,255,255,.8);z-index:2}
+@supports not (background:color-mix(in srgb,red 10%,transparent)){
+  .qgr-s{background:rgba(139,92,246,.14)}
+  .qgr-s.done{background:rgba(139,92,246,.32)}
+  .qgr-s.on{background:rgba(168,85,247,.75)}
+}
+
 /* the 30-degree sign cycle, with its seven stages laid out in order */
 .qcy{margin-top:14px;padding:13px 15px;border:1px solid var(--b1);border-radius:13px;
   background:rgba(11,6,40,.55)}
@@ -22447,6 +22469,66 @@ function qamClock(d){
   return d.toLocaleDateString('en',{day:'numeric',month:'short'})+' '+t;
 }
 
+/* ── THE 360-DEGREE CYCLE, WHICH THE TWELVE SIGNS HOLD BETWEEN THEM ─────
+   One sign is thirty degrees; the next sign does not restart the count, it
+   adds to it. Twelve of them hold three hundred and sixty, and that whole
+   circuit is the real cycle — the Moon leaves 0° Aries, works through every
+   sign in turn, and arrives back at 0° Aries about twenty-seven and a third
+   days later. The sign cycle above is one twelfth of this one.
+
+   The circuit's edges are the moments the Moon's longitude crosses zero,
+   found by walking back and forward in six-hour steps until the wrap shows
+   up and then bisecting, the same method as every other exact time here. */
+function qamLonAt(t){
+  try{ return rev(getEphemeris(new Date(t)).moon.lon); }catch(e){ return null; }
+}
+function qamZeroCross(from,dir){
+  var step=dir*6*3600000, t=from, prev=qamLonAt(from), guard=0;
+  if(prev==null)return null;
+  while(guard++<140){
+    var tn=t+step, cur=qamLonAt(tn);
+    if(cur==null)return null;
+    /* the wrap: going forward the longitude falls from ~359 to ~0,
+       going back it jumps from ~0 up to ~359 */
+    var wrapped = dir>0 ? (cur<prev-180) : (cur>prev+180);
+    if(wrapped){
+      var lo=Math.min(t,tn), hi=Math.max(t,tn);
+      for(var k=0;k<16;k++){
+        var mid=(lo+hi)/2, m=qamLonAt(mid);
+        if(m==null)break;
+        if(m>180){ if(dir>0)lo=mid; else lo=mid; }
+        else { hi=mid; }
+      }
+      return new Date(hi);
+    }
+    t=tn; prev=cur;
+  }
+  return null;
+}
+var _qamGrandCache=null;
+function qamGrand(M,date){
+  date=date||new Date();
+  var key=Math.floor(+date/600000);
+  if(_qamGrandCache&&_qamGrandCache.key===key)return _qamGrandCache.v;
+  var abs=M.signIdx*30+M.deg;
+  var started=qamZeroCross(+date,-1), ends=qamZeroCross(+date,1);
+  var out={abs:abs, pct:abs/360*100, signNo:M.signIdx+1, done:M.signIdx,
+           left:11-M.signIdx, started:started, ends:ends};
+  if(started&&ends&&+ends>+started){
+    out.span=+ends-+started;
+    out.elapsed=+date-+started;
+    out.remain=+ends-+date;
+    out.days=out.span/86400000;
+  }
+  /* every sign as a segment, so the bar is the circle laid flat */
+  out.segs=[];
+  for(var i=0;i<12;i++)
+    out.segs.push({i:i,name:SIGNS[i],el:qamElOf(i),
+      at:i/12*100,w:100/12,
+      state:i<M.signIdx?'done':i===M.signIdx?'on':'todo'});
+  return (_qamGrandCache={key:key,v:out}).v;
+}
+
 /* ── THE DIAL ────────────────────────────────────────────────────────────
    Built as an SVG string rather than the source's createElementNS loop, so
    it drops into the same innerHTML pass as the rest of the panel. Twelve
@@ -22580,13 +22662,50 @@ function qamHtml(){
 
   /* ── THE CYCLE BAR: 0° TO 30°, WITH THE SEVEN STAGES ON IT ───────── */
   var CY=null; try{ CY=qamCycle(M,new Date()); }catch(e){}
+  var GR=null; try{ GR=qamGrand(M,new Date()); }catch(e){}
   var cyHtml='';
+
+  /* ── THE WHOLE CIRCLE FIRST, THE CURRENT SIGN INSIDE IT ─────────────
+     The big cycle is the one that carries: 0° to 360°, twelve signs, the
+     Moon back where it started. The sign bar under it is one twelfth of
+     this, zoomed in. */
+  if(GR){
+    cyHtml+='<div class="qgr">'
+      +'<div class="qcy-h">'
+        +'<div class="qcy-t"><b>The full circle</b>'
+          +'<span>0&deg; to 360&deg; &mdash; twelve signs of thirty, each one adding to the last'
+          +(GR.days?', '+GR.days.toFixed(1)+' days end to end':'')+'</span></div>'
+        +'<div class="qcy-p"><b>'+GR.abs.toFixed(1)+'&deg;</b>'
+          +'<i>'+GR.pct.toFixed(0)+'% of 360</i></div>'
+      +'</div>'
+      +'<div class="qgr-bar">'
+        +GR.segs.map(function(g){
+           return '<div class="qgr-s '+g.state+'" style="left:'+g.at.toFixed(3)+'%;'
+             +'width:'+g.w.toFixed(3)+'%;--el:'+QAM_ELCOL[g.el]+'" '
+             +'title="'+escHtml(g.name+' \u2014 '+(g.i*30)+'\u00b0 to '+((g.i+1)*30)+'\u00b0')+'">'
+             +'<em>'+escHtml(g.name.slice(0,3).toUpperCase())+'</em></div>';
+         }).join('')
+        +'<u style="left:'+(GR.abs/360*100).toFixed(3)+'%"></u>'
+      +'</div>'
+      +'<div class="qcy-ax"><span>0&deg; Aries</span><span>180&deg; Libra</span><span>360&deg;</span></div>'
+      +'<div class="qcy-f">'
+        +'<div class="qcy-c"><i>Circle started</i><b>'+escHtml(qamClock(GR.started))+'</b>'
+          +'<s>Moon left 0&deg; Aries'+(GR.elapsed?' &middot; '+qamDur(GR.elapsed)+' ago':'')+'</s></div>'
+        +'<div class="qcy-c"><i>Sign</i><b>'+GR.signNo+' of 12</b>'
+          +'<s>'+GR.done+' behind it, '+GR.left+' still to come</s></div>'
+        +'<div class="qcy-c"><i>Degrees run</i><b>'+GR.abs.toFixed(1)+' of 360</b>'
+          +'<s>'+(360-GR.abs).toFixed(1)+'&deg; left in the circle</s></div>'
+        +'<div class="qcy-c"><i>Circle ends</i><b>'+escHtml(qamClock(GR.ends))+'</b>'
+          +'<s>'+(GR.remain?qamDur(GR.remain)+' left &middot; ':'')+'back at 0&deg; Aries</s></div>'
+      +'</div>'
+    +'</div>';
+  }
   if(CY){
-    cyHtml='<div class="qcy">'
+    cyHtml+='<div class="qcy">'
       +'<div class="qcy-h">'
         +'<div class="qcy-t"><b>The '+escHtml(M.sign)+' cycle</b>'
-          +'<span>0&deg; to 30&deg; &mdash; one full pass through the sign, '
-          +qamDur(CY.span)+' end to end</span></div>'
+          +'<span>sign '+(M.signIdx+1)+' of 12 &mdash; degrees '+(M.signIdx*30)+' to '
+          +((M.signIdx+1)*30)+' of the circle, '+qamDur(CY.span)+' end to end</span></div>'
         +'<div class="qcy-p"><b>'+CY.pct.toFixed(0)+'%</b><i>through</i></div>'
       +'</div>'
       +'<div class="qcy-bar">'
@@ -25800,9 +25919,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b99';
+var CA_BUILD='b100';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The sign cycle: 0\u00b0 to 30\u00b0 with its seven stages, when it started, which stage is running and when the next one arrives.';
+var CA_WHATS_NEW='The full circle: 0\u00b0 to 360\u00b0, twelve signs each adding thirty to the last, with the sign cycle sitting inside it.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
