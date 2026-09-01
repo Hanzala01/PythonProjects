@@ -3386,6 +3386,37 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qam-moon b{display:block;font-family:'Space Grotesk';font-size:22px;font-weight:800;color:var(--t1);
   font-variant-numeric:tabular-nums;line-height:1.1}
 
+/* the dial, the read, and the two behaviour cards */
+.qam-top{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:center;margin-top:14px}
+@media (max-width:820px){.qam-top{grid-template-columns:1fr}.qam-dw{margin:0 auto}}
+.qam-dw{text-align:center}
+.qam-dial{display:block;margin:0 auto;animation:qdFloat 6s ease-in-out infinite}
+@keyframes qdFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.qd-needle{animation:qdGlow 2s ease-in-out infinite}
+@keyframes qdGlow{0%,100%{opacity:.62}50%{opacity:1}}
+.qd-tip{filter:drop-shadow(0 0 5px #fff2cf)}
+.qam-dl{margin-top:6px}
+.qam-dl b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:800;color:var(--t1)}
+.qam-dl s{display:block;text-decoration:none;font-size:9px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--t3);margin-top:3px}
+.qam-rh{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t3)}
+.qam-read p{margin:7px 0 0;font-size:12px;line-height:1.75;color:var(--t2)}
+.qam-bb{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+@media (max-width:520px){.qam-bb{grid-template-columns:1fr}}
+.qam-b{border-radius:12px;padding:11px 13px;border:1px solid var(--b1);
+  transition:transform .18s ease}
+.qam-b:hover{transform:translateY(-2px)}
+.qam-b.up{border-color:rgba(34,197,94,.4);
+  background:linear-gradient(160deg,rgba(34,197,94,.13),rgba(34,197,94,.03))}
+.qam-b.dn{border-color:rgba(239,68,68,.4);
+  background:linear-gradient(160deg,rgba(239,68,68,.13),rgba(239,68,68,.03))}
+.qam-b i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase}
+.qam-b.up i{color:var(--up)} .qam-b.dn i{color:var(--dn)}
+.qam-b b{display:block;font-family:'Space Grotesk';font-size:15px;font-weight:700;color:var(--t1);
+  margin-top:4px;line-height:1.25}
+.qam-bbn{font-size:9px;color:var(--t3);line-height:1.6;margin-top:9px}
+
 .qam-state{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:13px}
 @media (max-width:900px){.qam-state{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:520px){.qam-state{grid-template-columns:1fr}}
@@ -22268,6 +22299,112 @@ function qamAhead(days){
    Celestial's own type, spacing and palette — nothing of the source
    console's styling came over, only what it knows. */
 /* the score said out loud, so a 3 is not just a 3 */
+var QAM_ELDESC={
+  fire:"Momentum / breakout character — trend tends to extend once it moves.",
+  earth:"Range / grind character — disciplined, slower, respects levels.",
+  air:"Whipsaw / fake-move character — news-reactive, indecisive swings.",
+  water:"Reversal / trap character — emotional, sharp turns, safe-haven flows."
+};
+var QAM_BULLBEAR = {
+  Aries:["Impulse continuation","Fast dump"],
+  Taurus:["Slow grind up","Late breakdown"],
+  Gemini:["Fake pullback → go","Whipsaw sell"],
+  Cancer:["Dip-buy support","Bounce then drop"],
+  Leo:["Extension / blow-off","Bull-trap then dump"],
+  Virgo:["Clean measured move","Clean breakdown"],
+  Libra:["Balanced slow rise","Range → breakdown"],
+  Scorpio:["Aggressive continuation","Violent flush"],
+  Sagittarius:["Trend expansion","Fake bounce → sell"],
+  Capricorn:["Controlled climb","Grind down"],
+  Aquarius:["Unstable snap move","Sudden crash"],
+  Pisces:["Final push then exhaust","Panic low then relief"]
+};
+var QAM_ELEM=['fire','earth','air','water'];
+var QAM_ELCOL={fire:'#E8823C',earth:'#7FAE7A',air:'#6EA8C9',water:'#5E7CE2'};
+function qamElOf(idx){ return QAM_ELEM[idx%4]; }
+
+/* ── THE DIAL ────────────────────────────────────────────────────────────
+   Built as an SVG string rather than the source's createElementNS loop, so
+   it drops into the same innerHTML pass as the rest of the panel. Twelve
+   element-coloured sign arcs with the current one lit, a five-degree tick
+   ring, twenty-seven nakshatra marks with the current one gold, and a
+   needle on the Moon's exact degree. */
+function qamDial(M,size){
+  size=size||210;
+  var cx=150,cy=150,arcO=134,arcI=126,tickO=118,tickI=104,nakR=94,nakR2=100;
+  var D=Math.PI/180;
+  function pt(r,a){ return [(cx+r*Math.sin(a*D)).toFixed(2),(cy-r*Math.cos(a*D)).toFixed(2)]; }
+  function arc(r1,r2,a1,a2){
+    var p1=pt(r2,a1),p2=pt(r2,a2),p3=pt(r1,a2),p4=pt(r1,a1);
+    var lg=(a2-a1)>180?1:0;
+    return 'M '+p1[0]+' '+p1[1]+' A '+r2+' '+r2+' 0 '+lg+' 1 '+p2[0]+' '+p2[1]
+      +' L '+p3[0]+' '+p3[1]+' A '+r1+' '+r1+' 0 '+lg+' 0 '+p4[0]+' '+p4[1]+' Z';
+  }
+  var g='';
+  g+='<circle cx="150" cy="150" r="118" fill="rgba(8,4,26,.85)" stroke="var(--b1)" stroke-width="1"/>';
+  for(var i=0;i<12;i++){
+    var on=(i===M.signIdx), el=qamElOf(i);
+    g+='<path d="'+arc(arcI,arcO,i*30,(i+1)*30)+'" fill="'+QAM_ELCOL[el]
+      +'" opacity="'+(on?0.92:0.16)+'"/>';
+    var lp=pt(arcO+11,i*30+15);
+    g+='<text x="'+lp[0]+'" y="'+lp[1]+'" text-anchor="middle" dominant-baseline="middle" '
+      +'font-size="'+(on?11:9.5)+'" font-weight="'+(on?700:500)+'" '
+      +'fill="'+(on?'var(--t1)':'var(--t3)')+'">'+SIGNS[i].slice(0,3).toUpperCase()+'</text>';
+  }
+  for(var d=0;d<360;d+=5){
+    var maj=(d%30===0), a=pt(maj?tickI-6:tickI,d), b2=pt(tickO,d);
+    g+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b2[0]+'" y2="'+b2[1]
+      +'" stroke="rgba(237,237,236,'+(maj?'.4':'.15')+')" stroke-width="'+(maj?1.6:1)+'"/>';
+  }
+  for(i=0;i<27;i++){
+    var cur=(i===M.nakIdx), aa=i*(360/27);
+    var n1=pt(cur?nakR-4:nakR,aa), n2=pt(nakR2,aa);
+    g+='<line x1="'+n1[0]+'" y1="'+n1[1]+'" x2="'+n2[0]+'" y2="'+n2[1]
+      +'" stroke="'+(cur?'#E8B24D':'rgba(255,255,255,.08)')+'" stroke-width="'+(cur?2.5:1)+'"/>';
+  }
+  var ma=M.signIdx*30+M.deg, tip=pt(tickI-2,ma);
+  g+='<line x1="150" y1="150" x2="'+tip[0]+'" y2="'+tip[1]
+    +'" stroke="#E8B24D" stroke-width="2" class="qd-needle"/>'
+   +'<circle cx="150" cy="150" r="5" fill="#E8B24D"/>'
+   +'<circle cx="'+tip[0]+'" cy="'+tip[1]+'" r="3.5" fill="#fff2cf" class="qd-tip"/>'
+   +'<text x="150" y="188" text-anchor="middle" font-size="16" fill="var(--t3)">\u263D</text>';
+  return '<svg class="qam-dial" viewBox="0 0 300 300" width="'+size+'" height="'+size+'">'+g+'</svg>';
+}
+
+/* ── TODAY'S READ ────────────────────────────────────────────────────────
+   The same sentence the console builds, from this app's own numbers. */
+function qamRead(M){
+  if(!M)return '';
+  var el=qamElOf(M.signIdx);
+  var deg=Math.floor(M.deg), min=Math.round((M.deg-deg)*60);
+  if(min===60){ min=0; deg+=1; }
+  var t='Moon sits in '+M.sign+' at '+deg+'\u00b0'+(min<10?'0':'')+min+'\u2032 \u2014 '
+    +QAM_ELDESC[el].charAt(0).toLowerCase()+QAM_ELDESC[el].slice(1)+' '
+    +'Right now that\u2019s a \u201c'+M.zone.label+'\u201d zone: '
+    +M.zone.desc.charAt(0).toLowerCase()+M.zone.desc.slice(1)+' '
+    +'It\u2019s moving at '+(M.speed||'average')+' speed'
+    +(M.oob?', and is out of bounds \u2014 expect sharper, less conventional moves. '
+           :'. ');
+  if(M.nak)t+='Nakshatra '+M.nak.name+' layers on a \u201c'
+    +M.nak.say.toLowerCase()+'\u201d undertone.';
+  /* the tightest aspect the Moon is holding right now, from the same table */
+  try{
+    var e=getEphemeris(new Date()), best=null;
+    QAM_ORDER.forEach(function(n){
+      if(n==='Moon')return;
+      var body=e[QAM_BODY[n]]; if(!body)return;
+      var c=qamClassify(qamSep(e.moon.lon,body.lon));
+      if(c&&(!best||c.off<best.c.off))best={n:n,c:c};
+    });
+    if(best){
+      var P=qamProfile('Moon',best.n,best.c.name);
+      t+=' Moon is also in '+best.c.name.toLowerCase()+' with '+best.n+' \u2014 '
+        +P.reason.charAt(0).toLowerCase()+P.reason.slice(1)+'.';
+    }
+  }catch(err){}
+  return t;
+}
+
 function qamVolWhy(M){
   var p=[];
   if(M.zone.label==='Stress / Trap'||M.zone.label==='Exit / Dump')p.push('+2 '+M.zone.label.toLowerCase()+' degree zone');
@@ -22315,6 +22452,24 @@ function qamHtml(){
       +'<span>where the Moon is, what that degree does, and every exact aspect ahead</span></div>'
     +'<div class="qam-moon"><i>'+escHtml(M.sign)+'</i>'
       +'<b>'+M.deg.toFixed(2)+'&deg;</b></div>'
+  +'</div>';
+
+  /* the dial and the read, side by side */
+  h+='<div class="qam-top">'
+    +'<div class="qam-dw">'+qamDial(M,200)
+      +'<div class="qam-dl"><b>'+escHtml(M.sign)+'</b>'
+        +'<s>'+escHtml(qamElOf(M.signIdx))+' &middot; '+escHtml(M.zone.label)+'</s></div></div>'
+    +'<div class="qam-read"><div class="qam-rh">Today&rsquo;s read</div>'
+      +'<p>'+escHtml(qamRead(M))+'</p>'
+      +'<div class="qam-bb">'
+        +'<div class="qam-b up"><i>If bullish</i><b>'
+          +escHtml((QAM_BULLBEAR[M.sign]||['\u2014','\u2014'])[0])+'</b></div>'
+        +'<div class="qam-b dn"><i>If bearish</i><b>'
+          +escHtml((QAM_BULLBEAR[M.sign]||['\u2014','\u2014'])[1])+'</b></div>'
+      +'</div>'
+      +'<div class="qam-bbn">The sign says how a move tends to behave, not which way it goes '
+        +'\u2014 read the side off the trend you already have, then take the matching line.</div>'
+    +'</div>'
   +'</div>';
 
   h+='<div class="qam-state">'
@@ -25481,9 +25636,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b97';
+var CA_BUILD='b98';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Lunar layer gains distance, out-of-bounds declination and a volatility score. The repetitive Aspects-today box is gone.';
+var CA_WHATS_NEW='The dial, Today\u2019s Read and the if-bullish / if-bearish cards are on the lunar layer.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
