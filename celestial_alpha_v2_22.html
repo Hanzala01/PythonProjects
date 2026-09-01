@@ -3368,6 +3368,80 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   padding-top:8px;border-top:1px solid var(--b1);line-height:1.55}
 .sgc.done{border-color:rgba(245,158,11,.4)}
 
+.tk-nrow.qhot{border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.07)}
+.tk-asp{grid-column:1/-1;display:block;font-size:9px;color:var(--t3);line-height:1.5;
+  margin-top:5px;padding-top:5px;border-top:1px solid var(--b1)}
+.tk-asp.hv{color:var(--warn)}
+
+/* ══ THE LUNAR LAYER ══════════════════════════════════════════════════ */
+.qam{margin:14px 0;border:1px solid var(--b1);border-radius:16px;padding:16px 18px 14px;
+  background:linear-gradient(155deg,rgba(83,51,153,.14),rgba(11,6,40,.92))}
+.qam-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.qam-t b{display:block;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--t1)}
+.qam-t span{display:block;font-size:9.5px;color:var(--t3);margin-top:4px;line-height:1.55}
+.qam-moon{text-align:right;flex:0 0 auto}
+.qam-moon i{display:block;font-style:normal;font-size:11px;font-weight:700;color:var(--p3);
+  letter-spacing:.06em}
+.qam-moon b{display:block;font-family:'Space Grotesk';font-size:22px;font-weight:800;color:var(--t1);
+  font-variant-numeric:tabular-nums;line-height:1.1}
+
+.qam-state{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:13px}
+@media (max-width:900px){.qam-state{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.qam-state{grid-template-columns:1fr}}
+.qam-s{border:1px solid var(--b1);border-radius:11px;padding:9px 11px;background:rgba(11,6,40,.6)}
+.qam-s.hot{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.07)}
+.qam-s.good{border-color:rgba(34,197,94,.38);background:rgba(34,197,94,.07)}
+.qam-s i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--t3)}
+.qam-s b{display:block;font-family:'Space Grotesk';font-size:14px;font-weight:700;color:var(--t1);
+  margin-top:3px;line-height:1.2}
+.qam-s.hot b{color:var(--dn)} .qam-s.good b{color:var(--up)}
+.qam-s s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:4px;line-height:1.5}
+
+.qam-alert{display:flex;gap:11px;align-items:flex-start;margin-top:12px;padding:10px 12px;
+  border-radius:11px;border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.1)}
+.qam-ab{flex:0 0 auto;font-size:8.5px;font-weight:800;letter-spacing:.1em;color:var(--warn);
+  border:1px solid rgba(245,158,11,.55);border-radius:99px;padding:3px 9px;white-space:nowrap}
+.qam-at{font-size:10.5px;color:var(--t2);line-height:1.7}
+.qam-at b{color:var(--t1)}
+
+.qam-lh{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);
+  margin:17px 0 8px;padding-top:13px;border-top:1px solid var(--b1)}
+.qam-lh s{text-decoration:none;font-weight:400;letter-spacing:.02em;text-transform:none;
+  color:var(--t3);margin-left:8px;font-size:9.5px}
+.qam-list{display:grid;gap:6px}
+.qam-r{display:grid;grid-template-columns:74px minmax(180px,1fr) 132px 108px;gap:12px;
+  align-items:center;padding:8px 11px;border:1px solid var(--b1);border-radius:10px;
+  background:rgba(11,6,40,.55);border-left:2px solid transparent}
+.qam-r.b-up{border-left-color:rgba(34,197,94,.45)}
+.qam-r.b-dn{border-left-color:rgba(239,68,68,.45)}
+.qam-r.b-nn{border-left-color:rgba(255,255,255,.16)}
+.qam-r.heavy{background:rgba(245,158,11,.09);border-color:rgba(245,158,11,.4)}
+@media (max-width:820px){.qam-r{grid-template-columns:60px 1fr;}
+  .qam-r .qam-k,.qam-r .qam-w{grid-column:2}}
+.qam-g{font-size:15px;color:var(--t1);letter-spacing:1px;white-space:nowrap}
+.qam-g u{text-decoration:none;color:var(--p3);margin:0 3px}
+.qam-n b{display:block;font-size:11.5px;font-weight:700;color:var(--t1)}
+.qam-n s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:2px;
+  line-height:1.45}
+.qam-k{display:flex;gap:5px;flex-wrap:wrap}
+.qam-k em{font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.09em;
+  border-radius:99px;padding:2px 7px;border:1px solid var(--b1);color:var(--t3)}
+.qam-k .rk-gold{color:#e8b24d;border-color:rgba(232,178,77,.5);background:rgba(232,178,77,.12)}
+.qam-k .rk-silver{color:#a8adc2;border-color:rgba(168,173,194,.4)}
+.qam-k .rk-bronze{color:#b0764c;border-color:rgba(176,118,76,.4)}
+.qam-k .rk-joker{color:var(--p3);border-color:rgba(168,85,247,.45)}
+.qam-k .bi-up{color:var(--up);border-color:rgba(34,197,94,.45)}
+.qam-k .bi-dn{color:var(--dn);border-color:rgba(239,68,68,.45)}
+.qam-w{text-align:right}
+.qam-w b{display:block;font-size:10.5px;font-weight:700;color:var(--t2);white-space:nowrap}
+.qam-w s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:2px}
+.qam-none{font-size:10.5px;color:var(--t3);padding:8px 0}
+.qam-note{margin-top:12px;padding-top:11px;border-top:1px solid var(--b1);font-size:9.5px;
+  color:var(--t3);line-height:1.7}
+.qam-note b{color:var(--warn)}
+
 /* ══ MAJOR LEVELS — one window on the face, two inside ══════════════════ */
 .mjl{margin:0 0 12px;border:1px solid var(--b1);border-radius:14px;overflow:hidden;
   background:linear-gradient(160deg,rgba(83,51,153,.15),rgba(11,6,40,.9))}
@@ -21863,6 +21937,401 @@ function tmgEngine(asset){
   return E;
 }
 
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE LUNAR LAYER — QAMAR, FOLDED IN
+
+   Brought over from the QAMAR console: the part that is knowledge rather
+   than arithmetic. The aspect-profile table is eighty-five named pairs, each
+   carrying a rank, a market bias and a sentence saying what it does to a
+   tape; the degree zones split every sign into seven bands; the nakshatras
+   name the lunar mansion.
+
+   WHAT WAS NOT BROUGHT OVER IS THE EPHEMERIS. That console carries its own
+   Keplerian model for the outer planets and its own Moon series. This app
+   already has getEphemeris, and two models of the same sky disagreeing by a
+   fraction of a degree is how a panel ends up contradicting the panel next
+   to it. Every position below comes from the engine that was already here.
+   ══════════════════════════════════════════════════════════════════════ */
+var QAM_ZONES=[
+  {max:3, label:"Fresh Start", desc:"Naya impulse, strong first move, breakout ka chance."},
+  {max:7, label:"Follow-Through", desc:"Trend continues, smooth candles, scalps favor continuation."},
+  {max:12, label:"Balance Zone", desc:"Normal / mixed price action — wait & watch."},
+  {max:15, label:"Stress / Trap", desc:"Fake breakouts, long wicks, stop hunts likely."},
+  {max:20, label:"Correction", desc:"Pullbacks, choppy market, trend temporarily weak."},
+  {max:25, label:"Preparation", desc:"Energy build-up, compression before a bigger move."},
+  {max:30, label:"Exit / Dump", desc:"Sharp candle, reversal or fast extension, panic-prone."}
+];
+var QAM_NAK=[
+  ["Ashwini","Ketu","Sharp, impulsive open"],["Bharani","Venus","Intense value swing"],
+  ["Krittika","Sun","Decisive breakout"],["Rohini","Moon","Steady accumulation"],
+  ["Mrigashira","Mars","Restless, searching"],["Ardra","Rahu","Stormy, erratic"],
+  ["Punarvasu","Jupiter","Recovery rally"],["Pushya","Saturn","Slow, steady support"],
+  ["Ashlesha","Mercury","Manipulative whipsaw"],["Magha","Ketu","Legacy trend, abrupt end"],
+  ["Purva Phalguni","Venus","Comfortable drift up"],["Uttara Phalguni","Sun","Stable, partnership trend"],
+  ["Hasta","Moon","Precise, skillful moves"],["Chitra","Mars","Brilliant, sharp turns"],
+  ["Swati","Rahu","Independent, scattered"],["Vishakha","Jupiter","Goal-driven push"],
+  ["Anuradha","Saturn","Disciplined continuation"],["Jyeshtha","Mercury","Dominant, sharp reaction"],
+  ["Mula","Ketu","Root shakeout, rebuild"],["Purva Ashadha","Venus","Invincible surge"],
+  ["Uttara Ashadha","Sun","Enduring victory trend"],["Shravana","Moon","Calm, sentiment-listening"],
+  ["Dhanishta","Mars","Fast, rhythmic swings"],["Shatabhisha","Rahu","Secretive shock move"],
+  ["Purva Bhadrapada","Jupiter","Fiery, intense ending"],["Uttara Bhadrapada","Saturn","Deep, slow transformation"],
+  ["Revati","Mercury","Gentle closure, completion"]
+];
+var QAM_PROFILES={
+  'Sun-Moon-Sextile': {rank:'GOLD',bias:'bullish',reason:'Harmony between cycles — smooth buying'},
+  'Sun-Moon-Trine': {rank:'GOLD',bias:'bullish',reason:'Harmony between cycles — smooth buying'},
+  'Sun-Moon-Square': {rank:'SILVER',bias:'bearish',reason:'Inner conflict — choppy, indecisive'},
+  'Sun-Moon-Opposition': {rank:'SILVER',bias:'bearish',reason:'Tension between will and emotion'},
+  'Sun-Moon-Conjunction': {rank:'JOKER',bias:'neutral',reason:'New cycle, no clear direction'},
+  'Moon-Mercury-Conjunction': {rank:'BRONZE',bias:'neutral',reason:'News-driven noise'},
+  'Moon-Mercury-Sextile': {rank:'BRONZE',bias:'neutral',reason:'News-driven — no strong direction'},
+  'Moon-Mercury-Trine': {rank:'BRONZE',bias:'neutral',reason:'News-driven — no strong direction'},
+  'Moon-Mercury-Square': {rank:'BRONZE',bias:'neutral',reason:'Whipsaw, confusion'},
+  'Moon-Mercury-Opposition': {rank:'BRONZE',bias:'neutral',reason:'Mixed signals, noisy tape'},
+  'Moon-Venus-Conjunction': {rank:'GOLD',bias:'bullish',reason:'Smooth buying'},
+  'Moon-Venus-Trine': {rank:'GOLD',bias:'bullish',reason:'Smooth risk-on flow'},
+  'Moon-Venus-Sextile': {rank:'GOLD',bias:'bullish',reason:'Gentle, steady buying'},
+  'Moon-Venus-Square': {rank:'SILVER',bias:'neutral',reason:'Emotional vs logical conflict — choppy'},
+  'Moon-Venus-Opposition': {rank:'SILVER',bias:'bearish',reason:'Value tension, profit-taking'},
+  'Moon-Mars-Conjunction': {rank:'SILVER',bias:'bullish',reason:'Quick impulsive up — short-lived'},
+  'Moon-Mars-Sextile': {rank:'SILVER',bias:'bullish',reason:'Quick impulsive up — short-lived'},
+  'Moon-Mars-Trine': {rank:'SILVER',bias:'bullish',reason:'Energetic but controlled push'},
+  'Moon-Mars-Square': {rank:'SILVER',bias:'bearish',reason:'Impulsive selling'},
+  'Moon-Mars-Opposition': {rank:'SILVER',bias:'bearish',reason:'Sharp, sudden reversal down'},
+  'Moon-Jupiter-Conjunction': {rank:'SILVER',bias:'bullish',reason:'Spike, short-lived'},
+  'Moon-Jupiter-Trine': {rank:'SILVER',bias:'bullish',reason:'Expansion spike — short-term up'},
+  'Moon-Jupiter-Sextile': {rank:'GOLD',bias:'bullish',reason:'Optimistic, steady expansion'},
+  'Moon-Jupiter-Square': {rank:'SILVER',bias:'bearish',reason:'Overexpansion then reversal'},
+  'Moon-Jupiter-Opposition': {rank:'SILVER',bias:'bearish',reason:'Excess unwinds, pullback'},
+  'Moon-Saturn-Conjunction': {rank:'SILVER',bias:'bearish',reason:'Cold pressure — caps upside'},
+  'Moon-Saturn-Square': {rank:'SILVER',bias:'bearish',reason:'Cold selling pressure'},
+  'Moon-Saturn-Opposition': {rank:'SILVER',bias:'bearish',reason:'Heavy resistance, sellers in control'},
+  'Moon-Saturn-Trine': {rank:'BRONZE',bias:'neutral',reason:'Stable, slow, range-bound'},
+  'Moon-Saturn-Sextile': {rank:'BRONZE',bias:'neutral',reason:'Mild restraint, quiet tape'},
+  'Moon-Uranus-Sextile': {rank:'GOLD',bias:'bullish',reason:'Sudden controlled breakout'},
+  'Moon-Uranus-Conjunction': {rank:'GOLD',bias:'bullish',reason:'Sudden smooth breakout'},
+  'Moon-Uranus-Trine': {rank:'GOLD',bias:'bullish',reason:'Sudden controlled breakout'},
+  'Moon-Uranus-Square': {rank:'SILVER',bias:'bearish',reason:'Shock move, erratic drop'},
+  'Moon-Uranus-Opposition': {rank:'SILVER',bias:'bearish',reason:'Sudden reversal, volatility spike'},
+  'Moon-Neptune-Conjunction': {rank:'BRONZE',bias:'neutral',reason:'Dreamy, fake moves'},
+  'Moon-Neptune-Trine': {rank:'BRONZE',bias:'neutral',reason:'Dreamy, no move'},
+  'Moon-Neptune-Sextile': {rank:'BRONZE',bias:'neutral',reason:'Hazy, low-conviction drift'},
+  'Moon-Neptune-Square': {rank:'BRONZE',bias:'neutral',reason:'Fake moves, confusion'},
+  'Moon-Neptune-Opposition': {rank:'BRONZE',bias:'neutral',reason:'Illusory move, quickly fades'},
+  'Moon-Pluto-Sextile': {rank:'SILVER',bias:'bullish',reason:'Deep liquidity shift — controlled buying'},
+  'Moon-Pluto-Conjunction': {rank:'SILVER',bias:'bearish',reason:'Intense, hidden pressure'},
+  'Moon-Pluto-Square': {rank:'SILVER',bias:'bearish',reason:'Power struggle — sharp drop'},
+  'Moon-Pluto-Opposition': {rank:'SILVER',bias:'bearish',reason:'Power struggle down'},
+  'Moon-Pluto-Trine': {rank:'SILVER',bias:'bullish',reason:'Controlled, deep accumulation'},
+  'Venus-Jupiter-Conjunction': {rank:'GOLD',bias:'bullish',reason:'Strong expansion + optimism — solid up'},
+  'Venus-Jupiter-Trine': {rank:'GOLD',bias:'bullish',reason:'Strong expansion + optimism — solid up'},
+  'Venus-Jupiter-Sextile': {rank:'GOLD',bias:'bullish',reason:'Smooth optimism, steady buying'},
+  'Venus-Jupiter-Square': {rank:'SILVER',bias:'bearish',reason:'Overvaluation correction'},
+  'Venus-Jupiter-Opposition': {rank:'SILVER',bias:'bearish',reason:'Excess optimism unwinds'},
+  'Venus-Saturn-Trine': {rank:'GOLD',bias:'neutral',reason:'Stability, fair-value support'},
+  'Venus-Saturn-Sextile': {rank:'SILVER',bias:'neutral',reason:'Mild stabilizing influence'},
+  'Venus-Saturn-Conjunction': {rank:'SILVER',bias:'bearish',reason:'Value contracts, cautious tape'},
+  'Venus-Saturn-Square': {rank:'SILVER',bias:'bearish',reason:'Cold contraction, demand cools'},
+  'Venus-Saturn-Opposition': {rank:'SILVER',bias:'bearish',reason:'Heavy resistance to value'},
+  'Venus-Uranus-Sextile': {rank:'GOLD',bias:'bullish',reason:'Sudden smooth breakout'},
+  'Venus-Uranus-Trine': {rank:'GOLD',bias:'bullish',reason:'Sudden smooth breakout'},
+  'Venus-Uranus-Conjunction': {rank:'GOLD',bias:'bullish',reason:'Surprise rally, fast buying'},
+  'Venus-Uranus-Square': {rank:'SILVER',bias:'bearish',reason:'Erratic, sudden selloff'},
+  'Venus-Uranus-Opposition': {rank:'SILVER',bias:'bearish',reason:'Shock reversal in value'},
+  'Venus-Neptune-Trine': {rank:'GOLD',bias:'bullish',reason:'Smooth risk-on flow'},
+  'Venus-Neptune-Sextile': {rank:'GOLD',bias:'bullish',reason:'Gentle risk-on drift'},
+  'Venus-Neptune-Conjunction': {rank:'BRONZE',bias:'neutral',reason:'Hazy valuation, low conviction'},
+  'Venus-Neptune-Square': {rank:'BRONZE',bias:'neutral',reason:'Illusory value, fake breakout'},
+  'Venus-Neptune-Opposition': {rank:'BRONZE',bias:'neutral',reason:'Confused sentiment, no follow-through'},
+  'Venus-Pluto-Opposition': {rank:'GOLD',bias:'bearish',reason:'Deep conflict, sharp drop'},
+  'Venus-Pluto-Square': {rank:'GOLD',bias:'bearish',reason:'Deep conflict, sharp drop'},
+  'Venus-Pluto-Conjunction': {rank:'SILVER',bias:'bearish',reason:'Intense value pressure'},
+  'Venus-Pluto-Trine': {rank:'SILVER',bias:'bullish',reason:'Deep, controlled accumulation'},
+  'Venus-Pluto-Sextile': {rank:'SILVER',bias:'bullish',reason:'Quiet deep-pocket buying'},
+  'Mercury-Saturn-Square': {rank:'GOLD',bias:'bearish',reason:'Negative news + contraction — selling pressure'},
+  'Mercury-Saturn-Opposition': {rank:'SILVER',bias:'bearish',reason:'Heavy news, restrictive tape'},
+  'Mercury-Saturn-Conjunction': {rank:'SILVER',bias:'bearish',reason:'Serious, cautious news flow'},
+  'Mercury-Saturn-Trine': {rank:'BRONZE',bias:'neutral',reason:'Measured, calm news flow'},
+  'Mercury-Saturn-Sextile': {rank:'BRONZE',bias:'neutral',reason:'Steady, low-drama news'},
+  'Mercury-Jupiter-Conjunction': {rank:'SILVER',bias:'bullish',reason:'Optimistic news, expansion'},
+  'Mercury-Jupiter-Trine': {rank:'SILVER',bias:'bullish',reason:'Optimistic news, expansion'},
+  'Mercury-Jupiter-Sextile': {rank:'SILVER',bias:'bullish',reason:'Encouraging news flow'},
+  'Mercury-Jupiter-Square': {rank:'BRONZE',bias:'neutral',reason:'Mixed, overhyped news'},
+  'Mercury-Jupiter-Opposition': {rank:'BRONZE',bias:'neutral',reason:'Conflicting headlines'},
+  'Mercury-Mars-Sextile': {rank:'BRONZE',bias:'neutral',reason:'Fast, sharp headlines'},
+  'Mercury-Mars-Conjunction': {rank:'BRONZE',bias:'neutral',reason:'Aggressive, fast news flow'},
+  'Mercury-Mars-Square': {rank:'SILVER',bias:'bearish',reason:'Sharp, combative headlines hit price'},
+  'Mercury-Mars-Trine': {rank:'BRONZE',bias:'neutral',reason:'Quick decisive news, fades fast'},
+  'Mercury-Mars-Opposition': {rank:'SILVER',bias:'bearish',reason:'Conflicting, aggressive headlines'}
+};
+
+var QAM_ASPECTS=[{name:'Conjunction',angle:0,orb:8,sym:'☌'},
+                 {name:'Sextile',angle:60,orb:4,sym:'⚹'},
+                 {name:'Square',angle:90,orb:6,sym:'□'},
+                 {name:'Trine',angle:120,orb:6,sym:'△'},
+                 {name:'Opposition',angle:180,orb:8,sym:'☍'}];
+var QAM_ORDER=['Moon','Sun','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+var QAM_BODY={Sun:'sun',Moon:'moon',Mercury:'mercury',Venus:'venus',Mars:'mars',
+              Jupiter:'jupiter',Saturn:'saturn',Uranus:'uranus',Neptune:'neptune',Pluto:'pluto'};
+var QAM_SYM={Sun:'☉',Moon:'☽',Mercury:'☿',Venus:'♀',Mars:'♂',
+             Jupiter:'♃',Saturn:'♄',Uranus:'♅',Neptune:'♆',Pluto:'♇'};
+var QAM_RANKW={GOLD:3,SILVER:2,BRONZE:1,JOKER:1};
+
+function qamSep(a,b){ var d=Math.abs(a-b)%360; return d>180?360-d:d; }
+function qamClassify(sep){
+  for(var i=0;i<QAM_ASPECTS.length;i++){
+    var A=QAM_ASPECTS[i], off=Math.abs(sep-A.angle);
+    if(off<=A.orb)return {name:A.name,off:off,sym:A.sym,orb:A.orb};
+  }
+  return null;
+}
+/* the table first; anything it does not name falls back to what the aspect
+   family does on its own, and says so rather than pretending to be listed */
+function qamProfile(p1,p2,aspect){
+  var i1=QAM_ORDER.indexOf(p1), i2=QAM_ORDER.indexOf(p2);
+  var a=i1<=i2?p1:p2, b=i1<=i2?p2:p1;
+  /* BOTH ORDERS, BECAUSE THE TABLE IS NOT CONSISTENT WITH ITSELF. It keys
+     the five Sun/Moon rows as 'Sun-Moon-…' while the lookup that shipped
+     with it sorts Moon first and asks for 'Moon-Sun-…', so those five were
+     dead in the original console too — every Sun/Moon aspect fell through to
+     the generic fallback. Asking both ways costs one lookup. */
+  var P=QAM_PROFILES[a+'-'+b+'-'+aspect]||QAM_PROFILES[b+'-'+a+'-'+aspect];
+  if(P)return {a:a,b:b,rank:P.rank,bias:P.bias,reason:P.reason,named:true};
+  var soft=(aspect==='Trine'||aspect==='Sextile'), hard=(aspect==='Square'||aspect==='Opposition');
+  return {a:a,b:b,rank:hard||soft?'SILVER':'BRONZE',
+          bias:soft?'bullish':hard?'bearish':'neutral',
+          reason:soft?'supportive background influence'
+                :hard?'underlying tension, mild pressure'
+                :'subtle, low-conviction background shift',
+          named:false};
+}
+function qamLons(date){
+  var e=null; try{ e=getEphemeris(date); }catch(err){ return null; }
+  if(!e)return null;
+  var out={};
+  for(var k in QAM_BODY){ var b=e[QAM_BODY[k]]; if(b&&isFinite(b.lon))out[k]=b.lon; }
+  return out;
+}
+
+/* ── WHERE THE MOON IS, AND WHAT THAT DEGREE MEANS ──────────────────── */
+function qamMoon(date){
+  date=date||new Date();
+  var e=null; try{ e=getEphemeris(date); }catch(err){}
+  if(!e||!e.moon)return null;
+  var S=signOf(e.moon.lon);
+  var Z=null;
+  for(var i=0;i<QAM_ZONES.length;i++){ if(S.deg<QAM_ZONES[i].max){ Z=QAM_ZONES[i]; break; } }
+  if(!Z)Z=QAM_ZONES[QAM_ZONES.length-1];
+  /* speed from the engine's own rate, not a second Moon series */
+  var rate=null; try{ rate=lonRate('moon',date); }catch(err){}
+  var speedClass = rate==null?null : rate>13.5?'fast' : rate<12.5?'slow' : 'average';
+  /* sidereal, for the mansion — the ayanamsa is the same linear fit QAMAR used */
+  var yr=date.getUTCFullYear()+date.getUTCMonth()/12;
+  var ayan=23.856+(yr-2000)*0.013972;
+  var sid=rev(e.moon.lon-ayan);
+  var nakIdx=Math.floor(sid/(360/27));
+  var pada=Math.floor((sid%(360/27))/((360/27)/4))+1;
+  var N=QAM_NAK[nakIdx]||null;
+  var elong=rev(e.moon.lon-e.sun.lon);
+  return {lon:e.moon.lon, sign:S.sign, signIdx:S.idx, deg:S.deg, zone:Z,
+          rate:rate, speed:speedClass, sid:sid, nakIdx:nakIdx, pada:pada,
+          nak:N?{name:N[0],lord:N[1],say:N[2]}:null,
+          elong:elong, illum:(1-Math.cos(elong*Math.PI/180))/2};
+}
+
+/* ── EXACT ASPECT TIMES, BY BISECTION ───────────────────────────────────
+   Sampled every 45 minutes and bisected fourteen times where a pair crosses
+   its angle, which lands the moment to under a minute. The pairs are every
+   combination of the ten bodies, so this finds the slow ones as well as the
+   Moon's. */
+function qamEvents(startDate,days,cap){
+  var out=[], step=45*60*1000;
+  var start=+startDate, end=start+days*86400000;
+  var pairs=[],i,j;
+  for(i=0;i<QAM_ORDER.length;i++)for(j=i+1;j<QAM_ORDER.length;j++)pairs.push([QAM_ORDER[i],QAM_ORDER[j]]);
+  var t=start, prev=qamLons(new Date(t));
+  if(!prev)return out;
+  var guard=0;
+  while(t<end&&guard++<4000){
+    var tn=Math.min(t+step,end), next=qamLons(new Date(tn));
+    if(!next)break;
+    for(var p=0;p<pairs.length;p++){
+      var A=pairs[p][0], B=pairs[p][1];
+      var d0=qamSep(prev[A],prev[B]), d1=qamSep(next[A],next[B]);
+      for(var k=0;k<QAM_ASPECTS.length;k++){
+        var ang=QAM_ASPECTS[k].angle, f0=d0-ang, f1=d1-ang;
+        if(!((f0>0&&f1<=0)||(f0<0&&f1>=0)))continue;
+        var lo=t, hi=tn;
+        for(var it=0;it<14;it++){
+          var mid=(lo+hi)/2, ml=qamLons(new Date(mid));
+          if(!ml)break;
+          var fm=qamSep(ml[A],ml[B])-ang;
+          if((fm>0)===(f0>0))lo=mid; else hi=mid;
+        }
+        var at=new Date((lo+hi)/2);
+        if(+at>=start&&+at<end)
+          out.push({at:at,p1:A,p2:B,aspect:QAM_ASPECTS[k].name,sym:QAM_ASPECTS[k].sym,
+                    profile:qamProfile(A,B,QAM_ASPECTS[k].name)});
+      }
+    }
+    t=tn; prev=next;
+  }
+  out.sort(function(x,y){return x.at-y.at;});
+  return cap?out.slice(0,cap):out;
+}
+
+/* ── WHAT COUNTS AS HEAVY ────────────────────────────────────────────────
+   Not "a square happened". Heavy means the table named it AND ranked it
+   GOLD, or it is a hard aspect between two slow bodies, which is the one
+   kind that does not come round again next month. Everything else is
+   weather. The weight is what the windows and the alert both read. */
+var QAM_SLOW={Jupiter:1,Saturn:1,Uranus:1,Neptune:1,Pluto:1};
+function qamWeight(ev){
+  if(!ev||!ev.profile)return 0;
+  var w=QAM_RANKW[ev.profile.rank]||1;
+  var hard=(ev.aspect==='Square'||ev.aspect==='Opposition');
+  var slowPair=(QAM_SLOW[ev.p1]&&QAM_SLOW[ev.p2]);
+  if(slowPair)w+=hard?3:2;
+  if(ev.profile.named)w+=1;
+  if(hard)w+=1;
+  return w;
+}
+/* HEAVY IS STATED, NOT SUMMED. A threshold on the weight put the bar above
+   everything the table actually ranks GOLD — measured over three days
+   nothing ever qualified — so it says what it means instead: the table named
+   it and called it GOLD, or it is a square or opposition between two slow
+   bodies, which is the kind that does not come round again next month. */
+function qamIsHeavy(ev){
+  if(!ev||!ev.profile)return false;
+  if(ev.profile.named&&ev.profile.rank==='GOLD')return true;
+  var hard=(ev.aspect==='Square'||ev.aspect==='Opposition');
+  return !!(hard&&QAM_SLOW[ev.p1]&&QAM_SLOW[ev.p2]);
+}
+function qamDayEvents(date){
+  var d=new Date(date||new Date()); d.setHours(0,0,0,0);
+  return qamEvents(d,1);
+}
+/* cached: the bisection is ~1,900 ephemeris calls a day of range */
+var _qamCache={};
+function qamAhead(days){
+  days=days||3;
+  var k=new Date().toISOString().slice(0,13)+'|'+days;
+  if(_qamCache[k])return _qamCache[k];
+  var d=new Date(); d.setHours(0,0,0,0);
+  var ev=[];
+  try{ ev=qamEvents(d,days); }catch(e){ ev=[]; }
+  ev.forEach(function(x){ x.weight=qamWeight(x); x.heavy=qamIsHeavy(x); });
+  _qamCache[k]=ev;
+  return ev;
+}
+
+
+/* ── THE LUNAR LAYER ON THE TIMING TAB ────────────────────────────────
+   Celestial's own type, spacing and palette — nothing of the source
+   console's styling came over, only what it knows. */
+function qamBiasCls(b){ return b==='bullish'?'up':b==='bearish'?'dn':'nn'; }
+function qamWhen(at){
+  var now=new Date(), d=new Date(at);
+  var sameDay=d.toDateString()===now.toDateString();
+  var t=d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false});
+  if(sameDay)return 'today '+t;
+  var tm=new Date(now.getTime()+86400000);
+  if(d.toDateString()===tm.toDateString())return 'tomorrow '+t;
+  return d.toLocaleDateString('en',{day:'numeric',month:'short'})+' '+t;
+}
+function qamIn(at){
+  var m=(new Date(at)-new Date())/60000;
+  if(m<0)return Math.abs(m)<90?Math.round(-m)+' min ago':null;
+  if(m<90)return 'in '+Math.round(m)+' min';
+  if(m<48*60)return 'in '+Math.round(m/60)+' h';
+  return 'in '+Math.round(m/1440)+' days';
+}
+
+function qamHtml(){
+  var M=null; try{ M=qamMoon(new Date()); }catch(e){}
+  if(!M)return '<div class="lm-na">The lunar layer could not read the sky.</div>';
+  var ev=[]; try{ ev=qamAhead(5); }catch(e){}
+  var ahead=ev.filter(function(x){ return +x.at>=Date.now()-90*60000; });
+  var heavy=ahead.filter(function(x){ return x.heavy; });
+  var todayHeavy=heavy.filter(function(x){
+    return new Date(x.at).toDateString()===new Date().toDateString(); });
+
+  var zoneTone = /Trap|Dump/.test(M.zone.label) ? 'hot'
+               : /Fresh|Follow/.test(M.zone.label) ? 'good' : '';
+
+  var h='<div class="qam">';
+
+  /* the state of the Moon right now */
+  h+='<div class="qam-head">'
+    +'<div class="qam-t"><b>Lunar layer</b>'
+      +'<span>where the Moon is, what that degree does, and every exact aspect ahead</span></div>'
+    +'<div class="qam-moon"><i>'+escHtml(M.sign)+'</i>'
+      +'<b>'+M.deg.toFixed(2)+'&deg;</b></div>'
+  +'</div>';
+
+  h+='<div class="qam-state">'
+    +'<div class="qam-s '+zoneTone+'"><i>Degree zone</i><b>'+escHtml(M.zone.label)+'</b>'
+      +'<s>'+escHtml(M.zone.desc)+'</s></div>'
+    +'<div class="qam-s"><i>Speed</i><b>'+escHtml(M.speed||'—')+'</b>'
+      +'<s>'+(M.rate!=null?M.rate.toFixed(2)+'&deg; a day — '
+        +(M.speed==='fast'?'moves through a sign quickly, shorter windows'
+         :M.speed==='slow'?'lingers, windows stretch out'
+         :'about its average')
+        :'rate unavailable')+'</s></div>'
+    +'<div class="qam-s"><i>Lit</i><b>'+Math.round(M.illum*100)+'%</b>'
+      +'<s>'+(M.elong<180?'waxing':'waning')+' &middot; '
+      +Math.round(M.elong)+'&deg; from the Sun</s></div>'
+    +'<div class="qam-s"><i>Mansion</i><b>'+escHtml(M.nak?M.nak.name:'—')+'</b>'
+      +'<s>'+(M.nak?'pada '+M.pada+' &middot; ruled by '+escHtml(M.nak.lord)
+        +' &middot; '+escHtml(M.nak.say):'sidereal position unavailable')+'</s></div>'
+  +'</div>';
+
+  /* the one that gets an alert */
+  if(todayHeavy.length){
+    h+='<div class="qam-alert">'
+      +'<span class="qam-ab">HEAVY TODAY</span>'
+      +'<span class="qam-at">'
+        +todayHeavy.map(function(x){
+           return '<b>'+escHtml(x.p1)+' '+x.sym+' '+escHtml(x.p2)+'</b> at '
+             +new Date(x.at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false})
+             +' — '+escHtml(x.profile.reason);
+         }).join('<br>')
+      +'</span></div>';
+  }
+
+  /* every exact aspect ahead */
+  h+='<div class="qam-lh">Exact aspects &mdash; next five days'
+    +'<s>'+ahead.length+' in the window, '+heavy.length+' heavy</s></div>';
+  if(!ahead.length){
+    h+='<div class="qam-none">Nothing perfects in the next five days.</div>';
+  }else{
+    h+='<div class="qam-list">'+ahead.slice(0,14).map(function(x){
+      var P=x.profile, ins=qamIn(x.at);
+      return '<div class="qam-r'+(x.heavy?' heavy':'')+' b-'+qamBiasCls(P.bias)+'">'
+        +'<div class="qam-g">'+escHtml(QAM_SYM[x.p1]||'')+'<u>'+x.sym+'</u>'
+          +escHtml(QAM_SYM[x.p2]||'')+'</div>'
+        +'<div class="qam-n"><b>'+escHtml(x.p1)+' '+escHtml(x.aspect.toLowerCase())
+          +' '+escHtml(x.p2)+'</b><s>'+escHtml(P.reason)
+          +(P.named?'':' — not in the table, read from the aspect family')+'</s></div>'
+        +'<div class="qam-k">'
+          +'<em class="rk-'+P.rank.toLowerCase()+'">'+P.rank+'</em>'
+          +'<em class="bi-'+qamBiasCls(P.bias)+'">'+P.bias+'</em>'
+        +'</div>'
+        +'<div class="qam-w"><b>'+escHtml(qamWhen(x.at))+'</b>'
+          +'<s>'+escHtml(ins||'')+'</s></div>'
+      +'</div>';
+    }).join('')+'</div>';
+  }
+
+  h+='<div class="qam-note">Ranks and readings come from a table of '
+    +Object.keys(QAM_PROFILES).length+' named pairs. A row marked <b>heavy</b> is either '
+    +'ranked GOLD in that table or a square or opposition between two slow bodies — those are '
+    +'the two that get an alert on the day and that the trading windows are marked against. '
+    +'Positions are this app’s own ephemeris, not a second one.</div>';
+  return h+'</div>';
+}
+
 /* ══ THE CARD ═══════════════════════════════════════════════════════════
    WRITTEN TWICE, BECAUSE THE FIRST ONE WAS UNREADABLE.
 
@@ -22248,12 +22717,34 @@ function timTodayWindows(st){
     var mins=b.end-b.start;
     var kind=timTradeKind(mins,days,b.best);
     var inMin=(st.cur!=null)?(b.start-st.srMin)-st.cur:null;
+    /* ── WHAT PERFECTS WHILE THIS WINDOW IS OPEN ──────────────────────
+       A planetary hour says when to look; an exact aspect says what the sky
+       is doing at that minute. A window with a GOLD-ranked aspect landing
+       inside it is not the same window as one with nothing in it, and until
+       now the panel had no way to tell them apart. The aspects are already
+       computed for the lunar layer, so this is a lookup rather than a second
+       pass over the ephemeris. */
+    var asp=[], hv=false;
+    try{
+      var day0=new Date(timDate()); day0.setHours(0,0,0,0);
+      var w0=+day0+b.start*60000, w1=+day0+b.end*60000;
+      qamAhead(2).forEach(function(x){
+        var t=+x.at;
+        if(t>=w0&&t<=w1){ asp.push(x); if(x.heavy)hv=true; }
+      });
+      asp.sort(function(x,y){ return (y.weight||0)-(x.weight||0); });
+    }catch(e){}
     return{start:b.start,end:b.end,mins:mins,best:b.best,kind:kind.k,
       pos:!!(b.hours[0]&&b.hours[0].isPos),
       night:!!(b.hours[0]&&b.hours[0].night),
       names:b.hours.map(function(x){return x.name;}),
       inMin:inMin, live:(inMin!=null&&inMin<=0&&inMin>-mins),
       gone:(inMin!=null&&inMin<=-mins),
+      aspects:asp, heavy:hv,
+      aspectSay:asp.length
+        ? asp[0].p1+' '+asp[0].sym+' '+asp[0].p2+' perfects inside this window — '
+          +asp[0].profile.reason+(asp.length>1?' (and '+(asp.length-1)+' more)':'')
+        : null,
       hold:timHoldUntil(b.start,mins,days,kind.k)};
   });
 }
@@ -22909,6 +23400,9 @@ function renderTiming(){
       not which way, only whether a turn is due. It sits here because the
       alert that fires off it points people at this tab. */
    +tmgHtml()
+   /* the lunar layer sits under the timing score: the score says whether a
+      turn is due, this says what the Moon is doing while it is */
+   +qamHtml()
    +'<div class="tk-hero '+v.level+'">'
     +'<div class="tk-col">'
       +'<div class="tk-dial">'+ring
@@ -22932,12 +23426,22 @@ function renderTiming(){
       +'<div class="tk-next-h">Next windows</div>'
       +'<div class="tk-next">'+(ahead.length?ahead.map(function(x){
           var inMin=st.cur!=null?(x.start-st.srMin)-st.cur:null;
-          return '<div class="tk-nrow '+(x.rank===2?'strong':'soft')+'">'
+          /* a window with a heavy aspect inside it is marked, because that
+             is the difference between an hour to look at and an hour to be
+             at the screen for */
+          var wq=null;
+          try{ wq=(timTodayWindows(st)||[]).filter(function(w){
+                 return w.start===x.start||(x.start>=w.start&&x.start<w.end); })[0]; }catch(e){}
+          return '<div class="tk-nrow '+(x.rank===2?'strong':'soft')
+            +(wq&&wq.heavy?' qhot':'')+'">'
             +'<span class="s">'+x.sym+'</span>'
             +'<span class="n">'+escHtml(x.name)+'<i>H'+x.h+' · '+fmtT(x.start)
               +(x.night?' · night':'')+(x.kind?' · trade it as '+timKindArticle(x.kind)+escHtml(x.kind.toLowerCase()):'')+'</i></span>'
             +'<span class="t">'+(inMin!=null?'in '+fmtIn(inMin):'')+'</span>'
-            +'<span class="b">'+(x.rank===2?'STRONG':'SUPPORT')+'</span></div>';
+            +'<span class="b">'+(x.rank===2?'STRONG':'SUPPORT')+'</span>'
+            +(wq&&wq.aspectSay?'<span class="tk-asp'+(wq.heavy?' hv':'')+'">'
+                +escHtml(wq.aspectSay)+'</span>':'')
+            +'</div>';
         }).join(''):'<div class="tk-none">No further windows in this 24-hour cycle — the next one opens after tomorrow&rsquo;s sunrise</div>')+'</div>'
     +'</div>'
    +'</div>'
@@ -23623,7 +24127,34 @@ function bigAlertCheck(){
         +' calculations from each side agree here');
   }catch(e){}
 
-  /* 5 · A REVERSAL WINDOW, AS A PERCENTAGE, EVERY DAY IT CLEARS FIFTY.
+  /* 5 · A HEAVY ASPECT PERFECTING TODAY.
+     Asked for directly: if an aspect is heavy, alert on the day. Heavy is
+     the stated test — the table ranks it GOLD, or it is a square or
+     opposition between two slow bodies. Fired once per aspect, at the top of
+     the day it lands on and again an hour out, because an aspect exact at
+     three in the morning is not something to be told about at 02:59. */
+  try{
+    qamAhead(2).forEach(function(x){
+      if(!x.heavy)return;
+      var t=+x.at, mins=(t-Date.now())/60000;
+      if(mins<-30||mins>26*60)return;
+      var stage = mins<=60 ? 'now' : 'ahead';
+      if(!bigAlertKey('qam:'+stage+':'+t))return;
+      var D=new Date(t);
+      var when=D.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false});
+      /* "today at 00:44" for something that perfects tomorrow morning is the
+         kind of small lie that costs a night's sleep */
+      var day = D.toDateString()===new Date().toDateString() ? 'today'
+              : D.toDateString()===new Date(Date.now()+86400000).toDateString() ? 'tomorrow'
+              : D.toLocaleDateString('en',{day:'numeric',month:'short'});
+      alertSend(x.p1+' '+x.sym+' '+x.p2+' \u2014 heavy aspect '
+          +(stage==='now'?'in '+Math.max(0,Math.round(mins))+' min':day+' at '+when),
+        x.profile.rank+' \u00b7 '+x.profile.bias+' \u00b7 '+x.profile.reason
+          +' \u00b7 exact '+day+' '+when);
+    });
+  }catch(e){}
+
+  /* 6 · A REVERSAL WINDOW, AS A PERCENTAGE, EVERY DAY IT CLEARS FIFTY.
      The other four triggers are events — a release, an hour, a count, a
      level. This one is a reading, and it is checked daily rather than waited
      for, because the five layers can build toward a turn over a week without
@@ -24892,9 +25423,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b95';
+var CA_BUILD='b96';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Dashboard format is back to the fixed layout. BUY/SELL sits in the card header, rows respond to the pointer, and clicking a price copies it.';
+var CA_WHATS_NEW='The lunar layer is on the Timing tab \u2014 the Moon\u2019s degree zone, its mansion, and every exact aspect ahead with a rank and a reading. Heavy ones alert on the day and mark the trading windows they fall inside.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
