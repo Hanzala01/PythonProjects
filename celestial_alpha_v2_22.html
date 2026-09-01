@@ -3386,6 +3386,33 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .qam-moon b{display:block;font-family:'Space Grotesk';font-size:22px;font-weight:800;color:var(--t1);
   font-variant-numeric:tabular-nums;line-height:1.1}
 
+/* the day card: weekday, lean, the kind of day, and its ruler */
+.qdc{margin-bottom:14px;padding:18px 20px;border-radius:15px;border:1px solid var(--b1);
+  background:linear-gradient(155deg,rgba(83,51,153,.2),rgba(11,6,40,.9));position:relative;
+  overflow:hidden}
+.qdc:before{content:'';position:absolute;inset:0 auto 0 0;width:3px;background:var(--p3)}
+.qdc.dn:before{background:var(--dn)} .qdc.up:before{background:var(--up)}
+.qdc.nn:before{background:var(--warn)}
+.qdc-k{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--p3)}
+.qdc-p{display:inline-block;margin:11px 0 12px;padding:5px 14px;border-radius:99px;
+  font-size:11px;font-weight:800;letter-spacing:.11em;
+  border:1px solid var(--b1);color:var(--t2)}
+.qdc-p b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1)}
+.qdc.dn .qdc-p{color:var(--dn);border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.09)}
+.qdc.dn .qdc-p b{color:var(--dn)}
+.qdc.up .qdc-p{color:var(--up);border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.09)}
+.qdc.up .qdc-p b{color:var(--up)}
+.qdc.nn .qdc-p{color:var(--warn);border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.09)}
+.qdc.nn .qdc-p b{color:var(--warn)}
+.qdc-n{font-family:'Space Grotesk';font-size:27px;font-weight:800;letter-spacing:-.01em;
+  color:var(--t1);line-height:1.15}
+@media (max-width:640px){.qdc-n{font-size:21px}}
+.qdc-s{font-size:12.5px;color:var(--t2);line-height:1.7;margin-top:9px;max-width:78ch}
+.qdc-f{margin-top:14px;padding-top:11px;border-top:1px solid var(--b1)}
+.qdc-r{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11px;letter-spacing:.1em;color:#E8B24D}
+.qdc-m{display:block;font-size:9px;color:var(--t3);line-height:1.6;margin-top:7px;max-width:82ch}
+
 /* the full-circle card: the ring lives on the dial, this holds its readings */
 .qgr{margin-top:14px;padding:13px 15px;border:1px solid rgba(168,85,247,.34);border-radius:13px;
   background:linear-gradient(150deg,rgba(83,51,153,.2),rgba(11,6,40,.72))}
@@ -22453,6 +22480,101 @@ function qamClock(d){
   return d.toLocaleDateString('en',{day:'numeric',month:'short'})+' '+t;
 }
 
+/* ══ THE DAY, IN ONE CARD ════════════════════════════════════════════════
+   The shape asked for: the weekday, a number with a direction on it, the
+   name of the kind of day it is, one sentence about how to trade it, and the
+   planet that rules the day.
+
+   THE NUMBER IS NOT CALLED A PROBABILITY. It is calcAstroBias's lean score
+   for the day, which is a weight of evidence between 0 and 100, and the
+   forward testing in this app has never shown it resolving at its own face
+   value. Calling 72 a 72% chance of a fall would be inventing a claim the
+   engine cannot support. It is labelled LEAN, and the line underneath gives
+   the figure that IS measured — what this asset's own year actually did on
+   days reading the same way. */
+var QAM_DAYWIN={
+  Sunday:   {ruler:'Sun',     name:'Direction / Trend Window',
+             say:'Trend days. What starts in the first session tends to hold into the close.'},
+  Monday:   {ruler:'Moon',    name:'Emotional / Reactive Window',
+             say:'Reactive and mood-led. Gaps get filled, conviction is thin, size down.'},
+  Tuesday:  {ruler:'Mars',    name:'Aggressive / Liquidation Window',
+             say:'Fast rallies or sudden sharp sell-offs. A day for decisive, aggressive moves rather than drift.'},
+  Wednesday:{ruler:'Mercury', name:'News / Whipsaw Window',
+             say:'Headline-driven. Two-way moves and false breaks — wait for the second test.'},
+  Thursday: {ruler:'Jupiter', name:'Expansion / Breakout Window',
+             say:'Ranges tend to widen. Breakouts carry further than they should, and overshoot.'},
+  Friday:   {ruler:'Venus',   name:'Value / Range Window',
+             say:'Mean-reverting and position-squaring. Fade the edges rather than chase the middle.'},
+  Saturday: {ruler:'Saturn',  name:'Compression / Grind Window',
+             say:'Slow, heavy and range-bound. Little follow-through — the smallest size of the week.'}
+};
+function qamDayCard(){
+  var now=new Date();
+  var dayName=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+  var W=QAM_DAYWIN[dayName];
+  var asset='Gold'; try{ asset=timAsset(); }catch(e){}
+
+  /* the lean, from the engine that already produces it for this tab */
+  var A=null;
+  try{
+    var noon=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,0,0);
+    A=calcAstroBias(asset,getEphemeris(noon),now);
+  }catch(e){}
+  if(!A)return '';
+  var fall=(A.dir==='bear'), rise=(A.dir==='bull');
+  var pct=fall?(100-A.bull):A.bull;
+  var word=fall?'FALL':rise?'RISE':'NO SIDE';
+  var tone=fall?'dn':rise?'up':'nn';
+
+  /* what the same reading has actually been worth on this asset's own year */
+  var split=null;
+  try{
+    var C=astroCalib(asset);
+    if(C&&typeof _leanCache!=='undefined'&&_leanCache){
+      var lk=asset+'|'+new Date().toISOString().slice(0,10), LC=_leanCache[lk];
+      if(LC&&LC.v){
+        var nb=0,nr=0;
+        LC.v.forEach(function(x){ if(x>=C.hi)nb++; else if(x<=C.lo)nr++; });
+        split={bull:Math.round(nb/LC.v.length*100),bear:Math.round(nr/LC.v.length*100)};
+        split.flat=100-split.bull-split.bear;
+      }
+    }
+  }catch(e){}
+
+  /* the Moon's degree zone sharpens the day's character */
+  var M=null; try{ M=qamMoon(now); }catch(e){}
+  var sharpen='';
+  if(M){
+    if(/Trap|Dump/.test(M.zone.label))
+      sharpen='The Moon is in its '+M.zone.label.toLowerCase()+' degrees, which sharpens that further — '
+        +'expect the wicks.';
+    else if(/Fresh|Follow/.test(M.zone.label))
+      sharpen='The Moon is in its '+M.zone.label.toLowerCase()+' degrees, so a move that starts '
+        +'has something behind it.';
+    else if(/Balance|Correction/.test(M.zone.label))
+      sharpen='The Moon is in its '+M.zone.label.toLowerCase()+' degrees, which takes some of the '
+        +'edge off — less follow-through than the day usually gives.';
+    else sharpen='The Moon is in its '+M.zone.label.toLowerCase()+' degrees — energy building rather '
+        +'than releasing.';
+  }
+
+  return '<div class="qdc '+tone+'">'
+    +'<div class="qdc-k">Intraday bias &mdash; '+dayName.toUpperCase()+'</div>'
+    +'<div class="qdc-p"><b>'+pct+'%</b> LEAN &mdash; '+word+'</div>'
+    +'<div class="qdc-n">'+escHtml(W.name)+'</div>'
+    +'<div class="qdc-s">'+escHtml(W.say)+(sharpen?' '+escHtml(sharpen):'')+'</div>'
+    +'<div class="qdc-f"><span class="qdc-r">'+escHtml(W.ruler)+' Day</span>'
+      +'<span class="qdc-m">'
+      +(split
+        ? 'Over its own year '+escHtml(asset)+' read this way on '
+          +(fall?split.bear:rise?split.bull:split.flat)+'% of days. The '+pct
+          +' is a lean score, not a probability \u2014 nothing here has been tested to resolve at '
+          +'its own face value.'
+        : 'The '+pct+' is a lean score, not a probability.')
+      +'</span></div>'
+  +'</div>';
+}
+
 /* ── THE 360-DEGREE CYCLE, WHICH THE TWELVE SIGNS HOLD BETWEEN THEM ─────
    One sign is thirty degrees; the next sign does not restart the count, it
    adds to it. Twelve of them hold three hundred and sixty, and that whole
@@ -22671,6 +22793,9 @@ function qamHtml(){
                : /Fresh|Follow/.test(M.zone.label) ? 'good' : '';
 
   var h='<div class="qam">';
+
+  /* the day, in one card, before anything else on the panel */
+  try{ h+=qamDayCard(); }catch(e){}
 
   /* the state of the Moon right now */
   h+='<div class="qam-head">'
@@ -25935,9 +26060,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b101';
+var CA_BUILD='b102';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The 360 is on the dial now \u2014 degree numbers round the rim, a ring swept from 0\u00b0 Aries to the Moon, and the running total in the middle.';
+var CA_WHATS_NEW='The day in one card at the top of the Timing tab \u2014 the weekday, the lean, what kind of day it is and how to trade it.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
