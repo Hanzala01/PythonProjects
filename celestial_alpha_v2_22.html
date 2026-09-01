@@ -22134,9 +22134,46 @@ function qamMoon(date){
   var pada=Math.floor((sid%(360/27))/((360/27)/4))+1;
   var N=QAM_NAK[nakIdx]||null;
   var elong=rev(e.moon.lon-e.sun.lon);
+
+  /* ── DISTANCE, DECLINATION AND WHAT THEY ADD UP TO ────────────────────
+     Three readings the panel was missing. The distance comes straight out of
+     the same orbital element the ephemeris already solves — Schlyter's Moon
+     has a = 60.2666 Earth radii, so r is in Earth radii with no conversion.
+     The latitude needs the z of that same heliocentric solve, which is why
+     ELEM and helio are called here rather than a second Moon series being
+     written. Declination follows from latitude, longitude and the obliquity
+     of the day. */
+  var dist=(e.moon.r>0)?e.moon.r:null, lat=null, dec=null, ecl=null, oob=null;
+  try{
+    var dd=dFromDate(date);
+    ecl=23.4393-3.563e-7*dd;
+    var mh=helio(ELEM.moon(dd));
+    if(mh&&mh.r>0){
+      lat=Math.asin(mh.zh/mh.r)*180/Math.PI;
+      var L=e.moon.lon*Math.PI/180, B=lat*Math.PI/180, E2=ecl*Math.PI/180;
+      dec=Math.asin(Math.sin(B)*Math.cos(E2)+Math.cos(B)*Math.sin(E2)*Math.sin(L))*180/Math.PI;
+      oob=Math.abs(dec)>ecl;
+    }
+  }catch(err){}
+  var distClass = dist==null?null : dist<58.5?'near' : dist>62.5?'far' : 'average';
+
+  /* the volatility score, as the source console scored it: the degree zone
+     does most of the work, speed nudges it, and out of bounds is worth as
+     much as a hostile zone because the Moon is then further from the
+     ecliptic than the Sun ever gets */
+  var vol=0;
+  if(Z.label==='Stress / Trap'||Z.label==='Exit / Dump')vol+=2;
+  if(Z.label==='Preparation')vol+=1;
+  if(speedClass==='fast')vol+=1;
+  if(speedClass==='slow')vol-=1;
+  if(oob)vol+=2;
+  var volLabel = vol>=3?'High' : vol>=1?'Medium' : 'Low';
+
   return {lon:e.moon.lon, sign:S.sign, signIdx:S.idx, deg:S.deg, zone:Z,
           rate:rate, speed:speedClass, sid:sid, nakIdx:nakIdx, pada:pada,
           nak:N?{name:N[0],lord:N[1],say:N[2]}:null,
+          dist:dist, distClass:distClass, lat:lat, dec:dec, ecl:ecl, oob:oob,
+          vol:vol, volLabel:volLabel,
           elong:elong, illum:(1-Math.cos(elong*Math.PI/180))/2};
 }
 
@@ -22230,6 +22267,16 @@ function qamAhead(days){
 /* ── THE LUNAR LAYER ON THE TIMING TAB ────────────────────────────────
    Celestial's own type, spacing and palette — nothing of the source
    console's styling came over, only what it knows. */
+/* the score said out loud, so a 3 is not just a 3 */
+function qamVolWhy(M){
+  var p=[];
+  if(M.zone.label==='Stress / Trap'||M.zone.label==='Exit / Dump')p.push('+2 '+M.zone.label.toLowerCase()+' degree zone');
+  if(M.zone.label==='Preparation')p.push('+1 preparation zone');
+  if(M.speed==='fast')p.push('+1 fast Moon');
+  if(M.speed==='slow')p.push('\u22121 slow Moon');
+  if(M.oob)p.push('+2 out of bounds');
+  return p.length?p.join(', '):'nothing adding to it — quiet on all three counts';
+}
 function qamBiasCls(b){ return b==='bullish'?'up':b==='bearish'?'dn':'nn'; }
 function qamWhen(at){
   var now=new Date(), d=new Date(at);
@@ -22285,6 +22332,22 @@ function qamHtml(){
     +'<div class="qam-s"><i>Mansion</i><b>'+escHtml(M.nak?M.nak.name:'—')+'</b>'
       +'<s>'+(M.nak?'pada '+M.pada+' &middot; ruled by '+escHtml(M.nak.lord)
         +' &middot; '+escHtml(M.nak.say):'sidereal position unavailable')+'</s></div>'
+    +'<div class="qam-s '+(M.distClass==='near'?'hot':'')+'"><i>Distance</i>'
+      +'<b>'+(M.dist!=null?M.dist.toFixed(1)+' R\u2295':'—')+'</b>'
+      +'<s>'+(M.dist==null?'distance unavailable'
+        :M.distClass==='near'?'near \u2014 closer than usual, moves tend to be bigger'
+        :M.distClass==='far'?'far \u2014 further than usual, moves tend to be smaller'
+        :'about average \u2014 nothing unusual either way')
+        +' (mean 60.3, range 57\u201364)</s></div>'
+    +'<div class="qam-s '+(M.oob?'hot':'')+'"><i>Out of bounds</i>'
+      +'<b>'+(M.oob==null?'—':M.oob?'ACTIVE':'Inactive')+'</b>'
+      +'<s>'+(M.dec==null?'declination unavailable'
+        :'declination '+M.dec.toFixed(2)+'\u00b0 against \u00b1'+M.ecl.toFixed(2)+'\u00b0'
+         +(M.oob?' \u2014 past the Sun\u2019s own limit, behaviour goes to extremes'
+                :' \u2014 inside normal bounds'))+'</s></div>'
+    +'<div class="qam-s '+(M.volLabel==='High'?'hot':M.volLabel==='Low'?'good':'')+'">'
+      +'<i>Volatility score</i><b>'+M.vol+' &middot; '+M.volLabel+'</b>'
+      +'<s>'+escHtml(qamVolWhy(M))+'</s></div>'
   +'</div>';
 
   /* the one that gets an alert */
@@ -23218,21 +23281,16 @@ function timExtras(){
            zone:dz(si.sign),deg:si.deg,retro:(b!=='sun'&&b!=='moon'&&rate<0),role:role};
   });
 
+  /* THE "ASPECTS TODAY" BOX IS GONE.
+     Asked for its removal, and it had earned it: four rows printing one
+     identical sentence — "the two bodies sit in zones that cancel, so this
+     angle gives no direction for Gold" — all tagged NEUTRAL. The lunar layer
+     above covers the same sky with exact times, a rank and a reading that
+     differs per pair, so this was the weaker of two answers to one question.
+     row(), rel, bg and verdict are still computed because the planet table
+     below reads from the same pass. */
+  void row; void rel; void bg; void verdict;
   return ''
-   +'<div class="ax-box">'
-     +'<div class="ax-head"><b>Aspects '+escHtml(dlabel)+' — '+escHtml(asset)+'</b>'
-       +'<span style="color:'+verdict.c+'">'+escHtml(verdict.t)+'</span></div>'
-     +(rel.length?rel.map(function(o){return row(o,false);}).join('')
-                 :'<div class="ab-none">No tight aspect is touching '+escHtml(asset)+'’s planets right now — the sky is quiet for it.</div>')
-     +(bg.length?'<details class="ax-more"><summary>Background angles ('+bg.length+') — not '+escHtml(asset)+'’s planets</summary>'
-         +bg.map(function(o){return row(o,true);}).join('')+'</details>':'')
-     +'<div class="ax-key">'
-       +ASPECTS.map(function(A){
-          var c=A.tone>0?'bull':A.tone<0?'bear':'flat';
-          return '<div class="ax-k '+c+'"><b>'+A.s+' '+A.n+'</b><span>'+escHtml(A.plain)+'</span></div>';
-        }).join('')
-     +'</div>'
-   +'</div>'
    +'<div class="tx-grid">'
      +'<div class="tx-card"><div class="ab-cap">9-day cycle</div>'
        +'<div class="tx-cyc"><div class="tx-dots">'
@@ -25423,9 +25481,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b96';
+var CA_BUILD='b97';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The lunar layer is on the Timing tab \u2014 the Moon\u2019s degree zone, its mansion, and every exact aspect ahead with a rank and a reading. Heavy ones alert on the day and mark the trading windows they fall inside.';
+var CA_WHATS_NEW='Lunar layer gains distance, out-of-bounds declination and a volatility score. The repetitive Aspects-today box is gone.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
