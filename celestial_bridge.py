@@ -47,7 +47,7 @@ from contextlib import contextmanager
 
 from fastapi import Body, Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 
 DB_PATH = os.environ.get("CELESTIAL_DB", os.path.join(os.path.dirname(os.path.abspath(__file__)), "celestial.db"))
 HOST = os.environ.get("CELESTIAL_HOST", "127.0.0.1")
@@ -169,7 +169,9 @@ app = FastAPI(title="celestial_bridge", docs_url=None, redoc_url=None)
 # any site you visit read this data from your own machine.
 ORIGINS = [o.strip() for o in os.environ.get(
     "CELESTIAL_ORIGINS",
-    "http://localhost:8080,http://127.0.0.1:8080,http://localhost:8099,http://127.0.0.1:8099",
+    "http://localhost:8080,http://127.0.0.1:8080,http://localhost:8099,http://127.0.0.1:8099,"
+    f"http://localhost:{os.environ.get('CELESTIAL_PORT', '8770')},"
+    f"http://127.0.0.1:{os.environ.get('CELESTIAL_PORT', '8770')}",
 ).split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
@@ -777,6 +779,52 @@ def fred(series_id: str, start: str = "2020-01-01"):
 
 
 # ══════════════════════════════════════════════════════════════════════════
+# SERVING THE PAGE ITSELF
+#
+# CHROME WILL NOT GIVE THE MICROPHONE TO A file:// PAGE. That is a browser
+# rule, not a setting, and nothing in the page can talk it round — so opening
+# celestial_alpha.html by double-clicking it means the wake word can never
+# work, however many times it is switched on.
+#
+# The fix is that the page has to arrive over http. There was already a
+# server here; it just was not handing over the one file that matters. Now
+# it does, and that solves three things at once rather than one:
+#
+#     the microphone is allowed, so "CELESX" works
+#     the page and the api are the same origin, so CORS stops applying
+#     there is one thing to start instead of two
+#
+# ONLY THIS FILE IS SERVED. Not a directory, not a path the caller chooses —
+# a fixed filename resolved once at import. A static mount over the project
+# folder would also have served celestial.db, which holds password hashes
+# and every trade taken.
+# ══════════════════════════════════════════════════════════════════════════
+APP_HTML = os.environ.get(
+    "CELESTIAL_PAGE",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "celestial_alpha.html"),
+)
+
+
+@app.get("/")
+def root_redirect():
+    return RedirectResponse("/app")
+
+
+@app.get("/app")
+def serve_app():
+    if not os.path.exists(APP_HTML):
+        raise HTTPException(
+            404,
+            f"no page at {APP_HTML} — put celestial_alpha.html beside this file, "
+            "or set CELESTIAL_PAGE to where it is",
+        )
+    # no-store, because the page is edited constantly and a cached copy of
+    # yesterday's build is a confusing thing to debug
+    return FileResponse(APP_HTML, media_type="text/html",
+                        headers={"Cache-Control": "no-store"})
+
+
+# ══════════════════════════════════════════════════════════════════════════
 # CELESX
 #
 # The assistant lives in celesx.py, not here — this file is storage and
@@ -859,5 +907,9 @@ if __name__ == "__main__":
         else:
             print("celesx loaded, scheduler off (CELESX_SCHEDULER=1 to run it)")
     print(f"celestial_bridge → http://{HOST}:{PORT}   db: {DB_PATH}")
+    print(f"OPEN THE APP AT   → http://127.0.0.1:{PORT}/app"
+          + ("" if os.path.exists(APP_HTML) else f"   (missing: {APP_HTML})"))
+    print("  the microphone and the wake word only work on this address, "
+          "never on a file:// one")
     print(f"origins allowed: {', '.join(ORIGINS)}")
     uvicorn.run(app, host=HOST, port=PORT, log_level="warning")

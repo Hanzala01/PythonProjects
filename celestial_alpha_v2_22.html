@@ -12576,7 +12576,7 @@ function jvFirstRun(){
         : 'Voice needs Chrome or Edge — this browser has no speech recognition. Everything else works.','',false);
       return;
     }
-    jvPill('Celestial can answer out loud — say “hey Celestial”. The microphone stays off until you '
+    jvPill('Say “hey Celestial” for the chart, or “CELESX” for the votes. The microphone stays off until you '
       +'switch the wake word on in Settings.','',false);
   },3200);
 }
@@ -12688,8 +12688,11 @@ function renderCelestialSettings(){
 
    +'<div class="cset-s"><i>Celestial, by voice</i>'
      +'<div class="cset-row">'
-       +'<div><b>Wake word</b><s>Say “Celestial” or “hey Celestial” and it starts. Ask in the same '
-         +'breath and it answers that; say the name on its own and it waits for your question.</s></div>'
+       +'<div><b>Wake word</b><s>Two names, two assistants. “Celestial” reads the chart; '
+         +'“CELESX” gives the three votes — price, time and macro — and whether two of them '
+         +'agree. Ask in the same breath and it answers that; say the name on its own and it '
+         +'waits for your question. Typing either name at the front of a chat message does the '
+         +'same thing without the microphone.</s></div>'
        +'<button class="cset-t'+(P.wake?' on':'')+'" '+(canWake?'':'disabled ')
          +'onclick="jvWakeSet('+(P.wake?'false':'true')+')">'+(P.wake?'On':'Off')+'</button>'
      +'</div>'
@@ -27028,9 +27031,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b106';
+var CA_BUILD='b107';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Say \u201cCELESX\u201d and it answers \u2014 the three votes, the range, the window, the ceiling. Typing the name works too.';
+var CA_WHATS_NEW='Run START_CELESTIAL.bat instead of opening the file, and the microphone works \u2014 that is the only way the wake word can run.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
