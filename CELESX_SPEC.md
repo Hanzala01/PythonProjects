@@ -1,8 +1,10 @@
 # CELESX — spec and decisions
 
-Not built yet. This file is the memory: what CELESX is meant to be, what has
-been decided, and what is still open. Nothing here has been added to
-`celestial_alpha.html`.
+This file is the memory: what CELESX is meant to be, and what has been
+decided. The first slice is built — `celesx.py` — and the four questions
+that were open are answered. Nothing has been added to
+`celestial_alpha.html`; CELESX drives that page rather than living inside
+it.
 
 ---
 
@@ -79,13 +81,63 @@ Twilio) charges per conversation and needs business verification; the
 unofficial libraries are free but get the number banned. Telegram and
 Discord are free bot tokens and cost nothing.
 
-## Still open
+## Answered 2026-09-01
 
-- Which assets does the weekend scan cover — all sixteen, or only the ones
-  the user watches?
-- Does "two or three agree" mean any two of {price, time, macro}, or is
-  price required in every selection?
-- Does CELESX speak out loud, or is the voice-assistant manner about how it
-  writes?
-- What does it send when a weekend finds nothing worth trading — silence,
-  or a message saying so?
+| Question | Answer |
+|---|---|
+| Which assets does the weekend scan cover? | **All sixteen.** |
+| Must price be one of the agreeing votes? | **No — any two of the three.** |
+| Does CELESX speak out loud? | **Yes, as well as writing.** |
+| A weekend that finds nothing? | **Say so, briefly.** |
+
+Two of those loosen the filter rather than tighten it. Sixteen assets with
+price not required means a weekend can select a dozen things, which pulls
+against *quality over quantity*. The build honours the answer and handles
+the volume by ranking instead: every qualifying asset is recorded and
+reaches the message, the strongest three lead, the rest sit below a fold.
+`LEAD_COUNT` in `celesx.py` is the one number to change if that reads wrong.
+
+Because price is optional, a selection can be made on time and macro with
+no level behind it. When that happens the brief says so in the line itself —
+*"no price level behind this one"* — rather than letting it pass as a
+complete case.
+
+Speaking aloud only works while the page is open, so it cannot be the
+delivery mechanism; it is an addition to the written brief, not a
+replacement. It also needs the ElevenLabs key for a real voice.
+
+---
+
+## What is built
+
+`celesx.py` — the spine.
+
+- **Delivery.** Telegram and Discord, tokens from the environment only.
+  They are never in the page, never in the database, never in a response.
+- **Schedule.** A minute tick that reads the run log, not the process, to
+  decide whether today's work is done — so a reboot at 06:59 still sends
+  the brief.
+- **Reading.** CELESX does not re-implement a single engine. It opens the
+  real `celestial_alpha.html` in a headless browser, loads each asset
+  through the page's own `SCAN_QUIET` path, and calls the page's own
+  `majorPair`, `tmgEngine`, `qamAhead` and `dayBias`. One implementation,
+  no drift, and an engine fix reaches CELESX the moment the page is saved.
+- **The selector.** Three votes — price, time, macro — counted, never
+  averaged. Averaging would let one strong layer carry a selection alone,
+  which is the thing the rule exists to prevent.
+- **Ceiling.** 12%, as one constant.
+
+Four endpoints on the bridge, all behind the login:
+`/celesx/status`, `/celesx/brief`, `/celesx/run`, `/celesx/test`.
+
+The scheduler does not start itself. `CELESX_SCHEDULER=1` turns it on, so a
+bridge started to test an endpoint does not send anybody a message.
+
+## Not built yet
+
+- Event-day alerts as their own path. Heavy aspects already reach the daily
+  brief; a number or a headline breaking mid-session does not yet.
+- Reading the journal to know whether the 12% is already met. The ceiling
+  is stated in every brief but not yet enforced against real trades.
+- Speaking aloud.
+- The owner-only Reference column.

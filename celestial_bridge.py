@@ -776,10 +776,88 @@ def fred(series_id: str, start: str = "2020-01-01"):
                     "cached": False, "observations": obs})
 
 
+# ══════════════════════════════════════════════════════════════════════════
+# CELESX
+#
+# The assistant lives in celesx.py, not here — this file is storage and
+# proxies, and mixing a scheduler into it would make both harder to reason
+# about. These four endpoints are the seam: the page asks what CELESX
+# knows, and can ask it to run now.
+#
+# Everything is behind the login. A brief names levels and directions, and
+# the bot tokens are the user's own; neither belongs on an open endpoint.
+# No endpoint here ever returns a token — /celesx/status says whether a
+# channel is configured, never what with.
+# ══════════════════════════════════════════════════════════════════════════
+try:
+    import celesx as _cx
+except Exception as _cx_err:  # a missing assistant must not stop the bridge
+    _cx = None
+    _CX_ERR = str(_cx_err)
+
+
+def _need_celesx():
+    if _cx is None:
+        raise HTTPException(503, f"celesx is not loadable: {_CX_ERR}")
+    return _cx
+
+
+@app.get("/celesx/status")
+def celesx_status(uid: int = Depends(user_from_token)):
+    return _need_celesx().status()
+
+
+@app.get("/celesx/brief")
+def celesx_brief(kind: str | None = None, uid: int = Depends(user_from_token)):
+    if kind not in (None, "weekend", "daily"):
+        raise HTTPException(400, "kind must be weekend or daily")
+    b = _need_celesx().latest_brief(kind)
+    if not b:
+        return {"brief": None, "note": "CELESX has not run yet"}
+    return {"brief": b}
+
+
+@app.post("/celesx/run")
+def celesx_run(kind: str = Body(..., embed=True), uid: int = Depends(user_from_token)):
+    """Run a pass now, outside the schedule.
+
+    Synchronous on purpose: a pass drives a real browser over sixteen
+    instruments and takes minutes, and a caller that is told 'started' with
+    no way to find out how it went is worse than a caller that waits."""
+    if kind not in ("weekend", "daily"):
+        raise HTTPException(400, "kind must be weekend or daily")
+    return _need_celesx().run_job(kind, force=True)
+
+
+@app.post("/celesx/test")
+def celesx_test(uid: int = Depends(user_from_token)):
+    cx = _need_celesx()
+    if not any(cx.channels_configured().values()):
+        raise HTTPException(
+            400,
+            "no channel is configured — set CELESX_TELEGRAM_TOKEN and "
+            "CELESX_TELEGRAM_CHAT, or CELESX_DISCORD_WEBHOOK, in the "
+            "server's environment",
+        )
+    return cx.deliver(
+        "<b>CELESX</b> is connected. This is the channel I will use for the "
+        "weekend view, the morning brief and event alerts."
+    )
+
+
 if __name__ == "__main__":
     import uvicorn
 
     init_db()
+    if _cx is not None:
+        _cx.init_db()
+        # Off unless asked for. A scheduler that starts itself would send
+        # messages from a bridge someone started to test an endpoint.
+        if os.environ.get("CELESX_SCHEDULER", "").strip() in ("1", "true", "yes", "on"):
+            _cx.start_scheduler()
+            print(f"celesx scheduler on · channels: {_cx.channels_configured()}")
+        else:
+            print("celesx loaded, scheduler off (CELESX_SCHEDULER=1 to run it)")
     print(f"celestial_bridge → http://{HOST}:{PORT}   db: {DB_PATH}")
     print(f"origins allowed: {', '.join(ORIGINS)}")
     uvicorn.run(app, host=HOST, port=PORT, log_level="warning")
