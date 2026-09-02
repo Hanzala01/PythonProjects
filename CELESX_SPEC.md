@@ -156,3 +156,59 @@ bridge started to test an endpoint does not send anybody a message.
   is stated in every brief but not yet enforced against real trades.
 - Speaking aloud.
 - The owner-only Reference column.
+
+
+---
+
+## VOICE — PARKED, AND WHAT WAS ALREADY DONE
+
+Parked by the owner. Not abandoned: when the word **voice** comes up again,
+this is the state to resume from, and none of it needs redoing.
+
+**Built and verified**
+
+- `CELESX` is its own wake word and its own branch — not a synonym for
+  "Celestial". "Celestial, gold" describes the chart; "CELESX, gold" gives
+  the three votes and whether two agree.
+- The name is matched in the forms a recogniser actually returns for an
+  invented word: `celesx, celex, salex, selex, seles, sell ex, cell ex,
+  sales x, celeste x, silex`.
+- Six spoken intents, answered live from `cqFacts`/`cqVotes` — the same
+  functions the cross-question uses: today's read, the range, the window,
+  should-I-buy, the ceiling, the sky.
+- Both wake paths work: one breath ("celesx should i buy") and two
+  ("celesx" → "Go ahead." → the question). `JV_ARMED` carries `'cx'` so the
+  follow-up reaches the right assistant.
+- **Typing the name works everywhere** — `jvLocal` routes any message that
+  starts with a CELESX name to the same answers. This is the path that
+  works today, with no server.
+
+**The blocker, measured rather than assumed**
+
+Chrome will not attach a microphone permission to a `file://` origin —
+there is no origin to attach one to. `getUserMedia` returns
+`NotSupportedError`, and the permission cannot be granted even through the
+devtools protocol. So `jvWakeSupported()`'s `!jvIsFile()` gate is correct,
+not over-cautious. **Voice requires an address: `http://localhost` or
+`https://`.** Nothing in the page can work around it.
+
+**Three doors, and which are open**
+
+| Route | Status |
+|---|---|
+| Public https host | **Closed by the owner** — the page carries 11 provider keys and they must not be exposed. |
+| Local server | Open but fought with: the `.bat` did not run, and whether Python is installed on the machine was never established. |
+| Own server (https, keys server-side) | **The chosen direction.** CELESX needs a server anyway, so it is one job rather than two. |
+
+**Half-done toward that**
+
+`celestial_bridge.py` can now take provider keys from its own environment
+(`CELESTIAL_<NAME>_KEY`), so the page need not carry them. EODHD and GNews
+are wired; nine remain. The page's own key still wins when it sends one, so
+nothing that works today breaks — which is what makes removing the keys
+later a quiet change rather than a flag day.
+
+**Also delivered and superseded:** `START_CELESTIAL.bat`. Its own bugs are
+fixed (server before browser, a real Python check rather than `where`, a
+pause on failure), but it never ran on the owner's machine and is not the
+path being pursued.
