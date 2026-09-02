@@ -7250,6 +7250,47 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ── THE SIGN CYCLE, BODY BY BODY ─────────────────────────────────────────*/
+.pc-wrap{margin-top:4px}
+.pc-head b{display:block;font-size:13px;font-weight:700;color:var(--t1)}
+.pc-head s{display:block;text-decoration:none;font-size:10.5px;line-height:1.55;color:var(--t3);
+  margin:4px 0 13px;max-width:84ch}
+.pc{border:1px solid var(--b1);border-radius:10px;padding:12px 14px 11px;margin-bottom:9px;background:var(--card2)}
+.pc.retro{border-color:rgba(var(--rgbWarn),.35)}
+.pc-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.pc-sym{font-size:19px;color:var(--p3);width:22px;text-align:center;flex:0 0 auto}
+.pc-n b{display:block;font-size:13px;font-weight:700;color:var(--t1)}
+.pc-n i{display:block;font-style:normal;font-size:10px;color:var(--t3);margin-top:1px}
+.pc-pos{margin-left:auto;text-align:right;font-size:11.5px;color:var(--t2);white-space:nowrap}
+.pc-pos b{font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.pc-pos i{display:block;font-style:normal;font-size:9.5px;color:var(--t3);margin-top:1px}
+.pc.retro .pc-pos i{color:var(--warn)}
+
+/* the seven zones as one strip, and where the body stands in it */
+.pc-bar{position:relative;height:22px;border-radius:6px;overflow:hidden;background:var(--card);
+  border:1px solid var(--bFaint)}
+.pc-z{position:absolute;top:0;bottom:0;border-right:1px solid var(--bFaint);
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pc-z span{font-size:7.5px;letter-spacing:.04em;color:var(--t3);white-space:nowrap;padding:0 3px;
+  text-overflow:ellipsis;overflow:hidden}
+.pc-z.on{background:rgba(var(--rgbAcc),.16)}
+.pc-z.on span{color:var(--t1);font-weight:700}
+.pc-mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--p3);
+  box-shadow:0 0 7px var(--p3);border-radius:2px}
+
+.pc-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.pc-facts>div{min-width:0}
+.pc-facts i{display:block;font-style:normal;font-size:8px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--t3)}
+.pc-facts b{display:block;font-size:12px;font-weight:700;color:var(--t1);margin-top:2px}
+.pc-facts s{display:block;text-decoration:none;font-size:9.5px;line-height:1.4;color:var(--t3);margin-top:2px}
+.pc-foot{font-size:10px;line-height:1.55;color:var(--t3);margin-top:10px;max-width:88ch}
+
+@media (max-width:820px){
+  .pc-facts{grid-template-columns:1fr 1fr}
+  .pc-z span{display:none}
+}
+
 /* ── LIVE SETUPS: LEVELS NOT YET REACHED ──────────────────────────────────*/
 .ix-card{border:1px solid var(--b2);border-radius:13px;padding:16px 18px 14px;margin-bottom:16px;background:var(--card)}
 .ix-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
@@ -23296,6 +23337,211 @@ function qamIn(at){
   return 'in '+Math.round(m/1440)+' days';
 }
 
+
+/* ══ THE SIGN CYCLE, FOR EVERY BODY ═══════════════════════════════════════
+   The Moon already had one: which sign it is in, which of the seven zones
+   of that sign it is standing in, when the sign started and when it ends.
+   This is the same reading for the Sun and the planets.
+
+   IT IS NOT THE MOON'S FUNCTION WITH A PARAMETER ADDED, FOR ONE REASON.
+   qamSignEdge walks forward in one-hour steps and gives up after 96 of
+   them — four days. The Moon crosses a sign every 2.3 days so that is
+   generous. The Sun takes thirty days, Mars two months, Saturn two and a
+   half years: the Moon's search would have returned null for every one of
+   them and the card would have been permanently empty.
+
+   So the step is derived from the body's own measured rate — about forty
+   steps to cross a sign, whatever the body — and then bisected to the
+   minute exactly as the Moon's is.
+
+   RETROGRADE IS THE OTHER DIFFERENCE. The Moon never turns back, so its
+   cycle only ever runs one way. Mercury, Venus and Mars do, and while they
+   are retrograde the degree count runs backwards through the same seven
+   zones — which is worth saying out loud, because a "Fresh Start" being
+   entered backwards is not a fresh start.
+   ══════════════════════════════════════════════════════════════════════ */
+
+var QAM_BODIES = [
+  {k:'sun',     name:'Sun',     sym:'☉', say:'the year’s own clock — the trend everything else moves inside'},
+  {k:'mercury', name:'Mercury', sym:'☿', say:'news, data, and how the market reads what it is told'},
+  {k:'venus',   name:'Venus',   sym:'♀', say:'risk appetite — what people are willing to pay up for'},
+  {k:'mars',    name:'Mars',    sym:'♂', say:'force and impatience — breakouts, liquidations, speed'},
+  {k:'jupiter', name:'Jupiter', sym:'♃', say:'expansion and excess — where size builds up'},
+  {k:'saturn',  name:'Saturn',  sym:'♄', say:'the limit — where a move is refused and structure holds'}
+];
+
+function qamBodyLon(k,t){
+  try{ return rev(getEphemeris(new Date(t))[k].lon); }catch(e){ return null; }
+}
+function qamBodySignIdx(k,t){
+  var L=qamBodyLon(k,t);
+  return L==null ? null : Math.floor(L/30);
+}
+
+/* degrees a day, measured rather than tabled — and signed, so a retrograde
+   body reports a negative rate instead of a wrong positive one */
+function qamBodyRate(k,t){
+  var a=qamBodyLon(k,t-43200000), b=qamBodyLon(k,t+43200000);
+  if(a==null||b==null)return null;
+  var d=b-a;
+  if(d>180)d-=360; if(d<-180)d+=360;   /* the wrap at 0°, not a real jump */
+  return d;
+}
+
+/* ── the edge of the current sign, at any speed ─────────────────────────
+   Step size comes from the body's own rate: roughly a fortieth of the time
+   it needs to cross thirty degrees. A body at a station has a rate near
+   zero and would give an infinite step, so it is clamped to a year. */
+function qamBodyEdge(k,from,dir){
+  var idx0=qamBodySignIdx(k,from);
+  if(idx0==null)return null;
+  var rate=Math.abs(qamBodyRate(k,from)||0);
+  var daysPerSign = rate>0.0005 ? 30/rate : 3650;
+  var stepDays = Math.max(0.02, Math.min(daysPerSign/40, 30));
+  var step = dir*stepDays*86400000;
+  var guard = Math.ceil(daysPerSign/stepDays)+80;
+  if(guard>4000)guard=4000;
+
+  var t=from, prev=from, g=0;
+  while(g++<guard){
+    t+=step;
+    var i=qamBodySignIdx(k,t);
+    if(i==null)return null;
+    if(i!==idx0){
+      var lo=Math.min(prev,t), hi=Math.max(prev,t);
+      for(var n=0;n<40;n++){
+        var mid=(lo+hi)/2;
+        if(qamBodySignIdx(k,mid)===idx0){ if(dir>0)lo=mid; else hi=mid; }
+        else { if(dir>0)hi=mid; else lo=mid; }
+      }
+      return new Date((lo+hi)/2);
+    }
+    prev=t;
+  }
+  return null;
+}
+
+var _qamPCyc={};
+function qamBodyCycle(k,date){
+  date=date||new Date();
+  /* ten minutes is finer than anything here moves; Saturn does not need
+     recomputing on every render */
+  var key=Math.floor(+date/600000);
+  if(_qamPCyc[k]&&_qamPCyc[k].key===key)return _qamPCyc[k].v;
+
+  var out=null;
+  var L=qamBodyLon(k,+date);
+  if(L!=null){
+    var idx=Math.floor(L/30), deg=L-idx*30;
+    var rate=qamBodyRate(k,+date);
+    var started=qamBodyEdge(k,+date,-1), ends=qamBodyEdge(k,+date,1);
+
+    out={ body:k, lon:L, signIdx:idx, sign:SIGNS[idx], deg:deg,
+          rate:rate, retro:(rate!=null&&rate<0),
+          started:started, ends:ends,
+          next:SIGNS[(idx+1)%12], prev:SIGNS[(idx+11)%12] };
+
+    if(started&&ends&&+ends>+started){
+      var span=+ends-+started, gone=+date-+started;
+      out.span=span; out.elapsed=gone; out.left=+ends-+date;
+      out.pct=Math.max(0,Math.min(100,gone/span*100));
+      out.days=span/86400000;
+    }
+
+    /* the same seven zones the Moon is read against — one sign is one sign,
+       whatever is standing in it */
+    var prev=0;
+    out.stages=QAM_ZONES.map(function(Z){
+      var st={label:Z.label,desc:Z.desc,from:prev,to:Z.max,
+              at:prev/30*100, w:(Z.max-prev)/30*100,
+              on:(deg>=prev&&deg<Z.max)};
+      prev=Z.max; return st;
+    });
+    var cur=-1;
+    out.stages.forEach(function(z,i){ if(z.on)cur=i; });
+    out.stageIdx=cur;
+    out.stage=cur>=0?out.stages[cur]:null;
+    /* forward when direct, backward when retrograde — the next zone is the
+       one it is actually heading into */
+    out.nextStage = out.retro
+      ? (cur>0 ? out.stages[cur-1] : null)
+      : (cur>=0 && cur<out.stages.length-1 ? out.stages[cur+1] : null);
+    if(out.nextStage && rate){
+      out.toNextDeg = out.retro ? (deg-out.nextStage.to) : (out.nextStage.from-deg);
+      out.toNextDays = Math.abs(out.toNextDeg/rate);
+    }
+  }
+  _qamPCyc[k]={key:key,v:out};
+  return out;
+}
+
+function qamSpan(days){
+  if(days==null||!isFinite(days))return '—';
+  if(days<1)  return (days*24).toFixed(1)+' h';
+  if(days<60) return days.toFixed(1)+' days';
+  if(days<730)return (days/30.44).toFixed(1)+' months';
+  return (days/365.25).toFixed(1)+' years';
+}
+
+/* ── the card ─────────────────────────────────────────────────────────── */
+function qamPlanetCard(B){
+  var C=null;
+  try{ C=qamBodyCycle(B.k); }catch(e){}
+  if(!C)return '';
+
+  var h='<div class="pc'+(C.retro?' retro':'')+'">';
+  h+='<div class="pc-top">'
+    +'<span class="pc-sym">'+B.sym+'</span>'
+    +'<span class="pc-n"><b>'+B.name+'</b><i>'+escHtml(B.say)+'</i></span>'
+    +'<span class="pc-pos">'+escHtml(C.sign)+' <b>'+C.deg.toFixed(2)+'&deg;</b>'
+      +'<i>'+(C.retro?'retrograde':'direct')+' &middot; '
+      +(C.rate!=null?Math.abs(C.rate).toFixed(3)+'&deg; a day':'rate unknown')+'</i></span>'
+  +'</div>';
+
+  /* the seven zones as one bar, with the body's place in it */
+  h+='<div class="pc-bar">'
+    + C.stages.map(function(z){
+        return '<div class="pc-z'+(z.on?' on':'')+'" style="left:'+z.at.toFixed(2)+'%;width:'+z.w.toFixed(2)+'%"'
+          +' title="'+escHtml(z.label)+' — '+escHtml(z.desc)+'"><span>'+escHtml(z.label)+'</span></div>';
+      }).join('')
+    + '<i class="pc-mark" style="left:'+(C.deg/30*100).toFixed(2)+'%"></i>'
+  +'</div>';
+
+  h+='<div class="pc-facts">'
+    +'<div><i>Stage now</i><b>'+escHtml(C.stage?C.stage.label:'—')+'</b>'
+      +'<s>'+escHtml(C.stage?C.stage.desc:'')+'</s></div>'
+    +'<div><i>'+(C.retro?'Falling back to':'Next stage')+'</i><b>'
+      +escHtml(C.nextStage?C.nextStage.label:'end of sign')+'</b>'
+      +'<s>'+(C.toNextDays!=null?'in '+qamSpan(C.toNextDays):'then it changes sign')+'</s></div>'
+    +'<div><i>In '+escHtml(C.sign)+' since</i><b>'
+      +(C.started?C.started.toLocaleDateString('en',{day:'numeric',month:'short',year:'2-digit'}):'—')+'</b>'
+      +'<s>'+(C.days!=null?'a '+qamSpan(C.days)+' pass':'')+'</s></div>'
+    +'<div><i>Enters '+escHtml(C.next)+'</i><b>'
+      +(C.ends?C.ends.toLocaleDateString('en',{day:'numeric',month:'short',year:'2-digit'}):'—')+'</b>'
+      +'<s>'+(C.left!=null?qamSpan(C.left/86400000)+' left':'')+'</s></div>'
+  +'</div>';
+
+  return h+'</div>';
+}
+
+function qamPlanetsHtml(){
+  var rows='';
+  QAM_BODIES.forEach(function(B){
+    try{ rows+=qamPlanetCard(B); }catch(e){}
+  });
+  if(!rows)return '';
+  return '<div class="pc-wrap">'
+    +'<div class="pc-head"><b>The sign cycle, body by body</b>'
+      +'<s>the same seven zones the Moon is read against, for the Sun and the planets. '
+      +'One sign is one sign — what changes is how long it takes to cross it: the Moon in days, '
+      +'the Sun in a month, Saturn in years.</s></div>'
+    +rows
+    +'<div class="pc-foot">A retrograde body runs backwards through the same zones, so the stage '
+    +'it is heading into is the one behind it. Rates are measured over a day either side of now, '
+    +'not read from a table, which is why a body near a station reports a rate close to zero.</div>'
+  +'</div>';
+}
+
 function qamHtml(){
   var M=null; try{ M=qamMoon(new Date()); }catch(e){}
   if(!M)return '<div class="lm-na">The lunar layer could not read the sky.</div>';
@@ -25555,6 +25801,12 @@ function renderTiming(){
    +'<details class="sec pin" open><summary><b>The lunar layer</b>'
      +'<span>the dial, the degree the Moon is in, and every exact aspect ahead</span></summary>'
      +qamHtml()+'</details>'
+   /* the same reading for everything else in the sky — the Moon crosses a
+      sign in days, the Sun in a month, Saturn in years, and the seven zones
+      mean the same thing in all of them */
+   +'<details class="sec pin"><summary><b>The sign cycle &mdash; Sun and planets</b>'
+     +'<span>where each body is in its sign, which of the seven zones, and when it moves on</span></summary>'
+     +(function(){ try{ return qamPlanetsHtml(); }catch(e){ return ''; } })()+'</details>'
    +'<div class="tk-hero '+v.level+'">'
     +'<div class="tk-col">'
       +'<div class="tk-dial">'+ring
@@ -27656,9 +27908,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b114';
+var CA_BUILD='b115';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Live setups card loads itself now. It shipped waiting for a button press, so the Timing tab showed an empty box where the setups were meant to be.';
+var CA_WHATS_NEW='The sign cycle for the Sun and five planets \u2014 the same seven zones the Moon is read against, with each body\u2019s own pace and its retrogrades.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
