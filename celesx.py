@@ -129,6 +129,10 @@ CREATE TABLE IF NOT EXISTS celesx_briefs(
   text      TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS celesx_brief_day ON celesx_briefs(day_key);
+CREATE TABLE IF NOT EXISTS celesx_state(
+  k         TEXT PRIMARY KEY,
+  v         TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS celesx_sent(
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
   sent_at   REAL NOT NULL,
@@ -204,6 +208,17 @@ def latest_brief(kind: str | None = None) -> dict | None:
         "kind": row["kind"], "made_at": row["made_at"], "day_key": row["day_key"],
         "text": row["text"], "body": json.loads(row["body"] or "{}"),
     }
+
+
+def state_get(k: str, dflt: str = "") -> str:
+    with db() as con:
+        row = con.execute("SELECT v FROM celesx_state WHERE k=?", (k,)).fetchone()
+    return row["v"] if row else dflt
+
+
+def state_set(k: str, v: str):
+    with db() as con:
+        con.execute("INSERT OR REPLACE INTO celesx_state(k,v) VALUES(?,?)", (k, str(v)))
 
 
 # ── delivery ──────────────────────────────────────────────────────────────
@@ -461,6 +476,12 @@ def votes_for(rec: dict, macro_bias: str | None) -> dict:
             return None
 
     MH, ML = _px(mj.get("MH")), _px(mj.get("ML"))
+    if not (px and MH and ML and MH > ML):
+        # A vote that abstains still has to say why. Leaving `why` unset here
+        # printed an empty line in the reply, which reads as a bug rather
+        # than as "there is nothing to measure".
+        v["why"]["price"] = ("no range measured — not enough history"
+                             if not (MH and ML) else "no price to place in the range")
     if px and MH and ML and MH > ML:
         span = MH - ML
         pos = (px - ML) / span if span else 0.5
@@ -484,12 +505,18 @@ def votes_for(rec: dict, macro_bias: str | None) -> dict:
         v["time"] = "bull" if d in ("up", "bull", "bullish") else \
                     "bear" if d in ("down", "bear", "bearish") else None
         v["why"]["time"] = f"timing {t.get('score')}/100, {t.get('grade')}"
+    elif t and not t.get("mayAlert"):
+        v["why"]["time"] = "the timing layers failed their own forward test here — no vote"
     elif t:
         v["why"]["time"] = f"timing {t.get('score')}/100 — below the alert line"
+    else:
+        v["why"]["time"] = "timing could not be read — no daily history loaded"
 
     if macro_bias in ("bull", "bear"):
         v["macro"] = macro_bias
         v["why"]["macro"] = f"sky leans {macro_bias} this week"
+    else:
+        v["why"]["macro"] = "no net lean in the sky — no vote"
 
     return v
 
@@ -641,10 +668,270 @@ def run_job(kind: str, force: bool = False) -> dict:
 
     body, text = (weekend_brief if kind == "weekend" else daily_brief)(data)
     brief_id = store_brief(kind, day_key, body, text)
+    # "quiet" has to stop the push, not just the reply, or it is a lie. The
+    # brief is still made and stored, so asking for it later still works.
+    if not force and muted_today():
+        record_run(kind, day_key, True, "muted")
+        return {"ok": True, "day": day_key, "brief": brief_id, "muted": True,
+                "picks": len(body.get("picks", []))}
     sent = deliver(text)
     record_run(kind, day_key, True, json.dumps(sent))
     return {"ok": True, "day": day_key, "brief": brief_id,
             "picks": len(body.get("picks", [])), "sent": sent}
+
+
+
+# ── being talked to ───────────────────────────────────────────────────────
+#
+# THIS IS THE HALF THAT MAKES IT AN ASSISTANT RATHER THAN A MAILING LIST.
+#
+# Everything above pushes: the scheduler decides when, CELESX writes, you
+# read. That is useful and it is not the thing that was asked for. What was
+# asked for is that you say "good morning" and it hands over its work —
+# which means it has to be listening.
+#
+# Telegram gives that away free. A bot can long-poll getUpdates, so there is
+# no webhook, no public address, no TLS certificate and no hosting bill for
+# the inbound half. Discord cannot do the same without a gateway connection
+# and a library, so replies are Telegram-only for now and Discord stays a
+# delivery channel.
+#
+# WHO IS ALLOWED TO TALK TO IT
+#
+#     Only CELESX_TELEGRAM_CHAT. A bot username is discoverable — anyone can
+#     find it and start typing — and the answers name levels, sizes and how
+#     much of the ceiling is spent. Every message from any other chat is
+#     dropped, counted, and never answered. It does not even reply "no",
+#     because that confirms the bot is live.
+#
+# WHAT IT UNDERSTANDS
+#
+#     Deliberately not a language model. Intents are keyword matches, which
+#     means the same words always do the same thing and a wrong answer is a
+#     bug I can find rather than a sampling temperature. Anything it does
+#     not recognise falls through to the day's work, because that is what
+#     was asked for: say anything, and it submits.
+
+INTENTS = [
+    ("week",   ("week", "weekend", "hafta", "swing", "next week")),
+    ("status", ("status", "alive", "working", "kaam", "health")),
+    ("quiet",  ("quiet", "stop", "mute", "band", "chup", "enough")),
+    ("wake",   ("wake", "resume", "start", "chalu", "unmute")),
+    ("help",   ("help", "what can you", "commands", "kya kar")),
+]
+
+
+def _intent(text: str) -> tuple[str, str | None]:
+    """Return (intent, asset). Unrecognised is 'today', on purpose."""
+    t = (text or "").strip().lower()
+
+    # an asset name anywhere in the message wins over everything else — if
+    # you type "gold" you want gold, not a lecture about the week
+    for a in ASSETS:
+        if a.lower() in t:
+            return "asset", a
+    for alias, real in (("xau", "Gold"), ("xag", "Silver"), ("btc", "Bitcoin"),
+                        ("eth", "Ethereum"), ("eur", "EURUSD"), ("gbp", "GBPUSD"),
+                        ("crude", "Oil"), ("wti", "Oil")):
+        if alias in t:
+            return "asset", real
+
+    for name, words in INTENTS:
+        if any(w in t for w in words):
+            return name, None
+    return "today", None
+
+
+def _fresh(kind: str) -> dict | None:
+    """Today's brief if it exists, otherwise nothing. A brief from Tuesday
+    is not an answer to a question asked on Thursday."""
+    b = latest_brief(kind)
+    if not b:
+        return None
+    return b if b.get("day_key") == now_local().strftime("%Y-%m-%d") else None
+
+
+def answer(text: str) -> str:
+    """What CELESX says back. Pure — it reads state and returns a string, so
+    it can be tested without a bot token or a network."""
+    intent, asset = _intent(text)
+
+    if intent == "quiet":
+        state_set("muted_until", now_local().strftime("%Y-%m-%d"))
+        return ("Quiet for the rest of today. I will not push anything until "
+                "tomorrow — say <b>wake</b> if you want me back sooner.")
+
+    if intent == "wake":
+        state_set("muted_until", "")
+        return "Back on. I will send the morning brief and alert on anything heavy."
+
+    if intent == "help":
+        return ("<b>CELESX</b>\n"
+                "Say anything and I hand over today's work.\n\n"
+                "· an instrument name — <i>gold, btc, eurusd</i> — that one's read\n"
+                "· <b>week</b> — the weekend view\n"
+                "· <b>status</b> — what I know and when I last ran\n"
+                "· <b>quiet</b> — nothing more today · <b>wake</b> — back on")
+
+    if intent == "status":
+        st = status()
+        runs = st.get("recent_runs") or []
+        last = runs[0] if runs else None
+        muted = state_get("muted_until") == now_local().strftime("%Y-%m-%d")
+        return ("<b>CELESX</b>\n"
+                f"Local time {st['local_now']}\n"
+                f"Watching {st['assets']} instruments · ceiling {st['risk_ceiling_pct']:g}%\n"
+                f"Rule: {st['rule']}\n"
+                f"Last run: {(last['kind'] + ' on ' + last['day_key']) if last else 'none yet'}\n"
+                f"Scheduler: {'on' if st['scheduler_alive'] else 'off'}"
+                + ("\n<i>Muted for today.</i>" if muted else ""))
+
+    if intent == "week":
+        b = latest_brief("weekend")
+        if not b:
+            return ("I have not run a weekend pass yet. It runs Saturday and "
+                    "Sunday morning — ask me then, or say <b>today</b> for "
+                    "what I have now.")
+        age = "" if b["day_key"] == now_local().strftime("%Y-%m-%d") \
+              else f"\n\n<i>This is from {b['day_key']}.</i>"
+        return b["text"] + age
+
+    if intent == "asset":
+        return _asset_answer(asset)
+
+    # anything else — the day's work, which is the whole point
+    b = _fresh("daily")
+    if b:
+        return b["text"]
+    return ("I have not read today yet. Give me a few minutes — reading "
+            "sixteen instruments takes a while — and I will send it through.")
+
+
+def _asset_answer(name: str) -> str:
+    """One instrument, read now. A single asset is one page load, so this is
+    seconds rather than the minutes a full pass takes, and it is worth doing
+    live instead of quoting a brief from this morning."""
+    try:
+        data = read_market(assets=[name])
+    except ReaderUnavailable as e:
+        return f"I cannot look right now — {e}"
+
+    rec = (data.get("assets") or [{}])[0]
+    lean, lean_note = macro_lean(data)
+    v = votes_for(rec, lean)
+    sel = select(rec, lean)
+
+    out = [f"<b>{name}</b>"]
+    if rec.get("price"):
+        out.append(f"Last {rec['price']:g} · {rec.get('bars', 0)} daily bars")
+    elif rec.get("skip"):
+        out.append(f"<i>No history loaded — {rec['skip']}. Nothing to measure.</i>")
+
+    out.append("")
+    for k in ("price", "time", "macro"):
+        mark = "●" if v[k] else "○"
+        side = f" — {'buy' if v[k] == 'bull' else 'sell'}" if v[k] else ""
+        out.append(f"{mark} <b>{k}</b>{side}\n   <i>{v['why'].get(k, '')}</i>")
+
+    out.append("")
+    if sel:
+        out.append(f"<b>{sel['count']} of 3 agree — {'BUY' if sel['side'] == 'bull' else 'SELL'} side.</b>")
+        if sel["no_level"]:
+            out.append("No price level behind it though — time and macro only.")
+    else:
+        cast = sum(1 for k in ("price", "time", "macro") if v[k])
+        if cast < 2:
+            out.append(f"<b>Not a setup.</b> Only {cast} of the three vote"
+                       f"{'s' if cast == 1 else ''} at all, and two have to agree "
+                       "before I will call anything. That is a reading, not a gap.")
+        else:
+            out.append("<b>Not a setup.</b> The votes are split — they point in "
+                       "different directions, which is not agreement. That is a "
+                       "reading, not a gap.")
+    return "\n".join(out)
+
+
+# ── the listener ──────────────────────────────────────────────────────────
+
+def _get_updates(offset: int, timeout: int = 50):
+    url = (f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/getUpdates"
+           f"?timeout={timeout}&offset={offset}&allowed_updates=%5B%22message%22%5D")
+    try:
+        with urllib.request.urlopen(url, timeout=timeout + 15) as r:
+            return json.loads(r.read()).get("result") or []
+    except Exception:
+        # a dropped long-poll is normal, not an error worth shouting about
+        return []
+
+
+class Listener(threading.Thread):
+    """Long-polls Telegram and answers.
+
+    The offset lives in the database rather than in memory: Telegram replays
+    every unacknowledged update to a reconnecting bot, so a listener that
+    kept the offset in a variable would answer the same "good morning" again
+    on every restart."""
+
+    daemon = True
+
+    def __init__(self):
+        super().__init__(name="celesx-listener")
+        self._stop = threading.Event()
+        self.answered = 0
+        self.rejected = 0
+        self.last_at = 0.0
+
+    def stop(self):
+        self._stop.set()
+
+    def run(self):
+        init_db()
+        if not (TELEGRAM_TOKEN and TELEGRAM_CHAT):
+            return
+        try:
+            offset = int(state_get("tg_offset", "0") or 0)
+        except ValueError:
+            offset = 0
+
+        while not self._stop.is_set():
+            ups = _get_updates(offset)
+            for u in ups:
+                offset = max(offset, int(u.get("update_id", 0)) + 1)
+                msg = u.get("message") or {}
+                chat = str((msg.get("chat") or {}).get("id", ""))
+                text = msg.get("text") or ""
+                if not text:
+                    continue
+                if chat != str(TELEGRAM_CHAT):
+                    # Not yours. Do not answer, do not acknowledge — a reply
+                    # of any kind confirms the bot is live and listening.
+                    self.rejected += 1
+                    continue
+                try:
+                    send_telegram(answer(text))
+                    self.answered += 1
+                    self.last_at = time.time()
+                except Exception as e:
+                    send_telegram(f"Something broke answering that: {str(e)[:200]}")
+            if ups:
+                state_set("tg_offset", offset)
+
+
+_LISTEN: "Listener | None" = None
+
+
+def start_listener() -> "Listener | None":
+    global _LISTEN
+    if not (TELEGRAM_TOKEN and TELEGRAM_CHAT):
+        return None
+    if _LISTEN is None or not _LISTEN.is_alive():
+        _LISTEN = Listener()
+        _LISTEN.start()
+    return _LISTEN
+
+
+def muted_today() -> bool:
+    return state_get("muted_until") == now_local().strftime("%Y-%m-%d")
 
 
 # ── the scheduler ─────────────────────────────────────────────────────────
@@ -720,6 +1007,10 @@ def status() -> dict:
         "tz_offset": TZ_OFFSET,
         "local_now": now_local().isoformat(timespec="seconds"),
         "scheduler_alive": bool(_SCHED and _SCHED.is_alive()),
+        "listener_alive": bool(_LISTEN and _LISTEN.is_alive()),
+        "answered": _LISTEN.answered if _LISTEN else 0,
+        "rejected": _LISTEN.rejected if _LISTEN else 0,
+        "muted_today": muted_today(),
         "last_result": _SCHED.last_result if _SCHED else None,
         "recent_runs": runs,
     }
@@ -737,11 +1028,16 @@ def main():
                     help="with --run: print the brief instead of sending it")
     ap.add_argument("--read", action="store_true",
                     help="drive the page and dump the raw reading as json")
+    ap.add_argument("--say", metavar="TEXT",
+                    help="what would CELESX reply to this? no token needed")
     ap.add_argument("--status", action="store_true")
     ap.add_argument("--serve", action="store_true",
                     help="run the scheduler in the foreground")
     a = ap.parse_args()
     init_db()
+
+    if a.say is not None:
+        print(answer(a.say)); return
 
     if a.status:
         print(json.dumps(status(), indent=2)); return
@@ -780,8 +1076,12 @@ def main():
 
     if a.serve:
         s = start_scheduler()
-        print(f"CELESX scheduler running. Local time {now_local():%Y-%m-%d %H:%M}. "
-              f"Channels: {channels_configured()}. Ctrl-C to stop.")
+        l = start_listener()
+        print(f"CELESX running. Local time {now_local():%Y-%m-%d %H:%M}. "
+              f"Channels: {channels_configured()}. "
+              + ("Listening on Telegram." if l else
+                 "Not listening — set CELESX_TELEGRAM_TOKEN and CELESX_TELEGRAM_CHAT for two-way.")
+              + " Ctrl-C to stop.")
         try:
             while s.is_alive():
                 time.sleep(1)

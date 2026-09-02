@@ -127,6 +127,18 @@ replacement. It also needs the ElevenLabs key for a real voice.
   which is the thing the rule exists to prevent.
 - **Ceiling.** 12%, as one constant.
 
+- **Being talked to.** The half that makes it an assistant rather than a
+  mailing list. A Telegram bot long-polls `getUpdates`, so there is no
+  webhook, no public address and no certificate for the inbound side. Say
+  anything and it hands over the day's work; name an instrument and it
+  reads that one live; `week`, `status`, `quiet`, `wake`, `help` do what
+  they say. Intents are keyword matches, not a language model — the same
+  words always do the same thing, so a wrong answer is a bug rather than a
+  sampling temperature. **Only the configured chat is answered.** A bot
+  username is discoverable and the replies name levels and sizes; every
+  other chat is dropped and never acknowledged, because a reply of any kind
+  confirms the bot is live.
+
 Four endpoints on the bridge, all behind the login:
 `/celesx/status`, `/celesx/brief`, `/celesx/run`, `/celesx/test`.
 
@@ -137,6 +149,9 @@ bridge started to test an endpoint does not send anybody a message.
 
 - Event-day alerts as their own path. Heavy aspects already reach the daily
   brief; a number or a headline breaking mid-session does not yet.
+- Discord replies. Discord needs a gateway connection and a library for
+  inbound, so it stays a delivery channel; Telegram carries the
+  conversation.
 - Reading the journal to know whether the 12% is already met. The ceiling
   is stated in every brief but not yet enforced against real trades.
 - Speaking aloud.
