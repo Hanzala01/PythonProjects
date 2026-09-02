@@ -485,6 +485,36 @@ def calendar():
 _PX_CACHE: dict[str, tuple[float, object]] = {}
 
 
+# ── KEYS BELONG ON THE SERVER, NOT IN THE PAGE ────────────────────────────
+#
+# Eleven data-provider keys are written into celestial_alpha.html as plain
+# text. That is survivable while the page only ever opens from a folder on
+# one machine — but it is exactly what stops the page from being put on an
+# address, and being on an address is the only way a browser will allow the
+# microphone.
+#
+# So the keys move here. The bridge reads them from its own environment and
+# the page never sees them: it asks this server for prices, this server asks
+# the provider. A page served from a host with these set needs no keys of
+# its own at all.
+#
+# The page's own key still wins when it sends one, so nothing that works
+# today stops working — a page opened straight from the folder carries on
+# exactly as before, and only a page that sends nothing falls back to the
+# server's copy.
+def _key(name: str, sent: str = "") -> str:
+    if sent:
+        return sent
+    v = os.environ.get(f"CELESTIAL_{name}_KEY", "").strip()
+    if not v:
+        raise HTTPException(
+            400,
+            f"no {name} key — the page sent none and CELESTIAL_{name}_KEY is "
+            "not set in this server's environment",
+        )
+    return v
+
+
 def _px(key: str, ttl: int, build):
     """Fetch through a small per-key cache, and serve a stale copy rather
     than nothing when the upstream is having a bad day."""
@@ -513,7 +543,8 @@ def _px(key: str, ttl: int, build):
 # The key travels from the page rather than living here, so this file stays
 # safe to share. Broker credentials are the opposite case and stay server-side.
 @app.get("/px/eodhd/{symbol}")
-def px_eodhd(symbol: str, token: str, days: int = 400):
+def px_eodhd(symbol: str, token: str = "", days: int = 400):
+    token = _key("EODHD", token)
     import datetime as _dt
     frm = (_dt.date.today() - _dt.timedelta(days=days)).isoformat()
     return _px(
@@ -525,7 +556,8 @@ def px_eodhd(symbol: str, token: str, days: int = 400):
 
 
 @app.get("/px/gnews")
-def px_gnews(q: str, token: str, max_results: int = 10):
+def px_gnews(q: str, token: str = "", max_results: int = 10):
+    token = _key("GNEWS", token)
     return _px(
         f"gnews:{q}", 900,
         lambda: ("https://gnews.io/api/v4/search?q=" + urllib.parse.quote(q)
