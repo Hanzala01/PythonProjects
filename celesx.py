@@ -318,9 +318,11 @@ async (assets) => {
       /* PRICE — where the range is, and whether price is at an edge of it */
       try {
         const mp = majorPair(rows, px);
+        /* MH and ML are objects — the level plus how it was found. Only the
+           price crosses the boundary; the rest is not used here. */
+        const lv = (x) => (x && typeof x === 'object') ? +x.px : +x;
         if (mp) rec.major = {
-          MH: mp.MH, ML: mp.ML, inPlay: mp.inPlay, stable: mp.stable,
-          range: mp.range, level: mp.level
+          MH: lv(mp.MH), ML: lv(mp.ML), inPlay: mp.inPlay, stable: mp.stable
         };
       } catch (e) { rec.majorErr = e.message; }
 
@@ -444,7 +446,21 @@ def votes_for(rec: dict, macro_bias: str | None) -> dict:
 
     mj = rec.get("major") or {}
     px = rec.get("price")
-    MH, ML = mj.get("MH"), mj.get("ML")
+
+    # majorPair returns MH and ML as objects — {px, date, atrAway, …} — not
+    # as numbers. `MH > ML` on two dicts raises TypeError in Python, so this
+    # would have taken down the whole pass the first time a real feed put a
+    # range in front of it. The reader unwraps them now; this stays tolerant
+    # of both shapes so an older stored reading still selects.
+    def _px(x):
+        if isinstance(x, dict):
+            x = x.get("px")
+        try:
+            return float(x)
+        except (TypeError, ValueError):
+            return None
+
+    MH, ML = _px(mj.get("MH")), _px(mj.get("ML"))
     if px and MH and ML and MH > ML:
         span = MH - ML
         pos = (px - ML) / span if span else 0.5

@@ -5869,6 +5869,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --elFire:#F97316; --elEarth:#84CC16; --elAir:#38BDF8; --elWater:#818CF8;
   --rgbFire:249,115,22; --rgbEarth:132,204,22;
   --rgbAir:56,189,248; --rgbWater:129,140,248;
+  --rgbUp:34,197,94; --rgbDn:239,68,68; --rgbWarn:245,158,11;
   /* THE GROUNDS. Twenty-nine near-black indigos were written out by hand
      across the stylesheet as the second stop of a card gradient. They are
      what kept the panels purple after the accents had already changed. */
@@ -5922,6 +5923,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --up:#5FD98A; --dn:#E2665A;          /* Bull / Bear */
   --warn:#E8B24D; --cy:#6EA8C9;
   --elFire:#E8823C; --elEarth:#7FAE7A; --elAir:#6EA8C9; --elWater:#5E7CE2;
+  --rgbUp:95,217,138; --rgbDn:226,102,90; --rgbWarn:232,178,77;
   --rgbFire:232,130,60; --rgbEarth:127,174,122;
   --rgbAir:110,168,201; --rgbWater:94,124,226;
   --wash:rgba(232,178,77,.055); --washTo:rgba(var(--g35),.96);
@@ -7243,6 +7245,97 @@ body{background:var(--bg0)}
 .qp-det[open]>summary:before{content:'▾ '}
 .qp-det>summary:hover{color:var(--t1)}
 
+
+/* ── CELESX CROSS-QUESTION ────────────────────────────────────────────────
+   Tokens only, so both palettes get it for free. The one thing it does not
+   token is the verdict tone, which reads off --up/--warn/--dn — those are
+   named per theme already. */
+.cq-wrap{position:fixed;inset:0;z-index:100200;display:none;align-items:center;
+  justify-content:center;padding:20px;background:rgba(0,0,0,.62);backdrop-filter:blur(3px)}
+.cq{width:min(660px,100%);max-height:calc(100vh - 40px);overflow:auto;
+  background:var(--card);border:1px solid var(--b2);border-radius:14px;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);padding:20px 22px 18px}
+.cq-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.cq-top b{display:block;font-size:14px;font-weight:700;color:var(--t1);letter-spacing:.02em}
+.cq-top s{display:block;text-decoration:none;font-size:10.5px;color:var(--t3);margin-top:2px}
+.cq-x{margin-left:auto;width:28px;height:28px;border-radius:7px;border:1px solid var(--b1);
+  background:transparent;color:var(--t2);font-size:18px;line-height:1;cursor:pointer}
+.cq-x:hover{color:var(--t1);border-color:var(--b2)}
+
+/* the three votes sit above every question, because they are the frame the
+   answers are judged inside and hiding them would make the verdict a
+   surprise */
+.cq-votes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.cq-v{border:1px solid var(--b1);border-radius:9px;padding:9px 10px;background:var(--card2)}
+.cq-v i{display:block;font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.cq-v b{display:block;font-size:12.5px;font-weight:700;color:var(--t3);margin-top:3px}
+.cq-v s{display:block;text-decoration:none;font-size:9.5px;line-height:1.4;color:var(--t3);margin-top:4px}
+.cq-v.on.b{border-color:rgba(var(--rgbUp),.42)}
+.cq-v.on.b b{color:var(--up)}
+.cq-v.on.r{border-color:rgba(var(--rgbDn),.42)}
+.cq-v.on.r b{color:var(--dn)}
+
+.cq-prog{height:2px;border-radius:2px;background:var(--b1);overflow:hidden;margin-bottom:12px}
+.cq-prog i{display:block;height:100%;background:var(--p3);transition:width .25s ease}
+.cq-step{font-size:8.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
+.cq-ask{font-size:19px;font-weight:700;color:var(--t1);line-height:1.3;margin:6px 0 6px}
+.cq-sub{font-size:11.5px;line-height:1.55;color:var(--t2);margin-bottom:15px}
+
+.cq-opts{display:flex;flex-wrap:wrap;gap:8px}
+.cq-o{padding:10px 15px;border-radius:9px;border:1px solid var(--b2);background:var(--card2);
+  color:var(--t1);font-size:12.5px;font-weight:600;cursor:pointer;transition:.14s}
+.cq-o:hover{border-color:var(--p3);background:rgba(var(--rgbAcc),.10)}
+.cq-o.gh{border-color:var(--b1);color:var(--t2);font-weight:500}
+
+.cq-inrow{display:flex;align-items:center;gap:8px}
+.cq-inrow input{flex:1;height:40px;padding:0 12px;border-radius:9px;border:1px solid var(--b2);
+  background:var(--card2);color:var(--t1);font-size:14px;font-variant-numeric:tabular-nums}
+.cq-inrow input:focus{outline:none;border-color:var(--p3)}
+.cq-inrow em{font-style:normal;font-size:13px;color:var(--t3)}
+.cq-go{height:40px;padding:0 18px;border-radius:9px;border:none;background:var(--p3);
+  color:var(--pDeep,#1a1205);font-size:12.5px;font-weight:700;cursor:pointer}
+.cq-go:hover{filter:brightness(1.08)}
+.cq-err{font-size:11px;color:var(--dn);margin-top:7px}
+
+/* what it has already said, so the argument builds in front of you rather
+   than arriving all at once at the end */
+.cq-said{margin-top:16px;display:flex;flex-direction:column;gap:7px}
+.cq-s{border-left:2px solid var(--b2);padding:6px 0 6px 11px}
+.cq-s u{display:block;text-decoration:none;font-size:9.5px;font-weight:600;color:var(--t3);
+  letter-spacing:.02em}
+.cq-s span{display:block;font-size:11.5px;line-height:1.55;color:var(--t2);margin-top:3px}
+.cq-s.ok{border-left-color:var(--up)}
+.cq-s.no{border-left-color:var(--dn)}
+.cq-s.no span{color:var(--t1)}
+.cq-s.un{border-left-color:var(--b2);opacity:.72}
+
+.cq-back{margin-top:14px;background:none;border:none;color:var(--t3);font-size:11px;cursor:pointer;padding:0}
+.cq-back:hover{color:var(--t1)}
+
+.cq-verdict{border-radius:11px;padding:16px 17px;border:1px solid var(--b2);background:var(--card2)}
+.cq-verdict b{display:block;font-size:26px;font-weight:800;letter-spacing:.06em;line-height:1}
+.cq-verdict span{display:block;font-size:12.5px;line-height:1.6;color:var(--t2);margin-top:9px}
+.cq-verdict.up{border-color:rgba(var(--rgbUp),.45)}   .cq-verdict.up b{color:var(--up)}
+.cq-verdict.warn{border-color:rgba(var(--rgbWarn),.45)} .cq-verdict.warn b{color:var(--warn)}
+.cq-verdict.dn{border-color:rgba(var(--rgbDn),.45)}   .cq-verdict.dn b{color:var(--dn)}
+.cq-note{font-size:10.5px;color:var(--t3);margin-top:12px;line-height:1.5}
+.cq-end{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+
+/* the button that opens it, on the setup it is going to argue with */
+.cq-btn{width:100%;height:34px;margin-top:9px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--b2);background:var(--card2);color:var(--t1);
+  font-size:12px;font-weight:600;letter-spacing:.01em;transition:.14s;
+  display:flex;align-items:center;justify-content:center;gap:7px}
+.cq-btn:hover{border-color:var(--p3);background:rgba(var(--rgbAcc),.10)}
+.cq-btn i{font-style:normal;color:var(--p3);font-size:13px}
+
+@media (max-width:560px){
+  .cq{padding:16px 15px 14px}
+  .cq-votes{grid-template-columns:1fr}
+  .cq-ask{font-size:17px}
+}
+
 /* the sidebar keeps its own statue — the original asset, cut out of its
    backdrop rather than redrawn. The .sc-portrait rules further up the sheet
    position it and fade its left edge away from the quote. */
@@ -7454,6 +7547,10 @@ body{background:var(--bg0)}
                was the one nobody could find. The answer belongs beside the
                setup it is sizing; the button still opens the full working. -->
           <div id="dash_risk" class="dsk"></div>
+          <!-- THE PART THAT ARGUES. Everything above this line agrees with
+               you; six questions, each checked against something already
+               measured, and it can say no. -->
+          <button class="cq-btn" onclick="cqOpen()"><i>&#8253;</i>Cross-question me</button>
         </div>
         <button class="cta" onclick="goTab('analytics',document.querySelector('.nav-item[onclick*=&quot;analytics&quot;]'))">View Full Analysis</button>
       </div>
@@ -23200,6 +23297,453 @@ function qamHtml(){
   return h+'</div>';
 }
 
+
+/* ══ CELESX — CROSS-QUESTION ═══════════════════════════════════════════════
+   A board that only agrees with you is a board that will let you lose money
+   politely. This is the part that argues.
+
+   Six questions, one at a time. Every answer is checked against something
+   the app has already measured — the range, the timing score and its
+   forward-test grade, the day's bias, the ATR, the heavy aspects, the
+   journal — and where the answer and the measurement disagree, it says so.
+
+   IT IS NOT A CHECKLIST. A checklist is ticked; this pushes back. Answering
+   every question does not earn a yes, and two of the checks can refuse on
+   their own no matter how well the rest went:
+
+       fewer than two of the three votes agree   →  no
+       the month is already at the ceiling       →  no
+
+   THE VOTES ARE THE SAME THREE CELESX USES ON THE SERVER — price, time,
+   macro — counted, never averaged, so a strong single layer cannot carry a
+   trade by itself. That is the whole point of "never astrology alone", and
+   it is enforced here rather than described.
+
+   Nothing is stored except the verdict, appended to the journal entry if
+   one is taken, so the next cross-question can read what happened last
+   time. Answers are not sent anywhere.
+   ══════════════════════════════════════════════════════════════════════ */
+
+var CQ = null;               /* the run in progress */
+var CQ_KEY = 'ca_cq_log';    /* verdicts only, for the ceiling and the streak */
+
+function cqNum(x){ var v = parseFloat(String(x).replace(/[^0-9.\-]/g, '')); return isFinite(v) ? v : null; }
+
+function cqLog(){
+  try{ var a = JSON.parse(localStorage.getItem(CQ_KEY) || '[]'); return Array.isArray(a) ? a : []; }
+  catch(e){ return []; }
+}
+function cqLogPush(rec){
+  try{
+    var a = cqLog(); a.unshift(rec);
+    localStorage.setItem(CQ_KEY, JSON.stringify(a.slice(0, 200)));
+  }catch(e){}
+}
+
+/* ── what the board actually knows, gathered once ────────────────────────
+   Every reading here is the app's own function. If one of them cannot
+   answer, the field is null and the question that depends on it says "I
+   cannot check this" rather than inventing a pass. */
+function cqFacts(){
+  var F = { asset: null, price: null, rows: null, atr: null, major: null,
+            timing: null, bias: null, heavy: [], macro: null, sig: null,
+            ceiling: 12, monthPct: null };
+
+  try{ F.asset = (typeof timAsset === 'function') ? timAsset()
+                 : (typeof _lastAsset !== 'undefined' ? _lastAsset : 'Gold'); }catch(e){ F.asset = 'Gold'; }
+  try{ F.rows = (typeof HIST_ROWS !== 'undefined' && HIST_ROWS && HIST_ROWS.length >= 120) ? HIST_ROWS : null; }catch(e){}
+  try{ F.sig = window._lastSig || null; }catch(e){}
+  if(F.rows) F.price = +F.rows[F.rows.length - 1].close;
+  if(!F.price && F.sig) F.price = +F.sig.curPrice || +F.sig.entry || null;
+
+  try{ if(F.rows) F.atr = CQE.atr(F.rows, 14); }catch(e){}
+  try{ if(F.rows && F.price) F.major = majorPair(F.rows, F.price); }catch(e){}
+  try{ F.timing = tmgEngine(F.asset); }catch(e){}
+  try{ F.bias = dayBias(F.asset, null); }catch(e){}
+  try{
+    var ah = qamAhead(3) || [];
+    F.heavy = ah.filter(function(x){ return x.heavy; });
+    var bl = F.heavy.filter(function(x){ return x.profile && x.profile.bias === 'bullish'; }).length;
+    var br = F.heavy.filter(function(x){ return x.profile && x.profile.bias === 'bearish'; }).length;
+    F.macro = bl > br ? 'bull' : br > bl ? 'bear' : null;
+  }catch(e){}
+
+  /* the month against the ceiling, from the journal the app already keeps */
+  try{
+    var mk = new Date().toISOString().slice(0, 7), sum = 0, seen = false;
+    (typeof JRNL !== 'undefined' ? JRNL : []).forEach(function(t){
+      if(String(t.d || '').slice(0, 7) !== mk) return;
+      var p = parseFloat(t.pnlPct != null ? t.pnlPct : t.rPct);
+      if(isFinite(p)){ sum += p; seen = true; }
+    });
+    if(seen) F.monthPct = sum;
+  }catch(e){}
+
+  return F;
+}
+
+/* ── the three votes, exactly as the server counts them ─────────────────── */
+function cqVotes(F){
+  var v = { price: null, time: null, macro: null, why: {} };
+
+  var mj = cqRange(F.major);
+  if(mj && F.price && mj.MH > mj.ML){
+    var span = mj.MH - mj.ML, pos = (F.price - mj.ML) / span;
+    if(pos <= 0.25){ v.price = 'bull'; v.why.price = 'price is at the low edge of ' + fmtPx(mj.ML) + '–' + fmtPx(mj.MH); }
+    else if(pos >= 0.75){ v.price = 'bear'; v.why.price = 'price is at the high edge of ' + fmtPx(mj.ML) + '–' + fmtPx(mj.MH); }
+    else v.why.price = 'price is mid-range in ' + fmtPx(mj.ML) + '–' + fmtPx(mj.MH) + ' — the range decides nothing here';
+  }else{
+    v.why.price = 'no range measured — not enough history';
+  }
+
+  var t = F.timing;
+  if(t && t.mayAlert && (t.score || 0) >= 50){
+    var d = String(t.dir || '').toLowerCase();
+    v.time = (d === 'bull') ? 'bull' : (d === 'bear') ? 'bear' : null;
+    v.why.time = 'timing ' + t.score + '/100, ' + t.grade;
+    if(!v.time) v.why.time += ' — but no direction, so it does not vote';
+  }else if(t && !t.mayAlert){
+    v.why.time = 'the timing layers failed their own forward test on ' + F.asset + ' — this layer does not get a vote';
+  }else if(t){
+    v.why.time = 'timing ' + t.score + '/100 — below the alert line';
+  }else{
+    v.why.time = 'timing could not be read';
+  }
+
+  if(F.macro){ v.macro = F.macro; v.why.macro = F.heavy.length + ' heavy aspect' + (F.heavy.length === 1 ? '' : 's') + ' ahead, leaning ' + F.macro; }
+  else v.why.macro = F.heavy.length ? 'heavy aspects ahead but no net lean' : 'no heavy aspect in the next three days';
+
+  var cast = ['price', 'time', 'macro'].filter(function(k){ return v[k]; });
+  var bull = cast.filter(function(k){ return v[k] === 'bull'; });
+  var bear = cast.filter(function(k){ return v[k] === 'bear'; });
+  var agree = bull.length >= bear.length ? bull : bear;
+  v.side = agree.length ? (bull.length >= bear.length ? 'bull' : 'bear') : null;
+  v.agree = agree;
+  v.count = agree.length;
+  return v;
+}
+
+/* MAJORPAIR DOES NOT RETURN TWO NUMBERS.
+   MH and ML come back as {px, date, atrAway, tested, cleared} — the level
+   and its history. Comparing those two objects with `>` is always false, so
+   the price vote silently never fired and every entry answer came back
+   "no range measured". Read the price out of them, once, here. */
+function cqRange(mj){
+  if(!mj) return null;
+  function px(x){ return (x && typeof x === 'object') ? +x.px : +x; }
+  var H = px(mj.MH), L = px(mj.ML);
+  return (isFinite(H) && isFinite(L)) ? { MH: H, ML: L } : null;
+}
+
+function fmtPx(n){
+  if(n == null || !isFinite(n)) return '—';
+  var a = Math.abs(n);
+  return a >= 1000 ? n.toFixed(0) : a >= 10 ? n.toFixed(2) : n.toFixed(4);
+}
+
+/* ── the questions ───────────────────────────────────────────────────────
+   Each one names what it will be checked against BEFORE it is answered.
+   Being told afterwards that the board disagreed is a gotcha; being told
+   first is a chance to think again, which is the point. */
+var CQ_Q = [
+  { id: 'side', ask: 'Which way are you taking this?',
+    sub: 'I will check it against the day’s bias and where the three votes point.',
+    type: 'choice', opts: [{ v: 'bull', t: 'Buy' }, { v: 'bear', t: 'Sell' }] },
+
+  { id: 'entry', ask: 'What price are you getting in at?',
+    sub: 'I will check it against the range — whether you are at an edge or in the middle of it.',
+    type: 'num', ph: 'entry price' },
+
+  { id: 'stop', ask: 'Where are you wrong?',
+    sub: 'The price that ends the trade. I will check the distance against the ATR — too tight is noise, too wide is not a trade.',
+    type: 'num', ph: 'stop loss' },
+
+  { id: 'target', ask: 'Where are you taking it off?',
+    sub: 'I will work out the reward against the risk you just gave me.',
+    type: 'num', ph: 'target' },
+
+  { id: 'why', ask: 'Why now, and not in four hours?',
+    sub: 'I will check this one against the timing score and its forward-test grade.',
+    type: 'choice', opts: [
+      { v: 'window', t: 'The time window is open' },
+      { v: 'level',  t: 'Price reached my level' },
+      { v: 'news',   t: 'News or an event' },
+      { v: 'feel',   t: 'It looks right' } ] },
+
+  { id: 'size', ask: 'How much of the account is at risk on this one?',
+    sub: 'A percentage. I will check it against the ' + '12' + '% ceiling and what the month has already used.',
+    type: 'num', ph: 'e.g. 1.5', suffix: '%' }
+];
+
+/* ── the checks ──────────────────────────────────────────────────────────
+   One function per question. Each returns {ok, say} — say is what CELESX
+   answers back, and ok:false is a challenge that counts against the
+   verdict. A check that cannot be made returns ok:null, which counts as
+   neither: an unknown is not a pass and it is not a failure. */
+function cqCheck(id, a, F, V){
+  var A = CQ.ans;
+
+  if(id === 'side'){
+    var board = V.side, day = F.bias && F.bias.dir;
+    if(!board && !day) return { ok: null, say: 'I have nothing to check that against yet — no votes and no bias on the board.' };
+    if(board && a !== board)
+      return { ok: false, say: 'The votes point the other way. ' + V.agree.map(function(k){ return V.why[k]; }).join('; ') + '. You are taking the opposite side of the only evidence I have.' };
+    if(day && day !== 'neutral' && ((day === 'bull') !== (a === 'bull')))
+      return { ok: false, say: 'The day’s bias reads ' + day + ' and you are going the other way. That can be right — but it is you against the reading, not with it.' };
+    return { ok: true, say: 'That agrees with the board.' };
+  }
+
+  if(id === 'entry'){
+    var mj = cqRange(F.major);
+    if(!mj || !(mj.MH > mj.ML)) return { ok: null, say: 'No range measured, so I cannot tell you whether that is an edge or the middle.' };
+    var pos = (a - mj.ML) / (mj.MH - mj.ML);
+    if(a > mj.MH || a < mj.ML)
+      return { ok: false, say: 'That is outside the range ' + fmtPx(mj.ML) + '–' + fmtPx(mj.MH) + ' entirely. Either the range has broken and the level you are using is stale, or the number is wrong.' };
+    if(pos > 0.35 && pos < 0.65)
+      return { ok: false, say: 'That is the middle of ' + fmtPx(mj.ML) + '–' + fmtPx(mj.MH) + '. The middle is where a range decides nothing — there is no edge to lean on and no obvious place to be wrong.' };
+    var near = (A.side === 'bull') ? (pos <= 0.35) : (pos >= 0.65);
+    if(!near)
+      return { ok: false, say: 'You are ' + (A.side === 'bull' ? 'buying near the top' : 'selling near the bottom')
+        + ' of the range (' + fmtPx(mj.ML) + '–' + fmtPx(mj.MH) + '). That is the expensive end of it.' };
+    return { ok: true, say: 'That is at the ' + (A.side === 'bull' ? 'low' : 'high') + ' edge of ' + fmtPx(mj.ML) + '–' + fmtPx(mj.MH) + ', which is where the range is worth using.' };
+  }
+
+  if(id === 'stop'){
+    var e = A.entry;
+    if(e == null) return { ok: null, say: 'I did not get an entry, so I cannot measure the distance.' };
+    var wrongSide = (A.side === 'bull') ? (a >= e) : (a <= e);
+    if(wrongSide)
+      return { ok: false, say: 'That stop is on the wrong side of your entry. On a ' + (A.side === 'bull' ? 'buy' : 'sell') + ', the invalidation sits ' + (A.side === 'bull' ? 'below' : 'above') + ' it.' };
+    var dist = Math.abs(e - a);
+    if(!F.atr) return { ok: null, say: 'No ATR available, so I cannot say whether that distance is noise or not.' };
+    var mult = dist / F.atr;
+    if(mult < 0.5)
+      return { ok: false, say: 'That is ' + mult.toFixed(2) + ' of one ATR. This instrument moves ' + fmtPx(F.atr) + ' in an average day — a stop that tight is not an invalidation, it is a coin toss against normal noise.' };
+    if(mult > 3)
+      return { ok: false, say: 'That is ' + mult.toFixed(1) + ' ATR away. A stop that far means the trade is not defined — if you need that much room, you do not know where you are wrong.' };
+    return { ok: true, say: mult.toFixed(1) + ' ATR of room. That is a real invalidation — far enough to survive noise, close enough to mean something.' };
+  }
+
+  if(id === 'target'){
+    var e2 = A.entry, s2 = A.stop;
+    if(e2 == null || s2 == null) return { ok: null, say: 'I need both an entry and a stop before reward means anything.' };
+    var wrong = (A.side === 'bull') ? (a <= e2) : (a >= e2);
+    if(wrong) return { ok: false, say: 'That target is behind your entry. On a ' + (A.side === 'bull' ? 'buy' : 'sell') + ' it has to be ' + (A.side === 'bull' ? 'above' : 'below') + ' it.' };
+    var risk = Math.abs(e2 - s2), rew = Math.abs(a - e2);
+    if(!risk) return { ok: false, say: 'Your stop is your entry. There is no risk defined, so there is no trade to size.' };
+    var rr = rew / risk;
+    CQ.rr = rr;
+    if(rr < 1)
+      return { ok: false, say: 'That is ' + rr.toFixed(2) + ' to 1 — you are risking more than you are trying to make. You would need to be right well over half the time just to break even.' };
+    if(rr < 1.5)
+      return { ok: false, say: 'That is ' + rr.toFixed(2) + ' to 1. Thin. At that ratio a normal losing run costs more than the wins pay back.' };
+    return { ok: true, say: rr.toFixed(2) + ' to 1. That pays for being wrong more often than you are right.' };
+  }
+
+  if(id === 'why'){
+    var t = F.timing;
+    if(a === 'feel')
+      return { ok: false, say: 'Then there is no case. Everything in here exists so that a trade has a reason that can be checked afterwards — "it looks right" cannot be.' };
+    if(a === 'window'){
+      if(!t) return { ok: null, say: 'I could not read the timing engine, so I cannot confirm a window is open.' };
+      if(!t.mayAlert) return { ok: false, say: 'The timing layers failed their forward test on ' + F.asset + '. The window you are trading is one I have measured and cannot trust on this instrument.' };
+      if((t.score || 0) < 50) return { ok: false, say: 'Timing reads ' + t.score + '/100, which is below the line. There is no window open right now — that is the engine’s own answer.' };
+      return { ok: true, say: 'Timing reads ' + t.score + '/100, ' + t.grade + '. The window is genuinely open.' };
+    }
+    if(a === 'level'){
+      return (CQ.checks.entry && CQ.checks.entry.ok === true)
+        ? { ok: true, say: 'Consistent — your entry did sit at an edge of the range.' }
+        : { ok: false, say: 'You said the level, but the entry you gave me was not at an edge of the range. Those two do not agree.' };
+    }
+    if(a === 'news'){
+      return F.heavy.length
+        ? { ok: true, say: 'There is something in the window: ' + F.heavy.slice(0, 2).map(function(x){ return x.p1 + ' ' + x.aspect.toLowerCase() + ' ' + x.p2; }).join(', ') + '. Trade the reaction, not the headline.' }
+        : { ok: null, say: 'I track aspects and the calendar, not headlines. I cannot check this one — you are on your own for it.' };
+    }
+  }
+
+  if(id === 'size'){
+    if(a <= 0) return { ok: false, say: 'Zero risk is not a trade.' };
+    if(a > 3)
+      return { ok: false, say: a + '% on a single trade. Three losses in a row at that size is ' + (a * 3).toFixed(0) + '% of the account, and three in a row is normal, not unlucky.' };
+    if(F.monthPct != null && F.monthPct >= F.ceiling)
+      return { ok: false, say: 'The month is already at ' + F.monthPct.toFixed(1) + '% against a ' + F.ceiling + '% ceiling. Target achieved — no more trades is better today.' };
+    if(F.monthPct != null && F.monthPct + a > F.ceiling)
+      return { ok: false, say: 'The month is at ' + F.monthPct.toFixed(1) + '% and the ceiling is ' + F.ceiling + '%. This one would take you past it.' };
+    return { ok: true, say: a + '% is inside the ceiling' + (F.monthPct != null ? ' — the month is at ' + F.monthPct.toFixed(1) + '%' : '') + '.' };
+  }
+
+  return { ok: null, say: '' };
+}
+
+/* ── the verdict ─────────────────────────────────────────────────────────
+   Two things refuse on their own, and they are named as such so it is
+   clear the answers did not cause it. */
+function cqVerdict(F, V){
+  var fails = 0, unknown = 0;
+  CQ_Q.forEach(function(q){
+    var c = CQ.checks[q.id];
+    if(!c) return;
+    if(c.ok === false) fails++;
+    else if(c.ok === null) unknown++;
+  });
+
+  var hard = null;
+  if(V.count < 2)
+    hard = 'Fewer than two of price, time and macro agree. That is the one rule that does not bend — not because of anything you answered.';
+  if(F.monthPct != null && F.monthPct >= F.ceiling)
+    hard = 'The month is at ' + F.monthPct.toFixed(1) + '% against a ' + F.ceiling + '% ceiling. Target achieved. No more trades is better.';
+
+  var word, tone, line;
+  if(hard){ word = 'NO'; tone = 'dn'; line = hard; }
+  else if(fails === 0){ word = 'TAKE IT'; tone = 'up';
+    line = 'Nothing I checked came back against you, and ' + V.count + ' of the three votes agree. This is as clean as it gets.'; }
+  else if(fails <= 2){ word = 'SMALLER'; tone = 'warn';
+    line = fails + ' of the six came back against you. The case is not broken, but it is not what you thought it was — take it at half the size, or wait.'; }
+  else { word = 'NO'; tone = 'dn';
+    line = fails + ' of the six came back against you. That is not a trade with a problem, that is a trade looking for a reason.'; }
+
+  return { word: word, tone: tone, line: line, fails: fails, unknown: unknown, votes: V.count };
+}
+
+/* ── the panel ───────────────────────────────────────────────────────────
+   Mounted on <body>. An earlier fixed panel inside a card was clipped by an
+   ancestor that had its own stacking context, which is why this one does
+   not live near the card it was opened from. */
+function cqOpen(){
+  var F = cqFacts(), V = cqVotes(F);
+  CQ = { i: 0, ans: {}, checks: {}, F: F, V: V, rr: null };
+
+  var w = document.getElementById('cq_wrap');
+  if(!w){
+    w = document.createElement('div');
+    w.id = 'cq_wrap';
+    w.className = 'cq-wrap';
+    w.addEventListener('click', function(e){ if(e.target === w) cqClose(); });
+    document.body.appendChild(w);
+  }
+  w.style.display = 'flex';
+  document.addEventListener('keydown', cqKey);
+  cqRender();
+}
+
+function cqClose(){
+  var w = document.getElementById('cq_wrap');
+  if(w) w.style.display = 'none';
+  document.removeEventListener('keydown', cqKey);
+  CQ = null;
+}
+
+function cqKey(e){
+  if(e.key === 'Escape') cqClose();
+  else if(e.key === 'Enter'){
+    var inp = document.getElementById('cq_in');
+    if(inp && document.activeElement === inp){ e.preventDefault(); cqAnswer(inp.value); }
+  }
+}
+
+function cqAnswer(raw){
+  if(!CQ) return;
+  var q = CQ_Q[CQ.i];
+  if(!q) return;
+  var a = (q.type === 'num') ? cqNum(raw) : raw;
+  if(q.type === 'num' && a == null){
+    var e = document.getElementById('cq_err');
+    if(e){ e.textContent = 'That is not a number.'; e.style.display = 'block'; }
+    return;
+  }
+  CQ.ans[q.id] = a;
+  CQ.checks[q.id] = cqCheck(q.id, a, CQ.F, CQ.V);
+  CQ.i++;
+  cqRender();
+}
+
+function cqBack(){ if(CQ && CQ.i > 0){ CQ.i--; cqRender(); } }
+
+function cqRender(){
+  var w = document.getElementById('cq_wrap');
+  if(!w || !CQ) return;
+  var F = CQ.F, V = CQ.V, q = CQ_Q[CQ.i], h = '';
+
+  h += '<div class="cq" role="dialog" aria-label="Cross-question">';
+  h += '<div class="cq-top"><div><b>CELESX asks</b>'
+     + '<s>' + escHtml(F.asset) + (F.price ? ' · ' + fmtPx(F.price) : '') + '</s></div>'
+     + '<button class="cq-x" onclick="cqClose()" aria-label="Close">×</button></div>';
+
+  /* the three votes, always visible — they are the frame the answers sit in */
+  h += '<div class="cq-votes">';
+  ['price', 'time', 'macro'].forEach(function(k){
+    var s = V[k];
+    h += '<div class="cq-v ' + (s ? 'on ' + (s === 'bull' ? 'b' : 'r') : '') + '">'
+       + '<i>' + k + '</i><b>' + (s ? (s === 'bull' ? 'buy' : 'sell') : 'no vote') + '</b>'
+       + '<s>' + escHtml(V.why[k] || '') + '</s></div>';
+  });
+  h += '</div>';
+
+  if(q){
+    var n = CQ.i + 1;
+    h += '<div class="cq-prog"><i style="width:' + Math.round(CQ.i / CQ_Q.length * 100) + '%"></i></div>';
+    h += '<div class="cq-step">Question ' + n + ' of ' + CQ_Q.length + '</div>';
+    h += '<div class="cq-ask">' + escHtml(q.ask) + '</div>';
+    h += '<div class="cq-sub">' + escHtml(q.sub) + '</div>';
+
+    if(q.type === 'choice'){
+      h += '<div class="cq-opts">' + q.opts.map(function(o){
+        return '<button class="cq-o" onclick="cqAnswer(\'' + o.v + '\')">' + escHtml(o.t) + '</button>';
+      }).join('') + '</div>';
+    }else{
+      h += '<div class="cq-inrow"><input id="cq_in" type="text" inputmode="decimal" '
+         + 'placeholder="' + escHtml(q.ph || '') + '" autocomplete="off">'
+         + (q.suffix ? '<em>' + escHtml(q.suffix) + '</em>' : '')
+         + '<button class="cq-go" onclick="cqAnswer(document.getElementById(\'cq_in\').value)">Answer</button></div>';
+      h += '<div class="cq-err" id="cq_err" style="display:none"></div>';
+    }
+
+    /* what it has already said, so the argument is visible as it builds */
+    var said = CQ_Q.slice(0, CQ.i).filter(function(x){ return CQ.checks[x.id]; });
+    if(said.length){
+      h += '<div class="cq-said">' + said.map(function(x){
+        var c = CQ.checks[x.id];
+        return '<div class="cq-s ' + (c.ok === true ? 'ok' : c.ok === false ? 'no' : 'un') + '">'
+             + '<u>' + escHtml(x.ask) + '</u><span>' + escHtml(c.say) + '</span></div>';
+      }).join('') + '</div>';
+    }
+    if(CQ.i > 0) h += '<button class="cq-back" onclick="cqBack()">← back</button>';
+
+  }else{
+    var Vd = cqVerdict(F, V);
+    CQ.verdict = Vd;
+    h += '<div class="cq-verdict ' + Vd.tone + '"><b>' + Vd.word + '</b><span>' + escHtml(Vd.line) + '</span></div>';
+    h += '<div class="cq-said">' + CQ_Q.map(function(x){
+      var c = CQ.checks[x.id];
+      if(!c) return '';
+      return '<div class="cq-s ' + (c.ok === true ? 'ok' : c.ok === false ? 'no' : 'un') + '">'
+           + '<u>' + escHtml(x.ask) + '</u><span>' + escHtml(c.say) + '</span></div>';
+    }).join('') + '</div>';
+    if(Vd.unknown)
+      h += '<div class="cq-note">' + Vd.unknown + ' of the six I could not check — those are neither a pass nor a fail, and they are listed above as unchecked.</div>';
+    h += '<div class="cq-end"><button class="cq-o" onclick="cqSave()">Log this verdict</button>'
+       + '<button class="cq-o gh" onclick="cqOpen()">Ask me again</button>'
+       + '<button class="cq-o gh" onclick="cqClose()">Close</button></div>';
+  }
+
+  h += '</div>';
+  w.innerHTML = h;
+  var inp = document.getElementById('cq_in');
+  if(inp) inp.focus();
+}
+
+function cqSave(){
+  if(!CQ || !CQ.verdict) return;
+  cqLogPush({
+    at: Date.now(), asset: CQ.F.asset, side: CQ.ans.side || null,
+    verdict: CQ.verdict.word, fails: CQ.verdict.fails, votes: CQ.verdict.votes,
+    rr: CQ.rr != null ? +CQ.rr.toFixed(2) : null
+  });
+  try{ caToast('Verdict logged', CQ.verdict.word + ' on ' + CQ.F.asset + ' — ' + CQ.verdict.fails + ' of six came back against it.', CQ.verdict.tone === 'up' ? 'up' : 'dn'); }catch(e){}
+  cqClose();
+}
+
 /* ══ THE CARD ═══════════════════════════════════════════════════════════
    WRITTEN TWICE, BECAUSE THE FIRST ONE WAS UNREADABLE.
 
@@ -26286,9 +26830,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b104';
+var CA_BUILD='b105';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Qamar is now the palette exactly as specified \u2014 fourteen named colours, including the four elements. Settings \u2192 Look to switch.';
+var CA_WHATS_NEW='Cross-question. Six questions on the Trade Setup card, each checked against something already measured \u2014 and it can say no.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
