@@ -7250,6 +7250,106 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ── THE MONTH MAP ───────────────────────────────────────────────────────*/
+.mm-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.mm-nav{width:30px;height:30px;border-radius:8px;border:1px solid var(--b1);background:var(--card2);
+  color:var(--t2);cursor:pointer;font-size:14px}
+.mm-nav:hover{border-color:var(--p3);color:var(--t1)}
+.mm-title{flex:1;text-align:center}
+.mm-title b{display:block;font-size:15px;font-weight:700;color:var(--t1)}
+.mm-title s{display:block;text-decoration:none;font-size:10px;color:var(--t3);margin-top:2px}
+.mm-anchor{border:1px solid var(--b1);border-radius:9px;padding:9px 12px;margin-bottom:12px;background:var(--card2)}
+.mm-anchor i{font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.mm-anchor b{display:block;font-size:12.5px;color:var(--p3);margin-top:2px}
+
+.mm-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.mm-dow{font-size:8.5px;font-weight:700;letter-spacing:.08em;color:var(--t3);text-align:center;padding-bottom:3px}
+.mm-d{position:relative;aspect-ratio:1;border-radius:7px;border:1px solid var(--b1);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.13s;background:var(--card2)}
+.mm-d b{font-size:12px;font-weight:600;color:var(--t2)}
+.mm-d i{position:absolute;top:2px;right:4px;font-style:normal;font-size:8px;color:var(--p3)}
+.mm-d u{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:12px;height:2px;
+  border-radius:2px;background:var(--cy)}
+.mm-d.av{background:rgba(var(--rgbDn),.13);border-color:rgba(var(--rgbDn),.3)}
+.mm-d.av b{color:var(--dn)}
+.mm-d.fa{background:rgba(var(--rgbUp),.14);border-color:rgba(var(--rgbUp),.34)}
+.mm-d.fa b{color:var(--up)}
+.mm-d.sel{outline:2px solid var(--p3);outline-offset:1px}
+.mm-d:hover{transform:translateY(-1px)}
+.mm-legend{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:10px;font-size:9.5px;color:var(--t3)}
+.mm-legend span{display:flex;align-items:center;gap:5px}
+.mm-legend span.av:before,.mm-legend span.fa:before,.mm-legend span.mi:before{
+  content:'';width:10px;height:10px;border-radius:3px;border:1px solid var(--b1)}
+.mm-legend span.av:before{background:rgba(var(--rgbDn),.4)}
+.mm-legend span.fa:before{background:rgba(var(--rgbUp),.4)}
+.mm-legend span.mi:before{background:var(--card2)}
+.mm-legend u{display:inline-block;width:10px;height:2px;background:var(--cy);border-radius:2px}
+
+.mm-wt{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);
+  margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
+.mm-amd{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--b1)}
+.mm-p{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-right:1px solid var(--bg0);min-width:0;overflow:hidden}
+.mm-p b{font-size:11px;font-weight:800}
+.mm-p i{font-style:normal;font-size:8px;opacity:.75;white-space:nowrap}
+.mm-p.accumulation{background:rgba(var(--rgbInfo),.20);color:var(--t1)}
+.mm-p.manipulation{background:rgba(var(--rgbDn),.22);color:var(--dn)}
+.mm-p.distribution{background:rgba(var(--rgbUp),.22);color:var(--up)}
+.mm-amdkey{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.mm-amdkey div{font-size:10px;color:var(--t3)}
+.mm-amdkey b{color:var(--t2);text-transform:capitalize;margin-right:6px}
+
+.mm-sel{margin-top:18px;font-size:13px;font-weight:700;color:var(--t1)}
+.mm-pos{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:7px}
+.mm-pos>div{border:1px solid var(--b1);border-radius:8px;padding:7px 9px;background:var(--card2)}
+.mm-pos i{font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.mm-pos b{display:block;font-size:12px;color:var(--t1);margin-top:2px}
+.mm-pos s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);margin-top:2px;font-variant-numeric:tabular-nums}
+.mm-pos em{font-style:normal;color:var(--p3);font-weight:700}
+
+.mm-asp{display:flex;flex-direction:column;gap:6px}
+.mm-a{border:1px solid var(--b1);border-radius:8px;padding:8px 10px;background:var(--card2);opacity:.55}
+.mm-a.on{opacity:1;border-color:var(--b2)}
+.mm-a.on.hard{border-left:3px solid var(--dn)}
+.mm-a.on.soft{border-left:3px solid var(--up)}
+.mm-a1{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.mm-a1 b{font-size:12px;color:var(--t1);text-transform:capitalize}
+.mm-a1 em{font-style:normal;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 6px;border-radius:4px;border:1px solid var(--b1);color:var(--t3)}
+.mm-a1 em.k-hard{color:var(--dn)} .mm-a1 em.k-soft{color:var(--up)}
+.mm-a1 em.k-on{color:var(--p3);border-color:var(--p3)}
+.mm-a2{font-size:10.5px;color:var(--t2);margin-top:4px;font-variant-numeric:tabular-nums}
+.mm-a2 b{color:var(--t1)}
+.mm-a3{font-size:9.5px;color:var(--t3);margin-top:3px}
+
+.mm-verdict{display:flex;align-items:center;gap:11px;border-radius:9px;padding:11px 13px;
+  border:1px solid var(--b1);background:var(--card2);flex-wrap:wrap}
+.mm-verdict b{font-size:15px;font-weight:800;letter-spacing:.05em}
+.mm-verdict.av b{color:var(--dn)} .mm-verdict.fa b{color:var(--up)} .mm-verdict.mi b{color:var(--t2)}
+.mm-verdict span{flex:1;font-size:11.5px;color:var(--t2);min-width:180px}
+.mm-verdict em{font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.08em;
+  padding:3px 7px;border-radius:5px;border:1px solid var(--b1);color:var(--t3)}
+.mm-dir{border:1px solid var(--b1);border-radius:9px;padding:10px 13px;background:var(--card2)}
+.mm-dir b{font-size:13px;font-weight:700;color:var(--t2)}
+.mm-dir.up b{color:var(--up)} .mm-dir.dn b{color:var(--dn)}
+.mm-dir span{display:block;font-size:11px;color:var(--t2);margin-top:3px}
+.mm-dir s{display:block;text-decoration:none;font-size:10px;color:var(--t3);margin-top:4px}
+.mm-dir u{display:block;text-decoration:none;font-size:10.5px;color:var(--t2);margin-top:5px;
+  font-variant-numeric:tabular-nums}
+.mm-macro{display:flex;gap:7px;flex-wrap:wrap}
+.mm-macro span{font-size:10.5px;padding:5px 10px;border-radius:7px;border:1px solid var(--b1);color:var(--t2)}
+.mm-macro span.sure{border-color:var(--cy);color:var(--cy)}
+.mm-macro span.maybe{color:var(--t3);border-style:dashed}
+.mm-rev{border:1px solid var(--b1);border-radius:9px;padding:10px 13px;background:var(--card2)}
+.mm-rev.good{border-color:var(--up)}
+.mm-rev b{font-size:13px;color:var(--t1)}
+.mm-rev span{display:block;font-size:11px;color:var(--t2);margin-top:3px}
+.mm-rev s{display:block;text-decoration:none;font-size:10px;color:var(--t3);margin-top:4px}
+.mm-note,.mm-none{font-size:10.5px;line-height:1.55;color:var(--t3);padding:9px 11px;
+  border:1px dashed var(--b1);border-radius:8px}
+.mm-foot{margin-top:16px;font-size:10px;line-height:1.6;color:var(--t3);max-width:92ch}
+@media (max-width:820px){ .mm-p i{display:none} }
+
 /* ── THE SIGN CYCLE, BODY BY BODY ─────────────────────────────────────────*/
 .pc-wrap{margin-top:4px}
 .pc-head b{display:block;font-size:13px;font-weight:700;color:var(--t1)}
@@ -23542,6 +23642,488 @@ function qamPlanetsHtml(){
   +'</div>';
 }
 
+
+/* ══ THE MONTH MAP ════════════════════════════════════════════════════════
+   A day-by-day favourable / avoid map for a month, with AMD structure and
+   reversal setups laid over it, so an AVOID day is a trade to prepare for
+   rather than a day to sit out.
+
+   EVERY POSITION COMES FROM THE EPHEMERIS THIS APP ALREADY CARRIES. Nothing
+   here is remembered or estimated. Where a date cannot be derived — an FOMC
+   decision is a published diary entry, not an orbit — it is named as
+   unknown instead of guessed, because a made-up FOMC date would poison
+   every classification that leaned on it.
+
+   THE ASPECT MATH IS WRITTEN OUT RATHER THAN HIDDEN. Positions go to
+   absolute degrees, separation folds at 180, and the aspect is matched
+   inside a six-degree orb. Whether it is applying or separating is decided
+   by measuring the same separation a day later — closing means applying.
+   ══════════════════════════════════════════════════════════════════════ */
+
+var MM_BASE = {Aries:0,Taurus:30,Gemini:60,Cancer:90,Leo:120,Virgo:150,
+               Libra:180,Scorpio:210,Sagittarius:240,Capricorn:270,
+               Aquarius:300,Pisces:330};
+
+var MM_BODIES = ['sun','mercury','venus','mars','jupiter','saturn','neptune'];
+
+var MM_ASPECTS = [
+  {name:'conjunction', deg:0,   sym:'☌', kind:'neutral'},
+  {name:'sextile',     deg:60,  sym:'⚹', kind:'soft'},
+  {name:'square',      deg:90,  sym:'□', kind:'hard'},
+  {name:'trine',       deg:120, sym:'△', kind:'soft'},
+  {name:'opposition',  deg:180, sym:'☍', kind:'hard'}
+];
+
+var MM_ORB = 6;
+var MM_BENEFIC = {venus:1, jupiter:1};
+var MM_MALEFIC = {mars:1, saturn:1};
+/* for gold the spec weights Venus and Neptune highest; BTC has no such
+   tradition worth honouring, so it is left flat rather than invented */
+var MM_GOLD_W = {venus:1.6, neptune:1.5, sun:1.1, jupiter:1.1};
+
+function mmLon(body,t){
+  try{ return rev(getEphemeris(new Date(t))[body].lon); }catch(e){ return null; }
+}
+function mmSignOf(L){
+  if(L==null)return null;
+  return SIGNS[Math.floor(rev(L)/30)];
+}
+function mmSep(a,b){
+  var d=Math.abs(a-b)%360;
+  return d>180 ? 360-d : d;
+}
+
+/* ── STEP 2 — every pair, with the working kept ────────────────────────── */
+function mmAspects(t,asset){
+  var pos={}, out=[];
+  MM_BODIES.forEach(function(b){ pos[b]=mmLon(b,t); });
+  var tomorrow={};
+  MM_BODIES.forEach(function(b){ tomorrow[b]=mmLon(b,t+86400000); });
+
+  for(var i=0;i<MM_BODIES.length;i++){
+    for(var j=i+1;j<MM_BODIES.length;j++){
+      var A=MM_BODIES[i], B=MM_BODIES[j];
+      if(pos[A]==null||pos[B]==null)continue;
+      var sep=mmSep(pos[A],pos[B]);
+      for(var k=0;k<MM_ASPECTS.length;k++){
+        var AS=MM_ASPECTS[k];
+        var orb=Math.abs(sep-AS.deg);
+        if(orb>MM_ORB)continue;
+        /* applying if the separation is closer to exact tomorrow */
+        var sep2=mmSep(tomorrow[A],tomorrow[B]);
+        var applying=Math.abs(sep2-AS.deg) < orb;
+        var w=1;
+        if(String(asset).toUpperCase().indexOf('GOLD')>=0||String(asset).toUpperCase().indexOf('XAU')>=0)
+          w=(MM_GOLD_W[A]||1)*(MM_GOLD_W[B]||1);
+        /* SIX DEGREES IS NOT SIX DEGREES.
+           Applied flat across seven bodies it marked every single day of a
+           test month AVOID, which is the same as saying nothing. Measured:
+           Sun opposite Neptune sat inside a six-degree orb for 11 days of
+           one month and Mars square Saturn for 9 — between them they
+           blanket a month, and every day inherits an AVOID from a slow pair
+           that is barely moving.
+
+           The orb is really a question about TIME: an aspect matters on the
+           days around the one it perfects. So the distance to exact is
+           converted at the pair's own closing speed, and a day counts as
+           being on an aspect when it is within two days of exact. A fast
+           pair keeps a wide degree orb; a slow one gets a narrow one, and
+           neither is a number I picked. */
+        var closing=Math.abs(sep2-sep);
+        var daysToExact = closing>0.0005 ? orb/closing : 999;
+        out.push({p1:A,p2:B,aspect:AS.name,sym:AS.sym,kind:AS.kind,
+                  sep:+sep.toFixed(2), orb:+orb.toFixed(2),
+                  applying:applying, weight:+w.toFixed(2),
+                  perDay:+closing.toFixed(4),
+                  daysToExact:+daysToExact.toFixed(1),
+                  active:(daysToExact<=2),
+                  benefics:!!(MM_BENEFIC[A]&&MM_BENEFIC[B]),
+                  malefic:!!(MM_MALEFIC[A]||MM_MALEFIC[B])});
+        break;                      /* one aspect per pair, the nearest */
+      }
+    }
+  }
+  /* tightest and heaviest first */
+  out.sort(function(x,y){ return (x.orb/x.weight)-(y.orb/y.weight); });
+  return {pos:pos, list:out};
+}
+
+/* ── STEP 1 — ingress and lunation, found rather than recalled ──────────── */
+function mmIngress(t){
+  var out=[];
+  MM_BODIES.concat(['moon']).forEach(function(b){
+    if(b==='moon')return;                 /* the Moon changes sign every 2 days */
+    var a=mmLon(b,t), c=mmLon(b,t+86400000);
+    if(a==null||c==null)return;
+    var ia=Math.floor(a/30), ic=Math.floor(c/30);
+    if(ia!==ic){
+      var into=SIGNS[ic];
+      out.push({body:b, from:SIGNS[ia], into:into,
+                cardinal:(into==='Aries'||into==='Cancer'||into==='Libra'||into==='Capricorn')});
+    }
+  });
+  return out;
+}
+
+/* new moon at 0 degrees of elongation, full at 180 — detected by the
+   crossing between one midnight and the next, not by a remembered date */
+function mmLunation(t){
+  function elong(x){
+    var s=mmLon('sun',x), m=mmLon('moon',x);
+    if(s==null||m==null)return null;
+    return rev(m-s);
+  }
+  var a=elong(t), b=elong(t+86400000);
+  if(a==null||b==null)return null;
+  if(b<a) return {kind:'New Moon'};                         /* wrapped past 0 */
+  if(a<180&&b>=180) return {kind:'Full Moon'};
+  return null;
+}
+
+/* ── STEP 4 — macro, and an honest gap where one belongs ───────────────── */
+function mmMacro(d){
+  var out=[];
+  var dow=d.getDay(), dom=d.getDate(), m=d.getMonth();
+  /* NFP: the first Friday. That one IS a rule and can be derived. */
+  if(dow===5 && dom<=7) out.push({name:'NFP / Employment', sure:true});
+  /* quarter end */
+  var last=new Date(d.getFullYear(),m+1,0).getDate();
+  if((m===2||m===5||m===8||m===11) && dom===last) out.push({name:'Quarter end', sure:true});
+  /* CPI and PPI cluster mid-month but the exact day is published, not
+     derived. Flagged as a window rather than asserted as a date. */
+  if(dom>=10&&dom<=15) out.push({name:'CPI / PPI window', sure:false});
+  return out;
+}
+
+/* ── STEP 3 — classify, first match wins ───────────────────────────────── */
+function mmClassify(day){
+  /* only aspects within two days of exact decide the day; everything else
+     in orb is still listed, because it is context and the reader should see
+     it — it just does not get a vote */
+  var A=day.aspects.list.filter(function(x){ return x.active; });
+  var hard=A.filter(function(x){ return x.kind==='hard'; });
+  var soft=A.filter(function(x){ return x.kind==='soft'; });
+  var beneSoft=soft.filter(function(x){ return x.benefics; });
+
+  /* the exception the spec allows, kept as a flag rather than an override */
+  var override=null;
+  if(day.lunation){
+    var strong=soft.filter(function(x){
+      return x.orb<=2 && (MM_BENEFIC[x.p1]||MM_BENEFIC[x.p2]) && x.aspect==='trine'; });
+    if(strong.length) override={by:strong[0], note:'a tight benefic trine against a lunation — judgment call, not a rule'};
+  }
+
+  if(day.lunation)      return {v:'AVOID', why:day.lunation.kind+' — reset and reversal', tag:'ASTRO', override:override};
+  if(day.cardinal)      return {v:'AVOID', why:'cardinal ingress: '+day.cardinal.body+' into '+day.cardinal.into+' — major turn', tag:'ASTRO', weight:2};
+  if(day.ingress.length)return {v:'AVOID', why:'ingress: '+day.ingress.map(function(g){return g.body+' → '+g.into;}).join(', ')+' — regime shift', tag:'ASTRO'};
+  if(hard.length)       return {v:'AVOID', why:hard[0].p1+' '+hard[0].sym+' '+hard[0].p2+', '+hard[0].orb+'° orb'+(hard[0].applying?', applying':', separating'), tag:'ASTRO'};
+  if(beneSoft.length)   return {v:'FAVOURABLE', why:beneSoft[0].p1+' '+beneSoft[0].sym+' '+beneSoft[0].p2+', '+beneSoft[0].orb+'° orb'+(beneSoft[0].applying?', applying':', separating'), tag:'ASTRO'};
+  if(soft.length)       return {v:'MILD', why:'quiet — only soft minor aspects ('+soft[0].p1+' '+soft[0].sym+' '+soft[0].p2+')', tag:'ASTRO'};
+  return {v:'MILD', why:'nothing exact within orb', tag:'ASTRO'};
+}
+
+/* ── STEP 5 — direction, which an ingress alone never gives ─────────────── */
+function mmDirection(day){
+  var A=day.aspects.list;
+  var up=0, dn=0, why=[];
+  A.forEach(function(x){
+    if(!x.active)return;
+    var w=x.weight*(x.applying?1.3:1)*(1-x.orb/MM_ORB*0.5);
+    if(x.kind==='soft' && (MM_BENEFIC[x.p1]||MM_BENEFIC[x.p2])){ up+=w; why.push('+ '+x.p1+' '+x.sym+' '+x.p2); }
+    if(x.kind==='hard' && (MM_MALEFIC[x.p1]||MM_MALEFIC[x.p2])){ dn+=w; why.push('− '+x.p1+' '+x.sym+' '+x.p2); }
+  });
+  if(up===0&&dn===0) return {dir:null, note:'timing only — no active aspect gives a direction'};
+  return {dir: up>dn?'up':dn>up?'down':null,
+          up:+up.toFixed(2), dn:+dn.toFixed(2), why:why.slice(0,3),
+          note: up>dn ? 'benefic soft aspect active — a turn up'
+              : dn>up ? 'malefic hard aspect active — a turn down'
+              : 'both sides active and level — no call'};
+}
+
+/* ── the month ─────────────────────────────────────────────────────────── */
+function mmMonth(year,month,asset){
+  asset=asset||'Gold';
+  var days=[], last=new Date(year,month+1,0).getDate();
+  for(var dom=1;dom<=last;dom++){
+    var d=new Date(year,month,dom,12,0,0,0);
+    var t=+d;
+    var ing=mmIngress(+new Date(year,month,dom,0,0,0,0));
+    var card=ing.filter(function(g){ return g.cardinal && g.body==='sun'; })[0]
+          || ing.filter(function(g){ return g.cardinal; })[0] || null;
+    var day={
+      date:d, dom:dom, dow:d.getDay(),
+      aspects:mmAspects(t,asset),
+      ingress:ing, cardinal:card,
+      lunation:mmLunation(+new Date(year,month,dom,0,0,0,0)),
+      macro:mmMacro(d)
+    };
+    day.cls=mmClassify(day);
+    day.dirn=mmDirection(day);
+    /* MACRO / ASTRO / BOTH, per the spec */
+    if(day.cls.v==='AVOID')
+      day.cls.tag = day.macro.length ? 'BOTH' : 'ASTRO';
+    else if(day.macro.length)
+      day.cls.tag = 'MACRO';
+    days.push(day);
+  }
+  return {year:year, month:month, asset:asset, days:days, amd:mmAMD(days),
+          anchor:mmAnchor(days)};
+}
+
+/* ── STEP 6 — accumulation, manipulation, distribution ─────────────────── */
+function mmAMD(days){
+  var out=[], run=null;
+  days.forEach(function(d){
+    var phase = d.cls.v==='AVOID' ? 'manipulation'
+              : d.cls.v==='FAVOURABLE' ? 'distribution'
+              : 'accumulation';
+    if(run&&run.phase===phase){ run.to=d.dom; }
+    else { if(run)out.push(run); run={phase:phase, from:d.dom, to:d.dom}; }
+  });
+  if(run)out.push(run);
+  return out.map(function(r){
+    r.say = r.phase==='accumulation'
+        ? 'range forms, size builds quietly — mark the range, do not enter'
+      : r.phase==='manipulation'
+        ? 'fakeout and stop-hunt window — do not chase the spike, this is where the trap is set'
+        : 'the real move runs after the trap — this is the entry and ride zone';
+    return r;
+  });
+}
+
+function mmAnchor(days){
+  var c=days.filter(function(d){ return d.cardinal; })[0];
+  if(c) return {dom:c.dom, what:'cardinal ingress — '+c.cardinal.body+' into '+c.cardinal.into};
+  var l=days.filter(function(d){ return d.lunation; })[0];
+  if(l) return {dom:l.dom, what:l.lunation.kind};
+  return null;
+}
+
+/* ── STEP 7 — the reversal, which needs price and says so ──────────────── */
+function mmReversal(rows,day){
+  /* A trap is a break of the prior range that closes back inside. Without
+     bars there is nothing to detect, and inventing one from the sky alone
+     is exactly what this whole engine is built not to do. */
+  if(!rows||rows.length<25)return {ok:false, why:'no daily bars loaded — a reversal is a price event and cannot be read from the sky'};
+  var n=rows.length;
+  var win=rows.slice(n-21,n-1);
+  var hi=Math.max.apply(null,win.map(function(r){return +r.high;}));
+  var lo=Math.min.apply(null,win.map(function(r){return +r.low;}));
+  var b=rows[n-1], o=+b.open, c=+b.close, h=+b.high, l=+b.low;
+
+  var sweptHigh = h>hi && c<hi;
+  var sweptLow  = l<lo && c>lo;
+  if(!sweptHigh&&!sweptLow)
+    return {ok:false, why:'no failed break — price has not swept the 20-day range and closed back inside'};
+
+  var dir = sweptLow ? 'up' : 'down';
+  var astro = day && day.dirn ? day.dirn.dir : null;
+  var agree = astro && astro===dir;
+  return {
+    ok:true, dir:dir,
+    trap: sweptLow ? 'lows swept at '+lo.toFixed(2)+', closed back above'
+                   : 'highs swept at '+hi.toFixed(2)+', closed back below',
+    astro:astro,
+    confidence: !astro ? 'medium — no astro direction to cross-check against'
+              : agree  ? 'high — the reversal and the astro bias agree'
+                       : 'low — the reversal points '+dir+' and the astro bias points '+astro+'; skip',
+    take: !!(agree)
+  };
+}
+
+
+/* ══ THE MONTH MAP, ON SCREEN ═════════════════════════════════════════════
+   A calendar coloured by the classification, an AMD strip under it, and —
+   the part that matters — the arithmetic for whichever day you click.
+
+   THE WORKING IS SHOWN BECAUSE A VERDICT NOBODY CAN CHECK IS ASTROLOGY IN
+   THE BAD SENSE. Positions go to absolute degrees, the separation is folded
+   at 180, the aspect is matched inside its orb, and the distance to exact is
+   converted at the pair's own speed. Every number on the panel can be
+   re-derived by hand from the two positions above it.
+   ══════════════════════════════════════════════════════════════════════ */
+
+var MM_VIEW = {y:null, m:null, sel:null, map:null};
+
+function mmInit(){
+  var n=new Date();
+  if(MM_VIEW.y==null){ MM_VIEW.y=n.getFullYear(); MM_VIEW.m=n.getMonth(); MM_VIEW.sel=n.getDate(); }
+}
+function mmGo(delta){
+  mmInit();
+  var d=new Date(MM_VIEW.y,MM_VIEW.m+delta,1);
+  MM_VIEW.y=d.getFullYear(); MM_VIEW.m=d.getMonth(); MM_VIEW.sel=1; MM_VIEW.map=null;
+  renderMonthMap();
+}
+function mmPick(dom){ MM_VIEW.sel=dom; renderMonthMap(); }
+
+function mmBuild(){
+  mmInit();
+  var asset='Gold'; try{ asset=timAsset(); }catch(e){}
+  if(!MM_VIEW.map || MM_VIEW.map.year!==MM_VIEW.y || MM_VIEW.map.month!==MM_VIEW.m
+     || MM_VIEW.map.asset!==asset)
+    MM_VIEW.map=mmMonth(MM_VIEW.y,MM_VIEW.m,asset);
+  return MM_VIEW.map;
+}
+
+function mmCls(v){ return v==='AVOID'?'av':v==='FAVOURABLE'?'fa':'mi'; }
+
+/* ── the calendar ─────────────────────────────────────────────────────── */
+function mmGrid(M){
+  var first=new Date(M.year,M.month,1).getDay();
+  var h='<div class="mm-grid">';
+  ['S','M','T','W','T','F','S'].forEach(function(d){ h+='<div class="mm-dow">'+d+'</div>'; });
+  for(var i=0;i<first;i++)h+='<div></div>';
+  M.days.forEach(function(d){
+    var mark=d.lunation?'●':d.cardinal?'✦':d.ingress.length?'→':'';
+    h+='<div class="mm-d '+mmCls(d.cls.v)+(MM_VIEW.sel===d.dom?' sel':'')+'"'
+      +' onclick="mmPick('+d.dom+')" title="'+escHtml(d.cls.v+' — '+d.cls.why)+'">'
+      +'<b>'+d.dom+'</b>'
+      +(mark?'<i>'+mark+'</i>':'')
+      +(d.macro.length?'<u></u>':'')
+      +'</div>';
+  });
+  return h+'</div>';
+}
+
+/* ── the arithmetic, for the day you clicked ──────────────────────────── */
+function mmWorking(d){
+  var P=d.aspects.pos;
+  var h='<div class="mm-work">';
+
+  h+='<div class="mm-wt">Step 1 &mdash; where everything is</div>';
+  h+='<div class="mm-pos">'+MM_BODIES.map(function(b){
+      var L=P[b]; if(L==null)return '';
+      var sg=mmSignOf(L), inSign=L-MM_BASE[sg];
+      return '<div><i>'+b+'</i><b>'+sg+' '+inSign.toFixed(2)+'&deg;</b>'
+        +'<s>'+MM_BASE[sg]+' + '+inSign.toFixed(2)+' = <em>'+L.toFixed(2)+'&deg;</em> absolute</s></div>';
+    }).join('')+'</div>';
+
+  var act=d.aspects.list.filter(function(x){ return x.active; });
+  var ctx=d.aspects.list.filter(function(x){ return !x.active; });
+
+  h+='<div class="mm-wt">Step 2 &mdash; the pairs, and the arithmetic</div>';
+  if(!act.length && !ctx.length){
+    h+='<div class="mm-none">No pair falls inside a six-degree orb today.</div>';
+  }else{
+    h+='<div class="mm-asp">'+d.aspects.list.slice(0,8).map(function(x){
+      var a=P[x.p1], b2=P[x.p2];
+      var raw=Math.abs(a-b2);
+      var folded=raw>180?360-raw:raw;
+      return '<div class="mm-a '+(x.active?'on ':'')+x.kind+'">'
+        +'<div class="mm-a1"><b>'+x.p1+' '+x.sym+' '+x.p2+'</b>'
+          +'<em class="k-'+x.kind+'">'+x.kind+'</em>'
+          +(x.active?'<em class="k-on">counts today</em>':'<em class="k-off">context only</em>')+'</div>'
+        +'<div class="mm-a2">|'+a.toFixed(2)+' &minus; '+b2.toFixed(2)+'| = '+raw.toFixed(2)+'&deg;'
+          +(raw>180?' &rarr; 360 &minus; '+raw.toFixed(2)+' = '+folded.toFixed(2)+'&deg;':'')
+          +' &nbsp;vs '+x.aspect+' at '+MM_ASPECTS.filter(function(A){return A.name===x.aspect;})[0].deg+'&deg;'
+          +' &nbsp;&rarr; orb <b>'+x.orb+'&deg;</b></div>'
+        +'<div class="mm-a3">'+(x.applying?'applying — closing to exact':'separating — fading')
+          +' &middot; moving '+x.perDay+'&deg; a day &middot; '
+          +(x.daysToExact<900?'exact in about '+x.daysToExact+' days':'barely moving')
+          +(x.weight!==1?' &middot; weight &times;'+x.weight+' for gold':'')+'</div>'
+      +'</div>';
+    }).join('')+'</div>';
+  }
+
+  h+='<div class="mm-wt">Step 3 &mdash; the verdict, first rule that matches</div>';
+  h+='<div class="mm-verdict '+mmCls(d.cls.v)+'"><b>'+d.cls.v+'</b>'
+    +'<span>'+escHtml(d.cls.why)+'</span>'
+    +'<em>'+d.cls.tag+'</em></div>';
+  if(d.cls.override)
+    h+='<div class="mm-note">Judgment call: '+escHtml(d.cls.override.note)+'</div>';
+
+  h+='<div class="mm-wt">Step 5 &mdash; direction</div>';
+  h+='<div class="mm-dir '+(d.dirn.dir==='up'?'up':d.dirn.dir==='down'?'dn':'')+'">'
+    +'<b>'+(d.dirn.dir?(d.dirn.dir==='up'?'Turn up':'Turn down'):'No direction')+'</b>'
+    +'<span>'+escHtml(d.dirn.note)+'</span>'
+    /* BOTH SIDES ARE OFTEN ACTIVE AND THE WINNER IS OFTEN NARROW.
+       Printing only "Turn up" under a list containing a Mars square hides
+       how close the call was. The tally is shown, so a 1.2-to-1.1 is not
+       read as a conviction. */
+    +(d.dirn.up!=null?'<u>up '+d.dirn.up+' &middot; down '+d.dirn.dn
+        +(Math.abs(d.dirn.up-d.dirn.dn)<0.25?' &mdash; too close to call it a lean':'')+'</u>':'')
+    +(d.dirn.why&&d.dirn.why.length?'<s>'+escHtml(d.dirn.why.join('   '))+'</s>':'')
+  +'</div>';
+
+  if(d.macro.length){
+    h+='<div class="mm-wt">Step 4 &mdash; macro</div><div class="mm-macro">'
+      + d.macro.map(function(x){
+          return '<span class="'+(x.sure?'sure':'maybe')+'">'+escHtml(x.name)
+            +(x.sure?'':' — a window, not a published date')+'</span>'; }).join('')
+      +'</div>';
+  }
+
+  /* Step 7 needs price, and says so rather than inventing a trap */
+  var rev=null;
+  try{ rev=mmReversal((typeof HIST_ROWS!=='undefined'?HIST_ROWS:null),d); }catch(e){}
+  if(rev){
+    h+='<div class="mm-wt">Step 7 &mdash; reversal</div>';
+    h+= rev.ok
+      ? '<div class="mm-rev '+(rev.take?'good':'')+'"><b>'+(rev.dir==='up'?'Bullish':'Bearish')+' reversal</b>'
+        +'<span>'+escHtml(rev.trap)+'</span><s>'+escHtml(rev.confidence)+'</s></div>'
+      : '<div class="mm-note">'+escHtml(rev.why)+'</div>';
+  }
+
+  return h+'</div>';
+}
+
+function monthMapHtml(){
+  var M;
+  try{ M=mmBuild(); }catch(e){ return '<div class="mm-none">The month map could not be built: '+escHtml(e.message)+'</div>'; }
+  var d=M.days.filter(function(x){ return x.dom===MM_VIEW.sel; })[0]||M.days[0];
+  var name=new Date(M.year,M.month,1).toLocaleDateString('en',{month:'long',year:'numeric'});
+
+  var counts={AVOID:0,FAVOURABLE:0,MILD:0};
+  M.days.forEach(function(x){ counts[x.cls.v]=(counts[x.cls.v]||0)+1; });
+
+  var h='<div class="mm">';
+  h+='<div class="mm-top">'
+    +'<button class="mm-nav" onclick="mmGo(-1)">&larr;</button>'
+    +'<div class="mm-title"><b>'+escHtml(name)+'</b><s>'+escHtml(M.asset)
+      +' &middot; '+counts.AVOID+' avoid &middot; '+counts.FAVOURABLE+' favourable &middot; '
+      +counts.MILD+' quiet</s></div>'
+    +'<button class="mm-nav" onclick="mmGo(1)">&rarr;</button>'
+  +'</div>';
+
+  if(M.anchor)
+    h+='<div class="mm-anchor"><i>The month turns on</i><b>'+M.anchor.dom+' — '+escHtml(M.anchor.what)+'</b></div>';
+
+  h+=mmGrid(M);
+
+  h+='<div class="mm-legend">'
+    +'<span class="av">avoid</span><span class="fa">favourable</span><span class="mi">quiet</span>'
+    +'<span class="mk">● lunation &nbsp; ✦ cardinal ingress &nbsp; → ingress &nbsp; <u></u> macro</span>'
+  +'</div>';
+
+  /* the AMD strip */
+  h+='<div class="mm-wt">Step 6 &mdash; accumulation, manipulation, distribution</div>';
+  h+='<div class="mm-amd">'+M.amd.map(function(r){
+      var w=(r.to-r.from+1)/M.days.length*100;
+      return '<div class="mm-p '+r.phase+'" style="width:'+w.toFixed(2)+'%" title="'+r.from+'–'+r.to+': '+escHtml(r.say)+'">'
+        +'<b>'+r.phase.charAt(0).toUpperCase()+'</b><i>'+r.from+'–'+r.to+'</i></div>';
+    }).join('')+'</div>';
+  h+='<div class="mm-amdkey">'+M.amd.filter(function(r,i,a){
+        return a.findIndex(function(z){return z.phase===r.phase;})===i; })
+      .map(function(r){ return '<div><b>'+r.phase+'</b><span>'+escHtml(r.say)+'</span></div>'; }).join('')
+    +'</div>';
+
+  h+='<div class="mm-sel">Day '+d.dom+' — '+escHtml(d.date.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long'}))+'</div>';
+  h+=mmWorking(d);
+
+  h+='<div class="mm-foot">Every position here is read from this app&rsquo;s own ephemeris at that '
+    +'date, never remembered. NFP is the first Friday and quarter end is the last session of the '
+    +'quarter — both are rules. CPI, PPI and FOMC are published diary dates and are shown as a '
+    +'window rather than asserted, because a made-up FOMC date would quietly poison every '
+    +'classification that leaned on it.</div>';
+  return h+'</div>';
+}
+
+function renderMonthMap(){
+  var el=document.getElementById('mm_host');
+  if(el)el.innerHTML=monthMapHtml();
+}
+
 function qamHtml(){
   var M=null; try{ M=qamMoon(new Date()); }catch(e){}
   if(!M)return '<div class="lm-na">The lunar layer could not read the sky.</div>';
@@ -25804,6 +26386,11 @@ function renderTiming(){
    /* the same reading for everything else in the sky — the Moon crosses a
       sign in days, the Sun in a month, Saturn in years, and the seven zones
       mean the same thing in all of them */
+   +'<details class="sec pin" ontoggle="if(this.open)try{renderMonthMap()}catch(e){}">'
+     +'<summary><b>The month map &mdash; favourable and avoid, day by day</b>'
+     +'<span>every day classified from the ephemeris, with the arithmetic shown, plus the '
+     +'accumulation / manipulation / distribution phases</span></summary>'
+     +'<div id="mm_host"></div></details>'
    +'<details class="sec pin"><summary><b>The sign cycle &mdash; Sun and planets</b>'
      +'<span>where each body is in its sign, which of the seven zones, and when it moves on</span></summary>'
      +(function(){ try{ return qamPlanetsHtml(); }catch(e){ return ''; } })()+'</details>'
@@ -27908,9 +28495,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b115';
+var CA_BUILD='b116';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The sign cycle for the Sun and five planets \u2014 the same seven zones the Moon is read against, with each body\u2019s own pace and its retrogrades.';
+var CA_WHATS_NEW='The month map \u2014 every day classified favourable or avoid from the ephemeris, with the arithmetic shown, plus the accumulation / manipulation / distribution phases.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
