@@ -11795,6 +11795,19 @@ function jvSwitchTo(name){
   }catch(e){}
 }
 function jvLocal(q){
+  /* TYPING THE NAME HAS TO WORK TOO.
+     Chrome will not give the microphone to a page opened as a file, which is
+     how this page is usually opened — so a voice-only CELESX would be a
+     feature most people could never reach. Prefixing a typed message with
+     the name routes it to the same answers the spoken one gets. */
+  try{
+    var lead0=String(q||'').toLowerCase().replace(/^(hey|ok|okay|hi|yo)[\s,]+/,'');
+    var cw=cxHeard(lead0);
+    if(cw){
+      var rest=lead0.slice(cw.length).replace(/^[\s,.:\-—]*/,'').trim();
+      return cxAnswer(rest||'what is going on');
+    }
+  }catch(e){}
   var s=jvState(), L=' '+q.toLowerCase().replace(/[?.!,]/g,' ')+' ';
   var has=function(){ for(var i=0;i<arguments.length;i++) if(L.indexOf(arguments[i])>=0)return true; return false; };
   var named=jvAssetIn(L);
@@ -12206,9 +12219,15 @@ function jvDot(){
 function jvHeard(text){
   var L=text.toLowerCase();
   if(JV_ARMED){
+    /* WHICH ASSISTANT WAS WOKEN IS REMEMBERED, NOT GUESSED.
+       JV_ARMED carries 'cx' when the name said was CELESX, so the follow-up
+       sentence goes to the votes rather than to the general answerer. Left
+       as a plain boolean, saying "CELESX" and then "gold" in two breaths
+       would have quietly given you the other assistant's answer. */
+    var wasCx = (JV_ARMED === 'cx');
     JV_ARMED=false; jvDot();
     jvPill('“'+text+'”','hot');
-    jvAnswerAloud(text);
+    if(wasCx) cxSay(text); else jvAnswerAloud(text);
     return;
   }
   /* THE NAME HAS TO OPEN THE SENTENCE.
@@ -12217,6 +12236,22 @@ function jvHeard(text){
      A wake word is only a wake word at the front — optionally after a hey or
      an ok — so anything further in is somebody talking about the sky. */
   var lead=L.replace(/^(hey|ok|okay|hi|yo)[\s,]+/,'');
+
+  /* CELESX FIRST, AND ON ITS OWN BRANCH.
+     Both names wake the same microphone, but they are not the same
+     assistant. "Celestial, gold" describes the chart; "CELESX, gold" gives
+     the three votes and whether two of them agree. Falling through to the
+     general answerer would have made the new name a synonym for the old
+     one, which is not what was asked for. */
+  var cxw=cxHeard(lead);
+  if(cxw){
+    var cxRest=text.slice(L.length-lead.length+cxw.length).replace(/^[\s,.\-—]*/,'').trim();
+    if(cxRest.length>1){ jvPill('“'+cxRest+'”','hot'); cxSay(cxRest); return; }
+    JV_ARMED='cx'; jvDot(); jvPill('CELESX listening…','hot',true); jvSpeak('Go ahead.');
+    setTimeout(function(){ if(JV_ARMED){ JV_ARMED=false; jvDot(); jvPill('Never mind.',''); } },9000);
+    return;
+  }
+
   var hit=-1, word='';
   for(var i=0;i<JV_WAKE_WORDS.length;i++){
     if(lead.indexOf(JV_WAKE_WORDS[i])===0){ word=JV_WAKE_WORDS[i]; hit=L.length-lead.length; break; }
@@ -23744,6 +23779,169 @@ function cqSave(){
   cqClose();
 }
 
+
+/* ══ CELESX, OUT LOUD ══════════════════════════════════════════════════════
+   Say "CELESX" and it answers.
+
+   The hearing and the speaking were already here — SpeechRecognition for the
+   microphone, speechSynthesis for the reply, both the browser's own, no key
+   and no cost. What was missing is that the assistant answering had no idea
+   the three votes existed. Ask it about Gold and it described a chart; ask
+   CELESX about Gold and you should get price, time and macro, and whether
+   two of them agree.
+
+   THE NAME HAD TO BE TAUGHT TWICE.
+
+   Once as a wake word, and once in the half-dozen ways a speech recogniser
+   actually hears an invented word. "CELESX" is not in any dictionary, so
+   Chrome returns whatever real words it fits — "sell ex", "salex", "seles",
+   "cell ex". Those are all here. Without them the wake word appears broken
+   perhaps a third of the time, which is worse than not having one.
+
+   WHAT IT ANSWERS. The same intents the server answers on Telegram, so
+   asking out loud and asking on your phone give the same answer from the
+   same numbers. It reads live, from the page's own engines — this is not a
+   cached brief being replayed.
+
+   IT SPEAKS DIFFERENTLY FROM HOW IT WRITES. A brief can carry a table; a
+   spoken sentence cannot. Every reply here is built to be heard once,
+   without being able to scroll back, so the verdict comes first and the
+   reasoning after it.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* the invented name, as a recogniser hears it */
+var CX_WAKE = ['celesx', 'celex', 'salex', 'selex', 'seles', 'sell ex', 'cell ex',
+               'sales x', 'celeste x', 'silex'];
+
+function cxHeard(low){
+  for(var i = 0; i < CX_WAKE.length; i++) if(low.indexOf(CX_WAKE[i]) === 0) return CX_WAKE[i];
+  return null;
+}
+
+/* ── the same three votes, read live ─────────────────────────────────────
+   cqVotes and cqFacts already do exactly this for the cross-question panel.
+   Reusing them rather than writing a second copy is the whole reason they
+   were split out of it. */
+function cxRead(){
+  var F = null, V = null;
+  try{ F = cqFacts(); V = cqVotes(F); }catch(e){}
+  return { F: F, V: V };
+}
+
+function cxSideWord(s){ return s === 'bull' ? 'buy' : s === 'bear' ? 'sell' : null; }
+
+/* ── the answers ─────────────────────────────────────────────────────────
+   Spoken, so: the answer first, then why, in sentences a person can follow
+   at speaking speed. No lists, no numbers read out to four decimal places. */
+function cxAnswer(q){
+  var L = ' ' + String(q || '').toLowerCase().replace(/[?.!,]/g, ' ') + ' ';
+  var has = function(){ for(var i = 0; i < arguments.length; i++) if(L.indexOf(arguments[i]) >= 0) return true; return false; };
+
+  var R = cxRead(), F = R.F, V = R.V;
+  if(!F || !V) return 'I cannot read the board right now.';
+
+  /* an instrument named anywhere wins, and switching takes a moment, so say so */
+  var named = null;
+  try{ named = jvAssetIn(L); }catch(e){}
+  if(named && String(named).toLowerCase() !== String(F.asset).toLowerCase()){
+    try{ jvSwitchTo(named); }catch(e){}
+    return 'Loading ' + named + '. Ask me again in a moment and I will have the votes.';
+  }
+
+  if(has('ceiling', 'target', 'how much left', 'kitna')){
+    if(F.monthPct == null)
+      return 'The ceiling is twelve percent. I cannot tell you where the month stands — '
+           + 'nothing is logged in the journal yet.';
+    if(F.monthPct >= 12)
+      return 'The month is at ' + F.monthPct.toFixed(1) + ' percent against a twelve percent ceiling. '
+           + 'Target achieved. No more trades is better.';
+    return 'The month is at ' + F.monthPct.toFixed(1) + ' percent, so there is '
+         + (12 - F.monthPct).toFixed(1) + ' left before the ceiling.';
+  }
+
+  if(has('time', 'window', 'when', 'kab')){
+    var t = F.timing;
+    if(!t) return 'I could not read the timing engine on ' + F.asset + '.';
+    if(!t.mayAlert)
+      return 'The timing layers failed their forward test on ' + F.asset
+           + ', so I would not trade a window here at all. That is measured, not an opinion.';
+    if((t.score || 0) < 50)
+      return 'Timing reads ' + t.score + ' out of a hundred on ' + F.asset
+           + '. That is below the line — there is no window open.';
+    return 'Timing reads ' + t.score + ' out of a hundred on ' + F.asset + ', graded ' + t.grade
+         + (t.dir && t.dir !== 'neutral' ? ', and the day leans ' + t.dir + '.' : '.');
+  }
+
+  if(has('level', 'range', 'where', 'kahan')){
+    var mj = null; try{ mj = cqRange(F.major); }catch(e){}
+    if(!mj) return 'No range measured on ' + F.asset + ' — there is not enough daily history loaded.';
+    return F.asset + ' is trading between ' + fmtPx(mj.ML) + ' and ' + fmtPx(mj.MH) + '.'
+         + (F.price ? ' It is at ' + fmtPx(F.price) + ' now, ' + cxWhereIn(F.price, mj) + '.' : '');
+  }
+
+  if(has('moon', 'sky', 'aspect', 'astro')){
+    var m = null; try{ m = qamMoon(new Date()); }catch(e){}
+    if(!m) return 'I could not read the sky.';
+    var s = 'The Moon is in ' + m.sign + ' at ' + m.deg.toFixed(0) + ' degrees, in its '
+          + (m.zone ? m.zone.label.toLowerCase() : 'unnamed') + ' degrees.';
+    if(F.heavy && F.heavy.length)
+      s += ' There ' + (F.heavy.length === 1 ? 'is one heavy aspect' : 'are ' + F.heavy.length + ' heavy aspects')
+         + ' in the next three days.';
+    else s += ' Nothing heavy in the next three days.';
+    return s + ' On its own that decides nothing — it is one vote of three.';
+  }
+
+  if(has('should i', 'take it', 'enter', 'buy', 'sell', 'trade', 'lena', 'karu')){
+    if(V.count < 2)
+      return 'No. ' + cxVotesSpoken(V) + ' Two of the three have to agree before I will call anything.';
+    return 'The votes say ' + cxSideWord(V.side) + ' — ' + V.count + ' of the three agree. '
+         + cxVotesSpoken(V) + ' Open the cross-question if you want me to check your actual levels.';
+  }
+
+  /* anything else — the day's work, same as on the phone */
+  return cxToday(F, V);
+}
+
+function cxWhereIn(px, mj){
+  var pos = (px - mj.ML) / (mj.MH - mj.ML);
+  return pos <= 0.25 ? 'down at the low edge'
+       : pos >= 0.75 ? 'up at the high edge'
+       : 'in the middle, where the range decides nothing';
+}
+
+function cxVotesSpoken(V){
+  var on = ['price', 'time', 'macro'].filter(function(k){ return V[k]; });
+  if(!on.length) return 'None of the three are voting.';
+  return on.map(function(k){ return k + ' says ' + cxSideWord(V[k]); }).join(', ') + '.';
+}
+
+function cxToday(F, V){
+  var bits = [];
+  bits.push(F.asset + (F.price ? ' is at ' + fmtPx(F.price) + '.' : '.'));
+  if(V.count >= 2){
+    bits.push(V.count + ' of the three votes agree on ' + cxSideWord(V.side) + '.');
+    bits.push(cxVotesSpoken(V));
+  }else{
+    bits.push('Not a setup. ' + cxVotesSpoken(V)
+      + ' Two have to agree before I will call anything, so today that is a reading, not a gap.');
+  }
+  if(F.monthPct != null && F.monthPct >= 12)
+    bits.push('And the month is already at the ceiling — no more trades is better.');
+  return bits.join(' ');
+}
+
+/* ── say it without the microphone ───────────────────────────────────────
+   So the answers can be checked, and so the whole thing is usable on a page
+   opened as a file, where Chrome will not give the microphone to a file://
+   origin no matter what is switched on. */
+function cxSay(q){
+  var a = cxAnswer(q);
+  try{ jvPush('me', 'CELESX: ' + q); jvPush('bot', a); jvRender(); }catch(e){}
+  try{ jvSpeak(a); }catch(e){}
+  try{ jvPill(a, 'said'); }catch(e){}
+  return a;
+}
+
 /* ══ THE CARD ═══════════════════════════════════════════════════════════
    WRITTEN TWICE, BECAUSE THE FIRST ONE WAS UNREADABLE.
 
@@ -26830,9 +27028,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b105';
+var CA_BUILD='b106';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Cross-question. Six questions on the Trade Setup card, each checked against something already measured \u2014 and it can say no.';
+var CA_WHATS_NEW='Say \u201cCELESX\u201d and it answers \u2014 the three votes, the range, the window, the ceiling. Typing the name works too.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
