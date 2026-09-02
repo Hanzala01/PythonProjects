@@ -25064,13 +25064,16 @@ function renderTiming(){
    +tmgHtml()
    /* the lunar layer sits under the timing score: the score says whether a
       turn is due, this says what the Moon is doing while it is */
-   /* THE LUNAR LAYER IS WORKING, NOT ANSWER.
-      The dial, the sign cycle, the 360 and every exact aspect ahead came to
-      about two thousand pixels sitting between the day's lean and the
-      window it applies to. It is the reasoning behind the macro vote, and
-      reasoning belongs one click away from the thing it supports. Nothing
-      is removed and the summary names what is inside. */
-   +'<details class="sec pin"><summary><b>The lunar layer</b>'
+   /* I FOLDED THIS AND I WAS WRONG TO.
+      The reasoning was that the dial, the sign cycle, the 360 and the
+      aspect list are working rather than answer, so they belong one click
+      away. That is a defensible rule and it was the wrong call here: this
+      is the part of the tab that is actually looked at, and it was asked
+      for over several passes and built to be read at a glance. A thing
+      someone reads every day is an answer no matter what the rule says.
+
+      It opens. The tab is taller for it, and that is the right trade. */
+   +'<details class="sec pin" open><summary><b>The lunar layer</b>'
      +'<span>the dial, the degree the Moon is in, and every exact aspect ahead</span></summary>'
      +qamHtml()+'</details>'
    +'<div class="tk-hero '+v.level+'">'
@@ -27170,9 +27173,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b110';
+var CA_BUILD='b111';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The community is real when a bridge is connected \u2014 everyone reads the same messages \u2014 and says plainly when it is not. Rooms, People and Manage are separate now.';
+var CA_WHATS_NEW='The lunar layer is back open where it belongs \u2014 folding it was my mistake. The dial, the full circle and the sign cycle are all on the Timing tab again.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
