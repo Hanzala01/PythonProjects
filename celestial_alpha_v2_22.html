@@ -7250,6 +7250,21 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ── COMMUNITY: THREE PLACES AND ONE HONEST LINE ──────────────────────────*/
+.comm-tabs{display:flex;gap:3px;padding:0 6px 8px;border-bottom:1px solid var(--b1);margin-bottom:9px}
+.comm-t{flex:1;padding:6px 4px;border-radius:7px;border:1px solid transparent;background:transparent;
+  color:var(--t3);font-size:10.5px;font-weight:600;cursor:pointer;transition:.14s}
+.comm-t:hover{color:var(--t1)}
+.comm-t.on{background:var(--card2);border-color:var(--b1);color:var(--t1)}
+.comm-sec.hidden{display:none}
+
+/* the mode is stated, never left for the reader to work out */
+.comm-mode{font-size:10.5px;line-height:1.5;padding:8px 16px;border-bottom:1px solid var(--b1)}
+.comm-mode b{font-weight:700}
+.comm-mode.on{color:var(--t3)}          .comm-mode.on b{color:var(--up)}
+.comm-mode.off{color:var(--t3);background:rgba(var(--rgbWarn),.06)}
+.comm-mode.off b{color:var(--warn)}
+
 /* ── HOW A TRADE ENDS, IN ONE TAP ─────────────────────────────────────────
    Three prices the row already knows, colour-coded the way the outcome
    reads: red for the stop, neutral for break-even, green for the target. */
@@ -8432,10 +8447,25 @@ body{background:var(--bg0)}
         <div class="card" style="overflow:hidden">
           <div class="comm-wrap">
             <div class="comm-side">
+              <!-- THREE PLACES, NOT ONE COLUMN OF EVERYTHING.
+                   Channels, members, approvals and invite keys were stacked
+                   in a single narrow rail, so the room you were in and the
+                   admin plumbing had the same weight. They are separate
+                   things looked at at separate times. -->
+              <div class="comm-tabs">
+                <button class="comm-t on" data-cs="rooms"   onclick="commSection('rooms',this)">Rooms</button>
+                <button class="comm-t"    data-cs="people"  onclick="commSection('people',this)">People</button>
+                <button class="comm-t"    data-cs="manage"  onclick="commSection('manage',this)">Manage</button>
+              </div>
+              <div class="comm-sec" data-cs="rooms">
               <div class="sb-lbl" style="padding:0 8px">Channels</div>
               <div id="ch_list" class="comm-ch-list"></div>
-              <div class="sb-lbl mt10" style="padding:0 8px">Members</div>
+              </div>
+              <div class="comm-sec hidden" data-cs="people">
+              <div class="sb-lbl" style="padding:0 8px">Members</div>
               <div style="padding:6px 8px;font-size:11px;color:var(--soft)"><span style="color:var(--green)">●</span> <span id="comm_me">Admin</span> <span class="tag tb" style="margin-left:4px" id="comm_role">OWNER</span><span id="comm_count" style="margin-left:auto;font-size:10px;color:var(--muted)"></span></div>
+              </div>
+              <div class="comm-sec hidden" data-cs="manage">
               <div id="apr_panel" style="margin-top:12px;padding:0 8px">
                 <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">Approvals <button class="btn btn-g btn-xs" onclick="loadPending()">⟳</button></div>
                 <input type="password" id="apr_pin" placeholder="Bridge PIN" style="margin-bottom:6px;padding:5px 8px;font-size:10px">
@@ -8449,12 +8479,14 @@ body{background:var(--bg0)}
                 </div>
                 <div id="inv_list" class="f10 dim italic">No keys yet</div>
               </div>
+              </div>
             </div>
             <div class="comm-main">
               <div style="padding:12px 16px;border-bottom:1px solid var(--rim);display:flex;align-items:center;gap:8px">
                 <span style="color:var(--acc2);font-weight:800"># </span><span id="ch_name" style="font-family:'Space Grotesk';font-weight:700;color:var(--white)">announcements</span>
                 <span class="f10 dim" id="ch_desc" style="margin-left:8px">Official platform updates</span>
               </div>
+              <div id="comm_mode" class="comm-mode off"></div>
               <div id="msg_feed" class="comm-feed"></div>
               <div class="emo-bar">
                 <button onclick="addEmo('🔥')">🔥</button><button onclick="addEmo('🚀')">🚀</button><button onclick="addEmo('💰')">💰</button>
@@ -27138,9 +27170,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b109';
+var CA_BUILD='b110';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Approving a setup now always writes the journal row, and SL / BE / TP close it in one tap. The Timing tab is half as tall \u2014 nothing removed, the working folded.';
+var CA_WHATS_NEW='The community is real when a bridge is connected \u2014 everyone reads the same messages \u2014 and says plainly when it is not. Rooms, People and Manage are separate now.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -28745,11 +28777,123 @@ function genInviteUI(){
   list.unshift({k:key,d:d,ts:Date.now()});
   localStorage.setItem('ca_invites',JSON.stringify(list.slice(0,20)));
   renderInvites();
+  try{ renderCommMeta(); dashStats(); }catch(e){}
   if(navigator.clipboard)navigator.clipboard.writeText(key);
   notify('Key copied — valid '+d+' days: '+key,'bull');
 }
 function kHash(s){var h=7;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return ('0000'+h.toString(36).toUpperCase()).slice(-4);}
 function loadComm(){try{return JSON.parse(localStorage.getItem('ca_comm')||'{}');}catch(e){return{};}}
+
+/* ══ THE COMMUNITY WAS A ROOM WITH ONE PERSON IN IT ═══════════════════════
+   Every message went to localStorage and nowhere else. You posted, you saw
+   it, nobody else ever did, and nothing on the screen said so — a private
+   notepad wearing the word "community". That is the same thing as the
+   hardcoded member count: a claim the app could not back.
+
+   It posts to the bridge when there is one and everyone with an account
+   reads the same messages. When there is no bridge it still works, still
+   keeps what you type, and SAYS which of the two it is doing. The mode is
+   never a guess the reader has to make.                                   */
+
+var COMM_MODE='local';       /* 'shared' once the bridge answers */
+var COMM_SEEN={};            /* last id per channel, so a poll only asks for new */
+
+function commAuth(){
+  var c=(typeof syncCfg==='function')?syncCfg():null;
+  return (c&&c.url&&c.token)?c:null;
+}
+
+function commFetch(path,opts){
+  var c=commAuth();
+  if(!c)return Promise.reject(new Error('no bridge'));
+  opts=opts||{};
+  opts.headers=Object.assign({'Content-Type':'application/json',
+                              'Authorization':'Bearer '+c.token}, opts.headers||{});
+  return fetch(c.url.replace(/\/+$/,'')+path,opts).then(function(r){
+    if(!r.ok)return r.text().then(function(t){ throw new Error(r.status+' '+t.slice(0,120)); });
+    return r.json();
+  });
+}
+
+/* pull whatever is new, merge it into the local copy, and paint */
+function commPull(){
+  if(!commAuth()){ commSetMode('local'); return Promise.resolve(false); }
+  var ch=CUR_CH;
+  return commFetch('/comm/'+encodeURIComponent(ch)+'?after='+(COMM_SEEN[ch]||0))
+    .then(function(d){
+      commSetMode('shared');
+      var msgs=d.messages||[];
+      if(msgs.length){
+        var store=loadComm(); if(!store[ch])store[ch]=[];
+        msgs.forEach(function(m){
+          COMM_SEEN[ch]=Math.max(COMM_SEEN[ch]||0,m.id);
+          store[ch].push({u:m.u,t:m.t,ts:m.ts,id:m.id});
+        });
+        saveComm(store);
+        if(CUR_CH===ch)renderFeed();
+      }
+      return true;
+    })
+    .catch(function(){ commSetMode('local'); return false; });
+}
+
+function commSetMode(m){
+  if(COMM_MODE===m)return;
+  COMM_MODE=m;
+  try{ renderCommBanner(); }catch(e){}
+}
+
+/* THE ONE LINE THAT STOPS THIS BEING A LIE. It names which of the two
+   things is happening, in the room it is happening in. */
+function renderCommBanner(){
+  var el=document.getElementById('comm_mode');
+  if(!el)return;
+  if(COMM_MODE==='shared'){
+    el.className='comm-mode on';
+    el.innerHTML='<b>Shared</b> — everyone with an account reads these messages.';
+  }else{
+    el.className='comm-mode off';
+    el.innerHTML='<b>On this device only</b> — there is no bridge connected, so nothing you '
+      +'post here leaves this browser. Connect one in Settings to make the room real.';
+  }
+}
+
+/* the member count, wherever it is asked for. It was inline in unlock(),
+   which meant it was painted once at sign-in and never again — so
+   generating an invite key did not move the number until a reload. */
+function renderCommMeta(){
+  var cc=document.getElementById('comm_count');
+  if(!cc)return;
+  if(!IS_ADMIN){ cc.style.display='none'; return; }
+  var n=commCount();
+  cc.style.display='';
+  cc.textContent=n+(n===1?' member':' members');
+}
+
+/* which of the three the rail is showing */
+function commSection(name,btn){
+  try{
+    var pane=document.getElementById('pane_announcements');
+    if(!pane)return;
+    pane.querySelectorAll('.comm-t').forEach(function(b2){ b2.classList.toggle('on',b2===btn); });
+    pane.querySelectorAll('.comm-sec').forEach(function(sec){
+      sec.classList.toggle('hidden',sec.getAttribute('data-cs')!==name);
+    });
+    if(name==='people'||name==='manage')renderCommMeta();
+  }catch(e){}
+}
+
+var _commPoll=null;
+function commStartPoll(){
+  if(_commPoll)clearInterval(_commPoll);
+  commPull();
+  /* eight seconds: often enough that a conversation feels live, rare enough
+     that a laptop on battery is not polling a server all day */
+  _commPoll=setInterval(function(){
+    var pane=document.getElementById('pane_announcements');
+    if(pane&&!pane.classList.contains('hidden'))commPull();
+  },8000);
+}
 function loadPending(){
   var pin=document.getElementById('apr_pin').value;
   var el=document.getElementById('apr_list');
@@ -28846,10 +28990,32 @@ function sendMsg(){
   if(!t&&!_CIMG)return;
   var ch=CH.filter(function(x){return x.id===CUR_CH;})[0];
   if(ch&&ch.lock&&!IS_ADMIN){notify('Only the owner can post in #'+CUR_CH,'info');return;}
-  var d=loadComm();if(!d[CUR_CH])d[CUR_CH]=[];
-  d[CUR_CH].push({u:IS_ADMIN?'Hanzala':'Guest',t:t,ts:Date.now(),img:_CIMG||null});
+  var who=IS_ADMIN?'Hanzala':'Guest';
+  var img=_CIMG||null;
   _CIMG=null;document.getElementById('cimg_btn').textContent='📷';document.getElementById('cimg_in').value='';
-  saveComm(d);inp.value='';renderFeed();
+  inp.value='';
+
+  /* THE BRIDGE FIRST, AND ONLY LOCALLY IF THERE IS NONE.
+     Writing to localStorage as well when the post succeeded would show the
+     message twice — once from the echo and once from the next pull. The
+     local copy is the fallback, not a cache in front of the real thing. */
+  if(commAuth()&&t){
+    commFetch('/comm/'+encodeURIComponent(CUR_CH),
+      {method:'POST',body:JSON.stringify({body:t,name:who})})
+      .then(function(){ commPull(); })
+      .catch(function(e){
+        notify('Could not post — '+e.message,'bear');
+        /* it is not lost: keep it locally so the words survive the failure */
+        var d=loadComm(); if(!d[CUR_CH])d[CUR_CH]=[];
+        d[CUR_CH].push({u:who,t:t,ts:Date.now(),img:img,failed:true});
+        saveComm(d); renderFeed();
+      });
+    return;
+  }
+
+  var d=loadComm();if(!d[CUR_CH])d[CUR_CH]=[];
+  d[CUR_CH].push({u:who,t:t,ts:Date.now(),img:img});
+  saveComm(d);renderFeed();
 }
 function stageCImg(inp){
   var f=inp.files&&inp.files[0];if(!f)return;
@@ -28876,17 +29042,7 @@ function unlock(){
   var me=document.getElementById('comm_me'),role=document.getElementById('comm_role');
   if(me){me.textContent=IS_ADMIN?'Hanzala':'Guest';}
   if(role){role.textContent=IS_ADMIN?'OWNER':'GUEST';role.className='tag '+(IS_ADMIN?'tb':'td');}
-  /* the same count, in the room it describes — owner only, same reasoning */
-  var cc=document.getElementById('comm_count');
-  if(cc){
-    if(IS_ADMIN){
-      var n=commCount();
-      cc.style.display='';
-      cc.textContent=n+(n===1?' member':' members');
-    }else{
-      cc.style.display='none';
-    }
-  }
+  renderCommMeta();
   renderChannels();renderFeed();renderInvites();
 }
 
@@ -29443,6 +29599,10 @@ function goTab(name,btn){
   try{ caReveal(document.getElementById('pane_'+name)); }catch(e){}
   try{ caCountAll(document.getElementById('pane_'+name)); }catch(e){}
   if(name==='reference')loadRefFrames();
+  /* the room only polls while you are looking at it */
+  if(name==='announcements'){
+    try{ renderCommBanner(); renderCommMeta(); commStartPoll(); }catch(e){}
+  }
   /* These builders populate static panels that would otherwise stay empty. */
   if(name==='timing'){
     try{renderTiming();}catch(e){console.error('timing v3:',e);}

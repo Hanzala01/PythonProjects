@@ -91,6 +91,15 @@ CREATE TABLE IF NOT EXISTS store (
   updated_at REAL NOT NULL,
   PRIMARY KEY (user_id, k)
 );
+CREATE TABLE IF NOT EXISTS comm (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  channel    TEXT NOT NULL,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name       TEXT NOT NULL,
+  body       TEXT NOT NULL,
+  ts         REAL NOT NULL
+);
+CREATE INDEX IF NOT EXISTS comm_ch ON comm(channel, id);
 CREATE INDEX IF NOT EXISTS store_user ON store(user_id);
 CREATE INDEX IF NOT EXISTS sess_user  ON sessions(user_id);
 """
@@ -808,6 +817,87 @@ def fred(series_id: str, start: str = "2020-01-01"):
     _FRED_CACHE[series_id] = (now, obs)
     return _public({"series": series_id, "name": FRED_SERIES[series_id],
                     "cached": False, "observations": obs})
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# THE COMMUNITY, FOR REAL
+#
+# The page kept its "community" in localStorage. Posting a message wrote it
+# into your own browser and nowhere else — nobody saw it, and nothing said
+# so. A room with one person in it, presented as a room with other people.
+# That is the same class of thing as the hardcoded user count: a claim the
+# app could not back, in an app whose whole argument is that it does not
+# make those.
+#
+# A message posted here is stored once and read by everyone with an
+# account, which is what the word was promising all along.
+#
+# Everything is behind the login. The channel name is bounded because it
+# reaches a query, and the body is bounded because a browser can paste a
+# novel into a text box.
+# ══════════════════════════════════════════════════════════════════════════
+COMM_MAX = 4000
+COMM_CHANNELS = {"announcements", "signals", "general", "wins"}
+
+
+def _channel(ch: str) -> str:
+    if ch not in COMM_CHANNELS:
+        raise HTTPException(404, f"no channel {ch!r} — there is {', '.join(sorted(COMM_CHANNELS))}")
+    return ch
+
+
+@app.get("/comm/{channel}")
+def comm_read(channel: str, after: int = 0, limit: int = 200,
+              uid: int = Depends(user_from_token)):
+    channel = _channel(channel)
+    limit = max(1, min(int(limit), 500))
+    with db() as con:
+        rows = con.execute(
+            "SELECT id, name, body, ts, user_id FROM comm "
+            "WHERE channel=? AND id>? ORDER BY id LIMIT ?",
+            (channel, int(after), limit),
+        ).fetchall()
+    return {"channel": channel,
+            "messages": [{"id": r["id"], "u": r["name"], "t": r["body"],
+                          "ts": r["ts"] * 1000, "mine": r["user_id"] == uid}
+                         for r in rows]}
+
+
+@app.post("/comm/{channel}")
+def comm_post(channel: str, body: str = Body(..., embed=True),
+              name: str = Body("", embed=True),
+              uid: int = Depends(user_from_token)):
+    channel = _channel(channel)
+    body = (body or "").strip()
+    if not body:
+        raise HTTPException(400, "empty message")
+    if len(body) > COMM_MAX:
+        raise HTTPException(413, f"message over {COMM_MAX} characters")
+    # The display name is the poster's own and is stored with the message, so
+    # renaming yourself later does not rewrite what you said before.
+    who = (name or "").strip()[:40]
+    if not who:
+        with db() as con:
+            row = con.execute("SELECT email FROM users WHERE id=?", (uid,)).fetchone()
+        who = (row["email"].split("@")[0] if row else "member")[:40]
+    with db() as con:
+        cur = con.execute(
+            "INSERT INTO comm(channel,user_id,name,body,ts) VALUES(?,?,?,?,?)",
+            (channel, uid, who, body, time.time()),
+        )
+        mid = int(cur.lastrowid)
+    return {"ok": True, "id": mid, "channel": channel, "u": who}
+
+
+@app.get("/comm-count")
+def comm_count(uid: int = Depends(user_from_token)):
+    """How many people actually have an account here. The page shows this to
+    the owner only, but the server does not decide that — it answers what it
+    knows and the page decides who sees it."""
+    with db() as con:
+        n = con.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
+        posts = con.execute("SELECT COUNT(*) c FROM comm").fetchone()["c"]
+    return {"members": int(n), "messages": int(posts)}
 
 
 # ══════════════════════════════════════════════════════════════════════════
