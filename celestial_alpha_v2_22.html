@@ -2111,10 +2111,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   color:var(--p3);font-variant-numeric:tabular-nums}
 .mn-tag{font-size:9px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:99px;
   border:1px solid var(--b1);color:var(--t2)}
-.mn-tag.el-fire{color:#F97316;border-color:rgba(249,115,22,.4)}
-.mn-tag.el-earth{color:#84CC16;border-color:rgba(132,204,22,.4)}
-.mn-tag.el-air{color:#38BDF8;border-color:rgba(56,189,248,.4)}
-.mn-tag.el-water{color:#818CF8;border-color:rgba(129,140,248,.4)}
+/* the four elements are a theme's business, not this rule's — Qamar names
+   its own four and they are nothing like these */
+.mn-tag.el-fire{color:var(--elFire);border-color:rgba(var(--rgbFire),.4)}
+.mn-tag.el-earth{color:var(--elEarth);border-color:rgba(var(--rgbEarth),.4)}
+.mn-tag.el-air{color:var(--elAir);border-color:rgba(var(--rgbAir),.4)}
+.mn-tag.el-water{color:var(--elWater);border-color:rgba(var(--rgbWater),.4)}
 .mn-say{font-size:10px;color:var(--t3);line-height:1.4}
 .mn-next{font-size:10px;color:var(--t3);margin-left:auto;white-space:nowrap}
 .mn-exp{font-size:8.5px;color:var(--t3);opacity:.7;letter-spacing:.04em;
@@ -5863,6 +5865,10 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --sideBg:#02010A; --sideTop:#160A36; --sideTop2:#06031A;
   --navOn1:#29115E; --navOn2:#160B32;
   --cUp:#8B5CF6; --cDn:#4C1D95; --gridLn:#151126; --axisTx:#6F6888; --dialFace:8,4,26; --markDim:#4A2C8F; --markLit:#C9B4F2;
+  /* the four elements, unchanged from what this theme already drew */
+  --elFire:#F97316; --elEarth:#84CC16; --elAir:#38BDF8; --elWater:#818CF8;
+  --rgbFire:249,115,22; --rgbEarth:132,204,22;
+  --rgbAir:56,189,248; --rgbWater:129,140,248;
   /* THE GROUNDS. Twenty-nine near-black indigos were written out by hand
      across the stylesheet as the second stop of a card gradient. They are
      what kept the panels purple after the accents had already changed. */
@@ -5894,12 +5900,30 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
    the body text past 11:1 while the character of the palette survives.
 ══════════════════════════════════════════════════════════════════════ */
 [data-theme="qamar"]{
-  --bg0:#07080A; --bg1:#0C0E11; --card:#111317; --card2:#161A20; --chartbg:#050608;
-  --b1:rgba(255,255,255,.09); --b2:rgba(255,255,255,.14);
-  --bAct:#E8B24D; --bFaint:rgba(255,255,255,.05);
-  --p1:#B07C28; --p2:#D19A3F; --p3:#E8B24D; --pGlow:#FFE7B0; --pDeep:#2A2113;
-  --t1:#F2F2F1; --t2:#C3C7CE; --t3:#9BA0A8;
-  --up:#5FD98A; --dn:#E2665A; --warn:#E8B24D; --cy:#6EA8C9;
+  /* THE PALETTE AS GIVEN. Fourteen names, and these are their values —
+     background, two surfaces, one line, two text tones, gold, violet, the
+     four elements and the two signals. Nothing here is interpolated except
+     where the app needs a step the table does not name, and those are
+     marked. */
+  --bg0:#07080A;                       /* Background */
+  --card:#111317;                      /* Surface    */
+  --card2:#161A20;                     /* Surface 2  */
+  --bg1:#0C0E11; --chartbg:#050608;    /* between Background and Surface */
+  --b1:rgba(255,255,255,.07);          /* Line       */
+  --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
+  --bAct:#E8B24D;
+  --p3:#E8B24D; --pGlow:#FFE7B0; --pDeep:#2A2113;   /* Gold   */
+  --p1:#8B7CF6; --p2:#A99BF8;                       /* Violet */
+  --t1:#EDEDEC;                        /* Text  */
+  --t2:#82868D; --t3:#82868D;          /* Muted — the table names one muted
+                                          tone, so both muted steps are it;
+                                          hierarchy comes from size and
+                                          weight, the way the source does it */
+  --up:#5FD98A; --dn:#E2665A;          /* Bull / Bear */
+  --warn:#E8B24D; --cy:#6EA8C9;
+  --elFire:#E8823C; --elEarth:#7FAE7A; --elAir:#6EA8C9; --elWater:#5E7CE2;
+  --rgbFire:232,130,60; --rgbEarth:127,174,122;
+  --rgbAir:110,168,201; --rgbWater:94,124,226;
   --wash:rgba(232,178,77,.055); --washTo:rgba(var(--g35),.96);
   --pDeepest:#B07C28; --pWell:#1B160C;
   --sideBg:#050608; --sideTop:#0C0E11; --sideTop2:#0A0B0E;
@@ -26262,9 +26286,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b103';
+var CA_BUILD='b104';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='A second palette. Settings \u2192 Look switches between Celestial and Qamar \u2014 near-black with one warm accent. Everything else is identical.';
+var CA_WHATS_NEW='Qamar is now the palette exactly as specified \u2014 fourteen named colours, including the four elements. Settings \u2192 Look to switch.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
