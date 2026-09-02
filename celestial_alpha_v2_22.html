@@ -7250,6 +7250,37 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ── LIVE SETUPS: LEVELS NOT YET REACHED ──────────────────────────────────*/
+.ix-card{border:1px solid var(--b2);border-radius:13px;padding:16px 18px 14px;margin-bottom:16px;background:var(--card)}
+.ix-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.ix-head b{display:block;font-size:14px;font-weight:700;color:var(--t1)}
+.ix-head s{display:block;text-decoration:none;font-size:10.5px;color:var(--t3);margin-top:3px;max-width:56ch}
+.ix-tf{margin-left:auto;display:flex;gap:4px;flex:0 0 auto}
+.ix-b{padding:5px 10px;border-radius:7px;border:1px solid var(--b1);background:var(--card2);
+  color:var(--t3);font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap}
+.ix-b.on{border-color:var(--p3);color:var(--t1);background:rgba(var(--rgbAcc),.10)}
+.ix-now{font-size:11px;color:var(--t2);margin-bottom:10px}
+.ix-now b.ok{color:var(--up)}
+.ix-msg{font-size:11.5px;line-height:1.6;color:var(--t2);padding:12px 13px;border:1px dashed var(--b1);border-radius:9px}
+.ix-msg.warn{border-color:rgba(var(--rgbWarn),.4);color:var(--warn)}
+.ix-msg s{display:block;text-decoration:none;font-size:10px;color:var(--t3);margin-top:6px}
+.ix-go{padding:7px 14px;border-radius:8px;border:1px solid var(--p3);background:rgba(var(--rgbAcc),.10);
+  color:var(--t1);font-size:11.5px;font-weight:600;cursor:pointer}
+.ix-rows{border:1px solid var(--b1);border-radius:9px;overflow:hidden}
+.ix-r{display:grid;grid-template-columns:60px 1.3fr 1fr 1.2fr;gap:10px;align-items:center;
+  padding:10px 12px;border-bottom:1px solid var(--bFaint);font-size:12px}
+.ix-r:last-child{border-bottom:none}
+.ix-r .s{font-size:9.5px;font-weight:800;letter-spacing:.07em;padding:3px 0;text-align:center;border-radius:5px}
+.ix-r.buy  .s{color:var(--up);background:rgba(var(--rgbUp),.12)}
+.ix-r.sell .s{color:var(--dn);background:rgba(var(--rgbDn),.12)}
+.ix-r .p{font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.ix-r i{display:block;font-style:normal;font-size:9.5px;font-weight:500;color:var(--t3);margin-top:2px}
+.ix-r .t,.ix-r .c{color:var(--t2);font-size:11px}
+.ix-r .c b.ok{color:var(--up);font-weight:700}
+.ix-r .c b.wait{color:var(--t3);font-weight:600}
+.ix-foot{margin-top:11px;font-size:10px;line-height:1.55;color:var(--t3);max-width:88ch}
+@media (max-width:820px){ .ix-r{grid-template-columns:52px 1fr;row-gap:5px} }
+
 /* ── TODAY, IN ONE CARD ───────────────────────────────────────────────────*/
 .td-card{border:1px solid var(--b2);border-radius:13px;padding:17px 19px 15px;margin-bottom:16px;
   background:linear-gradient(160deg,var(--wash),var(--washTo))}
@@ -25212,6 +25243,227 @@ function timTodayIn(w){
   try{ return 'in ' + fmtIn(w.inMin); }catch(e){ return ''; }
 }
 
+
+/* ══ THE SETUP HAS TO ARRIVE BEFORE THE MOVE ══════════════════════════════
+
+   Two complaints, one cause, and both were right.
+
+   "The setup appears after price has already moved." It did. The entry was
+   `rallyEntry ?? level?.price ?? price` — and when no Gann level happened to
+   sit nearby, that last fallback is the current price. A setup whose entry
+   is where price already is cannot be early; it is a description of the
+   present wearing the grammar of a plan.
+
+   "There is no scalping and no intraday." There was not. Every feed in this
+   file asks for period=d or interval=1day. There was not one request for a
+   1-minute, 5-minute, 15-minute or hourly bar anywhere. "Scalp" and
+   "Intraday" were labels chosen from the horizon in days — a time concept —
+   while the finest thing the app could see was one day. It could not have
+   found a scalp if one were in front of it.
+
+   WHAT THIS DOES INSTEAD
+
+   Intraday bars, and an entry that is a level price has NOT reached yet.
+   A level already touched is not a setup, it is a chase, and this says so
+   rather than printing it as a plan. Every candidate carries how far away
+   it is, so "not yet" is a number rather than a feeling.
+
+   WHAT IT DOES NOT DO. It does not promise the level will be reached. It
+   says where one is, how far, which side, and whether the clock agrees —
+   and it stays silent when the answer is that there is nothing to do.
+   ══════════════════════════════════════════════════════════════════════ */
+
+var INTRA = { bars:null, asset:null, tf:null, at:0, err:null, busy:false };
+
+/* The two that matter and that a free tier will actually serve. 15 minutes
+   is a scalp's structure; one hour is an intraday's. Anything finer burns
+   the request budget for noise. */
+var INTRA_TF = { scalp:'15min', intraday:'1h' };
+
+function intraFresh(){
+  return INTRA.bars && INTRA.asset===timAsset() && (Date.now()-INTRA.at) < 10*60*1000;
+}
+
+function intraLoad(tf,cb){
+  var asset=timAsset();
+  var sym=twelveSymbol(String(asset).toUpperCase().replace(/[^A-Z0-9]/g,''));
+  if(!sym){ INTRA.err='no intraday symbol mapped for '+asset; if(cb)cb(null); return; }
+  if(INTRA.busy){ if(cb)cb(INTRA.bars); return; }
+  INTRA.busy=true; INTRA.err=null;
+  TD.fetch(TWELVE_KEY,sym,tf,300).then(function(rows){
+    INTRA.bars=rows; INTRA.asset=asset; INTRA.tf=tf; INTRA.at=Date.now(); INTRA.busy=false;
+    if(cb)cb(rows);
+  }).catch(function(e){
+    INTRA.busy=false; INTRA.bars=null; INTRA.err=e.message||'intraday fetch failed';
+    if(cb)cb(null);
+  });
+}
+
+/* ── levels, from intraday structure ─────────────────────────────────────
+   A swing high is a bar whose high is the highest of the k bars either
+   side of it. That is all — no indicator, no fitting. What makes a level
+   worth anything here is the two things measured after it: how many times
+   price has come back to it, and whether it has been broken since. */
+function intraPivots(bars,k){
+  k=k||3;
+  var hi=[], lo=[];
+  for(var i=k;i<bars.length-k;i++){
+    var isH=true,isL=true;
+    for(var j=i-k;j<=i+k;j++){
+      if(j===i)continue;
+      if(bars[j].high>=bars[i].high)isH=false;
+      if(bars[j].low <=bars[i].low )isL=false;
+      if(!isH&&!isL)break;
+    }
+    if(isH)hi.push({px:+bars[i].high,i:i,side:'high'});
+    if(isL)lo.push({px:+bars[i].low ,i:i,side:'low' });
+  }
+  return {hi:hi,lo:lo};
+}
+
+function intraATR(bars,n){
+  n=n||14;
+  if(bars.length<n+1)return null;
+  var s=0;
+  for(var i=bars.length-n;i<bars.length;i++){
+    var p=bars[i-1], b=bars[i];
+    s+=Math.max(b.high-b.low, Math.abs(b.high-p.close), Math.abs(b.low-p.close));
+  }
+  return s/n;
+}
+
+/* ── the one rule that makes this lead rather than lag ───────────────────
+   A level counts only if price has NOT been there recently. If the last
+   bars have already traded through it, the move it describes has happened
+   and taking it now is chasing. */
+function intraUntouched(level,bars,lookback){
+  lookback=lookback||8;
+  var from=Math.max(0,bars.length-lookback);
+  for(var i=from;i<bars.length;i++)
+    if(bars[i].low<=level.px && bars[i].high>=level.px) return false;
+  return true;
+}
+
+/* ── candidates: where a trade could form, and how far off it is ─────── */
+function intraSetups(bars,style){
+  if(!bars||bars.length<60)return [];
+  var px=+bars[bars.length-1].close;
+  var atr=intraATR(bars,14);
+  if(!atr||!px)return [];
+
+  var P=intraPivots(bars,3);
+  var out=[];
+
+  function consider(lv,side){
+    if(!intraUntouched(lv,bars,8))return;             /* already traded through */
+    var dist=Math.abs(lv.px-px);
+    /* Too close is noise — the level and the price are the same thing.
+       Too far and it is not today's trade. Both bounds are in ATR so they
+       scale with the instrument instead of being guessed in points. */
+    if(dist < atr*0.4)return;
+    if(dist > atr*6  )return;
+    /* how often price has respected it, which is the only evidence a level
+       has for itself */
+    var tests=0;
+    for(var i=0;i<bars.length-2;i++)
+      if(bars[i].low<=lv.px && bars[i].high>=lv.px) tests++;
+    out.push({
+      px:lv.px, side:side, dist:dist, atr:atr,
+      atrAway:+(dist/atr).toFixed(2),
+      tests:tests, bars:bars.length - lv.i,
+      style:style
+    });
+  }
+
+  P.lo.forEach(function(l){ if(l.px<px)consider(l,'buy');  });
+  P.hi.forEach(function(h){ if(h.px>px)consider(h,'sell'); });
+
+  /* nearest first — the one price would reach soonest is the one that
+     matters today */
+  out.sort(function(a,b){ return a.dist-b.dist; });
+  return out.slice(0,4);
+}
+
+/* ── does the clock agree? ────────────────────────────────────────────── */
+function intraWindowNow(){
+  try{
+    var st=timState();
+    var ws=(timTodayWindows(st)||[]).filter(function(w){ return !w.gone; });
+    var live=ws.filter(function(w){ return w.live; })[0];
+    return {live:live||null, next:ws[0]||null, all:ws};
+  }catch(e){ return {live:null,next:null,all:[]}; }
+}
+
+/* ── the card ─────────────────────────────────────────────────────────── */
+function intraCard(){
+  var style = (typeof INTRA_STYLE!=='undefined') ? INTRA_STYLE : 'scalp';
+  var tf = INTRA_TF[style];
+  var h='<div class="ix-card">';
+
+  h+='<div class="ix-head"><div><b>Live setups</b>'
+    +'<s>levels price has not reached yet, on '+tf+' bars &mdash; not where it already is</s></div>'
+    +'<div class="ix-tf">'
+      +'<button class="ix-b'+(style==='scalp'?' on':'')+'" onclick="intraStyle(\'scalp\')">Scalp &middot; 15m</button>'
+      +'<button class="ix-b'+(style==='intraday'?' on':'')+'" onclick="intraStyle(\'intraday\')">Intraday &middot; 1h</button>'
+    +'</div></div>';
+
+  if(INTRA.busy)  return h+'<div class="ix-msg">Loading '+tf+' bars&hellip;</div></div>';
+  if(INTRA.err)   return h+'<div class="ix-msg warn">No intraday data &mdash; '+escHtml(INTRA.err)
+                          +'<s>Scalp and intraday need bars finer than a day. Without them this stays empty '
+                          +'rather than guessing from daily candles.</s></div></div>';
+  if(!INTRA.bars) return h+'<div class="ix-msg"><button class="ix-go" onclick="intraStyle(\''+style+'\')">'
+                          +'Load '+tf+' bars</button></div></div>';
+
+  var setups=intraSetups(INTRA.bars,style);
+  var W=intraWindowNow();
+  var px=+INTRA.bars[INTRA.bars.length-1].close;
+
+  h+='<div class="ix-now">Last '+fmtPx(px)+' &middot; '+INTRA.bars.length+' bars of '+tf
+    +' &middot; '+(W.live?'<b class="ok">a window is open now</b>'
+                 :W.next?'next window '+(W.next.inMin!=null?'in '+fmtIn(W.next.inMin):'today')
+                 :'no window left today')+'</div>';
+
+  if(!setups.length){
+    h+='<div class="ix-msg">Nothing is set up. Every level near price has already been traded '
+      +'through, which means the move it described has happened.'
+      +'<s>This is a reading, not a gap &mdash; chasing a level price is already past is the '
+      +'thing this card exists to stop.</s></div>';
+    return h+'</div>';
+  }
+
+  h+='<div class="ix-rows">';
+  setups.forEach(function(s){
+    var pct=(s.dist/px*100);
+    h+='<div class="ix-r '+s.side+'">'
+      +'<span class="s">'+(s.side==='buy'?'BUY':'SELL')+'</span>'
+      +'<span class="p">'+fmtPx(s.px)+'<i>'+s.atrAway+' ATR away &middot; '+pct.toFixed(2)+'%</i></span>'
+      +'<span class="t">'+s.tests+' test'+(s.tests===1?'':'s')+'<i>held this level before</i></span>'
+      +'<span class="c">'+(W.live?'<b class="ok">clock agrees</b>':'<b class="wait">wait for the window</b>')
+        +'<i>'+(W.live?'a window is open':(W.next?'next in '+(W.next.inMin!=null?fmtIn(W.next.inMin):'—'):'none today'))+'</i></span>'
+      +'</div>';
+  });
+  h+='</div>';
+
+  h+='<div class="ix-foot">A level counts here only if price has not traded through it in the '
+    +'last eight bars. Distance is in ATR so it means the same thing on gold as on a currency. '
+    +'None of this says the level will be reached &mdash; it says where one is, how far, and '
+    +'whether the clock agrees.</div>';
+  return h+'</div>';
+}
+
+var INTRA_STYLE='scalp';
+function intraStyle(s){
+  INTRA_STYLE=(s==='intraday')?'intraday':'scalp';
+  INTRA.bars=null; INTRA.err=null;
+  try{ renderIntra(); }catch(e){}
+  intraLoad(INTRA_TF[INTRA_STYLE],function(){ try{ renderIntra(); }catch(e){} });
+}
+
+function renderIntra(){
+  var el=document.getElementById('ix_host');
+  if(el)el.innerHTML=intraCard();
+}
+
 function renderTiming(){
   var host=document.getElementById('tim_new');
   if(!host)return;
@@ -25246,6 +25498,8 @@ function renderTiming(){
       this tab and was spread across five sections. Reading it meant
       assembling it. */
    +(function(){ try{ return timTodayCard(st); }catch(e){ return ''; } })()
+   /* and immediately under it, the levels that have NOT been reached yet */
+   +'<div id="ix_host"></div>'
    /* THE ENGINE'S OWN ANSWER, AT THE TOP OF ITS OWN TAB.
       Everything below this is the working: the wheel, the hours, the week,
       the aspects. The seven lines it produces were only visible on the
@@ -27364,9 +27618,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b112';
+var CA_BUILD='b113';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Today in one card at the top of the Timing tab \u2014 what kind of day it is, every window left, what each can be traded as, and which way it leans.';
+var CA_WHATS_NEW='Live setups on 15m and 1h bars \u2014 levels price has NOT reached yet. The old setup used the current price, which is why it always felt late.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -29794,6 +30048,7 @@ function goTab(name,btn){
   try{ caCountAll(document.getElementById('pane_'+name)); }catch(e){}
   if(name==='reference')loadRefFrames();
   /* the room only polls while you are looking at it */
+  if(name==='timing'){ try{ renderIntra(); }catch(e){} }
   if(name==='announcements'){
     try{ renderCommBanner(); renderCommMeta(); commStartPoll(); }catch(e){}
   }
