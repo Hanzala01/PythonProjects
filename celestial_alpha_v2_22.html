@@ -7250,6 +7250,18 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ── HOW A TRADE ENDS, IN ONE TAP ─────────────────────────────────────────
+   Three prices the row already knows, colour-coded the way the outcome
+   reads: red for the stop, neutral for break-even, green for the target. */
+.jx{display:flex;gap:3px}
+.jx-b{padding:3px 7px;border-radius:5px;font-size:9.5px;font-weight:700;letter-spacing:.04em;
+  border:1px solid var(--b1);background:var(--card2);color:var(--t2);cursor:pointer;transition:.13s}
+.jx-b:hover{transform:translateY(-1px)}
+.jx-b.sl{color:var(--dn)}   .jx-b.sl:hover{border-color:var(--dn);background:rgba(var(--rgbDn),.12)}
+.jx-b.be{color:var(--t2)}   .jx-b.be:hover{border-color:var(--b2);background:var(--card)}
+.jx-b.tp{color:var(--up)}   .jx-b.tp:hover{border-color:var(--up);background:rgba(var(--rgbUp),.12)}
+.jx-b.ot{color:var(--t3);padding:3px 6px} .jx-b.ot:hover{border-color:var(--b2);color:var(--t1)}
+
 /* ── CELESX CROSS-QUESTION ────────────────────────────────────────────────
    Tokens only, so both palettes get it for free. The one thing it does not
    token is the verdict tone, which reads off --up/--warn/--dn — those are
@@ -8423,7 +8435,7 @@ body{background:var(--bg0)}
               <div class="sb-lbl" style="padding:0 8px">Channels</div>
               <div id="ch_list" class="comm-ch-list"></div>
               <div class="sb-lbl mt10" style="padding:0 8px">Members</div>
-              <div style="padding:6px 8px;font-size:11px;color:var(--soft)"><span style="color:var(--green)">●</span> <span id="comm_me">Admin</span> <span class="tag tb" style="margin-left:4px" id="comm_role">OWNER</span></div>
+              <div style="padding:6px 8px;font-size:11px;color:var(--soft)"><span style="color:var(--green)">●</span> <span id="comm_me">Admin</span> <span class="tag tb" style="margin-left:4px" id="comm_role">OWNER</span><span id="comm_count" style="margin-left:auto;font-size:10px;color:var(--muted)"></span></div>
               <div id="apr_panel" style="margin-top:12px;padding:0 8px">
                 <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">Approvals <button class="btn btn-g btn-xs" onclick="loadPending()">⟳</button></div>
                 <input type="password" id="apr_pin" placeholder="Bridge PIN" style="margin-bottom:6px;padding:5px 8px;font-size:10px">
@@ -25311,7 +25323,41 @@ function apprApprove(id){
     reasons:[a.why||'approved from the queue'],timeStr:'—',apprId:id};
   if(typeof _lastAsset!=='undefined')_lastAsset=a.asset;
   a.state='approved'; a.decidedAt=Date.now(); apprSave();
-  if(typeof openTakeSignal==='function')openTakeSignal();
+
+  /* AN APPROVAL THAT LEFT NO ROW WAS THE HOLE IN THE RECORD.
+     This marked the setup approved and then opened the sizing panel, and
+     the journal row was only written when that panel was confirmed. Close
+     it, cancel it, leave the risk box empty, or hit a spent monthly
+     quota — and the queue said "approved" while the journal had nothing.
+     Every one of those is a trade that happened and was never recorded.
+
+     The row is written here instead, the moment the decision is made, with
+     the setup's own numbers. The panel still opens and still sets the risk
+     size; it now edits a row that already exists rather than being the only
+     thing that creates one. */
+  var jr=apprJournal(a);
+  if(typeof openTakeSignal==='function'){
+    window._lastSig.jrnlRow=jr;
+    openTakeSignal();
+  }
+}
+
+/* one journal row per approval, and never a second one for the same id */
+function apprJournal(a){
+  try{
+    for(var i=0;i<JRNL.length;i++)
+      if(JRNL[i].apprId===a.id)return JRNL[i];
+    var row={
+      d:ymd(new Date()), a:a.asset, t:String(a.style||'').toLowerCase(),
+      dir:a.side==='buy'?'buy':'sell', en:a.entry, ex:a.entry, lots:0,
+      move:'0.00%', pnl:0, r:'open', tp:a.tp, sl:a.sl,
+      riskAmt:0, rr:a.rr, approved:true, apprId:a.id
+    };
+    JRNL.unshift(row);
+    jrnlSave();
+    try{ renderJ(); renderPnlCalendar(); updatePortStats(); }catch(e){}
+    return row;
+  }catch(e){ return null; }
 }
 function apprSkip(id){
   var a=apprFind(id);
@@ -26849,11 +26895,18 @@ function confirmTakeSignal(){
     return;
   }
   var dateStr=ymd(new Date());
-  JRNL.unshift({
-    d:dateStr,a:_lastAsset,t:sig.style.toLowerCase(),dir:sig.isBull?'buy':'sell',
-    en:sig.entry,ex:sig.entry,lots:0,move:'0.00%',pnl:0,r:'open',
-    tp:sig.tp,sl:sig.sl,riskAmt:amt,rr:sig.rr
-  });
+  /* an approval already wrote its row; this sets the size on it rather than
+     logging the same trade twice */
+  if(sig.jrnlRow && JRNL.indexOf(sig.jrnlRow)>=0){
+    sig.jrnlRow.riskAmt=amt;
+  }else{
+    JRNL.unshift({
+      d:dateStr,a:_lastAsset,t:sig.style.toLowerCase(),dir:sig.isBull?'buy':'sell',
+      en:sig.entry,ex:sig.entry,lots:0,move:'0.00%',pnl:0,r:'open',
+      tp:sig.tp,sl:sig.sl,riskAmt:amt,rr:sig.rr,
+      apprId:sig.apprId||null, approved:!!sig.apprId
+    });
+  }
   jrnlSave();
   renderJ();renderPnlCalendar();updatePortStats();
   document.getElementById('take_signal_pop').classList.add('hidden');
@@ -26861,14 +26914,25 @@ function confirmTakeSignal(){
   var refBtn=document.querySelector(".nav-item[onclick*='portfolio']");
   goTab('portfolio',refBtn);
 }
-function closeJournalTrade(i){
+/* Close at a price the row already knows. Everything after the price is
+   chosen is closeJournalTrade's arithmetic, so the two cannot drift. */
+function closeAt(i,which){
   var j=JRNL[i];
-  var ex=prompt('Enter exit price to close this trade ('+j.a+' entry '+j.en+'):');
-  if(!ex)return;
-  ex=parseFloat(ex);
-  if(!ex||isNaN(ex)){notify('Invalid exit price','info');return;}
-  /* Size so that being stopped out loses exactly riskAmt.
-     calcPnL = move * lots * 100, so lots = riskAmt / (slDistance * 100). */
+  if(!j||j.r!=='open')return;
+  var px = which==='sl' ? j.sl : which==='tp' ? j.tp : j.en;
+  if(px==null||!isFinite(+px)){
+    notify('This row has no '+which.toUpperCase()+' recorded — use \u2026 to type the exit','info');
+    return;
+  }
+  var word = which==='sl' ? 'at the stop' : which==='tp' ? 'at the target' : 'at break-even';
+  if(!confirm('Close '+j.a+' '+word+', '+px+'?'))return;
+  jrnlClose(i,+px);
+}
+
+/* the one place a trade is closed, whichever button asked for it */
+function jrnlClose(i,ex){
+  var j=JRNL[i];
+  if(!j)return;
   var slDist=j.sl?Math.abs(j.en-j.sl):0;
   var lots=(j.riskAmt>0&&slDist>0)?j.riskAmt/(slDist*100):(j.lots||0.01);
   var pnl=calcPnL(j.en,ex,j.dir,lots);
@@ -26876,10 +26940,27 @@ function closeJournalTrade(i){
   j.lots=+lots.toFixed(4);
   j.move=(((ex-j.en)/j.en)*100).toFixed(2)+'%';
   j.pnl=pnl;
-  j.r=pnl>0?'win':pnl<0?'loss':'be';
+  /* break-even is its own outcome, not a rounding of win or loss — a record
+     that calls every scratch a loss reads worse than the trading was */
+  j.r = (j.sl!=null&&Math.abs(ex-j.sl)<1e-9) ? 'loss'
+      : (j.tp!=null&&Math.abs(ex-j.tp)<1e-9) ? 'win'
+      : Math.abs(ex-j.en)<1e-9 ? 'be'
+      : pnl>0?'win':pnl<0?'loss':'be';
   jrnlSave();
-  renderJ();renderPnlCalendar();updatePortStats();
-  notify('Trade closed — '+(pnl>0?'+':'')+pnl,(pnl>0?'bull':'bear'));
+  try{ renderJ();renderPnlCalendar();updatePortStats(); }catch(e){}
+  notify('Trade closed — '+(pnl>0?'+':'')+pnl,(pnl>0?'bull':pnl<0?'bear':'info'));
+}
+
+function closeJournalTrade(i){
+  var j=JRNL[i];
+  var ex=prompt('Enter exit price to close this trade ('+j.a+' entry '+j.en+'):');
+  if(!ex)return;
+  ex=parseFloat(ex);
+  if(!ex||isNaN(ex)){notify('Invalid exit price','info');return;}
+  /* Size so that being stopped out loses exactly riskAmt.
+     calcPnL = move * lots * 100, so lots = riskAmt / (slDistance * 100).
+     That arithmetic lives in jrnlClose now, shared with the SL/BE/TP taps. */
+  jrnlClose(i,ex);
 }
 
 function openShareWithSig(){
@@ -27297,8 +27378,21 @@ function renderJ(){
     var pc=isOpen?'color:var(--muted)':j.pnl>0?'color:var(--green)':' color:var(--red)';
     var rc=isOpen?'tb':j.r==='win'?'tg':j.r==='loss'?'tr':'ta';
     var dc=j.dir==='buy'?'cg':'cr';
+    /* THE THREE WAYS A TRADE ACTUALLY ENDS.
+       Closing used to be one button that asked for an exit price by prompt.
+       But a trade almost always ends at one of three prices that are
+       already on the row — the stop, the entry, or the target — and typing
+       those in by hand is both slower and a chance to fat-finger the record
+       that the whole track record is built out of. One tap each, and the
+       exact number comes off the setup. "Other" is still there for a manual
+       exit, which is the only case that genuinely needs typing. */
     var actionBtn=isOpen
-      ?'<button class="btn btn-a btn-xs" onclick="closeJournalTrade('+i+')">Close</button>'
+      ?'<div class="jx">'
+        +(j.sl!=null?'<button class="jx-b sl" onclick="closeAt('+i+',\'sl\')" title="Stopped out at '+j.sl+'">SL</button>':'')
+        +'<button class="jx-b be" onclick="closeAt('+i+',\'be\')" title="Closed at entry '+j.en+'">BE</button>'
+        +(j.tp!=null?'<button class="jx-b tp" onclick="closeAt('+i+',\'tp\')" title="Target hit at '+j.tp+'">TP</button>':'')
+        +'<button class="jx-b ot" onclick="closeJournalTrade('+i+')" title="Some other exit price">&hellip;</button>'
+      +'</div>'
       :'<button class="btn btn-g btn-xs" onclick="shareTradeCard('+i+')">⬆</button>';
     return'<tr style="border-bottom:1px solid var(--rim)'+(isOpen?';background:rgba(var(--rgbInfo),.04)':'')+'">'+
       '<td style="padding:9px 10px;font-size:11px;color:var(--mid)">'+ j.d+'</td>'+
@@ -28614,6 +28708,20 @@ function genInvite(days){
   var pay=exp+'-'+rnd;
   return 'CA-'+pay+'-'+kHash(pay+CA_SALT);
 }
+/* THE MEMBERSHIP, COUNTED RATHER THAN CLAIMED.
+   One owner, plus every invite key that has not expired. An expired key is
+   not a member, so it is not counted — which means the number goes down on
+   its own and nobody has to remember to prune it. */
+function commCount(){
+  var live=0;
+  try{
+    var list=JSON.parse(localStorage.getItem('ca_invites')||'[]');
+    if(Array.isArray(list))
+      list.forEach(function(o){ try{ if(checkInvite(o.k)==='ok')live++; }catch(e){} });
+  }catch(e){}
+  return 1+live;
+}
+
 function genInviteUI(){
   var d=parseInt(document.getElementById('inv_days').value)||7;
   var key=genInvite(d);
@@ -28752,6 +28860,17 @@ function unlock(){
   var me=document.getElementById('comm_me'),role=document.getElementById('comm_role');
   if(me){me.textContent=IS_ADMIN?'Hanzala':'Guest';}
   if(role){role.textContent=IS_ADMIN?'OWNER':'GUEST';role.className='tag '+(IS_ADMIN?'tb':'td');}
+  /* the same count, in the room it describes — owner only, same reasoning */
+  var cc=document.getElementById('comm_count');
+  if(cc){
+    if(IS_ADMIN){
+      var n=commCount();
+      cc.style.display='';
+      cc.textContent=n+(n===1?' member':' members');
+    }else{
+      cc.style.display='none';
+    }
+  }
   renderChannels();renderFeed();renderInvites();
 }
 
@@ -32655,7 +32774,24 @@ function dashStats(){
   T('st_win',wr.toFixed(1)+'%');
   T('st_pf',isFinite(pf)?pf.toFixed(2):'—');
   T('st_exp',(exp>=0?'+':'')+exp.toFixed(1)+'R');
-  T('st_usr','1');
+  /* HOW MANY PEOPLE ARE IN THIS, AND ONLY THE OWNER SEES IT.
+     This tile read a hardcoded "1" — a placeholder standing where a real
+     number should be, on a board whose whole argument is that its numbers
+     are measured. It counts the invite keys that are still live, plus the
+     owner, and it counts nothing it cannot see.
+
+     A guest does not get the tile at all rather than getting a dash: the
+     size of a private room is the owner's business, and a dash still tells
+     you there is a number being kept from you. */
+  (function(){
+    var tile=document.getElementById('st_usr');
+    tile=tile?tile.closest('.stat'):null;
+    if(!IS_ADMIN){ if(tile)tile.style.display='none'; return; }
+    if(tile)tile.style.display='';
+    T('st_usr',String(commCount()));
+    var m=tile?tile.querySelector('.m'):null;
+    if(m)m.textContent='you and your invites';
+  })();
   T('st_net',(net>=0?'$':'-$')+Math.abs(net).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}),
     net>0?'var(--green)':net<0?'var(--red)':'var(--white)');
   T('st_tt',String(closed.length));
