@@ -25290,11 +25290,27 @@ function intraLoad(tf,cb){
   if(!sym){ INTRA.err='no intraday symbol mapped for '+asset; if(cb)cb(null); return; }
   if(INTRA.busy){ if(cb)cb(INTRA.bars); return; }
   INTRA.busy=true; INTRA.err=null;
+
+  /* A FETCH THAT NEVER ANSWERS LEFT THE CARD SAYING "Loading" FOREVER,
+     which reads as the app doing nothing — the exact complaint this card
+     exists to answer. A request that has not come back in twelve seconds
+     has failed, whatever the network thinks it is still doing. */
+  var done=false;
+  var bail=setTimeout(function(){
+    if(done)return;
+    done=true; INTRA.busy=false; INTRA.bars=null;
+    INTRA.err='the feed did not answer in twelve seconds';
+    if(cb)cb(null);
+  },12000);
+
   TD.fetch(TWELVE_KEY,sym,tf,300).then(function(rows){
+    if(done)return; done=true; clearTimeout(bail);
     INTRA.bars=rows; INTRA.asset=asset; INTRA.tf=tf; INTRA.at=Date.now(); INTRA.busy=false;
     if(cb)cb(rows);
   }).catch(function(e){
-    INTRA.busy=false; INTRA.bars=null; INTRA.err=e.message||'intraday fetch failed';
+    if(done)return; done=true; clearTimeout(bail);
+    INTRA.busy=false; INTRA.bars=null;
+    INTRA.err=(e&&e.message)||'intraday fetch failed';
     if(cb)cb(null);
   });
 }
@@ -25410,7 +25426,9 @@ function intraCard(){
   if(INTRA.busy)  return h+'<div class="ix-msg">Loading '+tf+' bars&hellip;</div></div>';
   if(INTRA.err)   return h+'<div class="ix-msg warn">No intraday data &mdash; '+escHtml(INTRA.err)
                           +'<s>Scalp and intraday need bars finer than a day. Without them this stays empty '
-                          +'rather than guessing from daily candles.</s></div></div>';
+                          +'rather than guessing from daily candles.</s>'
+                          +'<div style="margin-top:9px"><button class="ix-go" onclick="INTRA.err=null;intraAuto();'
+                          +'renderIntra()">Try again</button></div></div></div>';
   if(!INTRA.bars) return h+'<div class="ix-msg"><button class="ix-go" onclick="intraStyle(\''+style+'\')">'
                           +'Load '+tf+' bars</button></div></div>';
 
@@ -25461,7 +25479,20 @@ function intraStyle(s){
 
 function renderIntra(){
   var el=document.getElementById('ix_host');
-  if(el)el.innerHTML=intraCard();
+  if(!el)return;
+  el.innerHTML=intraCard();
+  /* IT WAITED FOR A CLICK NOBODY HAD A REASON TO MAKE.
+     The card shipped showing a "Load 15min bars" button and nothing else,
+     so opening the Timing tab showed an empty box where the live setups
+     were meant to be — which looks exactly like the app not doing
+     anything, because it was not. It loads itself. */
+  if(!INTRA.bars && !INTRA.busy && !INTRA.err) intraAuto();
+}
+
+function intraAuto(){
+  intraLoad(INTRA_TF[INTRA_STYLE],function(){
+    try{ renderIntra(); }catch(e){}
+  });
 }
 
 function renderTiming(){
@@ -25615,6 +25646,13 @@ function renderTiming(){
      +'</div></details>';
 
   host.querySelectorAll('.tk-slot').forEach(function(el,i){el.style.animationDelay=(i*0.03).toFixed(2)+'s';});
+
+  /* THE HOST ONLY EXISTS ONCE THIS HAS RUN.
+     renderIntra was being called from goTab, before this function had
+     rebuilt the tab — so it painted into a div that was replaced a moment
+     later, and the live setups were nowhere in the DOM at all. It goes
+     here, after the markup it writes into exists. */
+  try{ renderIntra(); }catch(e){}
 }
 /* keep the hidden legacy inputs in step so the engine keeps working */
 function timSync(el,targetId){
@@ -27618,9 +27656,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b113';
+var CA_BUILD='b114';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Live setups on 15m and 1h bars \u2014 levels price has NOT reached yet. The old setup used the current price, which is why it always felt late.';
+var CA_WHATS_NEW='The Live setups card loads itself now. It shipped waiting for a button press, so the Timing tab showed an empty box where the setups were meant to be.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -30048,7 +30086,19 @@ function goTab(name,btn){
   try{ caCountAll(document.getElementById('pane_'+name)); }catch(e){}
   if(name==='reference')loadRefFrames();
   /* the room only polls while you are looking at it */
-  if(name==='timing'){ try{ renderIntra(); }catch(e){} }
+  if(name==='timing'){
+    /* renderTiming paints it; this only keeps it fresh.
+       A 15-minute level is stale within the hour, so it refreshes while the
+       tab is the one being looked at and stops the moment it is not */
+    try{
+      if(window._ixT)clearInterval(window._ixT);
+      window._ixT=setInterval(function(){
+        var pane=document.getElementById('pane_timing');
+        if(!pane||pane.classList.contains('hidden')){ clearInterval(window._ixT); window._ixT=null; return; }
+        INTRA.at=0; intraAuto();
+      },5*60*1000);
+    }catch(e){}
+  }
   if(name==='announcements'){
     try{ renderCommBanner(); renderCommMeta(); commStartPoll(); }catch(e){}
   }
