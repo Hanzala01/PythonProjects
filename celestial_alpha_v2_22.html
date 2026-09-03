@@ -7346,6 +7346,157 @@ body{background:var(--bg0)}
   #pane_timing .qam-state,#pane_timing .pc-facts,#pane_timing .td-facts{grid-template-columns:1fr}
 }
 
+/* ══ THE DECK ═════════════════════════════════════════════════════════════
+   The Time Engine stops being a stack of cards and becomes a document with
+   a front page and seven chapters.
+
+   WHY A DOCUMENT. Everything on this tab is an answer to one of seven
+   questions, and until now they were queued in the order they happened to
+   be built. Nobody reads a queue. A numbered chapter tells you what it is
+   for before you read a single number, and a sticky rail across the top
+   says how many there are and which one you are standing in — so the tab
+   stops feeling endless even though nothing has been taken off it.
+
+   WHY A FRONT PAGE. The four things anyone opens this tab to learn — what
+   the engine says, when the next window opens, which way the day leans, and
+   whether the month rates today at all — were on four different cards at
+   four different sizes. They are one masthead now, said once, said large.
+   Every one of them is read from the function that already produced it.
+
+   NOTHING IS HIDDEN AND NOTHING IS FOLDED. The rail scrolls; it does not
+   switch. Every section that was on the page is still on the page, in the
+   same order of importance I would read them in, with a header that says
+   what it answers.
+
+   NOT ONE NUMBER, RULE OR FUNCTION IS CHANGED BY THIS. It is a drawing.
+   ══════════════════════════════════════════════════════════════════════ */
+#pane_timing .tk{max-width:1180px}
+
+/* ── the masthead ─────────────────────────────────────────────────────── */
+#pane_timing .tg-mast{position:relative;overflow:hidden;border-radius:20px;
+  border:1px solid var(--b1);margin:2px 0 0;padding:28px 30px 0;
+  background:
+    radial-gradient(120% 160% at 88% -34%,rgba(var(--rgbAcc),.20),transparent 62%),
+    radial-gradient(95% 130% at 2% 125%,rgba(var(--rgbVio),.13),transparent 60%),
+    linear-gradient(160deg,rgba(var(--rgbAcc),.05),rgba(0,0,0,.34))}
+#pane_timing .tg-mast::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(var(--rgbAcc),.9),rgba(var(--rgbVio),.65),transparent)}
+#pane_timing .tg-mrow{display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap}
+#pane_timing .tg-mL{flex:1 1 400px;min-width:0}
+#pane_timing .tg-eye{font-size:9.5px;font-weight:800;letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(var(--rgbAcc),.95)}
+#pane_timing .tg-mast h1{font-size:clamp(29px,4.3vw,46px);line-height:1.03;font-weight:800;
+  letter-spacing:-.035em;color:var(--t1);margin:11px 0 0}
+#pane_timing .tg-say{font-size:13px;line-height:1.6;color:var(--t2);max-width:60ch;margin:10px 0 0}
+#pane_timing .tg-date{font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--t3);margin-top:12px}
+/* the asset picker, as a control on the masthead rather than a boxed card
+   of its own. Twelve names do not fit a right-hand column, so it takes the
+   full width under the title where it reads as one row. */
+#pane_timing .tg-band{margin:22px 0 0}
+#pane_timing .tg-band .tk-asset{display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+  margin:0!important;padding:0!important;background:none!important;border:none!important;
+  box-shadow:none!important;border-radius:0!important}
+#pane_timing .tg-band .tk-asset .lb{font-size:9px;font-weight:800;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--t3);margin-right:8px}
+#pane_timing .tg-band .ab-pick{padding:7px 13px;border-radius:999px;border:1px solid var(--b1);
+  background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:var(--t2);
+  cursor:pointer;transition:.16s;transform:none}
+#pane_timing .tg-band .ab-pick:hover{border-color:rgba(var(--rgbAcc),.5);color:var(--t1);transform:none}
+#pane_timing .tg-band .ab-pick.on{background:rgba(var(--rgbAcc),.18);
+  border-color:rgba(var(--rgbAcc),.65);color:var(--t1)}
+#pane_timing .tg-band .tk-anum{margin-left:10px;font-size:10.5px;font-weight:700;
+  color:rgba(var(--rgbAcc),.9)}
+
+/* the four readouts, on one rule across the foot of the masthead */
+#pane_timing .tg-stats{display:grid;grid-template-columns:repeat(4,1fr);
+  margin:26px -30px 0;border-top:1px solid var(--b1)}
+#pane_timing .tg-st{padding:16px 30px 20px;border-left:1px solid var(--b1);min-width:0}
+#pane_timing .tg-st:first-child{border-left:none}
+#pane_timing .tg-st i{display:block;font-size:9px;font-weight:800;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--t3);font-style:normal}
+#pane_timing .tg-st b{display:block;font-size:clamp(19px,2.2vw,26px);font-weight:800;
+  letter-spacing:-.035em;color:var(--t1);margin-top:8px;line-height:1.08;
+  overflow:hidden;text-overflow:ellipsis}
+#pane_timing .tg-st s{display:block;text-decoration:none;font-size:10.5px;line-height:1.5;
+  color:var(--t3);margin-top:5px}
+#pane_timing .tg-st.go b,#pane_timing .tg-st.up b,#pane_timing .tg-st.fa b{color:var(--green)}
+#pane_timing .tg-st.ok b,#pane_timing .tg-st.mi b{color:var(--amber)}
+#pane_timing .tg-st.wait b,#pane_timing .tg-st.down b,#pane_timing .tg-st.av b{color:var(--red)}
+#pane_timing .tg-st.live{position:relative}
+#pane_timing .tg-st.live::after{content:'';position:absolute;left:30px;top:18px;width:6px;height:6px;
+  border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(34,197,94,.55);
+  animation:tgpul 1.9s ease-out infinite;display:none}
+@keyframes tgpul{to{box-shadow:0 0 0 9px rgba(34,197,94,0)}}
+
+/* ── the chapter rail ─────────────────────────────────────────────────── */
+#pane_timing .tg-rail{position:sticky;top:0;z-index:24;display:flex;gap:6px;overflow-x:auto;
+  padding:11px 2px 12px;margin:16px 0 0;
+  background:linear-gradient(180deg,var(--bg) 68%,rgba(0,0,0,0))}
+#pane_timing .tg-rail::-webkit-scrollbar{height:0}
+#pane_timing .tg-rb{flex:0 0 auto;display:flex;align-items:baseline;gap:8px;padding:8px 14px;
+  border-radius:999px;border:1px solid var(--b1);background:rgba(255,255,255,.022);
+  white-space:nowrap;cursor:pointer;transition:.16s}
+#pane_timing .tg-rb u{text-decoration:none;font-size:9px;font-weight:800;letter-spacing:.1em;
+  color:var(--t3);font-variant-numeric:tabular-nums}
+#pane_timing .tg-rb b{font-size:11.5px;font-weight:700;color:var(--t2);letter-spacing:.01em}
+#pane_timing .tg-rb:hover{border-color:rgba(var(--rgbAcc),.5)}
+#pane_timing .tg-rb:hover b{color:var(--t1)}
+#pane_timing .tg-rb.on{background:rgba(var(--rgbAcc),.15);border-color:rgba(var(--rgbAcc),.6)}
+#pane_timing .tg-rb.on b{color:var(--t1)}
+#pane_timing .tg-rb.on u{color:rgba(var(--rgbAcc),1)}
+
+/* ── a chapter ────────────────────────────────────────────────────────── */
+#pane_timing .tg-ch{margin:46px 0 0;scroll-margin-top:70px}
+#pane_timing .tg-chh{position:relative;display:flex;align-items:flex-start;gap:16px;
+  padding-bottom:15px;border-bottom:1px solid var(--b1);margin-bottom:22px}
+#pane_timing .tg-chh::after{content:'';position:absolute;left:0;bottom:-1px;width:104px;height:2px;
+  background:linear-gradient(90deg,rgba(var(--rgbAcc),.95),transparent)}
+#pane_timing .tg-num{flex:0 0 auto;font-size:34px;font-weight:800;line-height:.95;
+  letter-spacing:-.055em;color:rgba(var(--rgbAcc),.32);font-variant-numeric:tabular-nums}
+#pane_timing .tg-cht{min-width:0}
+#pane_timing .tg-cht b{display:block;font-size:19px;font-weight:800;letter-spacing:-.022em;
+  color:var(--t1);line-height:1.2}
+#pane_timing .tg-cht span{display:block;font-size:11.5px;line-height:1.55;color:var(--t3);
+  margin-top:5px;max-width:76ch}
+/* inside a chapter the sub-sections are subordinate, not peers of it */
+#pane_timing .tg-ch details.sec{margin:26px 0 0}
+#pane_timing .tg-ch details.sec>summary b{font-size:13.5px}
+/* the engine's seven readouts were laid out as a fixed row and the last one
+   fell off the right edge at this width. They wrap. */
+#pane_timing .te{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:8px}
+#pane_timing .te-c{min-width:0}
+
+/* THE DAY'S NAME IS NOW THE MASTHEAD, SO IT STOPS BEING SHOUTED TWICE.
+   The panel's own headline and its sentence are the same words as the front
+   page, three inches above them. Neither is taken off the page — the panel
+   still opens with both — they are set as a caption rather than as a second
+   38px headline, because the same sentence at the same size twice is how a
+   page stops looking designed. */
+#pane_timing .tg-ch .nd{max-width:none;padding-top:0}
+#pane_timing .tg-ch .nd-h{padding:0 0 2px}
+#pane_timing .tg-ch .nd h1{font-size:15px;font-weight:700;letter-spacing:0;
+  color:var(--t2);margin:6px 0 0}
+#pane_timing .tg-ch .nd-h p{font-size:12px;color:var(--t3);margin:4px 0 0;max-width:70ch}
+#pane_timing .tg-ch .nd-lean{margin-top:20px}
+
+@media (max-width:820px){
+  #pane_timing .tg-stats{grid-template-columns:1fr 1fr}
+  #pane_timing .tg-st:nth-child(3){border-left:none}
+  #pane_timing .tg-st:nth-child(n+3){border-top:1px solid var(--b1)}
+  #pane_timing .tg-mast{padding:22px 20px 0}
+  #pane_timing .tg-stats{margin:22px -20px 0}
+  #pane_timing .tg-st{padding:14px 20px 16px}
+  #pane_timing .tg-st.live::after{left:20px}
+  #pane_timing .tg-band .tk-anum{margin-left:0;width:100%}
+}
+@media (max-width:520px){
+  #pane_timing .tg-stats{grid-template-columns:1fr}
+  #pane_timing .tg-st{border-left:none;border-top:1px solid var(--b1)}
+  #pane_timing .tg-st:first-child{border-top:none}
+  #pane_timing .tg-num{font-size:26px}
+}
+
 /* ── TODAY, REDESIGNED ───────────────────────────────────────────────────
    One column, one voice, and a timeline instead of a grid of boxes. The
    old screen used 8px labels on 12px values inside bordered cards, which is
@@ -26550,11 +26701,9 @@ var TT_VIEW='today';
 function ttGo(k){
   ttApply();
   try{ renderMonthMap(); }catch(e){}
-  try{
-    var host=document.getElementById('tim_new');
-    var p=host&&host.querySelector('.tt-p[data-tt="'+k+'"]');
-    if(p)p.scrollIntoView({block:'start',behavior:'smooth'});
-  }catch(e){}
+  /* the four old screen names now point at the chapter that swallowed them */
+  var map={today:'now', month:'month', sky:'moon', detail:'clock'};
+  try{ tgJump(map[k]||k); }catch(e){}
 }
 /* THE TABS WERE THE PROBLEM, NOT THE LENGTH.
    Splitting this tab into four screens read as things being deleted. The
@@ -26679,6 +26828,155 @@ function newDayHtml(st){
   return h+'</div>';
 }
 
+/* ══ THE DECK — front page, chapters, rail ════════════════════════════════
+   Everything below draws. It reads from functions that already exist and it
+   computes nothing of its own: the verdict is timVerdict, the windows are
+   timTodayWindows, the lean is qamDayData, the day's rating is the same
+   mmMonth the month map is built from. If one of them is unavailable the
+   readout says so rather than inventing a value.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* the seven chapters, in the order I would read them */
+var TG_CHAPTERS=[
+  ['01','now',   'Now',          'What to do in the next few hours — the day, the windows left in it, and the levels price has not reached yet'],
+  ['02','call',  'The call',     'What the engine concludes, how strongly, which way, and the plan that follows from it'],
+  ['03','clock', 'The clock',    'The twenty-four hours as one shape — the wheel, every window in the day, and the week after it'],
+  ['04','moon',  'The Moon',     'The fastest body and the one that sets the character of a session: its degree, its zone, and every exact aspect ahead'],
+  ['05','sky',   'The sky',      'Where the Sun and the planets stand in their signs, and the live positions and aspects behind every reading above'],
+  ['06','month', 'The month',    'Which days of this month are worth anything, with the arithmetic shown for whichever one you click'],
+  ['07','work',  'The working',  'Why this weekday and this hour, how the next fortnight ranks, and the full toolkit']
+];
+
+function tgCh(n,id,title,ask,body){
+  return '<section class="tg-ch" id="tgc_'+id+'" data-ch="'+id+'">'
+    +'<div class="tg-chh"><div class="tg-num">'+n+'</div>'
+    +'<div class="tg-cht"><b>'+escHtml(title)+'</b><span>'+escHtml(ask)+'</span></div></div>'
+    +body+'</section>';
+}
+function tgRail(){
+  return '<nav class="tg-rail">'+TG_CHAPTERS.map(function(c,i){
+    return '<button class="tg-rb'+(i===0?' on':'')+'" data-ch="'+c[1]+'" onclick="tgJump(\''+c[1]+'\')">'
+      +'<u>'+c[0]+'</u><b>'+escHtml(c[2])+'</b></button>';
+  }).join('')+'</nav>';
+}
+function tgJump(id){
+  try{
+    var el=document.getElementById('tgc_'+id);
+    if(el)el.scrollIntoView({block:'start',behavior:'smooth'});
+  }catch(e){}
+}
+/* the rail highlights the chapter you are standing in. It is a scroll
+   position indicator, not a switch — every chapter stays on the page. */
+/* AN OBSERVER WAS THE WRONG TOOL. IntersectionObserver hands you only the
+   sections whose state CHANGED, in no guaranteed order, so on a fast scroll
+   the last entry in the batch is not the chapter you are standing in — it
+   lit "The working" while the month map filled the screen. This measures
+   instead: the last chapter whose top has passed the rail is the one you
+   are in, which is true by definition and cannot go out of step. */
+var _tgScroll=null;
+function tgSpy(){
+  try{
+    var host=document.getElementById('tim_new');
+    if(!host)return;
+    if(!_tgScroll){
+      _tgScroll=function(){
+        if(_tgScroll.q)return;
+        _tgScroll.q=true;
+        requestAnimationFrame(function(){
+          _tgScroll.q=false;
+          var h=document.getElementById('tim_new');
+          if(!h||!h.offsetParent)return;
+          var secs=h.querySelectorAll('.tg-ch');
+          if(!secs.length)return;
+          var cur=secs[0].getAttribute('data-ch');
+          for(var i=0;i<secs.length;i++)
+            if(secs[i].getBoundingClientRect().top<=104)cur=secs[i].getAttribute('data-ch');
+          /* the last chapter is shorter than a screen, so it can never reach
+             the rail — at the foot of the page it is the one you are in */
+          if(window.innerHeight+window.pageYOffset>=document.documentElement.scrollHeight-6)
+            cur=secs[secs.length-1].getAttribute('data-ch');
+          h.querySelectorAll('.tg-rb').forEach(function(b){
+            b.classList.toggle('on', b.getAttribute('data-ch')===cur);
+          });
+        });
+      };
+      window.addEventListener('scroll',_tgScroll,{passive:true});
+      window.addEventListener('resize',_tgScroll,{passive:true});
+    }
+    _tgScroll();
+  }catch(e){}
+}
+
+/* today's row out of the month map, so the masthead can say whether the
+   month rates this day at all. Cached per day and asset — mmMonth walks
+   thirty days of ephemeris and there is no reason to do it twice. */
+var _tgTodayCls={k:null,v:null};
+function tgTodayCls(){
+  var n=new Date(), asset='Gold';
+  try{ asset=timAsset(); }catch(e){}
+  var k=n.toDateString()+'|'+asset;
+  if(_tgTodayCls.k===k)return _tgTodayCls.v;
+  var out=null;
+  try{
+    var M=mmMonth(n.getFullYear(),n.getMonth(),asset);
+    out=M.days.filter(function(d){ return d.dom===n.getDate(); })[0]||null;
+  }catch(e){}
+  _tgTodayCls={k:k,v:out};
+  return out;
+}
+
+function tgMast(st,v,chips){
+  var D=null;  try{ D=(typeof qamDayData==='function')?qamDayData():null; }catch(e){}
+  var ws=[];   try{ ws=timTodayWindows(st)||[]; }catch(e){}
+  var T=null;  try{ T=tgTodayCls(); }catch(e){}
+
+  var live=ws.filter(function(w){ return w.live; })[0]||null;
+  var next=live||ws.filter(function(w){ return !w.gone; })[0]||null;
+
+  var h='<header class="tg-mast"><div class="tg-mrow"><div class="tg-mL">'
+    +'<div class="tg-eye">Time engine</div>'
+    +'<h1>'+escHtml(D&&D.name?D.name:'The day')+'</h1>'
+    +(D&&D.say?'<p class="tg-say">'+escHtml(D.say)+'</p>':'')
+    +'<div class="tg-date">'
+      +escHtml(new Date().toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'}))
+      +(D&&D.ruler?' &middot; ruled by '+escHtml(D.ruler):'')+'</div>'
+  +'</div></div><div class="tg-band">'+chips+'</div>';
+
+  /* ── the four readouts ─────────────────────────────────────────────── */
+  var s='<div class="tg-stats">';
+
+  s+='<div class="tg-st '+v.level+'"><i>The engine says</i><b>'+escHtml(v.word)+'</b>'
+    +'<s>'+(st.minsLeft!=null?st.minsLeft+' min left in this hour':escHtml(v.line))+'</s></div>';
+
+  if(next){
+    s+='<div class="tg-st'+(live?' live go':'')+'"><i>'+(live?'Window open':'Next window')+'</i>'
+      +'<b>'+fmtT(next.start)+'</b>'
+      +'<s>'+(live?'running until '+fmtT(next.end):'opens in '+ndFmtIn(next.inMin))
+        +' &middot; '+escHtml(next.kind||'Scalp')+' &middot; '+(next.pos?'up side':'down side')+'</s></div>';
+  }else{
+    s+='<div class="tg-st"><i>Next window</i><b>&mdash;</b>'
+      +'<s>nothing left today; the next opens after tomorrow&rsquo;s sunrise</s></div>';
+  }
+
+  if(D){
+    s+='<div class="tg-st '+(D.dir==='up'?'up':D.dir==='down'?'down':'')+'"><i>Which way</i>'
+      +'<b>'+(D.dir==='up'?'Leans up':D.dir==='down'?'Leans down':'No lean')+'</b>'
+      +'<s>'+D.lean+'% on its own year &mdash; a lean, not a probability</s></div>';
+  }else{
+    s+='<div class="tg-st"><i>Which way</i><b>&mdash;</b><s>the day&rsquo;s bias could not be read</s></div>';
+  }
+
+  if(T){
+    s+='<div class="tg-st '+mmCls(T.cls.v)+'"><i>The month rates today</i>'
+      +'<b>'+escHtml(T.cls.v)+'</b><s>'+escHtml(T.cls.why||T.cls.tag)+'</s></div>';
+  }else{
+    s+='<div class="tg-st"><i>The month rates today</i><b>&mdash;</b>'
+      +'<s>open chapter 06 for the map</s></div>';
+  }
+
+  return h+s+'</div></header>';
+}
+
 function renderTiming(){
   var host=document.getElementById('tim_new');
   if(!host)return;
@@ -26706,194 +27004,141 @@ function renderTiming(){
       +'">#'+st.vib+(aCyc?' · '+aCyc.n:'')+'</span></div>';
 
   host.className='tk';
-  /* ══ FOUR SCREENS INSTEAD OF ONE SCROLL ═══════════════════════════════
-     This tab had grown to sixteen sections and something near seven
-     thousand pixels, and the complaint was the right one: it was hard.
+  /* ══ SEVEN CHAPTERS AND A FRONT PAGE ══════════════════════════════════
+     The tab used to be whatever order these blocks were built in. It is a
+     document now: a masthead that answers the four questions people open
+     this tab for, a rail that names the seven chapters and tracks which
+     one you are in, and then the chapters themselves in the order I would
+     read them — what to do now, what the engine concludes, the clock, the
+     Moon, the sky, the month, and the working behind all of it.
 
-     NOT ONE CALCULATION IS CHANGED HERE. Every block below is the same
-     function producing the same markup from the same numbers. What changes
-     is which of four screens it is on, so that the question you arrived
-     with has a screen of its own instead of a position in a queue:
-
-         Today   what do I do in the next few hours
-         Month   which days of the month are worth anything
-         Sky     where everything is and what it is doing
-         Detail  the hour grid, the week, the working, the tools
-
-     A tab strip costs one click. A seven-thousand-pixel page costs the
-     reader every time they open it. */
+     EVERY BLOCK THAT WAS ON THIS PAGE IS STILL ON THIS PAGE. Same
+     functions, same numbers, same markup coming out of them. What changed
+     is where each one sits and what is written above it. The rail scrolls
+     and never switches, so nothing is one click away — it is all one
+     page, the way it was asked for. */
   host.innerHTML=
-    '<div class="tt-bar" style="display:none">'
-     +['today','month','sky','detail'].map(function(k,i){
-        var lbl={today:'Today',month:'Month',sky:'Sky',detail:'Detail'}[k];
-        var sub={today:'what to do now',month:'the map',sky:'where everything is',detail:'the working'}[k];
-        return '<button class="tt-b'+(TT_VIEW===k?' on':'')+'" onclick="ttGo(\''+k+'\')">'
-          +'<b>'+lbl+'</b><i>'+sub+'</i></button>';
-      }).join('')
-    +'</div>'
-    +chips
-   /* TODAY, IN ONE CARD, ABOVE EVERYTHING ELSE.
-      What kind of day it is, which windows are left, what each one can be
-      traded as, and which way it leans — all of that already existed on
-      this tab and was spread across five sections. Reading it meant
-      assembling it. */
-   /* I DELETED THIS AND I HAD NO RIGHT TO.
-      The new day panel was put in place of timTodayCard rather than beside
-      it, so the windows table with its holds and its aspect lines simply
-      vanished. Nothing on this tab is mine to remove. Both are here: the
-      new one leads because it answers fastest, the full card follows
-      because it carries detail the short one does not. */
-   /* THE TODAY PANE OPENS HERE, NOT FURTHER DOWN.
-      These two sat above the first pane, so they were outside the switcher
-      entirely and showed on every screen — Detail included, where they made
-      it look as though the tab had not changed at all. */
-   +'<div class="tt-p" data-tt="today">'
-   +(function(){ try{ return newDayHtml(st); }catch(e){ return ''; } })()
-   +(function(){ try{ return timTodayCard(st); }catch(e){ return ''; } })()
-   /* and immediately under it, the levels that have NOT been reached yet */
-   +'<div id="ix_host"></div>'
-   /* THE ENGINE'S OWN ANSWER, AT THE TOP OF ITS OWN TAB.
-      Everything below this is the working: the wheel, the hours, the week,
-      the aspects. The seven lines it produces were only visible on the
-      Analytics tab, which is the wrong place for the Timing tab's verdict. */
-   +'<div class="te-strip">'+timEngineHtml()+'</div>'
-   /* WHEN, on its own, right under the engine's verdict. The five-layer
-      timing score is a different question from everything else on this tab:
-      not which way, only whether a turn is due. It sits here because the
-      alert that fires off it points people at this tab. */
-   +tmgHtml()
-   /* the lunar layer sits under the timing score: the score says whether a
-      turn is due, this says what the Moon is doing while it is */
-   /* I FOLDED THIS AND I WAS WRONG TO.
-      The reasoning was that the dial, the sign cycle, the 360 and the
-      aspect list are working rather than answer, so they belong one click
-      away. That is a defensible rule and it was the wrong call here: this
-      is the part of the tab that is actually looked at, and it was asked
-      for over several passes and built to be read at a glance. A thing
-      someone reads every day is an answer no matter what the rule says.
+    tgMast(st,v,chips)
+   +tgRail()
 
-      It opens. The tab is taller for it, and that is the right trade. */
-   +'</div>'                                   /* end Today */
-   +'<div class="tt-p" data-tt="sky">'
-   +'<details class="sec pin" open><summary><b>The lunar layer</b>'
-     +'<span>the dial, the degree the Moon is in, and every exact aspect ahead</span></summary>'
-     +qamHtml()+'</details>'
-   /* the same reading for everything else in the sky — the Moon crosses a
-      sign in days, the Sun in a month, Saturn in years, and the seven zones
-      mean the same thing in all of them */
-   +'</div>'                                   /* end Sky part one */
-   +'<div class="tt-p" data-tt="month">'
-   +'<details class="sec pin" open ontoggle="if(this.open)try{renderMonthMap()}catch(e){}">'
-     +'<summary><b>The month map &mdash; favourable and avoid, day by day</b>'
-     +'<span>every day classified from the ephemeris, with the arithmetic shown, plus the '
-     +'accumulation / manipulation / distribution phases</span></summary>'
-     +'<div id="mm_host"></div></details>'
-   +'</div>'                                   /* end Month */
-   +'<div class="tt-p" data-tt="sky">'
-   +'<details class="sec pin" open><summary><b>The sign cycle &mdash; Sun and planets</b>'
-     +'<span>where each body is in its sign, which of the seven zones, and when it moves on</span></summary>'
-     +(function(){ try{ return qamPlanetsHtml(); }catch(e){ return ''; } })()+'</details>'
-   /* Sky ends with the sign cycles. The hour grid and the next-windows list
-      that follow are the working, and were landing on Sky because this seam
-      was one block too late. */
-   +'</div>'
-   +'<div class="tt-p" data-tt="detail">'
-   +'<div class="tk-hero '+v.level+'">'
-    +'<div class="tk-col">'
-      +'<div class="tk-dial">'+ring
-        +'<div class="tk-core">'
-          +(st.live?'<div class="tk-now">'+escHtml(st.hours[st.live-1].name)+'</div>':'')
-          +'<div class="tk-word" style="color:'+col+'">'+v.word+'</div>'
-          +(st.minsLeft!=null?'<div class="tk-mins">'+st.minsLeft+' min left</div>':'')
-          +(st.live?'<div class="tk-hour">Hour '+st.live+' of 24'
-              +(st.live>12?' · night':' · day')+'</div>':'')
-        +'</div>'
+   /* ── 01 · NOW ─────────────────────────────────────────────────────── */
+   +tgCh('01','now','Now',
+      'What to do in the next few hours — the day, the windows left in it, and the levels price has not reached yet',
+      (function(){ try{ return newDayHtml(st); }catch(e){ return ''; } })()
+     /* I DELETED THIS ONCE AND I HAD NO RIGHT TO. The short panel leads
+        because it answers fastest; the full card follows because it carries
+        the holds and the aspect lines the short one does not. Both, always. */
+     +(function(){ try{ return timTodayCard(st); }catch(e){ return ''; } })()
+     /* and immediately under them, the levels price has NOT reached yet */
+     +'<div id="ix_host"></div>')
+
+   /* ── 02 · THE CALL ────────────────────────────────────────────────── */
+   +tgCh('02','call','The call',
+      'What the engine concludes, how strongly, which way, and the plan that follows from it',
+      '<div class="te-strip">'+timEngineHtml()+'</div>'
+     /* the five-layer timing score: not which way, only whether a turn is
+        due. The alert that fires off it points people at this tab. */
+     +tmgHtml()
+     +timDirHtml(st)
+     +timTradePlan(st)
+     +timTodayHtml(st))
+
+   /* ── 03 · THE CLOCK ───────────────────────────────────────────────── */
+   +tgCh('03','clock','The clock',
+      'The twenty-four hours as one shape — the wheel, every window in the day, and the week after it',
+      '<div class="tk-hero '+v.level+'">'
+       +'<div class="tk-col">'
+         +'<div class="tk-dial">'+ring
+           +'<div class="tk-core">'
+             +(st.live?'<div class="tk-now">'+escHtml(st.hours[st.live-1].name)+'</div>':'')
+             +'<div class="tk-word" style="color:'+col+'">'+v.word+'</div>'
+             +(st.minsLeft!=null?'<div class="tk-mins">'+st.minsLeft+' min left</div>':'')
+             +(st.live?'<div class="tk-hour">Hour '+st.live+' of 24'
+                 +(st.live>12?' · night':' · day')+'</div>':'')
+           +'</div>'
+         +'</div>'
+         /* directly under the wheel, because that is where the eye goes next */
+         +'<div class="tk-nxt">'+escHtml(timNextLine(st))+'</div>'
+         +'<div class="tk-leg"><span class="lg-b">bull window</span>'
+           +'<span class="lg-r">bear window</span>'
+           +'<span class="lg-n">nothing lit</span></div>'
+       +'</div>'
+       +'<div class="tk-side">'
+         +'<div class="tk-line">'+escHtml(v.line)+'</div>'
+         +'<div class="tk-next-h">Next windows</div>'
+         +'<div class="tk-next">'+(ahead.length?ahead.map(function(x){
+             var inMin=st.cur!=null?(x.start-st.srMin)-st.cur:null;
+             /* a window with a heavy aspect inside it is marked, because that
+                is the difference between an hour to look at and an hour to be
+                at the screen for */
+             var wq=null;
+             try{ wq=(timTodayWindows(st)||[]).filter(function(w){
+                    return w.start===x.start||(x.start>=w.start&&x.start<w.end); })[0]; }catch(e){}
+             return '<div class="tk-nrow '+(x.rank===2?'strong':'soft')
+               +(wq&&wq.heavy?' qhot':'')+'">'
+               +'<span class="s">'+x.sym+'</span>'
+               +'<span class="n">'+escHtml(x.name)+'<i>H'+x.h+' · '+fmtT(x.start)
+                 +(x.night?' · night':'')+(x.kind?' · trade it as '+timKindArticle(x.kind)+escHtml(x.kind.toLowerCase()):'')+'</i></span>'
+               +'<span class="t">'+(inMin!=null?'in '+fmtIn(inMin):'')+'</span>'
+               +'<span class="b">'+(x.rank===2?'STRONG':'SUPPORT')+'</span>'
+               +(wq&&wq.aspectSay?'<span class="tk-asp'+(wq.heavy?' hv':'')+'">'
+                   +escHtml(wq.aspectSay)+'</span>':'')
+               +'</div>';
+           }).join(''):'<div class="tk-none">No further windows in this 24-hour cycle — the next one opens after tomorrow&rsquo;s sunrise</div>')+'</div>'
+       +'</div>'
       +'</div>'
-      /* directly under the wheel, because that is where the eye goes next and
-         it was empty before */
-      +'<div class="tk-nxt">'+escHtml(timNextLine(st))+'</div>'
-      +'<div class="tk-leg"><span class="lg-b">bull window</span>'
-        +'<span class="lg-r">bear window</span>'
-        +'<span class="lg-n">nothing lit</span></div>'
-    +'</div>'
-    +'<div class="tk-side">'
-      +'<div class="tk-line">'+escHtml(v.line)+'</div>'
-      +'<div class="tk-next-h">Next windows</div>'
-      +'<div class="tk-next">'+(ahead.length?ahead.map(function(x){
-          var inMin=st.cur!=null?(x.start-st.srMin)-st.cur:null;
-          /* a window with a heavy aspect inside it is marked, because that
-             is the difference between an hour to look at and an hour to be
-             at the screen for */
-          var wq=null;
-          try{ wq=(timTodayWindows(st)||[]).filter(function(w){
-                 return w.start===x.start||(x.start>=w.start&&x.start<w.end); })[0]; }catch(e){}
-          return '<div class="tk-nrow '+(x.rank===2?'strong':'soft')
-            +(wq&&wq.heavy?' qhot':'')+'">'
-            +'<span class="s">'+x.sym+'</span>'
-            +'<span class="n">'+escHtml(x.name)+'<i>H'+x.h+' · '+fmtT(x.start)
-              +(x.night?' · night':'')+(x.kind?' · trade it as '+timKindArticle(x.kind)+escHtml(x.kind.toLowerCase()):'')+'</i></span>'
-            +'<span class="t">'+(inMin!=null?'in '+fmtIn(inMin):'')+'</span>'
-            +'<span class="b">'+(x.rank===2?'STRONG':'SUPPORT')+'</span>'
-            +(wq&&wq.aspectSay?'<span class="tk-asp'+(wq.heavy?' hv':'')+'">'
-                +escHtml(wq.aspectSay)+'</span>':'')
-            +'</div>';
-        }).join(''):'<div class="tk-none">No further windows in this 24-hour cycle — the next one opens after tomorrow&rsquo;s sunrise</div>')+'</div>'
-    +'</div>'
-   +'</div>'
-   +'<div class="tk-bar">'
-     +st.hours.map(function(x){
-        return '<div class="tk-slot r'+x.rank+(x.isPos?' pos':' neg')
-          +(x.h===st.live?' live':'')+'" title="H'+x.h+' · '+escHtml(x.name)+' · '+fmtT(x.start)
-          +' · '+(x.isPos?'positive half':'negative half')+'">'
-          +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
-      }).join('')
-   +'</div>'
-   +timSkyStrip()
-   /* the whole week's windows as one shape, rather than fourteen day-cards */
-   +'<details class="sec pin"><summary><b>The week ahead, hour by hour</b>'
-     +'<span>every window for the next seven days, as one shape</span></summary>'
-     +timWeekGrid()+'</details>'
-   +'</div>'                                   /* end Detail part one */
-   +'<div class="tt-p" data-tt="today">'
-   +timDirHtml(st)
-   +timTradePlan(st)
-   +timTodayHtml(st)
-   +'</div>'
-   +'<div class="tt-p" data-tt="detail">'
-   /* Everything below the plan is background. It was all open at once, which is
-      why the tab read as a wall — the answer and the reasoning had the same
-      weight on the page. The reasoning is one click away now. */
-   /* ══ TWO THOUSAND PIXELS NOBODY ASKED FOR ═════════════════════════
-      Both of these shipped forced open, and between them they were half the
-      height of this tab. The second one's own subtitle says "for anyone who
-      wants to check it" — which is exactly the description of something that
-      should be closed until someone wants to. Neither is hidden: the summary
-      still names what is inside, and one click still opens it. What has
-      stopped is scrolling past fourteen hundred pixels of planet positions
-      to reach the windows underneath them. */
-   +'<details class="sec pin" open><summary><b>Why this day and this hour</b>'
-     +'<span>the weekday&rsquo;s ruling cycle, the sky on it, and how the next two weeks rank</span></summary>'
-     +timDayCard(st)+timBestPanel(st)+'</details>'
-   /* THIS WAS SHIPPED CLOSED AND THAT IS WHY THE ASPECTS "WERE NOT SHOWING".
-      They were computed correctly the whole time — eight live aspects with
-      orbs down to 0.02 degrees — and drawn into 9.6KB of markup that sat
-      behind a collapsed summary. Measured, the visible timing pane contained
-      no degree symbol anywhere. The sky is the point of this tab, so it
-      opens. */
-   /* Open. I folded this once on the theory that the lunar layer above
-      already carries the sky — but the positions and the exact aspects are
-      the source those readings come out of, and being able to check them
-      is the point. Folded twice now, asked back twice; it stays open. */
-   +'<details class="sec pin" open><summary><b>Planet positions and aspects</b>'
-     +'<span>where everything is right now, for anyone who wants to check it</span></summary>'
-     +timExtras()+'</details>'
-   +'<details class="sec pin"><summary><b>Reference tools</b><span>the complete toolkit and every calendar in one place</span></summary>'
-     +'<div class="tk-tools">'
-       +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
-     +'</div></details>'
-   +'</div>';                                  /* end Detail */
+      +'<div class="tk-bar">'
+        +st.hours.map(function(x){
+           return '<div class="tk-slot r'+x.rank+(x.isPos?' pos':' neg')
+             +(x.h===st.live?' live':'')+'" title="H'+x.h+' · '+escHtml(x.name)+' · '+fmtT(x.start)
+             +' · '+(x.isPos?'positive half':'negative half')+'">'
+             +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
+         }).join('')
+      +'</div>'
+      +timSkyStrip()
+      /* the whole week's windows as one shape, rather than fourteen day-cards */
+      +'<details class="sec pin"><summary><b>The week ahead, hour by hour</b>'
+        +'<span>every window for the next seven days, as one shape</span></summary>'
+        +timWeekGrid()+'</details>')
+
+   /* ── 04 · THE MOON ────────────────────────────────────────────────── */
+   /* I FOLDED THIS ONCE AND I WAS WRONG TO. It is the part of the tab that
+      is actually read. It has its own chapter now and it is never closed. */
+   +tgCh('04','moon','The Moon',
+      'The fastest body and the one that sets the character of a session: its degree, its zone, and every exact aspect ahead',
+      qamHtml())
+
+   /* ── 05 · THE SKY ─────────────────────────────────────────────────── */
+   +tgCh('05','sky','The sky',
+      'Where the Sun and the planets stand in their signs, and the live positions and aspects behind every reading above',
+      (function(){ try{ return qamPlanetsHtml(); }catch(e){ return ''; } })()
+     /* THIS WAS SHIPPED CLOSED ONCE AND THAT IS WHY THE ASPECTS "WERE NOT
+        SHOWING" — computed correctly the whole time, and sitting behind a
+        collapsed summary. Folded twice, asked back twice; it stays open. */
+     +'<details class="sec pin" open><summary><b>Planet positions and aspects</b>'
+       +'<span>where everything is right now, for anyone who wants to check it</span></summary>'
+       +timExtras()+'</details>')
+
+   /* ── 06 · THE MONTH ───────────────────────────────────────────────── */
+   +tgCh('06','month','The month',
+      'Which days of this month are worth anything, with the arithmetic shown for whichever one you click',
+      '<div id="mm_host"></div>')
+
+   /* ── 07 · THE WORKING ─────────────────────────────────────────────── */
+   +tgCh('07','work','The working',
+      'Why this weekday and this hour, how the next fortnight ranks, and the full toolkit',
+      '<details class="sec pin" open><summary><b>Why this day and this hour</b>'
+        +'<span>the weekday&rsquo;s ruling cycle, the sky on it, and how the next two weeks rank</span></summary>'
+        +timDayCard(st)+timBestPanel(st)+'</details>'
+     +'<details class="sec pin"><summary><b>Reference tools</b>'
+       +'<span>the complete toolkit and every calendar in one place</span></summary>'
+       +'<div class="tk-tools">'
+         +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
+       +'</div></details>');
 
   ttApply();
+  /* the rail follows the scroll; it never hides a chapter */
+  try{ tgSpy(); }catch(e){}
   /* everything is on the page, so the map builds with it */
   try{ renderMonthMap(); }catch(e){}
   host.querySelectorAll('.tk-slot').forEach(function(el,i){el.style.animationDelay=(i*0.03).toFixed(2)+'s';});
@@ -28907,7 +29152,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b123';
+var CA_BUILD='b124';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
