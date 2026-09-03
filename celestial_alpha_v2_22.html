@@ -7250,6 +7250,79 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ── TODAY, REDESIGNED ───────────────────────────────────────────────────
+   One column, one voice, and a timeline instead of a grid of boxes. The
+   old screen used 8px labels on 12px values inside bordered cards, which is
+   the shape of a dashboard; a day is a line of time and reads better drawn
+   as one. Type does the work here, not borders. */
+.nd{max-width:720px;margin:0 auto;padding:8px 4px 0}
+.nd-h{padding:18px 0 4px}
+.nd-meta{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+.nd h1{font-size:38px;line-height:1.08;font-weight:700;color:var(--t1);margin:10px 0 0;letter-spacing:-.02em}
+.nd-h p{font-size:15px;line-height:1.55;color:var(--t2);margin:12px 0 0;max-width:56ch}
+
+/* which way, as a line rather than a tile */
+.nd-lean{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:26px 0 0;
+  padding:14px 0;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
+.nd-bar{flex:0 0 96px;height:4px;border-radius:3px;background:var(--b1);overflow:hidden}
+.nd-bar i{display:block;height:100%;border-radius:3px;background:var(--t3)}
+.nd-lean.up .nd-bar i{background:var(--up)}
+.nd-lean.down .nd-bar i{background:var(--dn)}
+.nd-lean b{font-size:16px;font-weight:700;color:var(--t2)}
+.nd-lean.up b{color:var(--up)} .nd-lean.down b{color:var(--dn)}
+.nd-lean em{font-style:normal;font-size:16px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.nd-lean s{text-decoration:none;font-size:11px;color:var(--t3);margin-left:auto}
+
+/* the next window is the only thing on the screen given size */
+.nd-next{margin:26px 0 0;padding:22px 24px;border-radius:16px;background:var(--card2);
+  border:1px solid var(--b1);position:relative;overflow:hidden}
+.nd-next:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--t3)}
+.nd-next.up:before{background:var(--up)} .nd-next.down:before{background:var(--dn)}
+.nd-next.live{border-color:var(--p3)}
+.nd-tag{font-size:9px;font-weight:800;letter-spacing:.18em;color:var(--t3)}
+.nd-next.live .nd-tag{color:var(--p3)}
+.nd-time{font-size:34px;font-weight:700;color:var(--t1);letter-spacing:-.02em;margin-top:8px;
+  font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:12px}
+.nd-time span{font-size:19px;color:var(--t3)}
+.nd-when{font-size:13px;color:var(--t2);margin-top:4px}
+.nd-do{display:flex;gap:34px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--bFaint)}
+.nd-do i{display:block;font-style:normal;font-size:9px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3)}
+.nd-do b{display:block;font-size:17px;font-weight:700;color:var(--t1);margin-top:4px}
+.nd-do b.up{color:var(--up)} .nd-do b.down{color:var(--dn)}
+.nd-asp{margin-top:16px;font-size:11.5px;line-height:1.5;color:var(--t3)}
+.nd-asp.hot{color:var(--warn)}
+.nd-next.none:before{background:var(--b1)}
+
+/* the day as a line of time */
+.nd-rail-h{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--t3);margin:34px 0 4px}
+.nd-rail{list-style:none;margin:0;padding:0;position:relative}
+.nd-rail:before{content:'';position:absolute;left:5px;top:14px;bottom:14px;width:1px;background:var(--b1)}
+.nd-w{display:flex;align-items:center;gap:14px;padding:11px 0;position:relative}
+.nd-dot{flex:0 0 11px;width:11px;height:11px;border-radius:50%;background:var(--bg0);
+  border:2px solid var(--b2);z-index:1}
+.nd-w.up   .nd-dot{border-color:var(--up)}
+.nd-w.down .nd-dot{border-color:var(--dn)}
+.nd-w.live .nd-dot{background:var(--p3);border-color:var(--p3);box-shadow:0 0 0 4px rgba(var(--rgbAcc),.2)}
+.nd-w.gone{opacity:.38}
+.nd-w.gone .nd-dot{border-color:var(--b1)}
+.nd-wt{flex:0 0 62px;font-size:14px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.nd-w.gone .nd-wt{color:var(--t3);text-decoration:line-through}
+.nd-wb{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.nd-wb b{font-size:13px;font-weight:600;color:var(--t2)}
+.nd-wb u{text-decoration:none;font-size:13px}
+.nd-wb u.up{color:var(--up)} .nd-wb u.down{color:var(--dn)}
+.nd-wb i{font-style:normal;font-size:11px;color:var(--t3);margin-left:auto;white-space:nowrap}
+.nd-foot{font-size:11px;line-height:1.65;color:var(--t3);margin:30px 0 6px;max-width:64ch}
+
+@media (max-width:640px){
+  .nd h1{font-size:29px}
+  .nd-time{font-size:27px}
+  .nd-do{gap:22px}
+  .nd-lean s{margin-left:0;flex-basis:100%}
+}
+
 /* ── THE TIMING TAB'S FOUR SCREENS ───────────────────────────────────────*/
 .tt-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:14px;
   padding:5px;border-radius:11px;border:1px solid var(--b1);background:var(--card2)}
@@ -26399,6 +26472,109 @@ function ttApply(){
 }
 try{ var _tt=localStorage.getItem('ca_tt'); if(_tt)TT_VIEW=_tt; }catch(e){}
 
+
+/* ══ TODAY, REDESIGNED ════════════════════════════════════════════════════
+   The old Today screen was a row of stat boxes over a four-column table —
+   the same shape as every other card in the app, which is why a timing
+   engine did not look or read like one.
+
+   THIS IS A DIFFERENT OBJECT, NOT THE OLD ONE REARRANGED. A day is a line
+   of time, so it is drawn as one: a single column running down the page
+   with now marked on it and each window sitting where it actually falls.
+   Windows that have passed are behind you and are drawn that way. The next
+   one is the only thing given size.
+
+   The numbers, the windows, the styles, the sides and the holds are exactly
+   what the old card used — same functions, same values, unchanged. What
+   changed is that one question is answered in one place at one size, and
+   everything else got smaller.
+   ══════════════════════════════════════════════════════════════════════ */
+
+function ndFmtIn(mins){
+  if(mins==null)return '';
+  var m=Math.abs(mins);
+  if(m<60)return Math.round(m)+' min';
+  if(m<1440)return Math.floor(m/60)+'h '+Math.round(m%60)+'m';
+  return (m/1440).toFixed(1)+' days';
+}
+
+function newDayHtml(st){
+  var ws=[]; try{ ws=timTodayWindows(st)||[]; }catch(e){}
+  var D=null; try{ D=(typeof qamDayData==='function')?qamDayData():null; }catch(e){}
+  var asset='Gold'; try{ asset=timAsset(); }catch(e){}
+
+  var ahead=ws.filter(function(w){ return !w.gone; });
+  var live=ws.filter(function(w){ return w.live; })[0]||null;
+  var next=live||ahead[0]||null;
+
+  var h='<div class="nd">';
+
+  /* ── the day, said once and said large ─────────────────────────────── */
+  h+='<header class="nd-h">'
+    +'<div class="nd-meta">'+escHtml(asset)+' &middot; '
+      +escHtml(new Date().toLocaleDateString('en',{weekday:'long', day:'numeric', month:'long'}))+'</div>'
+    +'<h1>'+escHtml(D&&D.name?D.name:'The day')+'</h1>'
+    +(D&&D.say?'<p>'+escHtml(D.say)+'</p>':'')
+  +'</header>';
+
+  /* ── one line for which way, instead of a box ──────────────────────── */
+  if(D){
+    var side = D.dir==='up'?'up':D.dir==='down'?'down':'flat';
+    h+='<div class="nd-lean '+side+'">'
+      +'<span class="nd-bar"><i style="width:'+Math.max(2,Math.min(100,D.lean))+'%"></i></span>'
+      +'<b>'+(D.dir==='up'?'Leans up':D.dir==='down'?'Leans down':'No lean')+'</b>'
+      +'<em>'+D.lean+'%</em>'
+      +'<s>over its own year &mdash; a lean, not a probability</s>'
+    +'</div>';
+  }
+
+  /* ── the one thing to do next, given room ──────────────────────────── */
+  if(next){
+    var nSide=next.pos?'up':'down';
+    h+='<section class="nd-next '+nSide+(live?' live':'')+'">'
+      +'<div class="nd-tag">'+(live?'OPEN NOW':'NEXT WINDOW')+'</div>'
+      +'<div class="nd-time">'+fmtT(next.start)+'<span>&rarr;</span>'+fmtT(next.end)+'</div>'
+      +'<div class="nd-when">'+(live?'running now'
+          :'opens in '+ndFmtIn(next.inMin))+(next.night?' &middot; night':'')+'</div>'
+      +'<div class="nd-do">'
+        +'<div><i>Trade it as</i><b>'+escHtml(next.kind||'Scalp')+'</b></div>'
+        +'<div><i>Which way</i><b class="'+nSide+'">'+(nSide==='up'?'Up side':'Down side')+'</b></div>'
+        +'<div><i>Hold</i><b>'+escHtml((next.hold&&next.hold.label)||'—')+'</b></div>'
+      +'</div>'
+      +(next.aspectSay?'<div class="nd-asp'+(next.heavy?' hot':'')+'">'+escHtml(next.aspectSay)+'</div>':'')
+    +'</section>';
+  }else{
+    h+='<section class="nd-next none"><div class="nd-tag">NOTHING LEFT</div>'
+      +'<div class="nd-time">&mdash;</div>'
+      +'<div class="nd-when">Every window today has closed. The next opens after tomorrow&rsquo;s sunrise.</div>'
+    +'</section>';
+  }
+
+  /* ── the whole day as one line of time ─────────────────────────────── */
+  h+='<div class="nd-rail-h">The day, end to end</div>';
+  h+='<ol class="nd-rail">';
+  ws.forEach(function(w){
+    var s2=w.pos?'up':'down';
+    var state=w.gone?'gone':w.live?'live':'due';
+    h+='<li class="nd-w '+s2+' '+state+'">'
+      +'<span class="nd-dot"></span>'
+      +'<span class="nd-wt">'+fmtT(w.start)+'</span>'
+      +'<span class="nd-wb">'
+        +'<b>'+escHtml(w.kind||'Scalp')+'</b>'
+        +'<u class="'+s2+'">'+(s2==='up'?'↑':'↓')+'</u>'
+        +'<i>'+(w.gone?'closed':w.live?'open now':'in '+ndFmtIn(w.inMin))+'</i>'
+      +'</span>'
+    +'</li>';
+  });
+  h+='</ol>';
+
+  h+='<p class="nd-foot">The window is when you may enter. The hold is how long the push behind '
+    +'it is dated to run. Which way is the half of the planetary hour it falls in &mdash; a lean, '
+    +'never a forecast. The Month and Sky screens carry the working behind all of it.</p>';
+
+  return h+'</div>';
+}
+
 function renderTiming(){
   var host=document.getElementById('tim_new');
   if(!host)return;
@@ -26457,7 +26633,7 @@ function renderTiming(){
       traded as, and which way it leans — all of that already existed on
       this tab and was spread across five sections. Reading it meant
       assembling it. */
-   +(function(){ try{ return timTodayCard(st); }catch(e){ return ''; } })()
+   +(function(){ try{ return newDayHtml(st); }catch(e){ return ''; } })()
    /* and immediately under it, the levels that have NOT been reached yet */
    +'<div id="ix_host"></div>'
    /* THE ENGINE'S OWN ANSWER, AT THE TOP OF ITS OWN TAB.
@@ -28611,9 +28787,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b118';
+var CA_BUILD='b119';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Timing tab is four screens now \u2014 Today, Month, Sky, Detail. Same numbers, same methods; you just stop scrolling past what you did not ask for.';
+var CA_WHATS_NEW='Today is redrawn \u2014 one column, one headline, and the day as a timeline instead of a grid of boxes. Same numbers, a different object.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
