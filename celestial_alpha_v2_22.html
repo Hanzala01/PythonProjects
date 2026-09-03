@@ -26545,26 +26545,34 @@ function intraAuto(){
 
 /* which of the four screens the Timing tab is showing */
 var TT_VIEW='today';
+/* kept so any old onclick still resolves — it scrolls to the section
+   instead of hiding the other three */
 function ttGo(k){
-  TT_VIEW=k;
-  try{ localStorage.setItem('ca_tt',k); }catch(e){}
   ttApply();
-  /* the month map is only built when its screen is actually looked at */
-  if(k==='month'){ try{ renderMonthMap(); }catch(e){} }
-  var host=document.getElementById('tim_new');
-  if(host){
-    host.querySelectorAll('.tt-b').forEach(function(b){
-      b.classList.toggle('on', b.getAttribute('onclick').indexOf("'"+k+"'")>=0);
-    });
-    try{ host.scrollIntoView({block:'start'}); }catch(e){}
-  }
+  try{ renderMonthMap(); }catch(e){}
+  try{
+    var host=document.getElementById('tim_new');
+    var p=host&&host.querySelector('.tt-p[data-tt="'+k+'"]');
+    if(p)p.scrollIntoView({block:'start',behavior:'smooth'});
+  }catch(e){}
 }
+/* THE TABS WERE THE PROBLEM, NOT THE LENGTH.
+   Splitting this tab into four screens read as things being deleted. The
+   day score, the hour dial, the positions table — all still built, all
+   still correct, and all one click away where nobody looked for them. Told
+   four times that the file looked unchanged, with the build label proving
+   it was not, the honest reading is that a tab strip on this page hides
+   more than it helps.
+
+   Everything is on one page again, in the new drawing. The panes stay in
+   the markup as plain sections so the split can come back if it is ever
+   wanted, but they are all shown, always. */
 function ttApply(){
   var host=document.getElementById('tim_new');
   if(!host)return;
-  host.querySelectorAll('.tt-p').forEach(function(p){
-    p.style.display = (p.getAttribute('data-tt')===TT_VIEW) ? '' : 'none';
-  });
+  host.querySelectorAll('.tt-p').forEach(function(p){ p.style.display=''; });
+  var bar=host.querySelector('.tt-bar');
+  if(bar)bar.style.display='none';
 }
 try{ var _tt=localStorage.getItem('ca_tt'); if(_tt)TT_VIEW=_tt; }catch(e){}
 
@@ -26715,7 +26723,7 @@ function renderTiming(){
      A tab strip costs one click. A seven-thousand-pixel page costs the
      reader every time they open it. */
   host.innerHTML=
-    '<div class="tt-bar">'
+    '<div class="tt-bar" style="display:none">'
      +['today','month','sky','detail'].map(function(k,i){
         var lbl={today:'Today',month:'Month',sky:'Sky',detail:'Detail'}[k];
         var sub={today:'what to do now',month:'the map',sky:'where everything is',detail:'the working'}[k];
@@ -26886,6 +26894,8 @@ function renderTiming(){
    +'</div>';                                  /* end Detail */
 
   ttApply();
+  /* everything is on the page, so the map builds with it */
+  try{ renderMonthMap(); }catch(e){}
   host.querySelectorAll('.tk-slot').forEach(function(el,i){el.style.animationDelay=(i*0.03).toFixed(2)+'s';});
 
   /* THE HOST ONLY EXISTS ONCE THIS HAS RUN.
@@ -28897,7 +28907,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b122';
+var CA_BUILD='b123';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -28918,7 +28928,7 @@ var CA_BUILD='b122';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The build number is real now \u2014 sidebar, browser tab and filename all say the same thing. It had been hardcoded to b80 since August.';
+var CA_WHATS_NEW='Everything is back on one page. The four tabs hid the day score, the hour dial and the positions \u2014 which read as deleting them. Nothing is behind a click now.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
