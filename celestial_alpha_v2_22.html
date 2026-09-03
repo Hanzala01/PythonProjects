@@ -7250,6 +7250,19 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ── THE TIMING TAB'S FOUR SCREENS ───────────────────────────────────────*/
+.tt-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:14px;
+  padding:5px;border-radius:11px;border:1px solid var(--b1);background:var(--card2)}
+.tt-b{padding:9px 6px;border-radius:8px;border:1px solid transparent;background:transparent;
+  cursor:pointer;transition:.14s;text-align:center}
+.tt-b b{display:block;font-size:12.5px;font-weight:700;color:var(--t3)}
+.tt-b i{display:block;font-style:normal;font-size:9px;color:var(--t3);opacity:.7;margin-top:2px}
+.tt-b:hover b{color:var(--t1)}
+.tt-b.on{background:var(--card);border-color:var(--b2)}
+.tt-b.on b{color:var(--t1)}
+.tt-b.on i{color:var(--p3);opacity:1}
+@media (max-width:700px){ .tt-b i{display:none} .tt-b{padding:8px 4px} }
+
 /* ── THE MONTH MAP ───────────────────────────────────────────────────────*/
 .mm-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .mm-nav{width:30px;height:30px;border-radius:8px;border:1px solid var(--b1);background:var(--card2);
@@ -26361,6 +26374,31 @@ function intraAuto(){
   });
 }
 
+/* which of the four screens the Timing tab is showing */
+var TT_VIEW='today';
+function ttGo(k){
+  TT_VIEW=k;
+  try{ localStorage.setItem('ca_tt',k); }catch(e){}
+  ttApply();
+  /* the month map is only built when its screen is actually looked at */
+  if(k==='month'){ try{ renderMonthMap(); }catch(e){} }
+  var host=document.getElementById('tim_new');
+  if(host){
+    host.querySelectorAll('.tt-b').forEach(function(b){
+      b.classList.toggle('on', b.getAttribute('onclick').indexOf("'"+k+"'")>=0);
+    });
+    try{ host.scrollIntoView({block:'start'}); }catch(e){}
+  }
+}
+function ttApply(){
+  var host=document.getElementById('tim_new');
+  if(!host)return;
+  host.querySelectorAll('.tt-p').forEach(function(p){
+    p.style.display = (p.getAttribute('data-tt')===TT_VIEW) ? '' : 'none';
+  });
+}
+try{ var _tt=localStorage.getItem('ca_tt'); if(_tt)TT_VIEW=_tt; }catch(e){}
+
 function renderTiming(){
   var host=document.getElementById('tim_new');
   if(!host)return;
@@ -26388,7 +26426,32 @@ function renderTiming(){
       +'">#'+st.vib+(aCyc?' · '+aCyc.n:'')+'</span></div>';
 
   host.className='tk';
-  host.innerHTML=chips
+  /* ══ FOUR SCREENS INSTEAD OF ONE SCROLL ═══════════════════════════════
+     This tab had grown to sixteen sections and something near seven
+     thousand pixels, and the complaint was the right one: it was hard.
+
+     NOT ONE CALCULATION IS CHANGED HERE. Every block below is the same
+     function producing the same markup from the same numbers. What changes
+     is which of four screens it is on, so that the question you arrived
+     with has a screen of its own instead of a position in a queue:
+
+         Today   what do I do in the next few hours
+         Month   which days of the month are worth anything
+         Sky     where everything is and what it is doing
+         Detail  the hour grid, the week, the working, the tools
+
+     A tab strip costs one click. A seven-thousand-pixel page costs the
+     reader every time they open it. */
+  host.innerHTML=
+    '<div class="tt-bar">'
+     +['today','month','sky','detail'].map(function(k,i){
+        var lbl={today:'Today',month:'Month',sky:'Sky',detail:'Detail'}[k];
+        var sub={today:'what to do now',month:'the map',sky:'where everything is',detail:'the working'}[k];
+        return '<button class="tt-b'+(TT_VIEW===k?' on':'')+'" onclick="ttGo(\''+k+'\')">'
+          +'<b>'+lbl+'</b><i>'+sub+'</i></button>';
+      }).join('')
+    +'</div>'
+    +chips
    /* TODAY, IN ONE CARD, ABOVE EVERYTHING ELSE.
       What kind of day it is, which windows are left, what each one can be
       traded as, and which way it leans — all of that already existed on
@@ -26401,6 +26464,7 @@ function renderTiming(){
       Everything below this is the working: the wheel, the hours, the week,
       the aspects. The seven lines it produces were only visible on the
       Analytics tab, which is the wrong place for the Timing tab's verdict. */
+   +'<div class="tt-p" data-tt="today">'
    +'<div class="te-strip">'+timEngineHtml()+'</div>'
    /* WHEN, on its own, right under the engine's verdict. The five-layer
       timing score is a different question from everything else on this tab:
@@ -26418,18 +26482,24 @@ function renderTiming(){
       someone reads every day is an answer no matter what the rule says.
 
       It opens. The tab is taller for it, and that is the right trade. */
+   +'</div>'                                   /* end Today */
+   +'<div class="tt-p" data-tt="sky">'
    +'<details class="sec pin" open><summary><b>The lunar layer</b>'
      +'<span>the dial, the degree the Moon is in, and every exact aspect ahead</span></summary>'
      +qamHtml()+'</details>'
    /* the same reading for everything else in the sky — the Moon crosses a
       sign in days, the Sun in a month, Saturn in years, and the seven zones
       mean the same thing in all of them */
-   +'<details class="sec pin" ontoggle="if(this.open)try{renderMonthMap()}catch(e){}">'
+   +'</div>'                                   /* end Sky part one */
+   +'<div class="tt-p" data-tt="month">'
+   +'<details class="sec pin" open ontoggle="if(this.open)try{renderMonthMap()}catch(e){}">'
      +'<summary><b>The month map &mdash; favourable and avoid, day by day</b>'
      +'<span>every day classified from the ephemeris, with the arithmetic shown, plus the '
      +'accumulation / manipulation / distribution phases</span></summary>'
      +'<div id="mm_host"></div></details>'
-   +'<details class="sec pin"><summary><b>The sign cycle &mdash; Sun and planets</b>'
+   +'</div>'                                   /* end Month */
+   +'<div class="tt-p" data-tt="sky">'
+   +'<details class="sec pin" open><summary><b>The sign cycle &mdash; Sun and planets</b>'
      +'<span>where each body is in its sign, which of the seven zones, and when it moves on</span></summary>'
      +(function(){ try{ return qamPlanetsHtml(); }catch(e){ return ''; } })()+'</details>'
    +'<div class="tk-hero '+v.level+'">'
@@ -26482,14 +26552,20 @@ function renderTiming(){
           +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
       }).join('')
    +'</div>'
+   +'</div>'                                   /* end Sky part two */
+   +'<div class="tt-p" data-tt="detail">'
    +timSkyStrip()
    /* the whole week's windows as one shape, rather than fourteen day-cards */
    +'<details class="sec pin"><summary><b>The week ahead, hour by hour</b>'
      +'<span>every window for the next seven days, as one shape</span></summary>'
      +timWeekGrid()+'</details>'
+   +'</div>'                                   /* end Detail part one */
+   +'<div class="tt-p" data-tt="today">'
    +timDirHtml(st)
    +timTradePlan(st)
    +timTodayHtml(st)
+   +'</div>'
+   +'<div class="tt-p" data-tt="detail">'
    /* Everything below the plan is background. It was all open at once, which is
       why the tab read as a wall — the answer and the reasoning had the same
       weight on the page. The reasoning is one click away now. */
@@ -26520,8 +26596,10 @@ function renderTiming(){
    +'<details class="sec pin"><summary><b>Reference tools</b><span>the complete toolkit and every calendar in one place</span></summary>'
      +'<div class="tk-tools">'
        +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
-     +'</div></details>';
+     +'</div></details>'
+   +'</div>';                                  /* end Detail */
 
+  ttApply();
   host.querySelectorAll('.tk-slot').forEach(function(el,i){el.style.animationDelay=(i*0.03).toFixed(2)+'s';});
 
   /* THE HOST ONLY EXISTS ONCE THIS HAS RUN.
@@ -28533,9 +28611,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b117';
+var CA_BUILD='b118';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The month map now carries bullish, bearish and neutral on every day, beside the risk colour \u2014 two axes at a glance instead of one.';
+var CA_WHATS_NEW='The Timing tab is four screens now \u2014 Today, Month, Sky, Detail. Same numbers, same methods; you just stop scrolling past what you did not ask for.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
