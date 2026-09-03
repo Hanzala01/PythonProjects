@@ -5919,18 +5919,23 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --bAct:#E8B24D;
   --p3:#E8B24D; --pGlow:#FFE7B0; --pDeep:#2A2113;   /* Gold   */
   --p1:#8B7CF6; --p2:#A99BF8;                       /* Violet */
-  --t1:#EDEDEC;                        /* Text  */
-  --t2:#82868D; --t3:#82868D;          /* Muted — the table names one muted
-                                          tone, so both muted steps are it;
-                                          hierarchy comes from size and
-                                          weight, the way the source does it */
+  /* the greys the legacy sheet reads, matched to the lifted pair */
+  --soft:#C6CAD0; --mid:#A8AEB6; --muted:#969CA4; --text:#E7E8E9;
+  /* CONTRAST, RAISED ON REQUEST.
+     The palette named one muted tone, #82868D, and both muted steps used
+     it — 5.48:1 on this ground, which passes the minimum and is hard work
+     in daylight. Body and small print are separate tones now: body goes to
+     12.17:1 and small print to 7.24:1, measured against #07080A. */
+  --t1:#F2F2F1;                        /* Text        17.89:1 */
+  --t2:#C6CAD0;                        /* body        12.17:1 */
+  --t3:#969CA4;                        /* small print  7.24:1 */
   --up:#5FD98A; --dn:#E2665A;          /* Bull / Bear */
   --warn:#E8B24D; --cy:#6EA8C9;
   --elFire:#E8823C; --elEarth:#7FAE7A; --elAir:#6EA8C9; --elWater:#5E7CE2;
   --rgbUp:95,217,138; --rgbDn:226,102,90; --rgbWarn:232,178,77;
   --rgbFire:232,130,60; --rgbEarth:127,174,122;
   --rgbAir:110,168,201; --rgbWater:94,124,226;
-  --wash:rgba(232,178,77,.055); --washTo:rgba(var(--g35),.96);
+  --wash:rgba(255,255,255,.028); --washTo:rgba(var(--g35),.97);
   --pDeepest:#B07C28; --pWell:#1B160C;
   --sideBg:#050608; --sideTop:#0C0E11; --sideTop2:#0A0B0E;
   --navOn1:#1F1A0D; --navOn2:#141313;
@@ -5956,19 +5961,29 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
      a near-black ground actually wants. Two of them stay violet on purpose
      — the info tone — so the theme keeps a second colour for the things
      that are meant to read as neutral information. */
-  --rgbAcc:232,178,77;  --rgbRim:255,255,255;  --rgbVio:232,178,77;
-  --rgbLit:255,231,176; --rgbDeep:176,124,40;  --rgbTrue:232,178,77;
-  --rgbAmy:232,178,77;  --rgbCore:232,178,77;  --rgbSoft:232,178,77;
-  --rgbBord:232,178,77; --rgbInfo:139,124,246; --rgbMid:176,124,40;
+  /* TOO MUCH GOLD, AND THIS IS WHERE IT CAME FROM.
+     Nine of the twelve accent channels pointed at the same gold, and the
+     most-used of them — rgbAcc, 206 places — paints every panel wash, every
+     hover and every faint glow. Gold at four percent behind everything is
+     still gold behind everything, so the theme read as one colour.
+
+     The washes are neutral now: white at low alpha, which on a near-black
+     ground reads as depth rather than as a hue. Gold is kept for what is
+     actually an accent — an active border, a live value, the mark — so
+     that when it appears it means something. */
+  --rgbAcc:255,255,255; --rgbRim:255,255,255; --rgbVio:232,178,77;
+  --rgbLit:236,236,234; --rgbDeep:120,124,130; --rgbTrue:232,178,77;
+  --rgbAmy:255,255,255; --rgbCore:255,255,255; --rgbSoft:190,195,201;
+  --rgbBord:232,178,77; --rgbInfo:139,124,246; --rgbMid:120,124,130;
 
   /* the older, first-generation tokens the legacy stylesheet still reads */
   --bg:#07080A; --s1:#0C0E11; --s2:#111317; --s3:#161A20; --s4:#1D222A;
   --navy:#0C0E11; --navy2:#111317; --sec:#0C0E11;
   --rim:rgba(255,255,255,.09); --rim2:rgba(255,255,255,.14); --rim3:rgba(232,178,77,.34);
-  --muted:#8A8F97; --mid:#9BA0A8; --soft:#C3C7CE; --text:#E7E8E9; --white:#F2F2F1;
+  --muted:#969CA4; --mid:#A8AEB6; --soft:#C6CAD0; --text:#E7E8E9; --white:#F2F2F1;
   --accent:#E8B24D; --acc2:#F0C578; --acc3:#FFE7B0;
   --purple:#E8B24D; --violet:#E8B24D; --blue:#6EA8C9;
-  --tw:#F2F2F1; --ts:#C3C7CE; --tm:#9BA0A8; --tf:#7A7F87;
+  --tw:#F2F2F1; --ts:#C6CAD0; --tm:#969CA4; --tf:#7E848C;
   --bd:rgba(255,255,255,.09); --bd2:rgba(255,255,255,.14);
   --green:#5FD98A; --red:#E2665A; --amber:#E8B24D; --yellow:#E8B24D;
   --gold:#E8B24D; --purple-glow:rgba(232,178,77,.14);
@@ -28882,9 +28897,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b120';
+var CA_BUILD='b121';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The whole Time Engine is redrawn \u2014 one type scale, one column, borders off. And the windows card I deleted is back. Nothing is removed.';
+var CA_WHATS_NEW='Qamar has far less gold \u2014 the washes are neutral now and gold is kept for real accents. Body text goes from 5.5:1 to 12.2:1.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
