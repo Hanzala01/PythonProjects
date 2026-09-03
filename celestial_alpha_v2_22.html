@@ -7275,6 +7275,12 @@ body{background:var(--bg0)}
 .mm-d.fa{background:rgba(var(--rgbUp),.14);border-color:rgba(var(--rgbUp),.34)}
 .mm-d.fa b{color:var(--up)}
 .mm-d.sel{outline:2px solid var(--p3);outline-offset:1px}
+.mm-dm{position:absolute;bottom:3px;right:4px;font-size:8.5px;line-height:1;opacity:.8}
+.mm-d.dr-bull .mm-dm{color:var(--up)}
+.mm-d.dr-bear .mm-dm{color:var(--dn)}
+.mm-d.dr-neutral .mm-dm{color:var(--t3)}
+.mm-lean{display:flex;gap:10px;justify-content:center;margin-top:5px;font-size:9.5px}
+.mm-lean span.bl{color:var(--up)} .mm-lean span.br{color:var(--dn)} .mm-lean span.nu{color:var(--t3)}
 .mm-d:hover{transform:translateY(-1px)}
 .mm-legend{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:10px;font-size:9.5px;color:var(--t3)}
 .mm-legend span{display:flex;align-items:center;gap:5px}
@@ -23832,12 +23838,23 @@ function mmDirection(day){
     if(x.kind==='soft' && (MM_BENEFIC[x.p1]||MM_BENEFIC[x.p2])){ up+=w; why.push('+ '+x.p1+' '+x.sym+' '+x.p2); }
     if(x.kind==='hard' && (MM_MALEFIC[x.p1]||MM_MALEFIC[x.p2])){ dn+=w; why.push('− '+x.p1+' '+x.sym+' '+x.p2); }
   });
-  if(up===0&&dn===0) return {dir:null, note:'timing only — no active aspect gives a direction'};
-  return {dir: up>dn?'up':dn>up?'down':null,
+  /* NEUTRAL IS AN ANSWER, NOT A MISSING ONE.
+     This returned null for "no aspect gives a direction" and null again for
+     "both sides active and level" — two different readings collapsed into
+     the same blank. Nothing pulling is a quiet day; both sides pulling
+     equally is a day being fought over. Both are neutral, and the note now
+     says which kind. */
+  if(up===0&&dn===0)
+    return {dir:'neutral', kind:'quiet', up:0, dn:0, why:[],
+            note:'nothing active — this is timing only, and gives no direction'};
+  var gap=Math.abs(up-dn);
+  if(gap<0.25)
+    return {dir:'neutral', kind:'contested', up:+up.toFixed(2), dn:+dn.toFixed(2), why:why.slice(0,3),
+            note:'both sides active and within a quarter point — contested, not neutral by absence'};
+  return {dir: up>dn?'bull':'bear', kind:'called',
           up:+up.toFixed(2), dn:+dn.toFixed(2), why:why.slice(0,3),
           note: up>dn ? 'benefic soft aspect active — a turn up'
-              : dn>up ? 'malefic hard aspect active — a turn down'
-              : 'both sides active and level — no call'};
+                      : 'malefic hard aspect active — a turn down'};
 }
 
 /* ── the month ─────────────────────────────────────────────────────────── */
@@ -23917,16 +23934,20 @@ function mmReversal(rows,day){
     return {ok:false, why:'no failed break — price has not swept the 20-day range and closed back inside'};
 
   var dir = sweptLow ? 'up' : 'down';
-  var astro = day && day.dirn ? day.dirn.dir : null;
-  var agree = astro && astro===dir;
+  /* the astro side speaks bull/bear and the price side up/down; comparing
+     them raw would never have matched and every reversal would have read as
+     a conflict */
+  var astro = (day && day.dirn && day.dirn.dir!=='neutral') ? day.dirn.dir : null;
+  var astroUD = astro==='bull' ? 'up' : astro==='bear' ? 'down' : null;
+  var agree = !!(astroUD && astroUD===dir);
   return {
     ok:true, dir:dir,
     trap: sweptLow ? 'lows swept at '+lo.toFixed(2)+', closed back above'
                    : 'highs swept at '+hi.toFixed(2)+', closed back below',
     astro:astro,
-    confidence: !astro ? 'medium — no astro direction to cross-check against'
-              : agree  ? 'high — the reversal and the astro bias agree'
-                       : 'low — the reversal points '+dir+' and the astro bias points '+astro+'; skip',
+    confidence: !astroUD ? 'medium — the astro read is neutral, so there is nothing to cross-check'
+              : agree    ? 'high — the reversal and the astro bias agree'
+                         : 'low — the reversal points '+dir+' and the astro bias points '+astroUD+'; skip',
     take: !!(agree)
   };
 }
@@ -23976,9 +23997,15 @@ function mmGrid(M){
   for(var i=0;i<first;i++)h+='<div></div>';
   M.days.forEach(function(d){
     var mark=d.lunation?'●':d.cardinal?'✦':d.ingress.length?'→':'';
-    h+='<div class="mm-d '+mmCls(d.cls.v)+(MM_VIEW.sel===d.dom?' sel':'')+'"'
-      +' onclick="mmPick('+d.dom+')" title="'+escHtml(d.cls.v+' — '+d.cls.why)+'">'
+    /* TWO AXES, AND THE CELL HAS TO CARRY BOTH.
+       The colour was risk — avoid, favourable, quiet — and the direction was
+       only visible after clicking the day. Which way a month leans is the
+       thing you want at a glance, so it belongs in the cell. */
+    var dm = d.dirn.dir==='bull'?'▲' : d.dirn.dir==='bear'?'▼' : '–';
+    h+='<div class="mm-d '+mmCls(d.cls.v)+' dr-'+d.dirn.dir+(MM_VIEW.sel===d.dom?' sel':'')+'"'
+      +' onclick="mmPick('+d.dom+')" title="'+escHtml(d.cls.v+' — '+d.cls.why+' · '+d.dirn.note)+'">'
       +'<b>'+d.dom+'</b>'
+      +'<span class="mm-dm">'+dm+'</span>'
       +(mark?'<i>'+mark+'</i>':'')
       +(d.macro.length?'<u></u>':'')
       +'</div>';
@@ -24034,8 +24061,9 @@ function mmWorking(d){
     h+='<div class="mm-note">Judgment call: '+escHtml(d.cls.override.note)+'</div>';
 
   h+='<div class="mm-wt">Step 5 &mdash; direction</div>';
-  h+='<div class="mm-dir '+(d.dirn.dir==='up'?'up':d.dirn.dir==='down'?'dn':'')+'">'
-    +'<b>'+(d.dirn.dir?(d.dirn.dir==='up'?'Turn up':'Turn down'):'No direction')+'</b>'
+  h+='<div class="mm-dir '+(d.dirn.dir==='bull'?'up':d.dirn.dir==='bear'?'dn':'')+'">'
+    +'<b>'+(d.dirn.dir==='bull'?'Bullish' : d.dirn.dir==='bear'?'Bearish'
+            : d.dirn.kind==='contested'?'Neutral \u2014 contested' : 'Neutral \u2014 quiet')+'</b>'
     +'<span>'+escHtml(d.dirn.note)+'</span>'
     /* BOTH SIDES ARE OFTEN ACTIVE AND THE WINNER IS OFTEN NARROW.
        Printing only "Turn up" under a list containing a Mars square hides
@@ -24075,14 +24103,23 @@ function monthMapHtml(){
   var name=new Date(M.year,M.month,1).toLocaleDateString('en',{month:'long',year:'numeric'});
 
   var counts={AVOID:0,FAVOURABLE:0,MILD:0};
-  M.days.forEach(function(x){ counts[x.cls.v]=(counts[x.cls.v]||0)+1; });
+  var dirs={bull:0,bear:0,neutral:0};
+  M.days.forEach(function(x){
+    counts[x.cls.v]=(counts[x.cls.v]||0)+1;
+    dirs[x.dirn.dir]=(dirs[x.dirn.dir]||0)+1;
+  });
 
   var h='<div class="mm">';
   h+='<div class="mm-top">'
     +'<button class="mm-nav" onclick="mmGo(-1)">&larr;</button>'
     +'<div class="mm-title"><b>'+escHtml(name)+'</b><s>'+escHtml(M.asset)
       +' &middot; '+counts.AVOID+' avoid &middot; '+counts.FAVOURABLE+' favourable &middot; '
-      +counts.MILD+' quiet</s></div>'
+      +counts.MILD+' quiet</s>'
+      +'<div class="mm-lean">'
+        +'<span class="bl">&#9650; '+dirs.bull+' bullish</span>'
+        +'<span class="br">&#9660; '+dirs.bear+' bearish</span>'
+        +'<span class="nu">&ndash; '+dirs.neutral+' neutral</span>'
+      +'</div></div>'
     +'<button class="mm-nav" onclick="mmGo(1)">&rarr;</button>'
   +'</div>';
 
@@ -24093,6 +24130,7 @@ function monthMapHtml(){
 
   h+='<div class="mm-legend">'
     +'<span class="av">avoid</span><span class="fa">favourable</span><span class="mi">quiet</span>'
+    +'<span class="mk">▲ bullish &nbsp; ▼ bearish &nbsp; &ndash; neutral</span>'
     +'<span class="mk">● lunation &nbsp; ✦ cardinal ingress &nbsp; → ingress &nbsp; <u></u> macro</span>'
   +'</div>';
 
@@ -28495,9 +28533,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b116';
+var CA_BUILD='b117';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The month map \u2014 every day classified favourable or avoid from the ephemeris, with the arithmetic shown, plus the accumulation / manipulation / distribution phases.';
+var CA_WHATS_NEW='The month map now carries bullish, bearish and neutral on every day, beside the risk colour \u2014 two axes at a glance instead of one.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
