@@ -7250,6 +7250,87 @@ body{background:var(--bg0)}
 .qp-det>summary:hover{color:var(--t1)}
 
 
+/* ══ THE WHOLE TIME ENGINE, REDRAWN ═══════════════════════════════════════
+   Not a section replaced — every section restyled, and nothing removed.
+
+   The tab was built card by card over months, so each part arrived with its
+   own type scale, its own border weight and its own idea of how much space a
+   label deserves. Read together they fight: eight-pixel capitals next to
+   nineteen-pixel numbers next to bordered boxes inside bordered boxes inside
+   a bordered card.
+
+   This layer is scoped to the Timing tab and does four things to all of it
+   at once, so the parts finally look like one object:
+
+     ONE COLUMN AND A READING WIDTH. Nothing runs the full width of a
+     monitor; long lines are the single biggest reason a dense screen feels
+     unreadable.
+
+     ONE TYPE SCALE. Labels 9.5px, body 12.5px, values 15px, section heads
+     13px. The old sizes ranged from 7.5 to 38 with no ladder between them.
+
+     BORDERS OFF, SPACE ON. A box inside a box inside a box is three lines
+     doing the work one gap does better. Panels keep a single hairline; the
+     nesting loses its own.
+
+     SECTION HEADS THAT READ AS HEADS. Every collapsible summary gets the
+     same weight and the same rhythm, so scanning the tab is scanning a list
+     of questions rather than a wall.
+
+   NOT ONE NUMBER, RULE OR FUNCTION IS TOUCHED. This is a stylesheet.
+   ══════════════════════════════════════════════════════════════════════ */
+#pane_timing .tk{max-width:1120px;margin:0 auto}
+
+/* the collapsible sections, as a list of questions */
+#pane_timing details.sec{border:none;background:transparent;margin:34px 0 0;padding:0}
+#pane_timing details.sec>summary{list-style:none;cursor:pointer;padding:0 0 12px;
+  border-bottom:1px solid var(--b1);margin-bottom:18px}
+#pane_timing details.sec>summary::-webkit-details-marker{display:none}
+/* the original rule laid summary out as a row, which pushed the subtitle
+   off the right edge on a narrow window; it stacks */
+#pane_timing details.sec>summary{display:block!important}
+#pane_timing details.sec>summary b{display:block;font-size:15px;font-weight:700;
+  color:var(--t1);letter-spacing:-.01em}
+#pane_timing details.sec>summary span{display:block;font-size:11.5px;line-height:1.5;
+  color:var(--t3);margin-top:4px;max-width:70ch}
+#pane_timing details.sec>summary:hover b{color:var(--p3)}
+
+/* one type ladder for every panel on the tab */
+#pane_timing .tk-card,#pane_timing .te-c,#pane_timing .qam-s,#pane_timing .pc,
+#pane_timing .mm-pos>div,#pane_timing .mm-a{border-radius:12px}
+#pane_timing .tk-card{background:var(--card2);border:1px solid var(--b1);padding:16px 18px}
+
+/* labels, values and body text, everywhere */
+#pane_timing .tk-k,#pane_timing .te-k,#pane_timing .qam-s i,#pane_timing .pc-facts i,
+#pane_timing .mm-pos i,#pane_timing .td-f i,#pane_timing .nd-do i{
+  font-size:9.5px!important;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--t3)}
+#pane_timing .tk-v,#pane_timing .te-v,#pane_timing .qam-s b,#pane_timing .pc-facts b,
+#pane_timing .td-f b{font-size:15px!important;font-weight:700;color:var(--t1)}
+#pane_timing .tk-s,#pane_timing .te-s,#pane_timing .qam-s s,#pane_timing .pc-facts s,
+#pane_timing .td-f s{font-size:10.5px!important;line-height:1.5;color:var(--t3)}
+
+/* the nested boxes lose their own outlines and keep the gap instead */
+#pane_timing .qam-state,#pane_timing .pc-facts,#pane_timing .td-facts,
+#pane_timing .mm-pos{gap:14px}
+#pane_timing .qam-s,#pane_timing .pc-facts>div{border:none;background:transparent;padding:0}
+
+/* the strips of small chips get room to breathe */
+#pane_timing .tk-bar,#pane_timing .te-strip{margin:18px 0}
+#pane_timing .a-sub{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--t3);margin:30px 0 12px}
+
+/* the lunar layer's own header, matched to the section heads */
+#pane_timing .qam-t b{font-size:15px;font-weight:700;color:var(--t1)}
+#pane_timing .qam-t span{font-size:11.5px;color:var(--t3)}
+#pane_timing .qam-lh{font-size:12.5px;font-weight:700;color:var(--t2);margin-top:26px}
+
+@media (max-width:900px){
+  #pane_timing .qam-state,#pane_timing .pc-facts,#pane_timing .td-facts{grid-template-columns:1fr 1fr}
+}
+@media (max-width:600px){
+  #pane_timing .qam-state,#pane_timing .pc-facts,#pane_timing .td-facts{grid-template-columns:1fr}
+}
+
 /* ── TODAY, REDESIGNED ───────────────────────────────────────────────────
    One column, one voice, and a timeline instead of a grid of boxes. The
    old screen used 8px labels on 12px values inside bordered cards, which is
@@ -26633,14 +26714,25 @@ function renderTiming(){
       traded as, and which way it leans — all of that already existed on
       this tab and was spread across five sections. Reading it meant
       assembling it. */
+   /* I DELETED THIS AND I HAD NO RIGHT TO.
+      The new day panel was put in place of timTodayCard rather than beside
+      it, so the windows table with its holds and its aspect lines simply
+      vanished. Nothing on this tab is mine to remove. Both are here: the
+      new one leads because it answers fastest, the full card follows
+      because it carries detail the short one does not. */
+   /* THE TODAY PANE OPENS HERE, NOT FURTHER DOWN.
+      These two sat above the first pane, so they were outside the switcher
+      entirely and showed on every screen — Detail included, where they made
+      it look as though the tab had not changed at all. */
+   +'<div class="tt-p" data-tt="today">'
    +(function(){ try{ return newDayHtml(st); }catch(e){ return ''; } })()
+   +(function(){ try{ return timTodayCard(st); }catch(e){ return ''; } })()
    /* and immediately under it, the levels that have NOT been reached yet */
    +'<div id="ix_host"></div>'
    /* THE ENGINE'S OWN ANSWER, AT THE TOP OF ITS OWN TAB.
       Everything below this is the working: the wheel, the hours, the week,
       the aspects. The seven lines it produces were only visible on the
       Analytics tab, which is the wrong place for the Timing tab's verdict. */
-   +'<div class="tt-p" data-tt="today">'
    +'<div class="te-strip">'+timEngineHtml()+'</div>'
    /* WHEN, on its own, right under the engine's verdict. The five-layer
       timing score is a different question from everything else on this tab:
@@ -26678,6 +26770,11 @@ function renderTiming(){
    +'<details class="sec pin" open><summary><b>The sign cycle &mdash; Sun and planets</b>'
      +'<span>where each body is in its sign, which of the seven zones, and when it moves on</span></summary>'
      +(function(){ try{ return qamPlanetsHtml(); }catch(e){ return ''; } })()+'</details>'
+   /* Sky ends with the sign cycles. The hour grid and the next-windows list
+      that follow are the working, and were landing on Sky because this seam
+      was one block too late. */
+   +'</div>'
+   +'<div class="tt-p" data-tt="detail">'
    +'<div class="tk-hero '+v.level+'">'
     +'<div class="tk-col">'
       +'<div class="tk-dial">'+ring
@@ -26728,8 +26825,6 @@ function renderTiming(){
           +'<b>'+x.sym+'</b><i>'+fmtT(x.start).slice(0,5)+'</i></div>';
       }).join('')
    +'</div>'
-   +'</div>'                                   /* end Sky part two */
-   +'<div class="tt-p" data-tt="detail">'
    +timSkyStrip()
    /* the whole week's windows as one shape, rather than fourteen day-cards */
    +'<details class="sec pin"><summary><b>The week ahead, hour by hour</b>'
@@ -28787,9 +28882,9 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b119';
+var CA_BUILD='b120';
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Today is redrawn \u2014 one column, one headline, and the day as a timeline instead of a grid of boxes. Same numbers, a different object.';
+var CA_WHATS_NEW='The whole Time Engine is redrawn \u2014 one type scale, one column, borders off. And the windows card I deleted is back. Nothing is removed.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
