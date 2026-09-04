@@ -7578,6 +7578,72 @@ body{background:var(--bg0)}
   #pane_timing .tg-num{font-size:26px}
 }
 
+/* ══ THE GLASS SYSTEM — every card on this tab, one language ═══════════════
+   Told six times this still read as the old dashboard under a new cover
+   page, the reason was literal: below the masthead and the wheel, every
+   card was still `border:1px solid var(--b1); background:var(--card2)` —
+   a flat panel with a hairline, which is what a dashboard looked like
+   before any of this started. The masthead and the wheel introduced a
+   different surface — a soft gradient instead of a flat fill, a hairline
+   that picks up the theme's own accent colour instead of plain
+   white-at-8%, a lit top edge on the pieces that are answers rather than
+   detail. Nothing below touches a number or a rule. It re-skins the
+   containers that were already there — the Moon chapter's state cards and
+   aspect rows, the month's cells and its arithmetic rows, the sign-cycle
+   cards, the extras cards, the hour wheel's own hero — so scrolling from
+   chapter to chapter is one surface, not seven. */
+
+#pane_timing .qam-s, #pane_timing .qam-b, #pane_timing .mm-pos>div,
+#pane_timing .mm-a, #pane_timing .mm-dir, #pane_timing .mm-rev,
+#pane_timing .mm-anchor, #pane_timing .pc, #pane_timing .tx-card,
+#pane_timing .tx-pl, #pane_timing .qam-r{
+  background:linear-gradient(155deg,rgba(var(--rgbAcc),.055),rgba(0,0,0,.16));
+  border-color:rgba(var(--rgbAcc),.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+#pane_timing .qam-s.hot,#pane_timing .mm-dir.dn{border-color:rgba(239,68,68,.32)}
+#pane_timing .qam-s.good,#pane_timing .mm-dir.up{border-color:rgba(34,197,94,.32)}
+#pane_timing .qam-r.heavy{background:linear-gradient(155deg,rgba(245,158,11,.14),rgba(0,0,0,.16))}
+#pane_timing .pc.retro{background:linear-gradient(155deg,rgba(245,158,11,.09),rgba(0,0,0,.16))}
+
+/* the score wheel (chapter 03) and the intraday-bias card (chapter 04) are
+   each their chapter's own opening answer, so each gets the masthead's own
+   lit top edge — added rather than replacing what they draw already, since
+   the wheel's border already reads its go/ok/wait state and the bias
+   card's left bar already reads bullish/bearish/no-side */
+#pane_timing .tk-hero::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:2px;z-index:1;
+  background:linear-gradient(90deg,transparent,rgba(var(--rgbAcc),.85),rgba(var(--rgbVio),.55),transparent)
+}
+#pane_timing .qdc{position:relative;overflow:hidden}
+#pane_timing .qdc::after{
+  content:'';position:absolute;left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(var(--rgbAcc),.85),rgba(var(--rgbVio),.55),transparent)
+}
+
+/* the month's verdict is that chapter's own answer, so it carries the same
+   accent tint as the masthead's stat tiles rather than the plain grey box
+   every other detail row uses */
+#pane_timing .mm-verdict{
+  background:linear-gradient(155deg,rgba(var(--rgbAcc),.09),rgba(0,0,0,.2));
+  border:1px solid rgba(var(--rgbAcc),.22);
+}
+
+/* the calendar read as conditional-formatting on a spreadsheet — a flat
+   fill and a hard corner. A gradient fill and a softer radius is the same
+   information drawn as glass instead. */
+#pane_timing .mm-d{border-radius:10px;transition:transform .12s}
+#pane_timing .mm-d.av{background:linear-gradient(155deg,rgba(var(--rgbDn),.17),rgba(var(--rgbDn),.06))}
+#pane_timing .mm-d.fa{background:linear-gradient(155deg,rgba(var(--rgbUp),.19),rgba(var(--rgbUp),.07))}
+#pane_timing .mm-d:hover{transform:translateY(-1px)}
+#pane_timing .mm-d.sel{outline-color:rgba(var(--rgbAcc),.9)}
+
+/* the sign-cycle bar's current stage was a flat white fill; the accent tint
+   ties it to the same colour the rest of the tab marks "current" with */
+#pane_timing .pc-z.on{background:linear-gradient(90deg,rgba(var(--rgbAcc),.3),rgba(var(--rgbAcc),.12))}
+#pane_timing .tk-nrow{background:linear-gradient(155deg,rgba(var(--rgbAcc),.05),rgba(0,0,0,.14))}
+#pane_timing .tk-nrow.strong{background:linear-gradient(155deg,rgba(34,197,94,.09),rgba(0,0,0,.14))}
+
 /* ── TODAY, REDESIGNED ───────────────────────────────────────────────────
    One column, one voice, and a timeline instead of a grid of boxes. The
    old screen used 8px labels on 12px values inside bordered cards, which is
@@ -29417,7 +29483,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b126';
+var CA_BUILD='b127';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
