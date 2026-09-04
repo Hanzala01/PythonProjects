@@ -7467,6 +7467,74 @@ body{background:var(--bg0)}
 #pane_timing .te{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:8px}
 #pane_timing .te-c{min-width:0}
 
+/* ══ THE TRANSIT WHEEL ═══════════════════════════════════════════════════
+   The chapter opened straight into the engine's seven-cell readout, which
+   is correct but reads as a spreadsheet. Every number on it comes from one
+   fact — the tightest live aspect and what the sky is doing right now — and
+   that fact had no face of its own anywhere on the tab.
+
+   This draws it as a wheel: the ten bodies at their real positions on the
+   360°, the two in the closest aspect ringed, and the aspect itself named
+   in the centre with its own orb, its own closing time, and the same
+   directional read calcAstroBias already gives the rest of this tab — not
+   a new probability, the day's own lean, said once more where it is easiest
+   to see. Same colours as everywhere else on this pane: rgbAcc reskins with
+   the theme, green/red/amber carry the same meaning they do in the masthead. */
+#pane_timing .tg-wheel{position:relative;overflow:hidden;border-radius:20px;
+  border:1px solid var(--b1);padding:30px;margin:0 0 30px;
+  display:flex;align-items:center;gap:34px;flex-wrap:wrap;
+  background:
+    radial-gradient(75% 100% at 18% 12%,rgba(var(--rgbAcc),.12),transparent 60%),
+    linear-gradient(160deg,rgba(var(--rgbAcc),.04),rgba(0,0,0,.3))}
+#pane_timing .tg-wheel::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(var(--rgbAcc),.85),rgba(var(--rgbVio),.6),transparent)}
+#pane_timing .tg-wring{flex:0 0 auto;width:296px;height:296px;position:relative}
+#pane_timing .tg-wring svg{width:100%;height:100%;overflow:visible}
+#pane_timing .tg-wtick{stroke:var(--b1);stroke-width:1}
+#pane_timing .tg-wring text{font-size:9px;font-weight:700;fill:var(--t3);
+  letter-spacing:.04em;font-family:inherit}
+#pane_timing .tg-wp{cursor:default}
+#pane_timing .tg-wp circle.dot{fill:rgba(255,255,255,.05);
+  stroke:var(--b1);stroke-width:1;transition:.16s}
+#pane_timing .tg-wp text.sym{font-size:12px;fill:var(--t2);text-anchor:middle;
+  dominant-baseline:central}
+#pane_timing .tg-wp.hit circle.dot{fill:rgba(var(--rgbAcc),.22);stroke:rgba(var(--rgbAcc),.9);
+  stroke-width:1.6}
+#pane_timing .tg-wp.hit text.sym{fill:var(--t1)}
+#pane_timing .tg-wp.hit circle.halo{fill:none;stroke:rgba(var(--rgbAcc),.4);stroke-width:1}
+#pane_timing .tg-wchord{fill:none;stroke:rgba(var(--rgbAcc),.5);stroke-width:1.2;
+  stroke-dasharray:2 4}
+#pane_timing .tg-wcore{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:0 26px}
+#pane_timing .tg-weye{font-size:8.5px;font-weight:800;letter-spacing:.24em;
+  text-transform:uppercase;color:rgba(var(--rgbAcc),.9)}
+#pane_timing .tg-wname{font-family:Georgia,'Times New Roman',serif;font-style:italic;
+  font-size:21px;font-weight:600;color:var(--t1);margin-top:8px;line-height:1.2}
+#pane_timing .tg-wnone{font-size:12.5px;color:var(--t3);margin-top:10px;max-width:22ch}
+
+#pane_timing .tg-wR{flex:1 1 280px;min-width:0}
+#pane_timing .tg-wsay{font-size:12.5px;line-height:1.65;color:var(--t2);max-width:60ch}
+#pane_timing .tg-wmeta{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;
+  padding-top:14px;border-top:1px solid var(--b1)}
+#pane_timing .tg-wmeta div i{display:block;font-size:8.5px;font-weight:800;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--t3);font-style:normal}
+#pane_timing .tg-wmeta div b{display:block;font-size:13.5px;font-weight:700;
+  color:var(--t1);margin-top:5px}
+#pane_timing .tg-wpill{display:inline-flex;align-items:baseline;gap:6px;margin-top:18px;
+  padding:8px 15px;border-radius:999px;border:1px solid;font-size:11px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase}
+#pane_timing .tg-wpill.up{color:var(--green);border-color:rgba(34,197,94,.4);
+  background:rgba(34,197,94,.1)}
+#pane_timing .tg-wpill.down{color:var(--red);border-color:rgba(239,68,68,.4);
+  background:rgba(239,68,68,.1)}
+#pane_timing .tg-wpill.flat{color:var(--amber);border-color:rgba(245,158,11,.4);
+  background:rgba(245,158,11,.1)}
+#pane_timing .tg-wpill s{text-decoration:none;font-weight:600;color:inherit;opacity:.75}
+@media (max-width:620px){
+  #pane_timing .tg-wheel{padding:24px 18px;justify-content:center}
+  #pane_timing .tg-wring{width:256px;height:256px}
+}
+
 /* THE DAY'S NAME IS NOW THE MASTHEAD, SO IT STOPS BEING SHOUTED TWICE.
    The panel's own headline and its sentence are the same words as the front
    page, three inches above them. Neither is taken off the page — the panel
@@ -26977,6 +27045,115 @@ function tgMast(st,v,chips){
   return h+s+'</div></header>';
 }
 
+/* ══ THE TRANSIT WHEEL — the tightest live aspect, drawn ═══════════════ */
+var TGW={cx:148,cy:148,R:118,R2:132};
+function tgWXY(r,deg){
+  var a=(deg-90)*Math.PI/180;
+  return[TGW.cx+r*Math.cos(a), TGW.cy+r*Math.sin(a)];
+}
+/* closing or fading, and roughly how long — sampled a day either side of
+   now rather than read from a table, same method qamBodyRate uses */
+function tgWClosing(a,b,aspDeg,now){
+  function orbAt(t){
+    var e=getEphemeris(t);
+    var d=Math.abs(rev(e[a].lon)-rev(e[b].lon))%360; if(d>180)d=360-d;
+    return Math.abs(d-aspDeg);
+  }
+  var o0=orbAt(now), o1=orbAt(new Date(+now+86400000));
+  var perDay=o0-o1, applying=perDay>0.0005;
+  var days=Math.abs(perDay)>0.0005?Math.abs(o0/perDay):null;
+  return{applying:applying,days:days};
+}
+function tgWheelHtml(){
+  var eph=null, asset='Gold', now=new Date();
+  try{ eph=timEph(); }catch(e){}
+  try{ asset=timAsset(); }catch(e){}
+  if(!eph)return '';
+
+  var A=null; try{ A=liveAspects(eph,6); }catch(e){}
+  var pick=(A&&A.length)?A[0]:null;
+
+  /* the ring: ten bodies at their real longitude, always drawn */
+  var ring='';
+  EPH_ORDER.forEach(function(b){
+    var deg=rev(eph[b].lon), p=tgWXY(TGW.R,deg);
+    var hit=pick&&(pick.a===b||pick.b===b);
+    var S=signOf(deg);
+    ring+='<g class="tg-wp'+(hit?' hit':'')+'" transform="translate('+p[0].toFixed(1)+','+p[1].toFixed(1)+')">'
+      +(hit?'<circle class="halo" r="15"></circle>':'')
+      +'<circle class="dot" r="12"></circle>'
+      +'<text class="sym">'+EPH_SYM[b]+'</text>'
+      +'<title>'+escHtml((PLANET_NAME[b]||b)+' '+S.sign+' '+S.deg.toFixed(1)+'°')+'</title>'
+    +'</g>';
+  });
+
+  /* the eight compass ticks, same convention as the hour dial elsewhere on
+     this tab: 0° at the top, running clockwise */
+  var ticks='';
+  for(var d=0; d<360; d+=45){
+    var t0=tgWXY(TGW.R2-6,d), t1=tgWXY(TGW.R2,d), lb=tgWXY(TGW.R2+13,d);
+    ticks+='<line class="tg-wtick" x1="'+t0[0].toFixed(1)+'" y1="'+t0[1].toFixed(1)
+      +'" x2="'+t1[0].toFixed(1)+'" y2="'+t1[1].toFixed(1)+'"></line>'
+      +'<text x="'+lb[0].toFixed(1)+'" y="'+lb[1].toFixed(1)+'" text-anchor="middle" dominant-baseline="central">'+d+'&deg;</text>';
+  }
+
+  var chord='';
+  if(pick){
+    var p1=tgWXY(TGW.R,rev(eph[pick.a].lon)), p2=tgWXY(TGW.R,rev(eph[pick.b].lon));
+    chord='<line class="tg-wchord" x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)
+      +'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'"></line>';
+  }
+
+  var svg='<svg viewBox="0 0 296 296">'
+    +'<circle cx="148" cy="148" r="'+TGW.R2+'" fill="none" stroke="var(--b1)" stroke-width="1"></circle>'
+    +'<circle cx="148" cy="148" r="'+TGW.R+'" fill="none" stroke="var(--b1)" stroke-width="1"></circle>'
+    +ticks+chord+ring+'</svg>';
+
+  /* the centre: nothing to report, or the aspect named and read */
+  var core;
+  if(!pick){
+    core='<div class="tg-weye">The sky right now</div>'
+      +'<div class="tg-wnone">No pair falls inside a six-degree orb today.</div>';
+  }else{
+    var read=null; try{ read=aspectRead(pick,asset,eph); }catch(e){}
+    core='<div class="tg-weye">Tightest aspect</div>'
+      +'<div class="tg-wname">'+escHtml((PLANET_NAME[pick.a]||pick.a))+' '+pick.asp.n+' '
+        +escHtml((PLANET_NAME[pick.b]||pick.b))+'</div>';
+  }
+
+  /* the right-hand read: the aspect's own plain meaning, its orb and its
+     closing time, and the day's own directional lean — the same figure
+     qamDayData already shows, not a second probability invented here */
+  var right='';
+  if(pick){
+    var read2=null; try{ read2=aspectRead(pick,asset,eph); }catch(e){}
+    var clo=null; try{ clo=tgWClosing(pick.a,pick.b,pick.asp.a,now); }catch(e){}
+    right+='<p class="tg-wsay">'+escHtml(pick.asp.plain)+'</p>';
+    if(read2)right+='<p class="tg-wsay">'+escHtml(read2.why)+'</p>';
+    right+='<div class="tg-wmeta">'
+      +'<div><i>Orb</i><b>'+pick.orb.toFixed(2)+'&deg;</b></div>'
+      +'<div><i>'+(clo&&clo.applying?'Exact in about':clo?'Fading over about':'Timing')+'</i>'
+        +'<b>'+(clo&&clo.days!=null?qamSpan(clo.days):'&mdash;')+'</b></div>'
+      +'<div><i>For '+escHtml(asset)+'</i><b>'+(read2?(read2.tone==='bull'?'Bullish lean':read2.tone==='bear'?'Bearish lean':'No lean'):'&mdash;')+'</b></div>'
+    +'</div>';
+
+    var D=null; try{ D=(typeof qamDayData==='function')?qamDayData():null; }catch(e){}
+    if(D){
+      var side=D.dir==='up'?'up':D.dir==='down'?'down':'flat';
+      right+='<div class="tg-wpill '+side+'">'+D.lean+'% probability<s>&mdash; '
+        +(D.dir==='up'?'RISE':D.dir==='down'?'FALL':'NO SIDE')+'</s></div>';
+    }
+  }else{
+    right+='<p class="tg-wsay">Nothing on the ten-body sky is inside a six-degree orb of an exact '
+      +'aspect right now — the tightest chapter below still carries the ones building towards one.</p>';
+  }
+
+  return '<div class="tg-wheel">'
+    +'<div class="tg-wring">'+svg+'<div class="tg-wcore">'+core+'</div></div>'
+    +'<div class="tg-wR">'+right+'</div>'
+  +'</div>';
+}
+
 function renderTiming(){
   var host=document.getElementById('tim_new');
   if(!host)return;
@@ -27035,7 +27212,8 @@ function renderTiming(){
    /* ── 02 · THE CALL ────────────────────────────────────────────────── */
    +tgCh('02','call','The call',
       'What the engine concludes, how strongly, which way, and the plan that follows from it',
-      '<div class="te-strip">'+timEngineHtml()+'</div>'
+      (function(){ try{ return tgWheelHtml(); }catch(e){ return ''; } })()
+     +'<div class="te-strip">'+timEngineHtml()+'</div>'
      /* the five-layer timing score: not which way, only whether a turn is
         due. The alert that fires off it points people at this tab. */
      +tmgHtml()
@@ -29152,7 +29330,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b124';
+var CA_BUILD='b125';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
