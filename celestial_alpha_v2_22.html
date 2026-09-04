@@ -7606,6 +7606,34 @@ body{background:var(--bg0)}
 #pane_timing .qam-r.heavy{background:linear-gradient(155deg,rgba(245,158,11,.14),rgba(0,0,0,.16))}
 #pane_timing .pc.retro{background:linear-gradient(155deg,rgba(245,158,11,.09),rgba(0,0,0,.16))}
 
+/* ── THE INTRADAY-BIAS CARD, GIVEN ROOM ──────────────────────────────────
+   Shown a clean reference of this exact card — eyebrow, pill, a serif
+   headline, one line of description, a small tag, nothing else competing
+   for the eye — against ours: eighteen pixels of padding, an inline pill
+   squeezed against the eyebrow, a sans headline the same weight as
+   everything around it, and a footer glued on with a divider line. Same
+   four facts, no room around any of them, so it read as another dense box
+   instead of the card the chapter opens with.
+
+   This does not change what the card says — dayName/W/pct/word/sharpen are
+   the same values from the same qamDayCard(). It gives them the space and
+   the type contrast the reference has: more than double the padding, the
+   pill on its own line, the headline set in serif italic the way the
+   wheel's aspect name already is, and the small print pushed well back in
+   both size and colour so the four facts that matter lead the eye. */
+#pane_timing .qdc{padding:34px 36px;border-radius:20px}
+#pane_timing .qdc-k{margin-bottom:2px}
+#pane_timing .qdc-p{display:block;width:max-content;margin:16px 0 22px;padding:8px 18px 8px 16px;
+  font-size:11px}
+#pane_timing .qdc-n{font-family:Georgia,'Times New Roman',serif;font-style:italic;
+  font-weight:600;font-size:30px;letter-spacing:0;line-height:1.22}
+@media (max-width:640px){#pane_timing .qdc-n{font-size:23px}}
+#pane_timing .qdc-s{font-size:14px;line-height:1.75;margin-top:14px;max-width:62ch}
+#pane_timing .qdc-f{margin-top:26px;padding-top:0;border-top:none}
+#pane_timing .qdc-r{font-family:inherit;font-size:9.5px;font-weight:800;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(var(--rgbAcc),.9)}
+#pane_timing .qdc-m{margin-top:10px;font-size:10.5px;line-height:1.7;opacity:.75}
+
 /* the score wheel (chapter 03) and the intraday-bias card (chapter 04) are
    each their chapter's own opening answer, so each gets the masthead's own
    lit top edge — added rather than replacing what they draw already, since
@@ -29483,7 +29511,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b127';
+var CA_BUILD='b128';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
