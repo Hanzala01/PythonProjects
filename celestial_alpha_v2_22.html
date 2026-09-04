@@ -7390,6 +7390,10 @@ body{background:var(--bg0)}
 #pane_timing .tg-say{font-size:13px;line-height:1.6;color:var(--t2);max-width:60ch;margin:10px 0 0}
 #pane_timing .tg-date{font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
   color:var(--t3);margin-top:12px}
+/* the masthead's own answer to "how does today read" — one sentence, set
+   apart from the eyebrow/date row so it reads as a conclusion, not a label */
+#pane_timing .tg-verdict{font-size:13.5px;font-weight:600;line-height:1.6;
+  color:rgba(var(--rgbAcc),1);margin:16px 0 0;max-width:64ch}
 /* the asset picker, as a control on the masthead rather than a boxed card
    of its own. Twelve names do not fit a right-hand column, so it takes the
    full width under the title where it reads as one row. */
@@ -7511,6 +7515,11 @@ body{background:var(--bg0)}
 #pane_timing .tg-wname{font-family:Georgia,'Times New Roman',serif;font-style:italic;
   font-size:21px;font-weight:600;color:var(--t1);margin-top:8px;line-height:1.2}
 #pane_timing .tg-wnone{font-size:12.5px;color:var(--t3);margin-top:10px;max-width:22ch}
+/* the same amber "heavy" reads everywhere else on this tab (.qam-r.heavy),
+   not a colour invented for the wheel alone */
+#pane_timing .tg-whv{margin-top:10px;display:inline-block;padding:4px 11px;border-radius:999px;
+  font-size:9px;font-weight:800;letter-spacing:.14em;color:#F59E0B;
+  background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4)}
 
 #pane_timing .tg-wR{flex:1 1 280px;min-width:0}
 #pane_timing .tg-wsay{font-size:12.5px;line-height:1.65;color:var(--t2);max-width:60ch}
@@ -7520,7 +7529,11 @@ body{background:var(--bg0)}
   letter-spacing:.16em;text-transform:uppercase;color:var(--t3);font-style:normal}
 #pane_timing .tg-wmeta div b{display:block;font-size:13.5px;font-weight:700;
   color:var(--t1);margin-top:5px}
-#pane_timing .tg-wpill{display:inline-flex;align-items:baseline;gap:6px;margin-top:18px;
+#pane_timing .tg-wmeta div s{display:block;text-decoration:none;font-size:10px;
+  color:var(--t3);margin-top:2px}
+#pane_timing .tg-wpilllab{font-size:8.5px;font-weight:800;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--t3);margin-top:18px}
+#pane_timing .tg-wpill{display:inline-flex;align-items:baseline;gap:6px;margin-top:8px;
   padding:8px 15px;border-radius:999px;border:1px solid;font-size:11px;font-weight:800;
   letter-spacing:.08em;text-transform:uppercase}
 #pane_timing .tg-wpill.up{color:var(--green);border-color:rgba(34,197,94,.4);
@@ -26993,6 +27006,24 @@ function tgTodayCls(){
   return out;
 }
 
+/* "aaj din kaisa rahega" said as one sentence — the lean, the month's own
+   rating, and whether a heavy aspect lands today, in that order, sourced
+   from the same D/T/qamAhead the tiles and the wheel already read. Nothing
+   here is a new calculation; it is the first three answers on the page,
+   joined into the sentence a person actually asks. */
+function tgTodaySay(D,T){
+  /* plain text only — the caller runs this through escHtml, so no markup
+     or HTML entities belong in here */
+  var bits=[];
+  if(D)bits.push(D.dir==='up'?('leans up '+D.lean+'% for '+D.asset)
+             :D.dir==='down'?('leans down '+D.lean+'% for '+D.asset)
+             :('no lean for '+D.asset+' — '+D.lean+'%'));
+  if(T)bits.push('the month map calls it '+String(T.cls.v).toLowerCase());
+  var hv=0; try{ hv=tgTodayHeavyCount(); }catch(e){}
+  bits.push(hv>0 ? (hv===1?'one heavy aspect lands today':hv+' heavy aspects land today')
+                 : 'no heavy aspect lands today');
+  return bits.length ? ('Today, in one line: '+bits.join(' · ')+'.') : '';
+}
 function tgMast(st,v,chips){
   var D=null;  try{ D=(typeof qamDayData==='function')?qamDayData():null; }catch(e){}
   var ws=[];   try{ ws=timTodayWindows(st)||[]; }catch(e){}
@@ -27008,6 +27039,13 @@ function tgMast(st,v,chips){
     +'<div class="tg-date">'
       +escHtml(new Date().toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'}))
       +(D&&D.ruler?' &middot; ruled by '+escHtml(D.ruler):'')+'</div>'
+    /* THE ONE QUESTION THE MASTHEAD WAS NOT ANSWERING. Everything it needed
+       was already on the page in stat tiles — the lean, the month's rating,
+       whether a heavy aspect lands today — but scattered across four boxes
+       is not the same as being told. This says it as one sentence, in the
+       first place anyone looks, built from the same three readings the
+       tiles below use so it can never disagree with them. */
+    +'<p class="tg-verdict">'+escHtml(tgTodaySay(D,T))+'</p>'
   +'</div></div><div class="tg-band">'+chips+'</div>';
 
   /* ── the four readouts ─────────────────────────────────────────────── */
@@ -27051,33 +27089,65 @@ function tgWXY(r,deg){
   var a=(deg-90)*Math.PI/180;
   return[TGW.cx+r*Math.cos(a), TGW.cy+r*Math.sin(a)];
 }
-/* closing or fading, and roughly how long — sampled a day either side of
-   now rather than read from a table, same method qamBodyRate uses */
-function tgWClosing(a,b,aspDeg,now){
-  function orbAt(t){
-    var e=getEphemeris(t);
-    var d=Math.abs(rev(e[a].lon)-rev(e[b].lon))%360; if(d>180)d=360-d;
-    return Math.abs(d-aspDeg);
-  }
-  var o0=orbAt(now), o1=orbAt(new Date(+now+86400000));
-  var perDay=o0-o1, applying=perDay>0.0005;
-  var days=Math.abs(perDay)>0.0005?Math.abs(o0/perDay):null;
-  return{applying:applying,days:days};
+
+/* ── WHICH ASPECT THE WHEEL FEATURES ──────────────────────────────────────
+   THE FIRST VERSION OF THIS WHEEL WAS WRONG. It picked whichever of the ten
+   bodies happened to sit closest together in raw degrees right now
+   (liveAspects, a flat 6° orb). That method has no memory of which pairs
+   matter — a Neptune–Pluto sextile can sit under a one-degree orb for
+   MONTHS, because both bodies barely move, and it will out-rank a Sun–Mars
+   aspect that actually says something about today. The wheel showed
+   background noise as "today's story" and never once showed a heavy one,
+   because a slow-body pair is almost always tighter than a fast one.
+
+   The tab already has the right method, built for the lunar layer: qamAhead
+   walks every pair of the ten bodies to the MINUTE it goes exact (bisection,
+   not a snapshot orb), checks it against the 85-pair named table for a rank
+   and a bias, and marks it heavy when the table calls it GOLD or it is a
+   square/opposition between two slow bodies — the kind that does not come
+   round again next month. That is what decides the "HEAVY TODAY" alert in
+   the Moon chapter. The wheel now asks the same question the same way, so
+   the two never disagree: today's heavy aspect first, a heavy one still
+   ahead in the window second, and only if neither exists does it fall back
+   to whatever is soonest to go exact. */
+function tgAheadPick(){
+  var ev=[]; try{ ev=qamAhead(5); }catch(e){}
+  if(!ev.length)return null;
+  var ahead=ev.filter(function(x){ return +x.at>=Date.now()-90*60000; });
+  if(!ahead.length)return null;
+  var heavy=ahead.filter(function(x){ return x.heavy; });
+  var today=new Date().toDateString();
+  var todayHeavy=heavy.filter(function(x){ return new Date(x.at).toDateString()===today; });
+  if(todayHeavy.length)return{ev:todayHeavy[0],scope:'today-heavy'};
+  if(heavy.length)return{ev:heavy[0],scope:'ahead-heavy'};
+  return{ev:ahead[0],scope:'ahead'};
 }
+/* the same three-part answer the masthead needs, so "how is today" and the
+   wheel underneath it are never telling two different stories */
+function tgTodayHeavyCount(){
+  var ev=[]; try{ ev=qamAhead(5); }catch(e){}
+  var today=new Date().toDateString();
+  return ev.filter(function(x){
+    return x.heavy && new Date(x.at).toDateString()===today && +x.at>=Date.now()-90*60000;
+  }).length;
+}
+
 function tgWheelHtml(){
-  var eph=null, asset='Gold', now=new Date();
+  var eph=null, asset='Gold';
   try{ eph=timEph(); }catch(e){}
   try{ asset=timAsset(); }catch(e){}
   if(!eph)return '';
 
-  var A=null; try{ A=liveAspects(eph,6); }catch(e){}
-  var pick=(A&&A.length)?A[0]:null;
+  var pickInfo=null; try{ pickInfo=tgAheadPick(); }catch(e){}
+  var ev=pickInfo&&pickInfo.ev;
+  var aKey=ev?QAM_BODY[ev.p1]:null, bKey=ev?QAM_BODY[ev.p2]:null;
 
-  /* the ring: ten bodies at their real longitude, always drawn */
+  /* the ring: ten bodies at their real longitude, always drawn — this part
+     was never the problem, so it is unchanged */
   var ring='';
   EPH_ORDER.forEach(function(b){
     var deg=rev(eph[b].lon), p=tgWXY(TGW.R,deg);
-    var hit=pick&&(pick.a===b||pick.b===b);
+    var hit=ev&&(b===aKey||b===bKey);
     var S=signOf(deg);
     ring+='<g class="tg-wp'+(hit?' hit':'')+'" transform="translate('+p[0].toFixed(1)+','+p[1].toFixed(1)+')">'
       +(hit?'<circle class="halo" r="15"></circle>':'')
@@ -27098,8 +27168,8 @@ function tgWheelHtml(){
   }
 
   var chord='';
-  if(pick){
-    var p1=tgWXY(TGW.R,rev(eph[pick.a].lon)), p2=tgWXY(TGW.R,rev(eph[pick.b].lon));
+  if(ev){
+    var p1=tgWXY(TGW.R,rev(eph[aKey].lon)), p2=tgWXY(TGW.R,rev(eph[bKey].lon));
     chord='<line class="tg-wchord" x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)
       +'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'"></line>';
   }
@@ -27109,43 +27179,60 @@ function tgWheelHtml(){
     +'<circle cx="148" cy="148" r="'+TGW.R+'" fill="none" stroke="var(--b1)" stroke-width="1"></circle>'
     +ticks+chord+ring+'</svg>';
 
-  /* the centre: nothing to report, or the aspect named and read */
+  /* the centre: which of the three cases this is, said plainly, before the
+     name of the aspect itself */
   var core;
-  if(!pick){
+  if(!ev){
     core='<div class="tg-weye">The sky right now</div>'
-      +'<div class="tg-wnone">No pair falls inside a six-degree orb today.</div>';
+      +'<div class="tg-wnone">Nothing goes exact in the next five days.</div>';
   }else{
-    var read=null; try{ read=aspectRead(pick,asset,eph); }catch(e){}
-    core='<div class="tg-weye">Tightest aspect</div>'
-      +'<div class="tg-wname">'+escHtml((PLANET_NAME[pick.a]||pick.a))+' '+pick.asp.n+' '
-        +escHtml((PLANET_NAME[pick.b]||pick.b))+'</div>';
+    var eyebrow = pickInfo.scope==='today-heavy' ? 'Heavy aspect — today'
+                : pickInfo.scope==='ahead-heavy' ? 'Heavy aspect ahead'
+                : 'Next exact aspect';
+    core='<div class="tg-weye">'+escHtml(eyebrow)+'</div>'
+      +'<div class="tg-wname">'+escHtml(ev.p1)+' '+escHtml(ev.aspect)+' '+escHtml(ev.p2)+'</div>'
+      +(ev.heavy?'<div class="tg-whv">HEAVY</div>':'');
   }
 
-  /* the right-hand read: the aspect's own plain meaning, its orb and its
-     closing time, and the day's own directional lean — the same figure
-     qamDayData already shows, not a second probability invented here */
+  /* the right-hand read: the table's own reason for this pair, the aspect
+     family's plain meaning, its rank, when it actually goes exact — to the
+     minute, from the same bisection the Moon chapter uses, not a re-sampled
+     approximation — and the day's own directional lean for the asset,
+     which is qamDayData's own figure, not a second probability invented
+     here for the wheel alone */
   var right='';
-  if(pick){
-    var read2=null; try{ read2=aspectRead(pick,asset,eph); }catch(e){}
-    var clo=null; try{ clo=tgWClosing(pick.a,pick.b,pick.asp.a,now); }catch(e){}
-    right+='<p class="tg-wsay">'+escHtml(pick.asp.plain)+'</p>';
-    if(read2)right+='<p class="tg-wsay">'+escHtml(read2.why)+'</p>';
+  if(ev){
+    var fam=null; try{ fam=ASPECTS.filter(function(A){return A.n===ev.aspect;})[0]; }catch(e){}
+    right+='<p class="tg-wsay">'+escHtml(ev.profile.reason)
+      +(ev.profile.named?'':' — not in the table, read from the aspect family')+'</p>';
+    if(fam)right+='<p class="tg-wsay">'+escHtml(fam.plain)+'</p>';
+
+    var read2=null;
+    try{ read2=aspectRead({a:aKey,b:bKey,asp:fam||{tone:0,s:ev.sym,n:ev.aspect}},asset,eph); }catch(e){}
+
     right+='<div class="tg-wmeta">'
-      +'<div><i>Orb</i><b>'+pick.orb.toFixed(2)+'&deg;</b></div>'
-      +'<div><i>'+(clo&&clo.applying?'Exact in about':clo?'Fading over about':'Timing')+'</i>'
-        +'<b>'+(clo&&clo.days!=null?qamSpan(clo.days):'&mdash;')+'</b></div>'
-      +'<div><i>For '+escHtml(asset)+'</i><b>'+(read2?(read2.tone==='bull'?'Bullish lean':read2.tone==='bear'?'Bearish lean':'No lean'):'&mdash;')+'</b></div>'
+      +'<div><i>Rank</i><b>'+escHtml(ev.profile.rank)+'</b></div>'
+      +'<div><i>Exact</i><b>'+escHtml(qamWhen(ev.at))+'</b><s>'+escHtml(qamIn(ev.at)||'')+'</s></div>'
+      +'<div><i>This pair, for '+escHtml(asset)+'</i><b>'
+        +(read2?(read2.tone==='bull'?'Bullish lean':read2.tone==='bear'?'Bearish lean':'No lean'):'&mdash;')+'</b></div>'
     +'</div>';
 
+    /* THE TWO NUMBERS ON THIS PANEL CAN DISAGREE, ON PURPOSE. The row above
+       is what this ONE pair says. The pill below is the day's whole-sky
+       lean from qamDayData — the same figure the masthead and the Moon
+       chapter already show. A single Gold-ranked aspect can read bullish
+       while the day as a whole is flat; that is not a bug, it is two
+       different questions, so each is labelled with what it actually is. */
     var D=null; try{ D=(typeof qamDayData==='function')?qamDayData():null; }catch(e){}
     if(D){
       var side=D.dir==='up'?'up':D.dir==='down'?'down':'flat';
-      right+='<div class="tg-wpill '+side+'">'+D.lean+'% probability<s>&mdash; '
+      right+='<div class="tg-wpilllab">The day as a whole, for '+escHtml(asset)+'</div>'
+        +'<div class="tg-wpill '+side+'">'+D.lean+'% probability<s>&mdash; '
         +(D.dir==='up'?'RISE':D.dir==='down'?'FALL':'NO SIDE')+'</s></div>';
     }
   }else{
-    right+='<p class="tg-wsay">Nothing on the ten-body sky is inside a six-degree orb of an exact '
-      +'aspect right now — the tightest chapter below still carries the ones building towards one.</p>';
+    right+='<p class="tg-wsay">No pair among the ten bodies crosses an exact aspect in the next '
+      +'five days — the sky is between events. The month map below still carries the wider read.</p>';
   }
 
   return '<div class="tg-wheel">'
@@ -29330,7 +29417,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b125';
+var CA_BUILD='b126';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
