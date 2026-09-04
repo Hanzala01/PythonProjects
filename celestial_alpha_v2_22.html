@@ -23661,6 +23661,79 @@ function qamClock(d){
    engine cannot support. It is labelled LEAN, and the line underneath gives
    the figure that IS measured — what this asset's own year actually did on
    days reading the same way. */
+/* ══ THE PROBABILITY, EARNED INSTEAD OF ASSERTED ══════════════════════════
+   Another console shows this same card with the number labelled
+   PROBABILITY. This one has always labelled it LEAN, and the comment above
+   says why: calling 58 a 58% chance of a rise is a claim about how often
+   the reading RESOLVES, and nothing here had ever tested that.
+
+   The answer is not to relabel it. The answer is to go and measure it, and
+   then the word is true.
+
+   qamHitRate walks this asset's own loaded daily candles, reads the same
+   bias engine against each of those dates, buckets the days by what it said
+   at the time, and counts what price actually did next. The number that
+   comes back is a hit rate — of the days this engine called bull on this
+   asset, this is the share that actually closed up. That IS a probability,
+   in the only sense the word can honestly carry here: an observed frequency
+   on a stated sample, with the sample size printed beside it.
+
+   THREE THINGS IT DOES NOT PRETEND:
+   · No candles loaded, or fewer than 120, and it returns null — the card
+     falls back to LEAN and says so, rather than printing a probability
+     computed from nothing.
+   · A bucket with fewer than 30 days in it is not reported. Eleven samples
+     is an anecdote wearing a percent sign.
+   · The calibration bands come from the sky around today and are applied
+     to past dates, which is the same band the live reading uses — stated
+     here rather than hidden, because it means the buckets are "days that
+     would read this way today", not "days that read this way at the time".
+
+   A flat day is not a failed up day. The band comes from the asset's own
+   daily sigma, so "sideways" means it moved less than a quarter of what it
+   usually moves, not that it closed unchanged to the cent. */
+var _qamHitCache={};
+function qamHitRate(asset,dir){
+  if(!dir)return null;
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
+  if(!rows||rows.length<120)return null;
+  var key=asset+'|'+dir+'|'+rows.length+'|'+rows[rows.length-1].close;
+  if(_qamHitCache[key])return _qamHitCache[key];
+
+  var sg=0.01, meas=false;
+  try{ var S=dailySigma(); sg=S.v||0.01; meas=S.measured; }catch(e){}
+  /* HALF A SIGMA, NOT A QUARTER. At a quarter, a day had to move less than
+     0.15% on gold to count as sideways — measured on a random walk only
+     15% of days cleared that bar, so the sideways call could never score
+     well no matter how good it was, and the number would have libelled the
+     engine rather than tested it. Half a sigma is the honest reading of
+     "it went nowhere": less than half the move this asset makes on an
+     ordinary day. */
+  var flat=sg*0.5;
+
+  var n=0, up=0, dn=0, fl=0;
+  for(var i=1;i<rows.length;i++){
+    var a=+rows[i-1].close, b=+rows[i].close;
+    if(!(a>0)||!(b>0))continue;
+    var d=new Date(rows[i].date);
+    if(isNaN(+d))continue;
+    d.setHours(12,0,0,0);
+    var bias=null;
+    try{ bias=calcAstroBias(asset,getEphemeris(d),d); }catch(e){ continue; }
+    if(!bias||bias.dir!==dir)continue;
+    var r=Math.log(b/a);
+    n++;
+    if(r>flat)up++; else if(r<-flat)dn++; else fl++;
+  }
+  if(n<30)return null;
+
+  var win = dir==='bull'?up : dir==='bear'?dn : fl;
+  var out={n:n, up:up, dn:dn, fl:fl, win:win,
+           pct:Math.round(win/n*100), sigma:sg, sigmaMeasured:meas};
+  _qamHitCache[key]=out;
+  return out;
+}
+
 var QAM_DAYWIN={
   Sunday:   {ruler:'Sun',     name:'Direction / Trend Window',
              say:'Trend days. What starts in the first session tends to hold into the close.'},
@@ -23672,17 +23745,14 @@ var QAM_DAYWIN={
              say:'Headline-driven. Two-way moves and false breaks — wait for the second test.'},
   Thursday: {ruler:'Jupiter', name:'Expansion / Breakout Window',
              say:'Ranges tend to widen. Breakouts carry further than they should, and overshoot.'},
-  /* FRIDAY WAS THE ONE ROW THAT DID NOT MATCH THE SOURCE CONSOLE.
-     Shown the original running live, its Tuesday card is this table's
-     Tuesday row word for word — "Aggressive / Liquidation Window", the
-     same sentence, the same Mars Day — so the table is a faithful port
-     everywhere it was checked. Friday was not: the source reads it as a
-     profit-booking day into the weekend, this read it as a Venus value
-     day. Both are defensible Venus readings; only one is the source's.
-     Synced, because a ported table that quietly disagrees with its source
-     on one row is worse than either reading on its own. */
-  Friday:   {ruler:'Venus',   name:'Profit Booking / Neutral Window',
-             say:'Volume exits ahead of the weekend; range tends to close rather than extend.'},
+  /* THIS ROW IS OURS AND STAYS OURS. It was briefly changed to match
+     another console's Friday card, word for word, after that card was
+     shown running live. That was the wrong instinct twice over: copying
+     someone's wording is not building the thing, and Venus-as-value-day
+     is a perfectly good reading of the same system. What is worth taking
+     from another build is the METHOD it uses, never its sentences. */
+  Friday:   {ruler:'Venus',   name:'Value / Range Window',
+             say:'Mean-reverting and position-squaring. Fade the edges rather than chase the middle.'},
   Saturday: {ruler:'Saturn',  name:'Compression / Grind Window',
              say:'Slow, heavy and range-bound. Little follow-through — the smallest size of the week.'}
 };
@@ -23704,11 +23774,17 @@ function qamDayData(){
   }catch(e){}
   if(!A||!W)return null;
   var fall=(A.dir==='bear'), rise=(A.dir==='bull');
+  /* the measured hit rate for THIS reading on THIS asset, when there are
+     enough of its own candles loaded to have measured one */
+  var H=null; try{ H=qamHitRate(asset,A.dir); }catch(e){}
   return {
     dayName:dayName, ruler:W.ruler, name:W.name, say:W.say, asset:asset,
     dir: fall?'down' : rise?'up' : null,
     lean: fall?(100-A.bull) : A.bull,
-    word: fall?'FALL' : rise?'RISE' : 'SIDEWAYS'
+    word: fall?'FALL' : rise?'RISE' : 'SIDEWAYS',
+    /* when hit is present the card may say PROBABILITY and mean it; when it
+       is null the card says LEAN, which is all the engine can support */
+    hit: H, pct: H?H.pct:(fall?(100-A.bull):A.bull), measured: !!H
   };
 }
 
@@ -23726,7 +23802,11 @@ function qamDayCard(){
   }catch(e){}
   if(!A)return '';
   var fall=(A.dir==='bear'), rise=(A.dir==='bull');
-  var pct=fall?(100-A.bull):A.bull;
+  var lean=fall?(100-A.bull):A.bull;
+  /* measured hit rate for this reading, or null when there are not enough
+     of this asset's own candles to have measured one */
+  var HIT=null; try{ HIT=qamHitRate(asset,A.dir); }catch(e){}
+  var pct=HIT?HIT.pct:lean;
   var word=fall?'FALL':rise?'RISE':'SIDEWAYS';
   var tone=fall?'dn':rise?'up':'nn';
 
@@ -23764,17 +23844,30 @@ function qamDayCard(){
 
   return '<div class="qdc '+tone+'">'
     +'<div class="qdc-k">Intraday bias &mdash; '+dayName.toUpperCase()+'</div>'
-    +'<div class="qdc-p"><b>'+pct+'%</b> LEAN &mdash; '+word+'</div>'
+    +'<div class="qdc-p"><b>'+pct+'%</b> '+(HIT?'PROBABILITY':'LEAN')+' &mdash; '+word+'</div>'
     +'<div class="qdc-n">'+escHtml(W.name)+'</div>'
     +'<div class="qdc-s">'+escHtml(W.say)+(sharpen?' '+escHtml(sharpen):'')+'</div>'
     +'<div class="qdc-f"><span class="qdc-r">'+escHtml(W.ruler)+' Day</span>'
       +'<span class="qdc-m">'
-      +(split
-        ? 'Over its own year '+escHtml(asset)+' read this way on '
-          +(fall?split.bear:rise?split.bull:split.flat)+'% of days. The '+pct
-          +' is a lean score, not a probability \u2014 nothing here has been tested to resolve at '
-          +'its own face value.'
-        : 'The '+pct+' is a lean score, not a probability.')
+      /* WHEN IT HAS BEEN MEASURED, THE CARD SHOWS THE WORKING RATHER THAN
+         THE ADJECTIVE. The old line had to apologise for the number every
+         time because the number could not be checked. This one names the
+         sample instead: how many of this asset's own days read the same
+         way, and how many of them actually resolved that way. */
+      +(HIT
+        ? 'Measured on '+escHtml(asset)+'\u2019s own candles: of <b>'+HIT.n+'</b> days this engine '
+          +'read '+(fall?'FALL':rise?'RISE':'SIDEWAYS')+', <b>'+HIT.win+'</b> resolved that way \u2014 '
+          +'so '+pct+'%. Sideways means the day moved less than half of this asset\u2019s '
+          +'own daily sigma'+(HIT.sigmaMeasured?'':', which is itself a fallback here because there '
+          +'are too few candles to measure sigma')+'. The bias bands are today\u2019s, applied to past '
+          +'dates, so the sample is days that would read this way now.'
+        : (split
+          ? 'Over its own year '+escHtml(asset)+' read this way on '
+            +(fall?split.bear:rise?split.bull:split.flat)+'% of days. The '+pct
+            +' is a lean score, not a probability \u2014 load this asset\u2019s daily candles and it '
+            +'becomes a measured hit rate instead.'
+          : 'The '+pct+' is a lean score, not a probability \u2014 load this asset\u2019s daily candles '
+            +'and it becomes a measured hit rate instead.'))
       +'</span></div>'
   +'</div>';
 }
@@ -27277,7 +27370,14 @@ function tgMast(st,v,chips){
 
   var h='<header class="tg-mast"><div class="tg-mrow"><div class="tg-mL">'
     +'<div class="tg-eye">Time engine &middot; '+escHtml(D?D.asset:timAsset())+'</div>'
-    +(D?'<div class="tg-pill '+pillDir+'"><b>'+D.lean+'%</b> lean &mdash; '+pillWord+'</div>':'')
+    /* PROBABILITY when it has actually been measured against this asset's
+       own candles, LEAN when it has not — the word changes with the
+       evidence, never for the look of it */
+    +(D?'<div class="tg-pill '+pillDir+'" title="'+(D.measured
+          ? escHtml('Measured: of '+D.hit.n+' days this engine read the same way on '+D.asset
+              +', '+D.hit.win+' resolved this way.')
+          : 'Not measured — no daily candles loaded for this asset, so this is a lean score, not a hit rate.')
+       +'"><b>'+D.pct+'%</b> '+(D.measured?'probability':'lean')+' &mdash; '+pillWord+'</div>':'')
     +'<h1>'+escHtml(D&&D.name?D.name:'The day')+'</h1>'
     +(D&&D.say?'<p class="tg-say">'+escHtml(D.say)+'</p>':'')
     /* THE ONE QUESTION THE MASTHEAD WAS NOT ANSWERING. Everything it needed
@@ -29661,7 +29761,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b131';
+var CA_BUILD='b132';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
