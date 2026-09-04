@@ -7611,7 +7611,7 @@ body{background:var(--bg0)}
 #pane_timing .qam-s, #pane_timing .qam-b, #pane_timing .mm-pos>div,
 #pane_timing .mm-a, #pane_timing .mm-dir, #pane_timing .mm-rev,
 #pane_timing .mm-anchor, #pane_timing .pc, #pane_timing .tx-card,
-#pane_timing .tx-pl, #pane_timing .qam-r{
+#pane_timing .tx-pl, #pane_timing .qam-r, #pane_timing .mm-mc{
   background:linear-gradient(155deg,rgba(var(--rgbAcc),.055),rgba(0,0,0,.16));
   border-color:rgba(var(--rgbAcc),.15);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
@@ -7865,10 +7865,19 @@ body{background:var(--bg0)}
 .mm-dir s{display:block;text-decoration:none;font-size:10px;color:var(--t3);margin-top:4px}
 .mm-dir u{display:block;text-decoration:none;font-size:10.5px;color:var(--t2);margin-top:5px;
   font-variant-numeric:tabular-nums}
-.mm-macro{display:flex;gap:7px;flex-wrap:wrap}
-.mm-macro span{font-size:10.5px;padding:5px 10px;border-radius:7px;border:1px solid var(--b1);color:var(--t2)}
-.mm-macro span.sure{border-color:var(--cy);color:var(--cy)}
-.mm-macro span.maybe{color:var(--t3);border-style:dashed}
+.mm-macro{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.mm-mc{border:1px solid var(--b1);border-radius:11px;padding:11px 13px;background:var(--card2)}
+.mm-mca{font-size:8.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--p3)}
+.mm-mcn{font-size:12.5px;font-weight:700;color:var(--t1);margin-top:4px}
+.mm-mcn i{font-style:normal;font-weight:500;font-size:10.5px;color:var(--t3)}
+.mm-mci{display:inline-block;margin-top:8px;font-size:8.5px;font-weight:800;letter-spacing:.1em;
+  padding:3px 8px;border-radius:99px;border:1px solid var(--b1);color:var(--t3)}
+.mm-mcs{font-size:10.5px;line-height:1.55;color:var(--t3);margin-top:7px}
+.mm-mc.mi-high{border-color:rgba(239,68,68,.4)}
+.mm-mc.mi-high .mm-mci{color:var(--dn);border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.09)}
+.mm-mc.mi-medium{border-color:rgba(245,158,11,.35)}
+.mm-mc.mi-medium .mm-mci{color:var(--warn);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+.mm-mc.mi-low .mm-mci{color:var(--t3)}
 .mm-rev{border:1px solid var(--b1);border-radius:9px;padding:10px 13px;background:var(--card2)}
 .mm-rev.good{border-color:var(--up)}
 .mm-rev b{font-size:13px;color:var(--t1)}
@@ -24309,8 +24318,69 @@ function mmLunation(t){
   return null;
 }
 
+/* ── WHICH ASSET A MAJOR PRINT ACTUALLY MOVES ───────────────────────────
+   The macro chips said "NFP / Employment" and left it there — every asset
+   on the picker got the same chip with no way to tell whether a print is
+   the thing that moves THIS one or background noise for it. NFP is built
+   to move a USD pair; it is a secondhand shock to Nvidia through the index.
+   Both deserve the chip. Neither deserves the same weight.
+
+   This is a reactivity read, not a direction — the app already refuses to
+   assert an unpublished FOMC date because a wrong date poisons every
+   classification that leans on it, and guessing which way a number as yet
+   unprinted will move price is the same mistake one step further. What CAN
+   be said honestly, in advance, is which channel each print reaches an
+   asset through and how hard it typically lands — that is what HIGH/MEDIUM/
+   LOW below means; not "the print will be bullish", but "the print will be
+   loud, and here is why". */
+var MM_MACRO_IMPACT={
+  'NFP / Employment':{
+    Gold:{t:'high',say:'One of the most reactive assets to NFP — USD and rate-path repricing moves it hard within minutes.'},
+    Silver:{t:'high',say:'Moves with Gold, usually a wider percentage swing on the same headline.'},
+    Bitcoin:{t:'medium',say:'Reacts through the risk-on/risk-off shift in equities more than the number itself.'},
+    Ethereum:{t:'medium',say:'Same channel as Bitcoin — one step further from the number.'},
+    EURUSD:{t:'high',say:'A USD pair on a USD jobs number — this is the print it is built around.'},
+    GBPUSD:{t:'high',say:'Same USD driver as EURUSD, usually a step calmer.'},
+    Oil:{t:'medium',say:'Reacts through the dollar and the growth outlook, not the payrolls figure directly.'},
+    Nasdaq:{t:'medium',say:'A strong or weak print resets rate-cut odds, which growth stocks are sensitive to.'},
+    SPX500:{t:'medium',say:'Same rate-odds channel as Nasdaq, usually calmer.'},
+    Apple:{t:'low',say:'Moves with the index reaction more than on its own name.'},
+    Tesla:{t:'low',say:'Index-level reaction; rarely a name-specific move on this print.'},
+    Nvidia:{t:'low',say:'Index-level reaction; rarely a name-specific move on this print.'}
+  },
+  'Quarter end':{
+    Gold:{t:'medium',say:'Fund rebalancing can move price on flow alone, without new information.'},
+    Silver:{t:'medium',say:'Same flow-driven effect as Gold; thinner liquidity makes it sharper.'},
+    Bitcoin:{t:'low',say:'Traditional-fund rebalancing has limited direct read-through.'},
+    Ethereum:{t:'low',say:'Same as Bitcoin — limited direct read-through.'},
+    EURUSD:{t:'low',say:'FX rebalancing exists but is smaller than the equity/bond flow.'},
+    GBPUSD:{t:'low',say:'Same as EURUSD.'},
+    Oil:{t:'low',say:'Rarely a quarter-end-flow-driven asset.'},
+    Nasdaq:{t:'high',say:'Index and sector rebalancing, plus fund window-dressing, land here directly.'},
+    SPX500:{t:'high',say:'The most exposed to quarter-end index-rebalancing flow.'},
+    Apple:{t:'medium',say:'A heavyweight index constituent — rebalancing flow passes through it.'},
+    Tesla:{t:'medium',say:'Same — a large-weight name inside the rebalanced indices.'},
+    Nvidia:{t:'medium',say:'Same — a large-weight name inside the rebalanced indices.'}
+  },
+  'CPI / PPI window':{
+    Gold:{t:'high',say:'Inflation prints are one of Gold’s two or three biggest catalysts of the month.'},
+    Silver:{t:'high',say:'Moves with Gold; the industrial-demand angle adds a second driver.'},
+    Bitcoin:{t:'medium',say:'Reacts to the rate-path repricing that follows a hot or cool print.'},
+    Ethereum:{t:'medium',say:'Same channel as Bitcoin.'},
+    EURUSD:{t:'high',say:'US inflation resets the rate differential this pair is priced on.'},
+    GBPUSD:{t:'high',say:'Same rate-differential channel as EURUSD.'},
+    Oil:{t:'medium',say:'Inflation feeds into the dollar and demand outlook rather than moving it directly.'},
+    Nasdaq:{t:'high',say:'Rate-sensitive growth names re-price hard on an inflation surprise.'},
+    SPX500:{t:'medium',say:'Broader and calmer than Nasdaq to the same repricing.'},
+    Apple:{t:'low',say:'Moves with the index reaction more than on its own.'},
+    Tesla:{t:'low',say:'Index-level reaction on this print.'},
+    Nvidia:{t:'medium',say:'A high-multiple growth name — more sensitive to rate repricing than the average large-cap.'}
+  }
+};
+var MM_IMPACT_FALLBACK={t:'low',say:'No established direct read-through for this asset — treat it as background risk rather than a driver.'};
+
 /* ── STEP 4 — macro, and an honest gap where one belongs ───────────────── */
-function mmMacro(d){
+function mmMacro(d,asset){
   var out=[];
   var dow=d.getDay(), dom=d.getDate(), m=d.getMonth();
   /* NFP: the first Friday. That one IS a rule and can be derived. */
@@ -24321,6 +24391,11 @@ function mmMacro(d){
   /* CPI and PPI cluster mid-month but the exact day is published, not
      derived. Flagged as a window rather than asserted as a date. */
   if(dom>=10&&dom<=15) out.push({name:'CPI / PPI window', sure:false});
+  out.forEach(function(x){
+    var M=MM_MACRO_IMPACT[x.name]||{};
+    x.impact=(asset&&M[asset])||MM_IMPACT_FALLBACK;
+    x.asset=asset||'Gold';
+  });
   return out;
 }
 
@@ -24395,7 +24470,7 @@ function mmMonth(year,month,asset){
       aspects:mmAspects(t,asset),
       ingress:ing, cardinal:card,
       lunation:mmLunation(+new Date(year,month,dom,0,0,0,0)),
-      macro:mmMacro(d)
+      macro:mmMacro(d,asset)
     };
     day.cls=mmClassify(day);
     day.dirn=mmDirection(day);
@@ -24598,10 +24673,24 @@ function mmWorking(d){
   +'</div>';
 
   if(d.macro.length){
-    h+='<div class="mm-wt">Step 4 &mdash; macro</div><div class="mm-macro">'
+    /* THE CHIP DID NOT SAY WHICH ASSET IT WAS TALKING ABOUT, OR HOW LOUD IT
+       WOULD LAND ON IT. Every asset on the picker got the same "NFP /
+       Employment" chip, whether NFP is the print that asset is built
+       around or two channels removed from it. Each chip now opens with the
+       asset it is being read for and closes with a HIGH/MEDIUM/LOW read on
+       how directly that asset reacts to this kind of print — a reactivity
+       call, not a direction. Nothing here says which way the number moves
+       price; that is not knowable before the number exists. */
+    h+='<div class="mm-wt">Step 4 &mdash; macro, for '+escHtml(d.macro[0].asset)+'</div>'
+      +'<div class="mm-macro">'
       + d.macro.map(function(x){
-          return '<span class="'+(x.sure?'sure':'maybe')+'">'+escHtml(x.name)
-            +(x.sure?'':' — a window, not a published date')+'</span>'; }).join('')
+          return '<div class="mm-mc mi-'+x.impact.t+'">'
+            +'<div class="mm-mca">'+escHtml(x.asset)+'</div>'
+            +'<div class="mm-mcn">'+escHtml(x.name)
+              +(x.sure?'':' <i>— a window, not a published date</i>')+'</div>'
+            +'<div class="mm-mci">'+x.impact.t.toUpperCase()+' impact</div>'
+            +'<div class="mm-mcs">'+escHtml(x.impact.say)+'</div>'
+          +'</div>'; }).join('')
       +'</div>';
   }
 
@@ -24633,6 +24722,29 @@ function monthMapHtml(){
   });
 
   var h='<div class="mm">';
+
+  /* MAJOR NEWS TODAY — the same alert shape the Moon chapter already uses
+     for a heavy aspect, read for the currently browsed month against
+     today's actual date rather than whichever day is selected. Only fires
+     when a print exists today AND that print's read for this asset is
+     medium or high — a low-impact chip does not deserve an alert. */
+  try{
+    var todayD=new Date();
+    if(M.year===todayD.getFullYear() && M.month===todayD.getMonth()){
+      var todayRow=M.days.filter(function(x){ return x.dom===todayD.getDate(); })[0];
+      var loud=todayRow?todayRow.macro.filter(function(x){
+        return x.impact.t==='high'||x.impact.t==='medium'; }):[];
+      if(loud.length){
+        h+='<div class="qam-alert" style="margin:0 0 14px">'
+          +'<span class="qam-ab">MAJOR NEWS TODAY</span>'
+          +'<span class="qam-at">'+loud.map(function(x){
+              return '<b>'+escHtml(x.name)+'</b> for <b>'+escHtml(x.asset)+'</b> &mdash; '
+                +x.impact.t.toUpperCase()+' impact. '+escHtml(x.impact.say);
+            }).join('<br>')+'</span></div>';
+      }
+    }
+  }catch(e){}
+
   h+='<div class="mm-top">'
     +'<button class="mm-nav" onclick="mmGo(-1)">&larr;</button>'
     +'<div class="mm-title"><b>'+escHtml(name)+'</b><s>'+escHtml(M.asset)
@@ -24674,9 +24786,13 @@ function monthMapHtml(){
 
   h+='<div class="mm-foot">Every position here is read from this app&rsquo;s own ephemeris at that '
     +'date, never remembered. NFP is the first Friday and quarter end is the last session of the '
-    +'quarter — both are rules. CPI, PPI and FOMC are published diary dates and are shown as a '
-    +'window rather than asserted, because a made-up FOMC date would quietly poison every '
-    +'classification that leaned on it.</div>';
+    +'quarter — both are rules. CPI and PPI cluster mid-month but the exact day is published, not '
+    +'derived, so it is shown as a window rather than asserted — a made-up date would quietly '
+    +'poison every classification that leaned on it. FOMC is not shown for the same reason and no '
+    +'weaker one: this app does not hold a real Fed meeting calendar, so rather than guess a date '
+    +'it says nothing. The HIGH/MEDIUM/LOW read beside each print is how directly the selected '
+    +'asset typically reacts to that kind of number, never which way it will move — that is not '
+    +'knowable before the number exists.</div>';
   return h+'</div>';
 }
 
@@ -29536,7 +29652,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b129';
+var CA_BUILD='b130';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
