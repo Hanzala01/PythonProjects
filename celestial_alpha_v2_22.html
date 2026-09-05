@@ -7004,6 +7004,22 @@ body{background:var(--bg0)}
 .sn-h2do span i{font-style:normal;font-size:8px;letter-spacing:.07em;text-transform:uppercase;
   color:var(--t3);margin-right:6px}
 .sn-h2do span.hide{display:none}
+/* what the next release does to the dollar, both branches */
+.sn-dxy{margin-top:12px;padding-top:12px;border-top:1px solid var(--b1)}
+.sn-dxy>i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.sn-dxr{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:7px 10px;
+  border:1px solid var(--b1);border-radius:9px;margin-bottom:6px;
+  background:linear-gradient(155deg,rgba(var(--rgbAcc),.05),rgba(0,0,0,.14))}
+.sn-dxr u{flex:1 1 190px;text-decoration:none;font-size:11px;color:var(--t2)}
+.sn-dxr b,.sn-dxr s{text-decoration:none;font-size:11.5px;font-weight:800;letter-spacing:.02em;
+  white-space:nowrap}
+.sn-dxr b.up,.sn-dxr s.up{color:var(--green)}
+.sn-dxr b.dn,.sn-dxr s.dn{color:var(--red)}
+.sn-dxy em{display:block;font-style:normal;font-size:9.5px;line-height:1.6;color:var(--t3);
+  margin-top:6px}
+.sn-dxy em.inv{color:var(--amber)}
+.sn-dxy.none span{display:block;font-size:10.5px;line-height:1.6;color:var(--t3)}
 
 .mj-in{display:grid;grid-template-columns:auto minmax(240px,1fr);gap:10px 16px;
   align-items:start;margin:9px 0 12px;
@@ -29777,7 +29793,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b133';
+var CA_BUILD='b134';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -34849,6 +34865,57 @@ function senRisk(next){
     b:'Let winners run to the level'};
 }
 
+/* ══ WHAT THE NEXT RELEASE DOES TO THE DOLLAR ═══════════════════════════
+   The hero card counted down to the release and never said what happens
+   when it lands. The conditional already existed — evBiasHtml prints it on
+   the small cards further down — but the card with the clock on it, the one
+   actually being looked at, stopped at Previous / Forecast.
+
+   DXY IS THE CHANNEL, WHICH IS WHY IT IS THE ONE NAMED. A US print does not
+   reach gold or the indices directly; it reprices the dollar, and everything
+   quoted in dollars takes the other side by construction. "DXY up, XAU
+   down" is not a second forecast — it is the arithmetic the legend already
+   states, applied to the release that is actually next.
+
+   NO DIRECTION IS CLAIMED FOR THE NUMBER. Both branches are printed,
+   because which one lands is not knowable until it prints. That is the
+   whole point: this tells you what to do once it does, not what it will be. */
+function senDxyHtml(next){
+  if(!next)return '';
+  var R=null; try{ R=evRead(next); }catch(e){ return ''; }
+  if(!R||!R.map)return '';
+  if(R.noNumber)
+    return '<div class="sn-dxy none"><i>On the dollar</i>'
+      +'<span>No number is published on this one, so there is no beat or miss for DXY to '
+      +'react to. It can still move on wording — which is a reason to be smaller, not a '
+      +'reason to have a side.</span></div>';
+
+  var usd=(R.ccy==='USD');
+  var kind=(R.kind&&R.kind.k)?R.kind.k:'this reading';
+  var strong=R.inverted?'a higher number':'a beat';
+  var weak  =R.inverted?'a lower number' :'a miss';
+  /* on an inverted indicator a higher print WEAKENS the currency, so the
+     condition that lifts it is the low one — same mapping evBiasHtml uses */
+  var ccyUpOn=R.inverted?weak:strong, ccyDnOn=R.inverted?strong:weak;
+
+  function row(cond,ccyUp){
+    var dxy = usd ? (ccyUp?'up':'down') : (ccyUp?'down':'up');
+    var xau = dxy==='up'?'down':'up';
+    return '<div class="sn-dxr">'
+      +'<u>'+escHtml(cond+' on '+kind)+'</u>'
+      +'<b class="'+(dxy==='up'?'up':'dn')+'">DXY '+dxy+'</b>'
+      +'<s class="'+(xau==='up'?'up':'dn')+'">XAU '+xau+'</s>'
+    +'</div>';
+  }
+  return '<div class="sn-dxy"><i>On the dollar &mdash; '+escHtml(R.map.name)+' release</i>'
+    +row(ccyUpOn,true)+row(ccyDnOn,false)
+    +(R.inverted?'<em class="inv">Inverted: a higher reading here is bad for '
+      +escHtml(R.map.name)+', not good.</em>':'')
+    +'<em>Both branches are shown because which one lands is not knowable until it prints. '
+      +'Everything quoted in dollars takes the opposite side of DXY by construction.</em>'
+  +'</div>';
+}
+
 /* headline tally → one net number in −1..+1 */
 function senNewsMood(items){
   var b=0,s=0,f=0,scored=[];
@@ -35418,7 +35485,11 @@ function renderSentimentV3(){
       +'<span id="sn_nh_pv">Previous —</span>'
       +'<span id="sn_nh_fc">Forecast —</span>'
       +'<span id="sn_nh_cmp" class="hide"></span>'
-    +'</div></div>'
+    +'</div>'
+    /* what it does to the dollar when it lands — the question the countdown
+       was raising and never answering */
+    +(function(){ try{ return senDxyHtml(next); }catch(e){ return ''; } })()
+    +'</div>'
    +'<div class="sn-moods">'+gauges+'</div>'
    /* Four boxes explaining what three ring colours mean was more furniture
       than information — one line says the same thing. */
