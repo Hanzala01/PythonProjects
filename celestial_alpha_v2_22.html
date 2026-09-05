@@ -2094,6 +2094,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .snm-c.ok b{color:var(--up)} .snm-c.warn b{color:var(--warn)} .snm-c.na b{color:var(--t3);font-size:12px}
 .snm-c s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);line-height:1.55}
 .snm-f{font-size:9.5px;color:var(--t3);line-height:1.7;margin-top:10px}
+/* the full yield curve — four maturities, each read on its own and against gold */
+.snm-yh{margin-top:14px;padding-top:12px;border-top:1px solid var(--b1);
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.snm-yh b{font-family:'Space Grotesk';font-size:14px;font-weight:800;color:var(--t1)}
+.snm-yh span{font-size:10px;color:var(--t3)}
+.snm-ycols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:11px}
+.snm-y{padding:11px 13px;border-radius:12px;border:1px solid var(--b1);background:rgba(var(--g11),.5)}
+.snm-y.ok{border-color:rgba(34,197,94,.3)}
+.snm-y.warn{border-color:rgba(245,158,11,.4)}
+.snm-y.na{opacity:.75}
+.snm-y u{display:block;text-decoration:none;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);font-weight:700}
+.snm-y u i{font-style:normal;text-transform:none;letter-spacing:0;color:var(--t3)}
+.snm-y.na>s{display:block;text-decoration:none;font-size:9.5px;color:var(--t3);
+  line-height:1.55;margin-top:6px}
+.snm-yv{font-family:'Space Grotesk';font-size:20px;font-weight:800;color:var(--t1);margin-top:3px}
+.snm-yr{display:flex;flex-direction:column;gap:5px;margin-top:9px}
+.snm-yr span{font-size:10px;color:var(--t2);line-height:1.5}
+.snm-yr span i{display:inline-block;font-style:normal;min-width:88px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;font-size:8px;color:var(--t3);margin-right:6px}
+.snm-yr span s{text-decoration:none;color:var(--t3)}
 /* the backtest */
 .bt-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
 .bt-c{padding:10px 12px;border-radius:11px;border:1px solid var(--b1);background:rgba(var(--g11),.5)}
@@ -19082,6 +19103,70 @@ function crossDivergence(rows,otherRows,pv,label,opt){
   return D;
 }
 
+/* ══ THE YIELD'S OWN READING — CHANGE, TREND, Z-SCORE, MOMENTUM ═════════
+   The curve was already fetched for one purpose — correlating each maturity
+   against gold — and the four series themselves were never read on their
+   own terms. This does that, from the exact same rows CQE_XM_CACHE.curve
+   already holds, with no second fetch.
+
+   CHANGE is the plain arithmetic: session over session, and over the last
+   21 sessions (a trading month), in basis points.
+
+   TREND compares the last five sessions' average against the five before
+   that, and calls it flat unless the move clears half a standard deviation
+   of the series' own five-session swings — the same half-sigma convention
+   this app already uses to decide when a day counts as "sideways" rather
+   than "up" or "down", applied here instead of an arbitrary basis-point
+   cutoff that would mean one thing on the 1-year and another on the 30.
+
+   Z-SCORE is the level against its own loaded history — how stretched
+   today's print is relative to what this maturity has actually printed,
+   not against some external assumption of "normal".
+
+   MOMENTUM reuses momentum(rows) unchanged — the same RSI/ROC/MACD math
+   already applied to every price series in this file. Nothing new is
+   invented; a yield curve read as a level series is exactly the input that
+   function already expects. It is labelled a technical reading, because
+   RSI on a yield is a technique, not a macro forecast. */
+function yieldSeriesStats(rows){
+  var S={required:[]};
+  if(!rows||rows.length<21){ S.required.push('at least 21 sessions'); return S; }
+  var sorted=rows.slice().sort(function(a,b){return (a.t||0)-(b.t||0);});
+  var c=sorted.map(function(r){return num(r.close);}).filter(function(x){return x!=null;});
+  var n=c.length;
+  if(n<21){ S.required.push('at least 21 valid prints'); return S; }
+  S.latest=c[n-1];
+  S.latestDate=sorted[sorted.length-1].t?new Date(sorted[sorted.length-1].t):null;
+
+  /* change — plain, in basis points (a yield is stored in percentage points) */
+  S.chg1d=+((c[n-1]-c[n-2])*100).toFixed(1);
+  if(n>=22)S.chg21d=+((c[n-1]-c[n-22])*100).toFixed(1);
+
+  /* trend — half a sigma of the series' own five-session swings, the same
+     flat-band convention qamHitRate uses for "sideways" */
+  var diffs=[]; for(var i=1;i<n;i++)diffs.push(c[i]-c[i-1]);
+  var dailySd=sd(diffs);
+  if(n>=10&&dailySd!=null){
+    var last5=mean(c.slice(n-5)), prev5=mean(c.slice(n-10,n-5));
+    var d=last5-prev5, band=dailySd*Math.sqrt(5)*0.5;
+    S.trend={dir: d>band?'rising':d<-band?'falling':'flat',
+             bps:+((d)*100).toFixed(1)};
+  }
+
+  /* z-score — the level against its own loaded history */
+  var m=mean(c), s=sd(c);
+  if(n>=60&&s){ S.z=+((S.latest-m)/s).toFixed(2); S.zN=n; }
+
+  /* momentum — the same function every price series in this file uses */
+  /* momentum() lives in the OTHER closure (the price-methods one, exported
+     as CQE.momentum) — this closure only has crossDivergence's neighbours,
+     so it is reached the same way every other cross-closure call in this
+     file is reached: through root.CQE, never by its bare name. */
+  try{ S.momentum=CQE.momentum(sorted); }catch(e){ S.momentum={required:['momentum unavailable']}; }
+
+  return S;
+}
+
 /* ══ 6 · THE DIVERGENCE SCORE ═════════════════════════════════════════
    A weighted mean of whatever could actually be computed, renormalised over
    those, with the missing ones named. It counts contradictory evidence. It
@@ -19112,6 +19197,10 @@ root.CQE.divergence={
   bbWidthSeries:bbWidthSeries, realisedVolSeries:realisedVolSeries,
   WEIGHTS:DIV_WEIGHTS
 };
+/* yieldSeriesStats and momentum() both live inside this closure, along with
+   every other price-series helper — the Sentiment page's render functions
+   live outside it and could not reach either one without this. */
+root.CQE.yieldStats=yieldSeriesStats;
 })(typeof window!=='undefined'?window:global);
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -29793,7 +29882,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b134';
+var CA_BUILD='b136';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -34497,7 +34586,7 @@ function macroEconPulse(which,cb){
    staleness before it is shown, and a stale figure is labelled with its age
    instead of being passed off as live. */
 var FMP_KEY='IO43kBiJ7ZymeLdmrlX3NlOyIAXCKbzA';
-var FRED_KEY='c430d00ac1788cdd16434956b4d08699';
+var FRED_KEY='de02d75bbc16d6f45d80aec1bb8239fd';
 /* BLS is CORS-open and current, but the unregistered pool is usually spent.
    Registration is free at bls.gov/developers — paste the key in Settings and
    CPI and payrolls come from the source that publishes them. */
@@ -35171,7 +35260,7 @@ function senMacroHtml(){
           : (div?'not behaving as usual right now':'behaving as usual')+' · '+plain)
       +'</s></div>';
   }
-  return '<div class="snm">'
+  var h='<div class="snm">'
     +'<div class="snm-h"><b>The dollar and the curve</b>'
       +'<span>correlation with this asset, measured over 20, 50 and 100 sessions</span></div>'
     +'<div class="snm-g">'
@@ -35180,8 +35269,100 @@ function senMacroHtml(){
     +'</div>'
     +'<div class="snm-f">These are context, not signals. A correlation is a description of '
     +'what has been happening, not a rule about what happens next — and when the three '
-    +'lengths disagree the honest answer is that there is nothing to read.</div>'
-  +'</div>';
+    +'lengths disagree the honest answer is that there is nothing to read.</div>';
+
+  /* the whole curve, not only the ten-year — same correlation engine
+     (C.yieldCurve, already computed for every maturity, never shown before
+     this) plus each maturity's own change/trend/z-score/momentum */
+  h+=senYieldCurveHtml(C);
+
+  return h+'</div>';
+}
+
+/* ══ THE FULL YIELD CURVE ═══════════════════════════════════════════════
+   The correlation cell above reads one maturity — the ten-year — because
+   that is the one the composite divergence score votes on. The other three
+   were computed the whole time (cqeRun builds a curveOut entry for every
+   maturity in CQE_YIELD_SET) and never printed anywhere. The short end and
+   the long end can move opposite ways, which is itself the information a
+   single "10Y yield" cell hides.
+
+   Six figures per maturity, four of them read on the yield alone rather than
+   against gold: the last change, the five-versus-prior-five trend, how
+   stretched the level is against its own history (z-score), and a technical
+   momentum reading (RSI/ROC/MACD, the same function every price series in
+   this file uses). The other two — correlation and divergence — are gold's
+   relationship to that maturity, already computed by the same DV.cross()
+   the ten-year cell above uses. Nothing here is asserted about what a
+   change in rates will do to price beyond what those two measured numbers
+   already say. */
+function senYieldCurveHtml(C){
+  var curve=C&&C.yieldCurve;
+  var raw=(typeof CQE_XM_CACHE!=='undefined'&&CQE_XM_CACHE.curve)||null;
+  if(!curve&&!raw)return '';
+  var order=['1Y','5Y','10Y','30Y'];
+
+  function trendTxt(S){
+    if(!S||!S.trend)return '—';
+    var t=S.trend;
+    return (t.dir==='rising'?'Rising':t.dir==='falling'?'Falling':'Flat')
+      +' <s>'+(t.bps>0?'+':'')+t.bps+' bps, last 5 vs prior 5 sessions</s>';
+  }
+  function momTxt(S){
+    var M=S&&S.momentum;
+    /* momentum() always returns required as an array — [] on success, which
+       is truthy, so checking M.required alone reported every real reading
+       as unavailable. The length is what actually means "could not
+       compute". */
+    if(!M||(M.required&&M.required.length))return '—';
+    var bits=[];
+    if(M.rsi14!=null)bits.push('RSI '+M.rsi14.toFixed(0));
+    if(M.roc10!=null)bits.push('ROC10 '+(M.roc10>=0?'+':'')+M.roc10.toFixed(2)+'%');
+    return bits.length?bits.join(' &middot; '):'—';
+  }
+
+  var cols=order.map(function(k){
+    var d=curve&&curve[k];
+    var rr=raw&&raw[k];
+    var missing=!rr||!rr.rows;
+    var S=missing?null:(function(){ try{ return CQE.yieldStats(rr.rows); }catch(e){ return null; } })();
+    var noStats=!S||(S.required&&S.required.length);
+
+    if(missing&&noStats){
+      var why=(rr&&rr.label)||(d&&d.label)||(k+' yield — not loaded');
+      return '<div class="snm-y na"><u>'+k+'</u><b>—</b><s>'+escHtml(why)+'</s></div>';
+    }
+
+    var dCls = (!d||d.average==null) ? 'na'
+      : /UNSTABLE/.test(d.classification||'') ? 'na'
+      : d.classification==='DIVERGING' ? 'warn' : 'ok';
+    var corrTxt = (!d||d.average==null) ? 'not computed'
+      : /UNSTABLE/.test(d.classification||'') ? d.average.toFixed(2)+' (unstable — 20/50/100 disagree)'
+      : d.average.toFixed(2)+' ('+(d.classification==='DIVERGING'?'not behaving as usual':'as usual')+')';
+
+    return '<div class="snm-y '+dCls+'">'
+      +'<u>'+k+' yield'+(rr&&rr.real===false?' <i>(ETF proxy)</i>':'')+'</u>'
+      +'<div class="snm-yv">'+(noStats?'—':S.latest.toFixed(2)+'%')+'</div>'
+      +'<div class="snm-yr">'
+        +'<span><i>Change</i>'+(noStats?'—':(S.chg1d>=0?'+':'')+S.chg1d+' bps/session'
+          +(S.chg21d!=null?' &middot; '+(S.chg21d>=0?'+':'')+S.chg21d+' bps/month':''))+'</span>'
+        +'<span><i>Trend</i>'+trendTxt(S)+'</span>'
+        +'<span><i>Z-score</i>'+(noStats||S.z==null?'not enough history':S.z+' &middot; over '+S.zN+' sessions')+'</span>'
+        +'<span><i>Momentum</i>'+momTxt(S)+'</span>'
+        +'<span><i>Gold correlation</i>'+corrTxt+'</span>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  return '<div class="snm-yh"><b>The yield curve</b>'
+    +'<span>each maturity read on its own — change, trend, z-score, momentum — '
+    +'and against gold — correlation and whether that relationship is currently behaving</span></div>'
+    +'<div class="snm-ycols">'+cols+'</div>'
+    +'<div class="snm-f">Z-score and momentum are technical readings of the yield level itself — '
+    +'the same statistics and the same RSI/ROC math this app applies to a price series — not a '
+    +'forecast of where rates go next. Correlation is the same 20/50/100-session measurement used '
+    +'above, run separately for each maturity, because the short end and the long end can move '
+    +'opposite ways.</div>';
 }
 
 /* ══════════════════════════════════════════════════════════════════════
