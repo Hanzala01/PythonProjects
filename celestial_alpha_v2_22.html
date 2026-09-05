@@ -1717,6 +1717,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cset-st.on i{background:var(--up);box-shadow:0 0 0 3px rgba(34,197,94,.15)}
 .cset-st.err i{background:var(--warn);box-shadow:0 0 0 3px rgba(245,158,11,.15)}
 .cset-st.busy i{background:var(--p2);animation:jvDotPulse 1.2s var(--ease) infinite}
+/* stacked directly above the risk FAB, same 20px margin, so the two read as
+   a deliberate pair of corner buttons rather than one floating and one not */
+.jv-fab{position:fixed;right:20px;bottom:86px;width:52px;height:52px;border-radius:50%;z-index:59;
+  display:grid;place-items:center;cursor:pointer;border:1px solid var(--b2);
+  /* plain near-black, not a token that flips light on Platinum — same
+     choice already made for .rfab just below it, for the same reason: a
+     floating button needs to read as a shadowed circle on every ground,
+     including a near-white one. */
+  background:radial-gradient(120% 120% at 30% 20%,var(--b2),rgba(0,0,0,.88));
+  box-shadow:0 10px 26px rgba(0,0,0,.5),0 0 0 5px rgba(var(--rgbCore),.12);
+  transition:.2s var(--ease)}
+.jv-fab svg{width:26px;height:26px}
+.jv-fab:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.55),0 0 0 6px rgba(var(--rgbCore),.16)}
+.jv-fab.hide{display:none}
 .jvp{position:fixed;right:20px;bottom:88px;width:352px;max-height:min(78vh,620px);z-index:60;
   display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:1px solid var(--b2);
   background:var(--bg1);box-shadow:0 20px 60px rgba(0,0,0,.6);
@@ -9646,6 +9660,23 @@ body{background:var(--bg0)}
 </main>
 </div>
 
+<!-- THE BUTTON CAME BACK. It was removed on the reasoning that a wake word
+     needs nothing to press — say "CELESX" and it is already listening. That
+     is true exactly when two things are also true: the browser supports
+     speech recognition, and the wake word has been switched on in Settings,
+     which it is not by default. Until both of those hold, removing the
+     button did not make the mic the way in — it left no way in at all.
+     jv_fab (the old id) is still force-removed by jvRender() every render,
+     so this is a different id and untouched by that cleanup. It hides
+     itself while the panel is open. -->
+<button id="jv_launch" class="jv-fab" onclick="jvToggle(true)" title="Ask Celestial or CELESX" aria-label="Open the assistant">
+  <svg viewBox="0 0 40 40">
+    <path d="M31.4 12.2A14 14 0 1 0 31.4 27.8" fill="none" style="stroke:var(--markDim)"
+          stroke-width="4.4" stroke-linecap="butt"/>
+    <path d="M14.4 27L20 12.4L25.6 27M16.9 21.4H23.1" fill="none" style="stroke:var(--markLit)"
+          stroke-width="2.6" stroke-linecap="butt" stroke-linejoin="miter"/>
+  </svg>
+</button>
 <div id="login_gate" style="position:fixed;inset:0;z-index:100000;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse 800px 560px at 50% 26%,rgba(var(--rgbDeep),.22),transparent 62%),var(--chartbg);overflow:hidden">
   <div class="cs-stars s1" style="position:absolute;inset:0"></div>
   <div class="cs-stars s2" style="position:absolute;inset:0"></div>
@@ -13926,11 +13957,12 @@ function jvRender(){
   var el=document.getElementById('jv_panel');
   if(!el){ el=document.createElement('div'); el.id='jv_panel'; document.body.appendChild(el); }
   el.className='jvp'+(JV_OPEN?' open':'');
-  /* NOTHING SITS ON THE SCREEN WAITING TO BE PRESSED.
-     There was a microphone button parked in the corner of every tab. With a
-     wake word there is nothing to press, so it is gone; the conversation panel
-     opens from Settings when you want to read it back or type. */
+  /* the OLD floating button (jv_fab) stays gone — this is jv_launch, added
+     back separately below, and it hides itself while the panel is open so
+     the two never sit on screen at once */
   var old=document.getElementById('jv_fab'); if(old)old.remove();
+  var launch=document.getElementById('jv_launch');
+  if(launch)launch.classList.toggle('hide',JV_OPEN);
   if(!JV_OPEN){ el.innerHTML=''; return; }
 
   var P=jvPrefs();
@@ -30169,7 +30201,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b139';
+var CA_BUILD='b140';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
