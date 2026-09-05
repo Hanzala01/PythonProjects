@@ -7643,7 +7643,10 @@ body{background:var(--bg0)}
 #pane_timing .qdc-n{font-family:Georgia,'Times New Roman',serif;font-style:italic;
   font-weight:600;font-size:30px;letter-spacing:0;line-height:1.22}
 @media (max-width:640px){#pane_timing .qdc-n{font-size:23px}}
-#pane_timing .qdc-s{font-size:14px;line-height:1.75;margin-top:14px;max-width:62ch}
+/* the window name as a line, not a second headline — the masthead has the
+   headline, this only needs to say which day it is reading */
+#pane_timing .qdc-of{font-size:13px;font-weight:700;color:var(--t2);margin-top:2px}
+#pane_timing .qdc-s{font-size:14px;line-height:1.75;margin-top:12px;max-width:62ch}
 #pane_timing .qdc-f{margin-top:26px;padding-top:0;border-top:none}
 #pane_timing .qdc-r{font-family:inherit;font-size:9.5px;font-weight:800;letter-spacing:.18em;
   text-transform:uppercase;color:rgba(var(--rgbAcc),.9)}
@@ -23845,8 +23848,14 @@ function qamDayCard(){
   return '<div class="qdc '+tone+'">'
     +'<div class="qdc-k">Intraday bias &mdash; '+dayName.toUpperCase()+'</div>'
     +'<div class="qdc-p"><b>'+pct+'%</b> '+(HIT?'PROBABILITY':'LEAN')+' &mdash; '+word+'</div>'
-    +'<div class="qdc-n">'+escHtml(W.name)+'</div>'
-    +'<div class="qdc-s">'+escHtml(W.say)+(sharpen?' '+escHtml(sharpen):'')+'</div>'
+    /* THE HEADLINE AND THE DAY'S SENTENCE BELONG TO THE MASTHEAD.
+       This card printed both again, four screens down, word for word. What
+       is genuinely this card's own is the Moon's reading of the same day —
+       the degree zone sharpening it — and the measured sample underneath.
+       The window name stays, as a small line rather than a second
+       headline, so the card still says which day it is reading. */
+    +'<div class="qdc-of">'+escHtml(W.name)+'</div>'
+    +(sharpen?'<div class="qdc-s">'+escHtml(sharpen)+'</div>':'')
     +'<div class="qdc-f"><span class="qdc-r">'+escHtml(W.ruler)+' Day</span>'
       +'<span class="qdc-m">'
       /* WHEN IT HAS BEEN MEASURED, THE CARD SHOWS THE WORKING RATHER THAN
@@ -26793,10 +26802,13 @@ function timTodayCard(st){
      +   '<div class="td-asset">' + escHtml(asset) + '</div>'
      + '</div>';
 
-  if(dayName)
-    h += '<div class="td-name">' + escHtml(dayName) + '</div>';
-  if(daySay)
-    h += '<div class="td-say">' + escHtml(daySay) + '</div>';
+  /* SAID FOUR TIMES ON ONE PAGE. The day's window name and its sentence
+     were printed by the masthead, by the Now panel, by this card and by
+     the Moon chapter's bias card — the same two strings, four times, on a
+     page you scroll in one go. Nothing is lost by this card not repeating
+     them: the masthead states both at the top of the same screen, at the
+     largest size on the tab. What this card uniquely holds is the window
+     table below, so it starts there. */
 
   /* ── line two: what the day is for, and which way it leans ────────── */
   var styles = timDayStyles(ahead);
@@ -27170,12 +27182,16 @@ function newDayHtml(st){
 
   var h='<div class="nd">';
 
-  /* ── the day, said once and said large ─────────────────────────────── */
+  /* THE DAY IS SAID ONCE, AND THE MASTHEAD SAYS IT.
+     This header used to repeat the window name and its sentence — the same
+     two strings the masthead prints directly above it, at a larger size,
+     on the same screen. Twice was already too many; between this, the
+     windows card and the Moon chapter it came to four. The panel keeps its
+     own line — which asset, which date — and gets on with the part only it
+     has: the lean, the next window, and the day drawn as a timeline. */
   h+='<header class="nd-h">'
     +'<div class="nd-meta">'+escHtml(asset)+' &middot; '
       +escHtml(new Date().toLocaleDateString('en',{weekday:'long', day:'numeric', month:'long'}))+'</div>'
-    +'<h1>'+escHtml(D&&D.name?D.name:'The day')+'</h1>'
-    +(D&&D.say?'<p>'+escHtml(D.say)+'</p>':'')
   +'</header>';
 
   /* ── one line for which way, instead of a box ──────────────────────── */
@@ -29761,7 +29777,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b132';
+var CA_BUILD='b133';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
