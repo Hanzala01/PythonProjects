@@ -886,13 +886,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   display:flex;flex-direction:column;overflow-y:auto}
 .side-brand{display:flex;align-items:center;gap:11px;padding:2px 8px 18px;border-bottom:1px solid var(--bd);margin-bottom:14px}
 .sb-orb{width:38px;height:38px;flex-shrink:0}
-/* both words were the same size, the same weight and tracked out to .22em, so
-   the stack read as one word broken across two lines by accident. The name is
-   Celestial Alpha; ALPHA is the half that matters, so it carries the weight. */
-.side-brand .t{font-family:'Space Grotesk';font-weight:500;font-size:11px;letter-spacing:.3em;
-  line-height:1.15;color:var(--t3)}
-.side-brand .t span{display:block;font-weight:800;font-size:16px;letter-spacing:.16em;
-  color:var(--t1);margin-top:2px}
+/* CAELUS is the product name and carries the weight now; the line under it
+   names the engine underneath rather than a second half of the same word,
+   so it is set small and quiet — a credit, not a co-headline. */
+.side-brand .t{font-family:'Space Grotesk';font-weight:800;font-size:17px;letter-spacing:.06em;
+  line-height:1.15;color:var(--t1)}
+.side-brand .t span{display:block;font-weight:500;font-size:9.5px;letter-spacing:.02em;
+  color:var(--t3);margin-top:4px}
 .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--ts);
   font-size:12.5px;font-weight:500;cursor:pointer;transition:.18s;margin-bottom:2px;border:1px solid transparent;position:relative}
 .nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;flex-shrink:0;opacity:.85}
@@ -3433,6 +3433,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border:1px solid rgba(255,255,255,.16)}
 .cset-tb .sw.celestial{background:linear-gradient(135deg,#01020E 45%,#B49BE6)}
 .cset-tb .sw.qamar{background:linear-gradient(135deg,#07080A 45%,#E8B24D)}
+.cset-tb .sw.obsidian{background:linear-gradient(135deg,#0A0A0B 45%,#C9A227)}
+.cset-tb .sw.newsroom{background:linear-gradient(135deg,#0B0D10 45%,#8FA6B8)}
+.cset-tb .sw.midnight{background:linear-gradient(135deg,#07090D 45%,#7FA3D6)}
+.cset-tb .sw.platinum{background:linear-gradient(135deg,#F4F4F1 45%,#9C7A22);border:1px solid rgba(0,0,0,.12)}
 
 /* ── HIERARCHY: one hero per card, and air between sections ─────────────
    Applied to both themes. The complaint the Qamar screenshot answers is not
@@ -6009,6 +6013,220 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --green:#5FD98A; --red:#E2665A; --amber:#E8B24D; --yellow:#E8B24D;
   --gold:#E8B24D; --purple-glow:rgba(232,178,77,.14);
 }
+
+/* ══ CAELUS — FOUR MORE THEMES, SAME TOKENS ══════════════════════════════
+   Qamar proved the shape: every colour in this app reads from a name, not
+   a literal, so a theme is a value-swap on one block and nothing else has
+   to know. These four are built the same way — the exact variable list
+   Qamar overrides, aimed at a different palette — because the risk in a
+   change this size is not a colour looking wrong, it is a variable being
+   MISSED and something rendering unstyled. Copying the working list first
+   and only then changing values is what keeps that from happening.
+
+   OBSIDIAN is the new default. Nothing about what "default" means changed
+   in code — themeGet() now falls back to it instead of Celestial for
+   anyone who has never chosen — so Celestial and Qamar stay exactly as
+   they were, still selectable, still first-class. */
+
+/* ── OBSIDIAN — the institutional default: black, graphite, silver, a
+      whisper of gold. Bloomberg-terminal restraint, not a space app. ── */
+[data-theme="obsidian"]{
+  --bg0:#0A0A0B; --card:#131315; --card2:#18181B;
+  --bg1:#0E0E10; --chartbg:#08080A;
+  --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
+  --bAct:#C9A227;
+  --p3:#C9A227; --pGlow:#E4C876; --pDeep:#241D0C;
+  --p1:#9AA0A6; --p2:#B8BEC4;
+  --soft:#C6C8CA; --mid:#9EA1A4; --muted:#7C7F82; --text:#E6E7E8;
+  --t1:#F1F1F0; --t2:#C6C8CA; --t3:#9EA1A4;
+  --up:#4CAF7D; --dn:#C0564D; --warn:#C9A227; --cy:#6E93A8;
+  --elFire:#C0704A; --elEarth:#5E8F68; --elAir:#6E93A8; --elWater:#526CA8;
+  --rgbUp:76,175,125; --rgbDn:192,86,77; --rgbWarn:201,162,39;
+  --rgbFire:192,112,74; --rgbEarth:94,143,104;
+  --rgbAir:110,147,168; --rgbWater:82,108,168;
+  --wash:rgba(255,255,255,.020); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#8A6B1C; --pWell:#16130A;
+  --sideBg:#08080A; --sideTop:#0E0E10; --sideTop2:#0C0C0E;
+  --navOn1:#221C0D; --navOn2:#161514;
+  --cUp:#C9A227; --cDn:#6B5B26; --gridLn:#1A1A1D; --axisTx:#7C7F82; --dialFace:9,9,10; --markDim:#6B5B26; --markLit:#C9A227;
+  --g01:8,8,9; --g02:8,8,9; --g03:8,8,9; --g04:8,8,9; --g05:8,8,9; --g06:8,8,9;
+  --g07:8,8,9; --g08:8,8,9; --g09:8,8,9; --g10:8,8,9; --g11:8,8,9; --g12:8,8,9;
+  --g13:8,8,9; --g14:8,8,9; --g15:8,8,9; --g16:8,8,9; --g17:8,8,9; --g18:14,14,16;
+  --g19:8,8,9; --g20:14,14,16; --g21:8,8,9; --g22:14,14,16; --g23:8,8,9; --g24:8,8,9;
+  --g25:14,14,16; --g26:14,14,16; --g27:14,14,16; --g28:8,8,9; --g29:14,14,16;
+  --g30:14,14,16; --g31:14,14,16; --g32:14,14,16; --g33:14,14,16; --g34:18,18,21;
+  --g35:14,14,16; --g36:14,14,16; --g37:14,14,16; --g38:18,18,21; --g39:18,18,21;
+  --g40:18,18,21; --g41:18,18,21; --g42:18,18,21; --g43:18,18,21; --g44:24,24,27;
+  --g45:24,24,27; --g46:18,44,32; --g47:52,20,18; --g48:18,18,21; --g49:24,24,27;
+  --g50:58,22,20; --g51:14,46,34; --g52:24,24,27; --g53:24,24,27; --g54:24,24,27;
+  --g55:24,24,27; --g56:40,40,44; --g57:40,40,44; --g58:40,40,44; --g59:40,40,44;
+  --g60:40,40,44; --g61:40,40,44; --g62:40,40,44;
+  --rgbAcc:198,201,204; --rgbRim:198,201,204; --rgbVio:201,162,39;
+  --rgbLit:222,224,226; --rgbDeep:96,99,102; --rgbTrue:201,162,39;
+  --rgbAmy:198,201,204; --rgbCore:198,201,204; --rgbSoft:158,161,164;
+  --rgbBord:201,162,39; --rgbInfo:118,138,158; --rgbMid:96,99,102;
+  --bg:#0A0A0B; --s1:#0E0E10; --s2:#131315; --s3:#18181B; --s4:#1E1E22;
+  --navy:#0E0E10; --navy2:#131315; --sec:#0E0E10;
+  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(201,162,39,.32);
+  --muted:#7C7F82; --mid:#9EA1A4; --soft:#C6C8CA; --text:#E6E7E8; --white:#F1F1F0;
+  --accent:#C9A227; --acc2:#D9B84E; --acc3:#E4C876;
+  --purple:#C9A227; --violet:#C9A227; --blue:#6E93A8;
+  --tw:#F1F1F0; --ts:#C6C8CA; --tm:#9EA1A4; --tf:#7C7F82;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.13);
+  --green:#4CAF7D; --red:#C0564D; --amber:#C9A227; --yellow:#C9A227;
+  --gold:#C9A227; --purple-glow:rgba(201,162,39,.13);
+}
+
+/* ── NEWSROOM — charcoal and slate, a research-terminal read: news cards,
+      headlines and market reaction over decoration. Colour is rationed. ── */
+[data-theme="newsroom"]{
+  --bg0:#0B0D10; --card:#14171B; --card2:#1A1E23;
+  --bg1:#0F1215; --chartbg:#090B0D;
+  --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
+  --bAct:#7C93A8;
+  --p3:#8FA6B8; --pGlow:#C3D3DE; --pDeep:#1C262E;
+  --p1:#8B98A3; --p2:#A7B2BB;
+  --soft:#C6CCD1; --mid:#9AA2A9; --muted:#77808A; --text:#E5E9EC;
+  --t1:#F0F2F4; --t2:#C3CBD1; --t3:#98A2AA;
+  --up:#4E9B6E; --dn:#B0554E; --warn:#C9A227; --cy:#7C93A8;
+  --elFire:#B06A46; --elEarth:#5C8A65; --elAir:#7C93A8; --elWater:#556F9E;
+  --rgbUp:78,155,110; --rgbDn:176,85,78; --rgbWarn:201,162,39;
+  --rgbFire:176,106,70; --rgbEarth:92,138,101;
+  --rgbAir:124,147,168; --rgbWater:85,111,158;
+  --wash:rgba(255,255,255,.020); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#5A7488; --pWell:#12171B;
+  --sideBg:#090B0D; --sideTop:#0F1215; --sideTop2:#0D0F11;
+  --navOn1:#1B242B; --navOn2:#151817;
+  --cUp:#8FA6B8; --cDn:#4E5E68; --gridLn:#1A1E22; --axisTx:#7B848C; --dialFace:9,10,12; --markDim:#4E5E68; --markLit:#8FA6B8;
+  --g01:9,10,12; --g02:9,10,12; --g03:9,10,12; --g04:9,10,12; --g05:9,10,12; --g06:9,10,12;
+  --g07:9,10,12; --g08:9,10,12; --g09:9,10,12; --g10:9,10,12; --g11:9,10,12; --g12:9,10,12;
+  --g13:9,10,12; --g14:9,10,12; --g15:9,10,12; --g16:9,10,12; --g17:9,10,12; --g18:15,17,19;
+  --g19:9,10,12; --g20:15,17,19; --g21:9,10,12; --g22:15,17,19; --g23:9,10,12; --g24:9,10,12;
+  --g25:15,17,19; --g26:15,17,19; --g27:15,17,19; --g28:9,10,12; --g29:15,17,19;
+  --g30:15,17,19; --g31:15,17,19; --g32:15,17,19; --g33:15,17,19; --g34:19,22,25;
+  --g35:15,17,19; --g36:15,17,19; --g37:15,17,19; --g38:19,22,25; --g39:19,22,25;
+  --g40:19,22,25; --g41:19,22,25; --g42:19,22,25; --g43:19,22,25; --g44:25,28,32;
+  --g45:25,28,32; --g46:17,40,30; --g47:48,20,19; --g48:19,22,25; --g49:25,28,32;
+  --g50:54,22,21; --g51:14,44,34; --g52:25,28,32; --g53:25,28,32; --g54:25,28,32;
+  --g55:25,28,32; --g56:42,46,50; --g57:42,46,50; --g58:42,46,50; --g59:42,46,50;
+  --g60:42,46,50; --g61:42,46,50; --g62:42,46,50;
+  --rgbAcc:150,163,173; --rgbRim:150,163,173; --rgbVio:124,147,168;
+  --rgbLit:198,208,215; --rgbDeep:82,94,102; --rgbTrue:124,147,168;
+  --rgbAmy:150,163,173; --rgbCore:150,163,173; --rgbSoft:132,144,152;
+  --rgbBord:124,147,168; --rgbInfo:124,147,168; --rgbMid:82,94,102;
+  --bg:#0B0D10; --s1:#0F1215; --s2:#14171B; --s3:#1A1E23; --s4:#20242A;
+  --navy:#0F1215; --navy2:#14171B; --sec:#0F1215;
+  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(124,147,168,.32);
+  --muted:#77808A; --mid:#9AA2A9; --soft:#C6CCD1; --text:#E5E9EC; --white:#F0F2F4;
+  --accent:#8FA6B8; --acc2:#A9BDCC; --acc3:#C3D3DE;
+  --purple:#8FA6B8; --violet:#8FA6B8; --blue:#7C93A8;
+  --tw:#F0F2F4; --ts:#C3CBD1; --tm:#98A2AA; --tf:#7B848C;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.13);
+  --green:#4E9B6E; --red:#B0554E; --amber:#C9A227; --yellow:#C9A227;
+  --gold:#C9A227; --purple-glow:rgba(124,147,168,.13);
+}
+
+/* ── MIDNIGHT — near-black and steel-navy, the coolest of the four. Quant
+      and data-intelligence read rather than a market desk. ── */
+[data-theme="midnight"]{
+  --bg0:#07090D; --card:#0F131A; --card2:#141A22;
+  --bg1:#0A0D12; --chartbg:#05070A;
+  --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
+  --bAct:#6E93C4;
+  --p3:#7FA3D6; --pGlow:#B6CCEC; --pDeep:#182233;
+  --p1:#8996A8; --p2:#A5B2C4;
+  --soft:#C3CBDA; --mid:#95A0B4; --muted:#727C8E; --text:#E3E8F0;
+  --t1:#EFF1F5; --t2:#C3CBDA; --t3:#95A0B4;
+  --up:#49A47E; --dn:#C15E56; --warn:#D7A83A; --cy:#6EA8D8;
+  --elFire:#C07452; --elEarth:#5C8F76; --elAir:#6EA8D8; --elWater:#5674C4;
+  --rgbUp:73,164,126; --rgbDn:193,94,86; --rgbWarn:215,168,58;
+  --rgbFire:192,116,82; --rgbEarth:92,143,118;
+  --rgbAir:110,168,216; --rgbWater:86,116,196;
+  --wash:rgba(255,255,255,.022); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#4A6A96; --pWell:#0F1420;
+  --sideBg:#05070A; --sideTop:#0A0D12; --sideTop2:#080A0E;
+  --navOn1:#16202E; --navOn2:#111417;
+  --cUp:#7FA3D6; --cDn:#3E4E64; --gridLn:#161B23; --axisTx:#7A8494; --dialFace:8,10,14; --markDim:#3E4E64; --markLit:#7FA3D6;
+  --g01:7,9,12; --g02:7,9,12; --g03:7,9,12; --g04:7,9,12; --g05:7,9,12; --g06:7,9,12;
+  --g07:7,9,12; --g08:7,9,12; --g09:7,9,12; --g10:7,9,12; --g11:7,9,12; --g12:7,9,12;
+  --g13:7,9,12; --g14:7,9,12; --g15:7,9,12; --g16:7,9,12; --g17:7,9,12; --g18:13,17,23;
+  --g19:7,9,12; --g20:13,17,23; --g21:7,9,12; --g22:13,17,23; --g23:7,9,12; --g24:7,9,12;
+  --g25:13,17,23; --g26:13,17,23; --g27:13,17,23; --g28:7,9,12; --g29:13,17,23;
+  --g30:13,17,23; --g31:13,17,23; --g32:13,17,23; --g33:13,17,23; --g34:17,22,29;
+  --g35:13,17,23; --g36:13,17,23; --g37:13,17,23; --g38:17,22,29; --g39:17,22,29;
+  --g40:17,22,29; --g41:17,22,29; --g42:17,22,29; --g43:17,22,29; --g44:22,28,36;
+  --g45:22,28,36; --g46:16,42,34; --g47:50,22,22; --g48:17,22,29; --g49:22,28,36;
+  --g50:56,24,24; --g51:13,46,38; --g52:22,28,36; --g53:22,28,36; --g54:22,28,36;
+  --g55:22,28,36; --g56:38,44,54; --g57:38,44,54; --g58:38,44,54; --g59:38,44,54;
+  --g60:38,44,54; --g61:38,44,54; --g62:38,44,54;
+  --rgbAcc:158,175,196; --rgbRim:158,175,196; --rgbVio:127,163,214;
+  --rgbLit:206,220,236; --rgbDeep:74,90,110; --rgbTrue:127,163,214;
+  --rgbAmy:158,175,196; --rgbCore:158,175,196; --rgbSoft:136,150,168;
+  --rgbBord:127,163,214; --rgbInfo:127,163,214; --rgbMid:74,90,110;
+  --bg:#07090D; --s1:#0A0D12; --s2:#0F131A; --s3:#141A22; --s4:#1A212A;
+  --navy:#0A0D12; --navy2:#0F131A; --sec:#0A0D12;
+  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(127,163,214,.34);
+  --muted:#727C8E; --mid:#95A0B4; --soft:#C3CBDA; --text:#E3E8F0; --white:#EFF1F5;
+  --accent:#7FA3D6; --acc2:#96B5E0; --acc3:#B6CCEC;
+  --purple:#7FA3D6; --violet:#7FA3D6; --blue:#6EA8D8;
+  --tw:#EFF1F5; --ts:#C3CBDA; --tm:#95A0B4; --tf:#7A8494;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.13);
+  --green:#49A47E; --red:#C15E56; --amber:#D7A83A; --yellow:#D7A83A;
+  --gold:#D7A83A; --purple-glow:rgba(127,163,214,.14);
+}
+
+/* ── PLATINUM — the light-mode option: near-white, graphite, black ink,
+      a restrained gold accent. Private-bank paper rather than a screen. ── */
+[data-theme="platinum"]{
+  --bg0:#F4F4F1; --card:#FFFFFF; --card2:#F1F1EE;
+  --bg1:#FAFAF8; --chartbg:#FFFFFF;
+  --b1:rgba(20,20,18,.09); --b2:rgba(20,20,18,.16); --bFaint:rgba(20,20,18,.05);
+  --bAct:#9C7A22;
+  --p3:#9C7A22; --pGlow:#C9A227; --pDeep:#F3E9CC;
+  --p1:#5A5E62; --p2:#787D81;
+  --soft:#3C4044; --mid:#585C60; --muted:#75797D; --text:#1C1D1F;
+  --t1:#121315; --t2:#3C4044; --t3:#6C7075;
+  --up:#1F8F5C; --dn:#B3362B; --warn:#9C7A22; --cy:#2D6C8C;
+  --elFire:#B0603C; --elEarth:#3F7A52; --elAir:#2D6C8C; --elWater:#3E5AA8;
+  --rgbUp:31,143,92; --rgbDn:179,54,43; --rgbWarn:156,122,34;
+  --rgbFire:176,96,60; --rgbEarth:63,122,82;
+  --rgbAir:45,108,140; --rgbWater:62,90,168;
+  --wash:rgba(20,20,18,.028); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#B8912E; --pWell:#FBF3DC;
+  --sideBg:#FAFAF8; --sideTop:#FFFFFF; --sideTop2:#F6F6F3;
+  --navOn1:#F3E9CC; --navOn2:#EFEFEA;
+  --cUp:#9C7A22; --cDn:#D8C48A; --gridLn:#E4E4DE; --axisTx:#6C7075; --dialFace:250,250,247; --markDim:#D8C48A; --markLit:#9C7A22;
+  --g01:250,250,247; --g02:250,250,247; --g03:250,250,247; --g04:250,250,247; --g05:250,250,247; --g06:250,250,247;
+  --g07:250,250,247; --g08:250,250,247; --g09:250,250,247; --g10:250,250,247; --g11:250,250,247; --g12:250,250,247;
+  --g13:250,250,247; --g14:250,250,247; --g15:250,250,247; --g16:250,250,247; --g17:250,250,247; --g18:240,240,235;
+  --g19:250,250,247; --g20:240,240,235; --g21:250,250,247; --g22:240,240,235; --g23:250,250,247; --g24:250,250,247;
+  --g25:240,240,235; --g26:240,240,235; --g27:240,240,235; --g28:250,250,247; --g29:240,240,235;
+  --g30:240,240,235; --g31:240,240,235; --g32:240,240,235; --g33:240,240,235; --g34:234,234,227;
+  --g35:240,240,235; --g36:240,240,235; --g37:240,240,235; --g38:234,234,227; --g39:234,234,227;
+  --g40:234,234,227; --g41:234,234,227; --g42:234,234,227; --g43:234,234,227; --g44:226,226,218;
+  --g45:226,226,218; --g46:222,240,229; --g47:248,225,222; --g48:234,234,227; --g49:226,226,218;
+  --g50:246,214,210; --g51:214,238,227; --g52:226,226,218; --g53:226,226,218; --g54:226,226,218;
+  --g55:226,226,218; --g56:220,220,214; --g57:220,220,214; --g58:220,220,214; --g59:220,220,214;
+  --g60:220,220,214; --g61:220,220,214; --g62:220,220,214;
+  /* on a white ground a "wash" has to read as a shadow, not a glow — so the
+     accent channels most CSS here uses as a low-alpha highlight point to a
+     dark ink tone instead of white, and the one true accent stays gold */
+  --rgbAcc:32,33,35; --rgbRim:32,33,35; --rgbVio:156,122,34;
+  --rgbLit:246,238,214; --rgbDeep:18,19,21; --rgbTrue:156,122,34;
+  --rgbAmy:32,33,35; --rgbCore:32,33,35; --rgbSoft:90,94,98;
+  --rgbBord:156,122,34; --rgbInfo:45,108,140; --rgbMid:96,100,104;
+  --bg:#F4F4F1; --s1:#FAFAF8; --s2:#FFFFFF; --s3:#F1F1EE; --s4:#E6E6E0;
+  --navy:#FAFAF8; --navy2:#FFFFFF; --sec:#FAFAF8;
+  --rim:rgba(20,20,18,.09); --rim2:rgba(20,20,18,.15); --rim3:rgba(156,122,34,.34);
+  --muted:#75797D; --mid:#585C60; --soft:#3C4044; --text:#1C1D1F; --white:#121315;
+  --accent:#9C7A22; --acc2:#B8912E; --acc3:#D4B44A;
+  --purple:#9C7A22; --violet:#9C7A22; --blue:#2D6C8C;
+  --tw:#121315; --ts:#3C4044; --tm:#6C7075; --tf:#8A8E92;
+  --bd:rgba(20,20,18,.09); --bd2:rgba(20,20,18,.15);
+  --green:#1F8F5C; --red:#B3362B; --amber:#9C7A22; --yellow:#9C7A22;
+  --gold:#9C7A22; --purple-glow:rgba(156,122,34,.12);
+}
+
 /* THE ARTWORK. Two decorative images are baked into the file as data URIs
    and are violet in the pixels, which no token can reach. A filter turns
    them warm so they belong to this palette instead of the other one. */
@@ -8172,31 +8390,27 @@ body{background:var(--bg0)}
 <aside class="side">
   <nav class="side-nav rise">
     <div class="side-brand">
-      <!-- THE MARK — one hour of the dial.
-           This took four goes and two wrong directions, so the reasoning is
-           worth leaving here. Flat line drawings of a ring were correct and
-           lifeless. Adding gradients, a specular highlight and a bloom to a
-           ringed planet made it shine and made it look machine-made — glossy
-           orbs with soft glows are the house style of generated art, which is
-           exactly why it read as fake. Going flat again produced a crescent
-           with a dot beside it, which is clean and is also on a dozen national
-           flags and a thousand logos; correct, and nobody's.
+      <!-- THE MARK — a CA monogram, not the dial any more.
+           The dial mark (a ring and one wedge of it) was built for a Celestial
+           Alpha that WAS the timing engine. CAELUS sits a level above that —
+           one platform, several visual identities, the same engine under all
+           of them — and a mark this specific to one screen stopped being
+           right for the name on the masthead. A monogram is the right kind of
+           mark for a platform: it names the product, not one feature of it.
 
-           A mark should be flat, precise, readable in one colour — and about
-           the thing it sits on. What this app is about is which hour to trade:
-           a dial, and the one slice of it that matters. So that is the mark. A
-           ring for the day and a single filled sector for the window, cut at
-           the top where the day begins.
-
-           A circle and a wedge of a circle. Nobody owns those, and none of this
-           is traced from an existing logo. -->
-      <svg class="sb-orb" viewBox="0 0 40 40" role="img" aria-label="Celestial Alpha">
-        <path d="M33.74 17.33A14 14 0 1 1 19.76 6.00" fill="none" style="stroke:var(--markDim)"
-              stroke-width="5.2" stroke-linecap="butt"/>
-        <path d="M21.46 6.08A14 14 0 0 1 33.31 15.67" fill="none" style="stroke:var(--markLit)"
-              stroke-width="5.2" stroke-linecap="butt"/>
+           Built the same way the dial mark was reasoned through: flat,
+           two-tone, one colour reading as structure and the other as the
+           single accent, nothing traced from an existing logo. The C is an
+           open ring — three-quarters of a circle, cut on the right — and the
+           A sits inside it as a plain peak with a crossbar. Both read at
+           16px, which a gradient or a bevel would not have survived. -->
+      <svg class="sb-orb" viewBox="0 0 40 40" role="img" aria-label="CAELUS">
+        <path d="M31.4 12.2A14 14 0 1 0 31.4 27.8" fill="none" style="stroke:var(--markDim)"
+              stroke-width="4.4" stroke-linecap="butt"/>
+        <path d="M14.4 27L20 12.4L25.6 27M16.9 21.4H23.1" fill="none" style="stroke:var(--markLit)"
+              stroke-width="2.6" stroke-linecap="butt" stroke-linejoin="miter"/>
       </svg>
-      <div class="t">CELESTIAL<span>ALPHA</span></div>
+      <div class="t">CAELUS<span>Powered by Celestial Alpha</span></div>
       <!-- The interface-sound toggle used to sit here, beside the wordmark.
            A mute switch is a setting, not a piece of branding, and next to
            the logo it read as decoration nobody could name. It is a row in
@@ -13448,13 +13662,30 @@ function celestialSettingsClose(){
    needs to know which is on. Remembered per browser and applied before the
    first paint so there is no flash of the wrong palette. */
 var THEME_KEY='ca_theme';
+/* SIX NOW, NOT TWO — same mechanism, more destinations.
+   CAELUS asked for institutional themes without purple, and asked in the
+   same breath to keep Celestial exactly as it is, selectable, the way
+   Qamar already sits beside it. So Obsidian is new and is the default; the
+   original two are untouched and simply moved down the list. */
 var CA_THEMES=[
+  {id:'obsidian', name:'Obsidian', say:'black, graphite, silver — a whisper of gold. The institutional default.'},
   {id:'celestial',name:'Celestial',say:'the original — deep indigo, purple accent'},
-  {id:'qamar',    name:'Qamar',    say:'near-black, one warm accent, more air'}
+  {id:'qamar',    name:'Qamar',    say:'near-black, one warm accent, more air'},
+  {id:'newsroom', name:'Newsroom',say:'charcoal and slate — a research-terminal read, colour rationed'},
+  {id:'midnight', name:'Midnight',say:'near-black and steel-navy — the coolest of the six'},
+  {id:'platinum', name:'Platinum',say:'near-white, black ink, a restrained gold accent — the light-mode option'}
 ];
+var CA_THEME_IDS=CA_THEMES.map(function(t){return t.id;});
 function themeGet(){
-  try{ var t=localStorage.getItem(THEME_KEY); return t==='qamar'?'qamar':'celestial'; }
-  catch(e){ return 'celestial'; }
+  try{
+    var t=localStorage.getItem(THEME_KEY);
+    /* nothing chosen yet → Obsidian, the new default. Something chosen
+       that this build does not recognise (an id from an older or newer
+       version) → the safest known value, not a silent guess. Anything
+       else is exactly what the user picked, unchanged. */
+    if(t==null)return 'obsidian';
+    return CA_THEME_IDS.indexOf(t)>=0 ? t : 'obsidian';
+  }catch(e){ return 'obsidian'; }
 }
 /* THE PALETTE, READABLE FROM JAVASCRIPT.
    A stylesheet token cannot be reached by code that builds an SVG string,
@@ -13471,7 +13702,11 @@ function palRgb(n,a,f){
        return 'rgba('+(v||f)+','+a+')'; }catch(e){ return 'rgba('+f+','+a+')'; }
 }
 function themeApply(id){
-  var t=(id==='qamar')?'qamar':'celestial';
+  /* Celestial is still the one with no attribute — the bare :root — exactly
+     as before, so a page saved or cached from before this change keeps
+     rendering correctly. Every other theme, the four new ones included,
+     sets data-theme the same way Qamar always has. */
+  var t=CA_THEME_IDS.indexOf(id)>=0?id:'obsidian';
   try{
     if(t==='celestial')document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme',t);
@@ -13485,8 +13720,8 @@ function themeSet(id){
   /* the chart is drawn into an SVG string with colours baked in, so it is the
      one thing that does not follow a token change on its own */
   try{ chartRedraw(); }catch(e){}
-  try{ caToast('Theme: '+(t==='qamar'?'Qamar':'Celestial'),
-      t==='qamar'?'Near-black, one warm accent.':'Back to the original palette.','up','timing'); }catch(e){}
+  var T=CA_THEMES.filter(function(x){return x.id===t;})[0];
+  try{ caToast('Theme: '+(T?T.name:t), T?T.say:'', 'up', 'timing'); }catch(e){}
 }
 try{ themeApply(themeGet()); }catch(e){}
 
@@ -13501,9 +13736,10 @@ function renderCelestialSettings(){
 
    +'<div class="cset-s"><i>Look</i>'
      +'<div class="cset-row">'
-       +'<div><b>Theme</b><s>Two palettes. The first is the original. The second is Qamar &mdash; '
-         +'near-black with a single warm accent instead of five competing ones, and more air '
-         +'between things. Everything else is identical; only the colours move.</s></div>'
+       +'<div><b>Theme</b><s>Six palettes, the same tokens underneath — the dashboard, the Timing '
+         +'Engine, the Analytics and everything they compute are identical in every one of them; '
+         +'only the colours move. Celestial is the original, purple accent and all, kept exactly '
+         +'as it was and still one tap away.</s></div>'
        +'<div class="cset-th">'
          +CA_THEMES.map(function(T){
             return '<button class="cset-tb'+(themeGet()===T.id?' on':'')+'" '
@@ -29882,7 +30118,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b136';
+var CA_BUILD='b137';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
