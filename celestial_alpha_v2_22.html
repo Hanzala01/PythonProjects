@@ -151,9 +151,15 @@ a{color:var(--acc2);text-decoration:none}
   border-radius:8px;color:var(--soft);font-size:16px;transition:.15s;cursor:pointer;flex-shrink:0}
 .sb-tog:hover{background:var(--s3);color:var(--white)}
 .app-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-right:12px}
-.app-logo{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,#4a3a9a,var(--accent));
+/* was a hardcoded purple gradient behind a "C∞" placeholder glyph — invisible
+   before there was a second theme to show it up, and a straight purple leak
+   into every one of the five that came after. Same fix as .btn-a and #fab:
+   the literal hex becomes a token, so this stops being one specific colour
+   and starts being whatever "secondary accent" means in the theme running. */
+.app-logo{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,var(--p1),var(--accent));
   display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;
   box-shadow:0 0 12px var(--purple-glow)}
+.app-logo svg{width:70%;height:70%}
 .app-name{font-size:12px;font-weight:800;color:var(--white);letter-spacing:-.02em}
 .tab-rail{display:flex;gap:2px;flex:1;overflow-x:auto}
 .tab-rail::-webkit-scrollbar{display:none}
@@ -567,7 +573,10 @@ h1,h2,h3,.ct,.hero-h1,.app-name,.home-name,.stat .v,.sb .v,.zone-p,.sig-rr,.port
 input,select,textarea{background:rgba(var(--g36),.72);border-radius:10px}
 input:focus,select:focus{border-color:rgba(var(--rgbAcc),.55);box-shadow:0 0 0 3px rgba(var(--rgbAcc),.13)}
 .btn{border-radius:10px}
-.btn-a{background:linear-gradient(135deg,#6d4fd8,var(--accent))}
+/* #6d4fd8 was a literal purple baked into every primary button on the app —
+   Analyse, Unlock, every btn-a — regardless of theme. Token now, like
+   everything else this size was supposed to swap on a theme change. */
+.btn-a{background:linear-gradient(135deg,var(--p1),var(--accent))}
 .btn-a:hover{box-shadow:0 0 22px rgba(var(--rgbAcc),.4);transform:translateY(-1px)}
 .tab-btn.on,.tag{border-radius:8px}
 tbody tr{transition:background .14s}
@@ -793,7 +802,7 @@ body{background:
 
 /* FAB + loading */
 #fab{position:fixed;right:22px;bottom:76px;width:52px;height:52px;border-radius:18px;z-index:9000;
-  background:linear-gradient(135deg,#6d4fd8,var(--accent));color:#fff;font-size:20px;
+  background:linear-gradient(135deg,var(--p1),var(--accent));color:#fff;font-size:20px;
   box-shadow:0 10px 30px rgba(var(--rgbAcc),.45);transition:.2s;cursor:pointer}
 #fab:hover{transform:translateY(-3px) scale(1.05)}
 #fab_pop{position:fixed;right:22px;bottom:138px;width:300px;z-index:9001;padding:16px;border-radius:20px;
@@ -934,7 +943,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hero-title h1{font-family:'Space Grotesk';font-size:clamp(22px,2.4vw,31px);font-weight:700;line-height:1.22;letter-spacing:-.015em}
 .hero-title h1 em{font-style:normal;background:linear-gradient(120deg,var(--violet),var(--acc3));
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.hero-title .sub{font-size:11px;color:#b18aff;margin-top:10px;letter-spacing:.04em}
+.hero-title .sub{font-size:11px;color:var(--acc3);margin-top:10px;letter-spacing:.04em}
 .tick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .tick{background:linear-gradient(170deg,var(--card),var(--card2));border:1px solid var(--bd);border-radius:16px;
   padding:13px 14px;transition:.2s;position:relative;overflow:hidden}
@@ -957,7 +966,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .stat:hover{transform:translateY(-2px);border-color:var(--bd2)}
 .stat .ic{width:34px;height:34px;border-radius:10px;background:rgba(var(--rgbAcc),.13);border:1px solid rgba(var(--rgbVio),.25);
   display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.stat .ic svg{width:15px;height:15px;stroke:#b18aff;fill:none;stroke-width:1.7}
+.stat .ic svg{width:15px;height:15px;stroke:var(--t2);fill:none;stroke-width:1.7}
 .stat .l{font-size:9.5px;color:var(--ts);font-weight:600}
 .stat .v{font-family:'Space Grotesk';font-size:16.5px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
 .stat .m{font-size:8.5px;color:var(--tm)}
@@ -1016,11 +1025,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #boot_screen.gone{opacity:0;visibility:hidden;pointer-events:none}
 #boot_screen::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
   background:radial-gradient(1px 1px at 20% 30%,#fff,transparent),
-             radial-gradient(1px 1px at 72% 18%,#cbb6ff,transparent),
+             radial-gradient(1px 1px at 72% 18%,rgba(var(--rgbVio),.9),transparent),
              radial-gradient(1px 1px at 38% 78%,#fff,transparent),
-             radial-gradient(1px 1px at 86% 64%,#b9a4ff,transparent),
+             radial-gradient(1px 1px at 86% 64%,rgba(var(--rgbVio),.75),transparent),
              radial-gradient(1px 1px at 12% 62%,#fff,transparent),
-             radial-gradient(1px 1px at 60% 88%,#e6dcff,transparent);
+             radial-gradient(1px 1px at 60% 88%,rgba(var(--rgbLit),.85),transparent);
   animation:bsTwinkle 4s ease-in-out infinite}
 @keyframes bsTwinkle{0%,100%{opacity:.28}50%{opacity:.65}}
 /* three rings, three speeds, one dot each — the orbit reads as motion even
@@ -1030,35 +1039,40 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .bs-ring:nth-child(2){inset:17px;border-color:rgba(var(--rgbRim),.24)}
 .bs-ring:nth-child(3){inset:34px;border-color:rgba(var(--rgbRim),.32)}
 .bs-ring i{position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;
-  border-radius:50%;background:#c4b1ff;box-shadow:0 0 10px 2px rgba(var(--rgbRim),.75)}
+  border-radius:50%;background:rgba(var(--rgbVio),1);box-shadow:0 0 10px 2px rgba(var(--rgbRim),.75)}
 .bs-ring:nth-child(1){animation:bsSpin 7s linear infinite}
 .bs-ring:nth-child(2){animation:bsSpin 4.6s linear infinite reverse}
 .bs-ring:nth-child(3){animation:bsSpin 2.9s linear infinite}
 @keyframes bsSpin{to{transform:rotate(360deg)}}
 .bs-core{position:absolute;inset:52px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,var(--acc2),#6d4bc4 60%,#3a2170);
+  background:radial-gradient(circle at 35% 30%,var(--acc2),var(--accent) 60%,var(--pDeep));
   box-shadow:0 0 26px rgba(var(--rgbAcc),.6);animation:bsBreathe 2.6s ease-in-out infinite}
 @keyframes bsBreathe{0%,100%{transform:scale(1);box-shadow:0 0 22px rgba(var(--rgbAcc),.45)}
   50%{transform:scale(1.11);box-shadow:0 0 38px rgba(var(--rgbAcc),.75)}}
 .bs-word{position:relative;text-align:center}
 .bs-word b{display:block;font-family:'Space Grotesk',system-ui,sans-serif;font-size:19px;
-  font-weight:700;letter-spacing:.34em;text-indent:.34em;color:#efe9ff;
+  /* this splash's own background stays a fixed dark gradient regardless of
+     theme (below), so its text cannot follow --t1 — on Platinum that token
+     is near-black and would vanish here. --rgbLit is the one channel that
+     stays a light tone in every theme, Platinum included, because it was
+     built for exactly this: a glow against a backdrop that is always dark. */
+  font-weight:700;letter-spacing:.34em;text-indent:.34em;color:rgba(var(--rgbLit),1);
   animation:bsUp .8s cubic-bezier(.22,1,.36,1) both}
 .bs-word s{display:block;margin-top:7px;text-decoration:none;font-family:system-ui,sans-serif;
-  font-size:9.5px;letter-spacing:.26em;text-indent:.26em;color:#8b7fb0;text-transform:uppercase;
+  font-size:9.5px;letter-spacing:.26em;text-indent:.26em;color:rgba(var(--rgbLit),.65);text-transform:uppercase;
   animation:bsUp .8s .12s cubic-bezier(.22,1,.36,1) both}
 @keyframes bsUp{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 .bs-bar{position:relative;width:212px;height:2px;border-radius:2px;
   background:rgba(var(--rgbRim),.14);overflow:hidden}
 .bs-bar i{position:absolute;inset:0;width:22%;border-radius:2px;
-  background:linear-gradient(90deg,#6d4bc4,var(--acc2),#e0d4ff);
+  background:linear-gradient(90deg,var(--accent),var(--acc2),rgba(var(--rgbLit),1));
   transition:width .4s cubic-bezier(.4,0,.2,1)}
 .bs-bar::after{content:'';position:absolute;inset:0;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
   animation:bsSweep 1.5s linear infinite}
 @keyframes bsSweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
 .bs-step{position:relative;height:12px;font-family:system-ui,sans-serif;font-size:10px;
-  letter-spacing:.1em;color:#7d719f;text-align:center}
+  letter-spacing:.1em;color:rgba(var(--rgbLit),.55);text-align:center}
 .bs-step span{animation:bsFade .35s ease both}
 @keyframes bsFade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){
@@ -1066,14 +1080,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     {animation:none!important}
 }
 </style>
-<div id="boot_screen" role="status" aria-label="Loading Celestial Alpha">
+<div id="boot_screen" role="status" aria-label="Loading CAELUS">
   <div class="bs-orbit">
     <div class="bs-ring"><i></i></div>
     <div class="bs-ring"><i></i></div>
     <div class="bs-ring"><i></i></div>
     <div class="bs-core"></div>
   </div>
-  <div class="bs-word"><b>CELESTIAL</b><s>Precision in Timing</s></div>
+  <div class="bs-word"><b>CAELUS</b><s>Powered by Celestial Alpha</s></div>
   <div class="bs-bar"><i id="bs_fill"></i></div>
   <div class="bs-step" id="bs_step"><span>Starting the engines</span></div>
 </div>
@@ -1747,7 +1761,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* the round button, fixed to the window on every tab */
 .rfab{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;z-index:61;
   display:grid;place-items:center;cursor:pointer;
-  background:radial-gradient(120% 120% at 30% 20%,var(--b2),#1A0D3C);
+  /* #1A0D3C was a fixed dark purple in the outer ring of this button's
+     gradient — every theme, including the five that were asked to have no
+     purple in them at all, showed a small purple orb bottom-right. Plain
+     near-black instead of a tinted one: the button still reads as a
+     shadowed sphere against any background, and it stops being a colour. */
+  background:radial-gradient(120% 120% at 30% 20%,var(--b2),rgba(0,0,0,.88));
   border:1px solid var(--b2);color:var(--t1);
   box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 6px rgba(var(--rgbCore),.14);
   transition:.22s var(--ease);-webkit-user-select:none;user-select:none}
@@ -2422,7 +2441,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .wk-c.n{background:rgba(255,255,255,.025)}
 .wk-c.r1{background:rgba(52,211,153,.32)}
 .wk-c.r2{background:rgba(52,211,153,.78);box-shadow:0 0 5px rgba(52,211,153,.4)}
-.wk-c.live{outline:1.5px solid #E9DEFC;outline-offset:1px}
+.wk-c.live{outline:1.5px solid var(--markLit);outline-offset:1px}
 .wk-note{margin-top:7px;font-size:9px;line-height:1.6;color:var(--t3)}
 
 /* the scanner's new rows */
@@ -3828,11 +3847,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lm-b.tight b{display:none}
 .lm-b.tight:hover b{display:block}
-.lm-p{position:absolute;left:0;right:0;height:0;border-top:2px solid #E9DEFC;margin-top:-1px;
-  box-shadow:0 0 12px rgba(233,222,252,.5);animation:lmFade .6s .25s both}
+.lm-p{position:absolute;left:0;right:0;height:0;border-top:2px solid var(--markLit);margin-top:-1px;
+  box-shadow:0 0 12px rgba(var(--rgbVio),.5);animation:lmFade .6s .25s both}
 @keyframes lmFade{from{opacity:0}to{opacity:1}}
 .lm-p b{position:absolute;right:7px;top:-8px;padding:1px 7px;border-radius:6px;font-size:9.5px;
-  font-weight:800;background:#E9DEFC;color:#120d2a;font-variant-numeric:tabular-nums}
+  font-weight:800;background:var(--markLit);color:#14110a;font-variant-numeric:tabular-nums}
 .lm-m{position:absolute;right:0;width:0;height:0;margin-top:-8px;
   animation:lmFade .5s .35s both}
 .lm-m span{position:absolute;right:86px;top:0;font-size:11px;line-height:1}
@@ -3861,8 +3880,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cy-band{position:absolute;top:3px;height:9px;border-radius:5px;
   background:linear-gradient(90deg,rgba(var(--rgbAcc),.45),rgba(var(--rgbRim),.75));
   box-shadow:0 0 10px rgba(var(--rgbAcc),.3)}
-.cy-due{position:absolute;top:0;width:2px;height:15px;background:#E9DEFC;border-radius:2px;
-  box-shadow:0 0 7px rgba(233,222,252,.7)}
+.cy-due{position:absolute;top:0;width:2px;height:15px;background:var(--markLit);border-radius:2px;
+  box-shadow:0 0 7px rgba(var(--rgbVio),.7)}
 .cy-lbl{position:absolute;top:14px;font-size:8.5px;color:var(--t3);white-space:nowrap}
 .cy-row .cy-lbl{padding-left:1px}
 .cy-lbl i{font-style:normal;margin-left:5px;color:var(--p3);font-weight:700}
@@ -4785,7 +4804,7 @@ body{background:
   padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .ts-row:last-child{border-bottom:none}
 .ts-row .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.ts-row .k.acc{color:#b18aff} .ts-row .k.red{color:var(--red)} .ts-row .k.grn{color:var(--green)}
+.ts-row .k.acc{color:var(--acc3)} .ts-row .k.red{color:var(--red)} .ts-row .k.grn{color:var(--green)}
 .ts-row .v{font-family:'Space Grotesk';font-size:12.5px;font-weight:700;color:var(--white);
   text-align:right;font-variant-numeric:tabular-nums}
 .ts-row .v.acc{color:var(--acc3)}
@@ -5566,7 +5585,7 @@ body{background:
 .cyc-tick{stroke:rgba(255,255,255,.18);stroke-width:2}
 .cyc-tick.on{stroke:var(--acc2);stroke-width:3}
 .cyc-planet{position:absolute;width:14px;height:14px;border-radius:50%;left:50%;top:50%;
-  background:radial-gradient(circle at 35% 30%,#e9defc,var(--accent) 60%,#3b1d80);
+  background:radial-gradient(circle at 35% 30%,var(--pGlow),var(--accent) 60%,var(--pDeep));
   box-shadow:0 0 16px rgba(var(--rgbVio),.9);transform:translate(-50%,-50%);
   transition:transform 1.4s var(--ease)}
 .cyc-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
@@ -6219,7 +6238,17 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --navy:#FAFAF8; --navy2:#FFFFFF; --sec:#FAFAF8;
   --rim:rgba(20,20,18,.09); --rim2:rgba(20,20,18,.15); --rim3:rgba(156,122,34,.34);
   --muted:#75797D; --mid:#585C60; --soft:#3C4044; --text:#1C1D1F; --white:#121315;
-  --accent:#9C7A22; --acc2:#B8912E; --acc3:#D4B44A;
+  /* EVERY OTHER THEME BRIGHTENS ACROSS accent → acc2 → acc3, BECAUSE EVERY
+     OTHER THEME IS DARK. acc3 is meant to be the boldest, most-legible step
+     — the one used where nothing else may be used, a masthead wordmark
+     among them — and "boldest" against a near-black ground means lightest.
+     Copied forward with the same three values lifted toward white, acc3
+     landed at a pale gold that all but disappeared against Platinum's own
+     near-white ground: the one theme where boldest means darkest instead.
+     The progression is reversed here, only here, so acc3 stays what it is
+     everywhere else — the strongest, most legible version of the accent
+     for whatever ground the theme actually has. */
+  --accent:#9C7A22; --acc2:#7C611B; --acc3:#5E4914;
   --purple:#9C7A22; --violet:#9C7A22; --blue:#2D6C8C;
   --tw:#121315; --ts:#3C4044; --tm:#6C7075; --tf:#8A8E92;
   --bd:rgba(20,20,18,.09); --bd2:rgba(20,20,18,.15);
@@ -6309,7 +6338,12 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
   border-radius:8px;border:1px solid var(--b1);background:var(--card)}
 .stat .ic{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;
   background:rgba(var(--rgbAcc),.14);border:1px solid var(--b1)}
-.stat .ic svg{width:13px;height:13px;stroke:var(--p3);fill:none;stroke-width:1.7}
+/* --p3 is the accent, calibrated for contrast against the dark background
+   this app used to always have — against Platinum's near-white it drops
+   under 3:1 and the icon reads as barely there. --t2 is the general body
+   text tone, contrast-audited against every theme's own surface already,
+   so the icon is exactly as legible as the label sitting beside it. */
+.stat .ic svg{width:13px;height:13px;stroke:var(--t2);fill:none;stroke-width:1.7}
 .stat .sv{min-width:0}
 .stat .l{font-size:9px;color:var(--t3);font-weight:500;white-space:nowrap}
 .stat .v{font-size:19px;font-weight:600;color:var(--t1);line-height:1.15}
@@ -6333,8 +6367,13 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 .pill.ghost{border-color:var(--b2);color:var(--p3);background:rgba(var(--rgbTrue),.1)}
 .ch-body{display:flex;flex:1;min-height:0}
 .ch-tools{display:flex;flex-direction:column;gap:1px;padding:6px 3px;border-right:1px solid var(--b1)}
+/* --t3 is this app's deliberately-weakest text tone — right for a caption,
+   wrong for a row of clickable drawing tools nobody is meant to have to
+   hunt for. On the original near-black background it still read; on
+   Platinum's near-white one it nearly vanishes. --t2 is legible everywhere
+   these six themes go. */
 .ch-tools i{width:24px;height:24px;display:grid;place-items:center;border-radius:5px;font-style:normal;
-  font-size:11px;color:var(--t3);cursor:pointer}
+  font-size:11px;color:var(--t2);cursor:pointer}
 .ch-tools i:hover{background:rgba(var(--rgbAcc),.12);color:var(--p3)}
 .ch-plot{flex:1;min-width:0;min-height:0;display:flex}
 .ch-plot svg{flex:1;width:100%;height:100%!important;display:block}
@@ -9613,10 +9652,17 @@ body{background:var(--bg0)}
   <div class="cs-ring" style="top:4%;width:min(520px,90vw)"></div>
   <div class="cs-beam" style="bottom:52%"></div>
   <div class="lg-orb"></div>
-  <div class="lg-word">CELESTIAL&nbsp;ALPHA</div>
+  <div class="lg-word">CAELUS</div>
   <div class="lg-tag">MARKET ANALYTICS · CYCLE ENGINE · PRECISION EDGE</div>
   <div class="card" style="width:min(92vw,380px);padding:34px 30px;text-align:center;border-radius:26px">
-    <div class="app-logo" style="width:52px;height:52px;font-size:20px;margin:0 auto 16px;border-radius:16px">C∞</div>
+    <div class="app-logo" style="width:52px;height:52px;margin:0 auto 16px;border-radius:16px">
+      <svg viewBox="0 0 40 40" role="img" aria-label="CAELUS">
+        <path d="M31.4 12.2A14 14 0 1 0 31.4 27.8" fill="none" style="stroke:rgba(255,255,255,.55)"
+              stroke-width="4.4" stroke-linecap="butt"/>
+        <path d="M14.4 27L20 12.4L25.6 27M16.9 21.4H23.1" fill="none" style="stroke:#fff"
+              stroke-width="2.6" stroke-linecap="butt" stroke-linejoin="miter"/>
+      </svg>
+    </div>
     <div style="font-family:'Space Grotesk';font-size:20px;font-weight:700;color:var(--white)" id="lg_title">Welcome back</div>
     <div class="f11 mid" style="margin:6px 0 22px" id="lg_sub">Owner key or invite key — either one unlocks</div>
     <input type="text" id="lg_pass" placeholder="Access key" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" name="ca_field_9f2" style="text-align:center;height:44px;font-size:15px;letter-spacing:.2em;-webkit-text-security:disc" onkeydown="if(event.key==='Enter')doLogin()">
@@ -27058,16 +27104,21 @@ function timDial(st){
 
   /* how much of the day is behind you, and the minute you are standing in */
   if(nowDeg!=null){
+    /* an SVG presentation attribute cannot read a CSS var() directly, so the
+       hand — hardcoded purple regardless of theme until now — reads its
+       colour through palHex() the same way every other JS-drawn shape in
+       this file already does. */
+    var handCol=palHex('--markLit','#D5C3F2');
     if(nowDeg>0.6)
       s+='<path d="'+dialArc(DIAL.R-DIAL.SW/2-5,0,Math.min(nowDeg,359.9))+'" fill="none"'
-        +' stroke="rgba(180,155,230,.30)" stroke-width="2" stroke-linecap="round"/>';
+        +' stroke="'+palRgb('--rgbVio',.30,'180,155,230')+'" stroke-width="2" stroke-linecap="round"/>';
     /* the marker sits outside the band, like the pointer on a watch bezel. A
        hand drawn in towards the centre crossed straight through the verdict —
        at hour 16 it ran through the middle of "HOUR 16 OF 24". */
     var tip=dialXY(DIAL.R,nowDeg);
-    s+='<path d="'+dialLine(DIAL.R+DIAL.SW/2+2,DIAL.R+DIAL.SW/2+11,nowDeg)+'" stroke="#D5C3F2"'
+    s+='<path d="'+dialLine(DIAL.R+DIAL.SW/2+2,DIAL.R+DIAL.SW/2+11,nowDeg)+'" stroke="'+handCol+'"'
       +' stroke-width="2.6" stroke-linecap="round" class="tk-hand"/>'
-      +'<circle cx="'+tip[0].toFixed(1)+'" cy="'+tip[1].toFixed(1)+'" r="3.4" fill="#D5C3F2" class="tk-hand"/>';
+      +'<circle cx="'+tip[0].toFixed(1)+'" cy="'+tip[1].toFixed(1)+'" r="3.4" fill="'+handCol+'" class="tk-hand"/>';
   }
   return s+'</svg>';
 }
@@ -30118,7 +30169,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b137';
+var CA_BUILD='b139';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
