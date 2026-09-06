@@ -6314,62 +6314,64 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       same reversal Platinum needed for the same reason, a light ground
       reading "bold" as dark rather than pale. ── */
 [data-theme="frostlight"]{
-  /* SECOND PASS. Still too white — 214-234 a channel reads exactly like
-     238-255 does at a glance, because both are near the top of the range;
-     "a bit darker than white" is still white. This is an actual medium
-     slate-blue now (bg0 at 146-176 a channel, roughly half the range down
-     from white), re-derived properly rather than dimmed a second time —
-     the accent had to darken with it or it lost all contrast against a
-     ground that is no longer near-white. Verified against WCAG contrast
-     math, not by eye: body text ~6.6:1 on bg0, ~7.6:1 on card; the accent
-     ~4:1 on card (fine for the bold/large text it is actually used on);
-     acc2/acc3 5:1 and 6:1. Still unambiguously a light theme — dark text,
-     light ground — just nowhere near a flashlight any more. */
-  --bg0:#92A0B0; --card:#A3ABB5; --card2:#94A2B1;
-  --bg1:#9BA6B3; --chartbg:#A3ABB5;
-  --b1:rgba(16,26,36,.10); --b2:rgba(16,26,36,.18); --bFaint:rgba(16,26,36,.06);
-  --bAct:#1F4A70;
-  --p3:#1F4A70; --pGlow:#8FB8DE; --pDeep:#7F96AC;
-  --p1:#495B6D; --p2:#647A8E;
+  /* THIRD PASS, AND THE FIRST TWO WERE SOLVING THE WRONG VARIABLE. Both
+     tried to fix "too white" by darkening the ground — first a little,
+     then a lot, until it stopped being a light theme at all. What was
+     actually asked for is the classic pairing: an off-white ground (not
+     grey, not near-black — genuinely off-white, close to Platinum's own)
+     paired with a real navy for the accent, rather than the pale sky-blue
+     this theme launched with. A pale accent on a near-white ground is what
+     read as glare; a dark, saturated navy on that same off-white does not,
+     because the eye is resting on ink, not on a wash of pale colour.
+     Contrast checked, not eyeballed: body text ~15:1 on bg0/card (AAA has
+     no higher bar), the navy accent ~10:1 on both — miles past the 4.5:1
+     floor, because a navy this deep does not need the boost the previous
+     two passes were trying to buy by darkening the whole page around it. */
+  --bg0:#E9EEF3; --card:#F2F6F9; --card2:#E7ECF0;
+  --bg1:#EDF1F5; --chartbg:#F2F6F9;
+  --b1:rgba(16,26,36,.09); --b2:rgba(16,26,36,.16); --bFaint:rgba(16,26,36,.05);
+  --bAct:#0E3A66;
+  --p3:#0E3A66; --pGlow:#6C93B8; --pDeep:#D3DFE9;
+  --p1:#465B70; --p2:#5F7A90;
   --soft:#222C36; --mid:#3A4854; --muted:#57646E; --text:#101820;
   --t1:#0A1219; --t2:#222C36; --t3:#4C5964;
-  --up:#146B4A; --dn:#902E26; --warn:#7A5C1E; --cy:#1E4F70;
-  --elFire:#8A4A2E; --elEarth:#305E42; --elAir:#1E4F70; --elWater:#2E4480;
+  --up:#146B4A; --dn:#902E26; --warn:#7A5C1E; --cy:#0E3A66;
+  --elFire:#8A4A2E; --elEarth:#305E42; --elAir:#0E3A66; --elWater:#1E3868;
   --rgbUp:20,107,74; --rgbDn:144,46,38; --rgbWarn:122,92,30;
   --rgbFire:138,74,46; --rgbEarth:48,94,66;
-  --rgbAir:30,79,112; --rgbWater:46,68,128;
-  --wash:rgba(16,26,36,.04); --washTo:rgba(var(--g35),.97);
-  --pDeepest:#163E62; --pWell:#869AAE;
-  --sideBg:#9BA6B3; --sideTop:#A3ABB5; --sideTop2:#97A4B2;
-  --navOn1:#7F96AC; --navOn2:#8F9DAD;
-  --cUp:#1F4A70; --cDn:#7B90A2; --gridLn:#8494A6; --axisTx:#465360; --dialFace:152,166,181; --markDim:#7B90A2; --markLit:#1F4A70;
-  --g01:152,166,181; --g02:152,166,181; --g03:152,166,181; --g04:152,166,181; --g05:152,166,181; --g06:152,166,181;
-  --g07:152,166,181; --g08:152,166,181; --g09:152,166,181; --g10:152,166,181; --g11:152,166,181; --g12:152,166,181;
-  --g13:152,166,181; --g14:152,166,181; --g15:152,166,181; --g16:152,166,181; --g17:152,166,181; --g18:142,156,170;
-  --g19:152,166,181; --g20:142,156,170; --g21:152,166,181; --g22:142,156,170; --g23:152,166,181; --g24:152,166,181;
-  --g25:142,156,170; --g26:142,156,170; --g27:142,156,170; --g28:152,166,181; --g29:142,156,170;
-  --g30:142,156,170; --g31:142,156,170; --g32:142,156,170; --g33:142,156,170; --g34:136,150,162;
-  --g35:142,156,170; --g36:142,156,170; --g37:142,156,170; --g38:136,150,162; --g39:136,150,162;
-  --g40:136,150,162; --g41:136,150,162; --g42:136,150,162; --g43:136,150,162; --g44:128,142,153;
-  --g45:128,142,153; --g46:124,156,164; --g47:150,141,157; --g48:136,150,162; --g49:128,142,153;
-  --g50:148,130,145; --g51:116,154,162; --g52:128,142,153; --g53:128,142,153; --g54:128,142,153;
-  --g55:128,142,153; --g56:122,136,149; --g57:122,136,149; --g58:122,136,149; --g59:122,136,149;
-  --g60:122,136,149; --g61:122,136,149; --g62:122,136,149;
+  --rgbAir:14,58,102; --rgbWater:30,56,104;
+  --wash:rgba(16,26,36,.028); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#0A2E52; --pWell:#E0E8EE;
+  --sideBg:#EDF1F5; --sideTop:#F2F6F9; --sideTop2:#EBF0F4;
+  --navOn1:#D3DFE9; --navOn2:#E1E7EC;
+  --cUp:#0E3A66; --cDn:#B7C7D4; --gridLn:#DCE3E9; --axisTx:#5C6A78; --dialFace:239,244,249; --markDim:#B7C7D4; --markLit:#0E3A66;
+  --g01:239,244,249; --g02:239,244,249; --g03:239,244,249; --g04:239,244,249; --g05:239,244,249; --g06:239,244,249;
+  --g07:239,244,249; --g08:239,244,249; --g09:239,244,249; --g10:239,244,249; --g11:239,244,249; --g12:239,244,249;
+  --g13:239,244,249; --g14:239,244,249; --g15:239,244,249; --g16:239,244,249; --g17:239,244,249; --g18:229,234,237;
+  --g19:239,244,249; --g20:229,234,237; --g21:239,244,249; --g22:229,234,237; --g23:239,244,249; --g24:239,244,249;
+  --g25:229,234,237; --g26:229,234,237; --g27:229,234,237; --g28:239,244,249; --g29:229,234,237;
+  --g30:229,234,237; --g31:229,234,237; --g32:229,234,237; --g33:229,234,237; --g34:223,228,229;
+  --g35:229,234,237; --g36:229,234,237; --g37:229,234,237; --g38:223,228,229; --g39:223,228,229;
+  --g40:223,228,229; --g41:223,228,229; --g42:223,228,229; --g43:223,228,229; --g44:215,220,220;
+  --g45:215,220,220; --g46:211,234,231; --g47:237,219,224; --g48:223,228,229; --g49:215,220,220;
+  --g50:235,208,212; --g51:203,232,229; --g52:215,220,220; --g53:215,220,220; --g54:215,220,220;
+  --g55:215,220,220; --g56:209,214,216; --g57:209,214,216; --g58:209,214,216; --g59:209,214,216;
+  --g60:209,214,216; --g61:209,214,216; --g62:209,214,216;
   --rgbAcc:16,24,32; --rgbRim:16,24,32; --rgbVio:122,92,30;
-  --rgbLit:127,150,172; --rgbDeep:10,18,25; --rgbTrue:31,74,112;
+  --rgbLit:211,223,233; --rgbDeep:10,18,25; --rgbTrue:14,58,102;
   --rgbAmy:16,24,32; --rgbCore:16,24,32; --rgbSoft:70,83,96;
-  --rgbBord:31,74,112; --rgbInfo:30,79,112; --rgbMid:80,90,100;
-  --bg:#92A0B0; --s1:#9BA6B3; --s2:#A3ABB5; --s3:#94A2B1; --s4:#889AAB;
-  --navy:#9BA6B3; --navy2:#A3ABB5; --sec:#9BA6B3;
-  --rim:rgba(16,26,36,.10); --rim2:rgba(16,26,36,.17); --rim3:rgba(31,74,112,.34);
+  --rgbBord:14,58,102; --rgbInfo:14,58,102; --rgbMid:80,90,100;
+  --bg:#E9EEF3; --s1:#EDF1F5; --s2:#F2F6F9; --s3:#E7ECF0; --s4:#DFE5EB;
+  --navy:#EDF1F5; --navy2:#F2F6F9; --sec:#EDF1F5;
+  --rim:rgba(16,26,36,.09); --rim2:rgba(16,26,36,.15); --rim3:rgba(14,58,102,.30);
   --muted:#57646E; --mid:#3A4854; --soft:#222C36; --text:#101820; --white:#0A1219;
   /* same reversal as Platinum, same reason: bold means darkest here, not lightest */
-  --accent:#1F4A70; --acc2:#173D5D; --acc3:#112E48;
-  --purple:#1F4A70; --violet:#1F4A70; --blue:#1E4F70;
+  --accent:#0E3A66; --acc2:#0A2E52; --acc3:#071F3A;
+  --purple:#0E3A66; --violet:#0E3A66; --blue:#0E3A66;
   --tw:#0A1219; --ts:#222C36; --tm:#4C5964; --tf:#5C6874;
-  --bd:rgba(16,26,36,.10); --bd2:rgba(16,26,36,.17);
+  --bd:rgba(16,26,36,.09); --bd2:rgba(16,26,36,.15);
   --green:#146B4A; --red:#902E26; --amber:#7A5C1E; --yellow:#7A5C1E;
-  --gold:#7A5C1E; --purple-glow:rgba(31,74,112,.16);
+  --gold:#7A5C1E; --purple-glow:rgba(14,58,102,.14);
 }
 /* the hero art and sidebar portrait are one shared purple-toned image in
    every theme; both frost themes desaturate and re-tint it toward the same
@@ -30521,7 +30523,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b150';
+var CA_BUILD='b151';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30542,7 +30544,7 @@ var CA_BUILD='b150';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost Light, properly this time \u2014 a real medium slate-blue, not a slightly-darker white. Re-derived with the accent recontrasted against it and checked against WCAG numbers, not by eye.';
+var CA_WHATS_NEW='Frost Light rebuilt on the pairing that was actually asked for \u2014 off-white ground, deep navy accent \u2014 instead of darkening the page around a pale accent that was the real source of the glare.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
