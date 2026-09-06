@@ -6314,24 +6314,22 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       same reversal Platinum needed for the same reason, a light ground
       reading "bold" as dark rather than pale. ── */
 [data-theme="frostlight"]{
-  /* THIRD PASS, AND THE FIRST TWO WERE SOLVING THE WRONG VARIABLE. Both
-     tried to fix "too white" by darkening the ground — first a little,
-     then a lot, until it stopped being a light theme at all. What was
-     actually asked for is the classic pairing: an off-white ground (not
-     grey, not near-black — genuinely off-white, close to Platinum's own)
-     paired with a real navy for the accent, rather than the pale sky-blue
-     this theme launched with. A pale accent on a near-white ground is what
-     read as glare; a dark, saturated navy on that same off-white does not,
-     because the eye is resting on ink, not on a wash of pale colour.
-     Contrast checked, not eyeballed: body text ~15:1 on bg0/card (AAA has
-     no higher bar), the navy accent ~10:1 on both — miles past the 4.5:1
-     floor, because a navy this deep does not need the boost the previous
-     two passes were trying to buy by darkening the whole page around it. */
-  --bg0:#E9EEF3; --card:#F2F6F9; --card2:#E7ECF0;
-  --bg1:#EDF1F5; --chartbg:#F2F6F9;
-  --b1:rgba(16,26,36,.09); --b2:rgba(16,26,36,.16); --bFaint:rgba(16,26,36,.05);
+  /* FOURTH PASS. "Less white, more navy/dark blue added" — read literally:
+     not a paler background with navy TEXT on it (passes one through
+     three), but less of the page actually being pale, and a real block of
+     navy actually present rather than implied by a headline colour. Two
+     changes: the ground itself is a visibly blue "sky/powder" tone now,
+     not an off-white with a blue cast — still light enough for dark text
+     (~12-13:1, see below) but nowhere near neutral. And the sidebar (see
+     the scoped block right after this one) is an actual navy panel, not
+     off-white with a navy logo on it — the one part of the screen that is
+     now unambiguously "navy", the way the request named it as a colour to
+     add rather than a text tint. */
+  --bg0:#C7D9E8; --card:#D0E1EE; --card2:#C5D7E5;
+  --bg1:#CBDCEA; --chartbg:#D0E1EE;
+  --b1:rgba(16,26,36,.10); --b2:rgba(16,26,36,.17); --bFaint:rgba(16,26,36,.06);
   --bAct:#0E3A66;
-  --p3:#0E3A66; --pGlow:#6C93B8; --pDeep:#D3DFE9;
+  --p3:#0E3A66; --pGlow:#5C87AE; --pDeep:#B1CADE;
   --p1:#465B70; --p2:#5F7A90;
   --soft:#222C36; --mid:#3A4854; --muted:#57646E; --text:#101820;
   --t1:#0A1219; --t2:#222C36; --t3:#4C5964;
@@ -6340,38 +6338,60 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --rgbUp:20,107,74; --rgbDn:144,46,38; --rgbWarn:122,92,30;
   --rgbFire:138,74,46; --rgbEarth:48,94,66;
   --rgbAir:14,58,102; --rgbWater:30,56,104;
-  --wash:rgba(16,26,36,.028); --washTo:rgba(var(--g35),.97);
-  --pDeepest:#0A2E52; --pWell:#E0E8EE;
-  --sideBg:#EDF1F5; --sideTop:#F2F6F9; --sideTop2:#EBF0F4;
-  --navOn1:#D3DFE9; --navOn2:#E1E7EC;
-  --cUp:#0E3A66; --cDn:#B7C7D4; --gridLn:#DCE3E9; --axisTx:#5C6A78; --dialFace:239,244,249; --markDim:#B7C7D4; --markLit:#0E3A66;
-  --g01:239,244,249; --g02:239,244,249; --g03:239,244,249; --g04:239,244,249; --g05:239,244,249; --g06:239,244,249;
-  --g07:239,244,249; --g08:239,244,249; --g09:239,244,249; --g10:239,244,249; --g11:239,244,249; --g12:239,244,249;
-  --g13:239,244,249; --g14:239,244,249; --g15:239,244,249; --g16:239,244,249; --g17:239,244,249; --g18:229,234,237;
-  --g19:239,244,249; --g20:229,234,237; --g21:239,244,249; --g22:229,234,237; --g23:239,244,249; --g24:239,244,249;
-  --g25:229,234,237; --g26:229,234,237; --g27:229,234,237; --g28:239,244,249; --g29:229,234,237;
-  --g30:229,234,237; --g31:229,234,237; --g32:229,234,237; --g33:229,234,237; --g34:223,228,229;
-  --g35:229,234,237; --g36:229,234,237; --g37:229,234,237; --g38:223,228,229; --g39:223,228,229;
-  --g40:223,228,229; --g41:223,228,229; --g42:223,228,229; --g43:223,228,229; --g44:215,220,220;
-  --g45:215,220,220; --g46:211,234,231; --g47:237,219,224; --g48:223,228,229; --g49:215,220,220;
-  --g50:235,208,212; --g51:203,232,229; --g52:215,220,220; --g53:215,220,220; --g54:215,220,220;
-  --g55:215,220,220; --g56:209,214,216; --g57:209,214,216; --g58:209,214,216; --g59:209,214,216;
-  --g60:209,214,216; --g61:209,214,216; --g62:209,214,216;
+  --wash:rgba(16,26,36,.032); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#0A2E52; --pWell:#BED3E3;
+  --sideBg:#0E2A4A; --sideTop:#123456; --sideTop2:#0B2340;
+  --navOn1:#B1CADE; --navOn2:#BFD2E1;
+  --cUp:#0E3A66; --cDn:#9AB2C6; --gridLn:#BACEDE; --axisTx:#4E5C6A; --dialFace:205,223,238; --markDim:#9AB2C6; --markLit:#0E3A66;
+  --g01:205,223,238; --g02:205,223,238; --g03:205,223,238; --g04:205,223,238; --g05:205,223,238; --g06:205,223,238;
+  --g07:205,223,238; --g08:205,223,238; --g09:205,223,238; --g10:205,223,238; --g11:205,223,238; --g12:205,223,238;
+  --g13:205,223,238; --g14:205,223,238; --g15:205,223,238; --g16:205,223,238; --g17:205,223,238; --g18:195,213,226;
+  --g19:205,223,238; --g20:195,213,226; --g21:205,223,238; --g22:195,213,226; --g23:205,223,238; --g24:205,223,238;
+  --g25:195,213,226; --g26:195,213,226; --g27:195,213,226; --g28:205,223,238; --g29:195,213,226; --g30:195,213,226;
+  --g31:195,213,226; --g32:195,213,226; --g33:195,213,226; --g34:189,207,218; --g35:195,213,226; --g36:195,213,226;
+  --g37:195,213,226; --g38:189,207,218; --g39:189,207,218; --g40:189,207,218; --g41:189,207,218; --g42:189,207,218;
+  --g43:189,207,218; --g44:181,199,209; --g45:181,199,209; --g46:177,213,220; --g47:203,198,213; --g48:189,207,218;
+  --g49:181,199,209; --g50:201,187,201; --g51:169,211,218; --g52:181,199,209; --g53:181,199,209; --g54:181,199,209;
+  --g55:181,199,209; --g56:175,193,205; --g57:175,193,205; --g58:175,193,205; --g59:175,193,205;
+  --g60:175,193,205; --g61:175,193,205; --g62:175,193,205;
   --rgbAcc:16,24,32; --rgbRim:16,24,32; --rgbVio:122,92,30;
-  --rgbLit:211,223,233; --rgbDeep:10,18,25; --rgbTrue:14,58,102;
+  --rgbLit:177,202,222; --rgbDeep:10,18,25; --rgbTrue:14,58,102;
   --rgbAmy:16,24,32; --rgbCore:16,24,32; --rgbSoft:70,83,96;
   --rgbBord:14,58,102; --rgbInfo:14,58,102; --rgbMid:80,90,100;
-  --bg:#E9EEF3; --s1:#EDF1F5; --s2:#F2F6F9; --s3:#E7ECF0; --s4:#DFE5EB;
-  --navy:#EDF1F5; --navy2:#F2F6F9; --sec:#EDF1F5;
-  --rim:rgba(16,26,36,.09); --rim2:rgba(16,26,36,.15); --rim3:rgba(14,58,102,.30);
+  --bg:#C7D9E8; --s1:#CBDCEA; --s2:#D0E1EE; --s3:#C5D7E5; --s4:#B9CEE0;
+  --navy:#CBDCEA; --navy2:#D0E1EE; --sec:#CBDCEA;
+  --rim:rgba(16,26,36,.10); --rim2:rgba(16,26,36,.16); --rim3:rgba(14,58,102,.30);
   --muted:#57646E; --mid:#3A4854; --soft:#222C36; --text:#101820; --white:#0A1219;
   /* same reversal as Platinum, same reason: bold means darkest here, not lightest */
   --accent:#0E3A66; --acc2:#0A2E52; --acc3:#071F3A;
   --purple:#0E3A66; --violet:#0E3A66; --blue:#0E3A66;
   --tw:#0A1219; --ts:#222C36; --tm:#4C5964; --tf:#5C6874;
-  --bd:rgba(16,26,36,.09); --bd2:rgba(16,26,36,.15);
+  --bd:rgba(16,26,36,.10); --bd2:rgba(16,26,36,.16);
   --green:#146B4A; --red:#902E26; --amber:#7A5C1E; --yellow:#7A5C1E;
   --gold:#7A5C1E; --purple-glow:rgba(14,58,102,.14);
+}
+/* THE SIDEBAR ITSELF, NOW NAVY. .side-nav and .side-card paint with the
+   shared g41/g21 background-layer tokens, the same ones every other card
+   on the page uses — redefining them globally would turn every card navy,
+   not just the sidebar. Redefined here, scoped to .side, they only ever
+   resolve to these values for the sidebar's own descendants; every other
+   card elsewhere on the page keeps reading the theme's real g41/g21
+   (a light blue) unaffected. Same trick for the text-tone tokens, so the
+   nav labels and the member card read light-on-navy instead of the
+   theme's normal dark-on-light. */
+[data-theme="frostlight"] .side{
+  /* .side-nav paints with g41/g21 (one declaration, easy). .side-card has
+     THREE layered declarations elsewhere in this sheet from earlier passes
+     over the file, and the one that actually wins uses rgbCore and g34
+     instead — missed on the first attempt, which is why the card stayed
+     pale while the nav panel above it went navy. Both pairs covered now. */
+  --g41:14,42,74; --g21:11,34,60; --g34:14,42,74; --rgbCore:11,34,60;
+  --t1:#EEF4FA; --t2:#C7D9EA; --t3:#8CA6C0; --tw:#EEF4FA; --ts:#C7D9EA; --tm:#8CA6C0; --tf:#7492AE;
+  --soft:#DCE7F1; --mid:#A9C2D8; --muted:#7C97B2; --text:#EEF4FA;
+  --p3:#8FBEEA; --p2:#6C93B8; --p1:#4C6A88;
+  --b1:rgba(255,255,255,.10); --b2:rgba(255,255,255,.18); --bFaint:rgba(255,255,255,.06);
+  --bd:rgba(255,255,255,.10); --bd2:rgba(255,255,255,.16);
+  --rgbAcc:143,190,234; --rgbRim:143,190,234;
 }
 /* the hero art and sidebar portrait are one shared purple-toned image in
    every theme; both frost themes desaturate and re-tint it toward the same
@@ -30523,7 +30543,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b151';
+var CA_BUILD='b152';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30544,7 +30564,7 @@ var CA_BUILD='b151';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost Light rebuilt on the pairing that was actually asked for \u2014 off-white ground, deep navy accent \u2014 instead of darkening the page around a pale accent that was the real source of the glare.';
+var CA_WHATS_NEW='Frost Light: less pale, more navy \u2014 the ground is a real blue now instead of off-white, and the sidebar is an actual navy panel instead of the same light ground with a navy logo on it.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
