@@ -8574,30 +8574,17 @@ body{background:var(--bg0)}
   .dh,.stats,.drow-a,.drow-b,.drow-c,.po-grid,.mx-strip,
   .hyp3,.myev-f{grid-template-columns:1fr!important}
   .dh,.drow-a,.drow-b,.drow-c{height:auto!important;min-height:0!important}
-  /* the bell, the member badge, the illustration and the quote all lived in
-     a right-aligned column on desktop (.dh-r, align-items:flex-end). A first
-     pass here switched it to a stretched, centred block, which is why the
-     whole thing read as dropped into the middle of the page instead of
-     living where it always lived — the corner, just a smaller one.
-     .dh stacks in DOM order — headline, then tickers, then this — which
-     buried the bell/badge four cards down and put it right where the
-     fixed corner buttons already live, so the two overlapped. .order
-     moves it to the top of the stack without touching the markup: the
-     sidebar's own mark sits top-left the moment the drawer opens, so this
-     is the same idea on the right, above everything else, not underneath
-     four cards' worth of scroll. */
-  .dh-r{order:-1!important;flex-direction:column!important;align-items:flex-end!important;
-    gap:6px!important;margin-left:auto!important;width:auto!important;max-width:150px!important}
-  .dh-art{width:48px!important;height:48px!important;align-self:flex-end!important}
-  /* .dh-art::before is the soft glow behind the illustration — 148x148px,
-     sized for the 120px-wide desktop image. Shrinking the image to 48px
-     and leaving this at 148px left a glow four times the size of the art
-     it was supposed to sit behind, spilling down into the headline below
-     it as a large dim smudge — that's the "empty space" in the screenshot,
-     not empty at all, just a glow with nothing left inside it to glow. */
-  .dh-art::before{width:60px!important;height:60px!important;right:-12px!important;top:-4px!important}
-  .dh-q{text-align:right!important;font-size:9px!important}
-  .sc-portrait{width:64px!important;height:64px!important}
+  /* THREE ROUNDS OF SHRINKING THIS BLOCK AND THE SPACE COMPLAINT DID NOT GO
+     AWAY, BECAUSE SHRINKING WAS NEVER GOING TO FIX IT. The illustration and
+     the quote are pure decoration — no number, no control, nothing a phone
+     screen has room to spend on when it is scarce everywhere else on this
+     tab. Wherever they end up and whatever size they are, they still cost
+     a card's worth of height for zero information. On a phone they are
+     gone, not smaller. The bell and the member badge stay — the only part
+     of this block anyone actually reads — right-aligned, up top, on their
+     own, one row. */
+  .dh-r{order:-1!important;justify-self:end!important;width:auto!important}
+  .dh-art,.dh-q{display:none!important}
   /* the four ticker tiles read badly as four full-width rows, one under
      the next — a phone-native ticker is a compact grid, not a list, so
      two columns of smaller tiles instead of one column of full-size ones. */
@@ -30407,7 +30394,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b146';
+var CA_BUILD='b147';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30428,7 +30415,7 @@ var CA_BUILD='b146';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='A seventh theme: Charcoal \u2014 black, grey and off-white only, no accent colour anywhere, not even gold, the hero art and sidebar portrait included. Also fixed an oversized glow behind the hero art that was reading as empty space on a phone.';
+var CA_WHATS_NEW='The hero illustration and its quote are gone on a phone, not just smaller \u2014 decoration with nothing to read was still costing real height after two rounds of shrinking it. The bell and member badge stay, compact, up top.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
