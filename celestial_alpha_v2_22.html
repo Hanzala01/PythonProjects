@@ -8486,6 +8486,34 @@ body{background:var(--bg0)}
    backdrop rather than redrawn. The .sc-portrait rules further up the sheet
    position it and fade its left edge away from the quote. */
 .side-card{overflow:hidden}
+
+/* ═══ A PHONE, NOT A SQUEEZED LAPTOP — BELOW 600PX ═══
+   Every grid above this point was tuned for a column with real width: a
+   three-part hero, six stat tiles across, four ticker tiles across (some
+   of them fixed-pixel columns that simply do not fit in 375px and were
+   spilling the last tile off the edge), cards sitting two and three
+   abreast, several of them pinned to a fixed pixel height for that exact
+   layout. Below 600px that is not "smaller", it is unreadable — the fix
+   is not shrinking six columns until each one is thirty pixels wide, it
+   is one thing, then the next thing, full width. This block is last in
+   the sheet on purpose: this file has three or four earlier "final"
+   passes over some of these same classes (a first version, a redesign,
+   a pixel-exact one with fixed heights), each written without !important,
+   so being last plus !important is what actually wins over every one of
+   them regardless of which pass a given rule came from. The two purely
+   decorative images (the hero illustration, the sidebar portrait) shrink
+   here too, rather than pushing the text beside them into a corner. */
+@media(max-width:600px){
+  .dh,.dh-ticks,.stats,.drow-a,.drow-b,.drow-c,.po-grid,.mx-strip,
+  .hyp3,.myev-f{grid-template-columns:1fr!important}
+  .dh,.drow-a,.drow-b,.drow-c{height:auto!important;min-height:0!important}
+  .dh-r{flex-direction:column!important;align-items:stretch!important;
+    width:auto!important;gap:10px!important}
+  .dh-top{justify-content:space-between!important}
+  .dh-art{width:64px!important;height:64px!important;align-self:center!important}
+  .dh-q{text-align:left!important}
+  .sc-portrait{width:64px!important;height:64px!important}
+}
 </style>
 <div class="shell">
 
@@ -30284,7 +30312,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b142';
+var CA_BUILD='b143';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30305,7 +30333,7 @@ var CA_BUILD='b142';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The sidebar is a proper menu on a phone now \u2014 a hamburger button opens it as a drawer instead of dumping every tab down the page above your content. Saturday\u2019s (and Monday/Wednesday/Friday\u2019s) reading no longer looks like it disagrees with itself.';
+var CA_WHATS_NEW='Every card on a phone now stacks one under the next instead of squeezing six columns into one screen \u2014 the ticker row, the stat tiles, the journal and performance cards all go full width. The two decorative images shrink instead of crowding the text next to them.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
