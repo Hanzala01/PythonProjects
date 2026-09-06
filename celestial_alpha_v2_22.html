@@ -3514,6 +3514,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cset-tb .sw.newsroom{background:linear-gradient(135deg,#0B0D10 45%,#8FA6B8)}
 .cset-tb .sw.midnight{background:linear-gradient(135deg,#07090D 45%,#7FA3D6)}
 .cset-tb .sw.platinum{background:linear-gradient(135deg,#F4F4F1 45%,#9C7A22);border:1px solid rgba(0,0,0,.12)}
+.cset-tb .sw.charcoal{background:linear-gradient(135deg,#0B0D10 45%,#A1A1A1)}
 
 /* ── HIERARCHY: one hero per card, and air between sections ─────────────
    Applied to both themes. The complaint the Qamar screenshot answers is not
@@ -6252,6 +6253,72 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --gold:#D7A83A; --purple-glow:rgba(127,163,214,.14);
 }
 
+/* ── CHARCOAL — the request was exact: black, gray, charcoal, off-white,
+      and not one thing that reads as a colour, the accent included. Every
+      other theme still has a signature tint doing the accent's job (gold,
+      steel-blue); this one does the same job in true neutral grey instead
+      — every accent/glow/mark token below is R=G=B, converted from
+      Newsroom's steel-blue at matching luminance so nothing got lighter or
+      darker in the swap, just desaturated to zero. Bull/bear green and red
+      are untouched — they are not decoration, they are the one thing on
+      this board that has to stay legible as a colour. ── */
+[data-theme="charcoal"]{
+  --bg0:#0B0D10; --card:#14171B; --card2:#1A1E23;
+  --bg1:#0F1215; --chartbg:#090B0D;
+  --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
+  --bAct:#8F8F8F;
+  --p3:#A1A1A1; --pGlow:#CFCFCF; --pDeep:#242424;
+  --p1:#959595; --p2:#B0B0B0;
+  --soft:#CBCBCB; --mid:#A0A0A0; --muted:#7E7E7E; --text:#E8E8E8;
+  --t1:#F2F2F2; --t2:#C9C9C9; --t3:#A0A0A0;
+  --up:#4E9B6E; --dn:#B0554E; --warn:#C9A227; --cy:#8F8F8F;
+  --elFire:#B06A46; --elEarth:#5C8A65; --elAir:#8F8F8F; --elWater:#556F9E;
+  --rgbUp:78,155,110; --rgbDn:176,85,78; --rgbWarn:201,162,39;
+  --rgbFire:176,106,70; --rgbEarth:92,138,101;
+  --rgbAir:143,143,143; --rgbWater:85,111,158;
+  --wash:rgba(255,255,255,.020); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#6F6F6F; --pWell:#161616;
+  --sideBg:#0B0B0B; --sideTop:#111111; --sideTop2:#0F0F0F;
+  --navOn1:#222222; --navOn2:#171717;
+  --cUp:#A1A1A1; --cDn:#5A5A5A; --gridLn:#1D1D1D; --axisTx:#828282; --dialFace:10,10,10; --markDim:#5A5A5A; --markLit:#A1A1A1;
+  --g01:9,10,12; --g02:9,10,12; --g03:9,10,12; --g04:9,10,12; --g05:9,10,12; --g06:9,10,12;
+  --g07:9,10,12; --g08:9,10,12; --g09:9,10,12; --g10:9,10,12; --g11:9,10,12; --g12:9,10,12;
+  --g13:9,10,12; --g14:9,10,12; --g15:9,10,12; --g16:9,10,12; --g17:9,10,12; --g18:15,17,19;
+  --g19:9,10,12; --g20:15,17,19; --g21:9,10,12; --g22:15,17,19; --g23:9,10,12; --g24:9,10,12;
+  --g25:15,17,19; --g26:15,17,19; --g27:15,17,19; --g28:9,10,12; --g29:15,17,19;
+  --g30:15,17,19; --g31:15,17,19; --g32:15,17,19; --g33:15,17,19; --g34:19,22,25;
+  --g35:15,17,19; --g36:15,17,19; --g37:15,17,19; --g38:19,22,25; --g39:19,22,25;
+  --g40:19,22,25; --g41:19,22,25; --g42:19,22,25; --g43:19,22,25; --g44:25,28,32;
+  --g45:25,28,32; --g46:17,40,30; --g47:48,20,19; --g48:19,22,25; --g49:25,28,32;
+  --g50:54,22,21; --g51:14,44,34; --g52:25,28,32; --g53:25,28,32; --g54:25,28,32;
+  --g55:25,28,32; --g56:42,46,50; --g57:42,46,50; --g58:42,46,50; --g59:42,46,50;
+  --g60:42,46,50; --g61:42,46,50; --g62:42,46,50;
+  --rgbAcc:160,160,160; --rgbRim:160,160,160; --rgbVio:143,143,143;
+  --rgbLit:206,206,206; --rgbDeep:91,91,91; --rgbTrue:143,143,143;
+  --rgbAmy:160,160,160; --rgbCore:160,160,160; --rgbSoft:141,141,141;
+  --rgbBord:143,143,143; --rgbInfo:143,143,143; --rgbMid:91,91,91;
+  --bg:#0B0D10; --s1:#0F1215; --s2:#14171B; --s3:#1A1E23; --s4:#20242A;
+  --navy:#0F1215; --navy2:#14171B; --sec:#0F1215;
+  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(143,143,143,.32);
+  --muted:#7E7E7E; --mid:#A0A0A0; --soft:#CBCBCB; --text:#E8E8E8; --white:#F2F2F2;
+  --accent:#A1A1A1; --acc2:#B9B9B9; --acc3:#CFCFCF;
+  --purple:#A1A1A1; --violet:#A1A1A1; --blue:#8F8F8F;
+  --tw:#F2F2F2; --ts:#C9C9C9; --tm:#A0A0A0; --tf:#828282;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.13);
+  --green:#4E9B6E; --red:#B0554E; --amber:#C9A227; --yellow:#C9A227;
+  --gold:#C9A227; --purple-glow:rgba(143,143,143,.13);
+}
+/* the hero illustration is one fixed image shared by every theme (--heroart,
+   set once in :root) — every other theme just lets its native purple/blue
+   show through. This is the one theme where that would put a stray colour
+   back on screen after removing it everywhere else, so the image itself is
+   desaturated in place rather than swapped for a second asset. */
+[data-theme="charcoal"] .dh-art,[data-theme="charcoal"] .sc-portrait{filter:grayscale(1) brightness(.94)}
+/* the sidebar's sparkle dots are a hardcoded #e9defc fill on the SVG itself
+   (never a token, in any theme) — the one other fixed-colour asset besides
+   the two images above, and the same reasoning applies to it here. */
+[data-theme="charcoal"] .side-card svg{filter:grayscale(1) brightness(.85)}
+
 /* ── PLATINUM — the light-mode option: near-white, graphite, black ink,
       a restrained gold accent. Private-bank paper rather than a screen. ── */
 [data-theme="platinum"]{
@@ -8522,6 +8589,13 @@ body{background:var(--bg0)}
   .dh-r{order:-1!important;flex-direction:column!important;align-items:flex-end!important;
     gap:6px!important;margin-left:auto!important;width:auto!important;max-width:150px!important}
   .dh-art{width:48px!important;height:48px!important;align-self:flex-end!important}
+  /* .dh-art::before is the soft glow behind the illustration — 148x148px,
+     sized for the 120px-wide desktop image. Shrinking the image to 48px
+     and leaving this at 148px left a glow four times the size of the art
+     it was supposed to sit behind, spilling down into the headline below
+     it as a large dim smudge — that's the "empty space" in the screenshot,
+     not empty at all, just a glow with nothing left inside it to glow. */
+  .dh-art::before{width:60px!important;height:60px!important;right:-12px!important;top:-4px!important}
   .dh-q{text-align:right!important;font-size:9px!important}
   .sc-portrait{width:64px!important;height:64px!important}
   /* the four ticker tiles read badly as four full-width rows, one under
@@ -13855,7 +13929,8 @@ var CA_THEMES=[
   {id:'qamar',    name:'Qamar',    say:'near-black, one warm accent, more air'},
   {id:'newsroom', name:'Newsroom',say:'charcoal and slate — a research-terminal read, colour rationed'},
   {id:'midnight', name:'Midnight',say:'near-black and steel-navy — the coolest of the six'},
-  {id:'platinum', name:'Platinum',say:'near-white, black ink, a restrained gold accent — the light-mode option'}
+  {id:'platinum', name:'Platinum',say:'near-white, black ink, a restrained gold accent — the light-mode option'},
+  {id:'charcoal', name:'Charcoal',say:'black, grey and off-white only — no accent colour anywhere, not even gold'}
 ];
 var CA_THEME_IDS=CA_THEMES.map(function(t){return t.id;});
 function themeGet(){
@@ -13918,7 +13993,7 @@ function renderCelestialSettings(){
 
    +'<div class="cset-s"><i>Look</i>'
      +'<div class="cset-row">'
-       +'<div><b>Theme</b><s>Six palettes, the same tokens underneath — the dashboard, the Timing '
+       +'<div><b>Theme</b><s>Seven palettes, the same tokens underneath — the dashboard, the Timing '
          +'Engine, the Analytics and everything they compute are identical in every one of them; '
          +'only the colours move. Celestial is the original, purple accent and all, kept exactly '
          +'as it was and still one tap away.</s></div>'
@@ -30332,7 +30407,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b145';
+var CA_BUILD='b146';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30353,7 +30428,7 @@ var CA_BUILD='b145';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The bell, member badge and hero art moved to the top of the phone view, right-aligned \u2014 same idea as the sidebar\u2019s own mark sitting top-left, mirrored. It used to sit four cards down, right on top of the two corner buttons.';
+var CA_WHATS_NEW='A seventh theme: Charcoal \u2014 black, grey and off-white only, no accent colour anywhere, not even gold, the hero art and sidebar portrait included. Also fixed an oversized glow behind the hero art that was reading as empty space on a phone.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
