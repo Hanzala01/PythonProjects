@@ -6337,50 +6337,60 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
      majority. Checked headline contrast specifically, since .dh-t sits
      directly on bg0 with no card behind it: ~6.6:1, comfortably past
      the 3:1 floor for text that size. */
-  --bg0:#7C9CBE; --card:#D0E1EE; --card2:#C5D7E5;
-  --bg1:#7C9CBE; --chartbg:#D0E1EE;
-  --b1:rgba(16,26,36,.10); --b2:rgba(16,26,36,.17); --bFaint:rgba(16,26,36,.06);
-  --bAct:#0E3A66;
-  --p3:#0E3A66; --pGlow:#5C87AE; --pDeep:#B1CADE;
-  --p1:#465B70; --p2:#5F7A90;
+  /* SIXTH PASS. "Add a bit of black too, fade the white further, darken the
+     navy." Every surface moved a step further the same direction as the
+     last two passes: bg0 darker and a little less saturated (more black
+     mixed in, less pure blue), cards a step down from bright pale blue,
+     the navy accent darker still. Re-checked contrast at each step rather
+     than assuming the last pass's margin still holds: dark text on the new
+     card is ~9.4:1, on the new (much darker) bg0 specifically — the one
+     risky spot, since .dh-t sits directly on it with no card behind it —
+     ~4.8:1, still past the 3:1 floor for text that size with real margin
+     left, not just barely legal. */
+  --bg0:#6C88A6; --card:#B4C8D8; --card2:#A9BECF;
+  --bg1:#6C88A6; --chartbg:#B4C8D8;
+  --b1:rgba(8,14,20,.12); --b2:rgba(8,14,20,.20); --bFaint:rgba(8,14,20,.07);
+  --bAct:#0A2C50;
+  --p3:#0A2C50; --pGlow:#4C7398; --pDeep:#95B1C8;
+  --p1:#3C4F62; --p2:#526A7E;
   --soft:#222C36; --mid:#3A4854; --muted:#57646E; --text:#101820;
   --t1:#0A1219; --t2:#222C36; --t3:#4C5964;
-  --up:#146B4A; --dn:#902E26; --warn:#7A5C1E; --cy:#0E3A66;
-  --elFire:#8A4A2E; --elEarth:#305E42; --elAir:#0E3A66; --elWater:#1E3868;
+  --up:#146B4A; --dn:#902E26; --warn:#7A5C1E; --cy:#0A2C50;
+  --elFire:#8A4A2E; --elEarth:#305E42; --elAir:#0A2C50; --elWater:#182C54;
   --rgbUp:20,107,74; --rgbDn:144,46,38; --rgbWarn:122,92,30;
   --rgbFire:138,74,46; --rgbEarth:48,94,66;
-  --rgbAir:14,58,102; --rgbWater:30,56,104;
-  --wash:rgba(16,26,36,.032); --washTo:rgba(var(--g35),.97);
-  --pDeepest:#0A2E52; --pWell:#BED3E3;
-  --sideBg:#0E2A4A; --sideTop:#123456; --sideTop2:#0B2340;
-  --navOn1:#B1CADE; --navOn2:#BFD2E1;
-  --cUp:#0E3A66; --cDn:#9AB2C6; --gridLn:#BACEDE; --axisTx:#4E5C6A; --dialFace:205,223,238; --markDim:#9AB2C6; --markLit:#0E3A66;
-  --g01:205,223,238; --g02:205,223,238; --g03:205,223,238; --g04:205,223,238; --g05:205,223,238; --g06:205,223,238;
-  --g07:205,223,238; --g08:205,223,238; --g09:205,223,238; --g10:205,223,238; --g11:205,223,238; --g12:205,223,238;
-  --g13:205,223,238; --g14:205,223,238; --g15:205,223,238; --g16:205,223,238; --g17:205,223,238; --g18:195,213,226;
-  --g19:205,223,238; --g20:195,213,226; --g21:205,223,238; --g22:195,213,226; --g23:205,223,238; --g24:205,223,238;
-  --g25:195,213,226; --g26:195,213,226; --g27:195,213,226; --g28:205,223,238; --g29:195,213,226; --g30:195,213,226;
-  --g31:195,213,226; --g32:195,213,226; --g33:195,213,226; --g34:189,207,218; --g35:195,213,226; --g36:195,213,226;
-  --g37:195,213,226; --g38:189,207,218; --g39:189,207,218; --g40:189,207,218; --g41:189,207,218; --g42:189,207,218;
-  --g43:189,207,218; --g44:181,199,209; --g45:181,199,209; --g46:177,213,220; --g47:203,198,213; --g48:189,207,218;
-  --g49:181,199,209; --g50:201,187,201; --g51:169,211,218; --g52:181,199,209; --g53:181,199,209; --g54:181,199,209;
-  --g55:181,199,209; --g56:175,193,205; --g57:175,193,205; --g58:175,193,205; --g59:175,193,205;
-  --g60:175,193,205; --g61:175,193,205; --g62:175,193,205;
-  --rgbAcc:16,24,32; --rgbRim:16,24,32; --rgbVio:122,92,30;
-  --rgbLit:177,202,222; --rgbDeep:10,18,25; --rgbTrue:14,58,102;
-  --rgbAmy:16,24,32; --rgbCore:16,24,32; --rgbSoft:70,83,96;
-  --rgbBord:14,58,102; --rgbInfo:14,58,102; --rgbMid:80,90,100;
-  --bg:#7C9CBE; --s1:#7C9CBE; --s2:#D0E1EE; --s3:#C5D7E5; --s4:#B9CEE0;
-  --navy:#7C9CBE; --navy2:#D0E1EE; --sec:#7C9CBE;
-  --rim:rgba(16,26,36,.10); --rim2:rgba(16,26,36,.16); --rim3:rgba(14,58,102,.30);
+  --rgbAir:10,44,80; --rgbWater:24,44,84;
+  --wash:rgba(8,14,20,.04); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#06203C; --pWell:#A2BACD;
+  --sideBg:#081C33; --sideTop:#0B2340; --sideTop2:#06182C;
+  --navOn1:#95B1C8; --navOn2:#A3B9CB;
+  --cUp:#0A2C50; --cDn:#7E99B0; --gridLn:#9EB5C8; --axisTx:#3E4A56; --dialFace:177,198,216; --markDim:#7E99B0; --markLit:#0A2C50;
+  --g01:177,198,216; --g02:177,198,216; --g03:177,198,216; --g04:177,198,216; --g05:177,198,216; --g06:177,198,216;
+  --g07:177,198,216; --g08:177,198,216; --g09:177,198,216; --g10:177,198,216; --g11:177,198,216; --g12:177,198,216;
+  --g13:177,198,216; --g14:177,198,216; --g15:177,198,216; --g16:177,198,216; --g17:177,198,216; --g18:167,188,204;
+  --g19:177,198,216; --g20:167,188,204; --g21:177,198,216; --g22:167,188,204; --g23:177,198,216; --g24:177,198,216;
+  --g25:167,188,204; --g26:167,188,204; --g27:167,188,204; --g28:177,198,216; --g29:167,188,204; --g30:167,188,204;
+  --g31:167,188,204; --g32:167,188,204; --g33:167,188,204; --g34:161,182,196; --g35:167,188,204; --g36:167,188,204;
+  --g37:167,188,204; --g38:161,182,196; --g39:161,182,196; --g40:161,182,196; --g41:161,182,196; --g42:161,182,196;
+  --g43:161,182,196; --g44:153,174,187; --g45:153,174,187; --g46:149,188,198; --g47:175,173,191; --g48:161,182,196;
+  --g49:153,174,187; --g50:173,162,179; --g51:141,186,196; --g52:153,174,187; --g53:153,174,187; --g54:153,174,187;
+  --g55:153,174,187; --g56:147,168,183; --g57:147,168,183; --g58:147,168,183; --g59:147,168,183;
+  --g60:147,168,183; --g61:147,168,183; --g62:147,168,183;
+  --rgbAcc:8,14,20; --rgbRim:8,14,20; --rgbVio:122,92,30;
+  --rgbLit:149,177,200; --rgbDeep:6,10,14; --rgbTrue:10,44,80;
+  --rgbAmy:8,14,20; --rgbCore:8,14,20; --rgbSoft:62,74,87;
+  --rgbBord:10,44,80; --rgbInfo:10,44,80; --rgbMid:70,80,90;
+  --bg:#6C88A6; --s1:#6C88A6; --s2:#B4C8D8; --s3:#A9BECF; --s4:#9DB5CA;
+  --navy:#6C88A6; --navy2:#B4C8D8; --sec:#6C88A6;
+  --rim:rgba(8,14,20,.12); --rim2:rgba(8,14,20,.19); --rim3:rgba(10,44,80,.34);
   --muted:#57646E; --mid:#3A4854; --soft:#222C36; --text:#101820; --white:#0A1219;
   /* same reversal as Platinum, same reason: bold means darkest here, not lightest */
-  --accent:#0E3A66; --acc2:#0A2E52; --acc3:#071F3A;
-  --purple:#0E3A66; --violet:#0E3A66; --blue:#0E3A66;
+  --accent:#0A2C50; --acc2:#06203C; --acc3:#031124;
+  --purple:#0A2C50; --violet:#0A2C50; --blue:#0A2C50;
   --tw:#0A1219; --ts:#222C36; --tm:#4C5964; --tf:#5C6874;
-  --bd:rgba(16,26,36,.10); --bd2:rgba(16,26,36,.16);
+  --bd:rgba(8,14,20,.12); --bd2:rgba(8,14,20,.19);
   --green:#146B4A; --red:#902E26; --amber:#7A5C1E; --yellow:#7A5C1E;
-  --gold:#7A5C1E; --purple-glow:rgba(14,58,102,.14);
+  --gold:#7A5C1E; --purple-glow:rgba(10,44,80,.18);
 }
 /* THE SIDEBAR ITSELF, NOW NAVY. .side-nav and .side-card paint with the
    shared g41/g21 background-layer tokens, the same ones every other card
@@ -6397,7 +6407,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
      over the file, and the one that actually wins uses rgbCore and g34
      instead — missed on the first attempt, which is why the card stayed
      pale while the nav panel above it went navy. Both pairs covered now. */
-  --g41:14,42,74; --g21:11,34,60; --g34:14,42,74; --rgbCore:11,34,60;
+  --g41:8,24,44; --g21:6,18,34; --g34:8,24,44; --rgbCore:6,18,34;
   --t1:#EEF4FA; --t2:#C7D9EA; --t3:#8CA6C0; --tw:#EEF4FA; --ts:#C7D9EA; --tm:#8CA6C0; --tf:#7492AE;
   --soft:#DCE7F1; --mid:#A9C2D8; --muted:#7C97B2; --text:#EEF4FA;
   --p3:#8FBEEA; --p2:#6C93B8; --p1:#4C6A88;
@@ -30555,7 +30565,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b153';
+var CA_BUILD='b154';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30576,7 +30586,7 @@ var CA_BUILD='b153';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost Light: the page background itself (every margin, every gap between cards) is a deep navy-blue now, not just the sidebar \u2014 cards stay light so they still read, but pale is the minority colour on the screen instead of the majority.';
+var CA_WHATS_NEW='Frost Light, one more step: a bit of black mixed into the navy, the cards toned down further, the accent darker still \u2014 checked contrast at every step so it stays legible while getting darker.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
