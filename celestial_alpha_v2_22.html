@@ -937,6 +937,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;box-shadow:0 0 14px rgba(var(--rgbAcc),.5)}
 .sc-badge .n{font-family:'Space Grotesk';font-size:12px;font-weight:600}
 .side-card p{font-size:10.5px;color:var(--ts);line-height:1.9}
+/* ═══ THE SIDEBAR AS A DRAWER, BELOW 1180PX ═══
+   Hidden and inert above 1180px — the sidebar sits in its own grid column
+   there and none of this applies. Below it, .side itself becomes the
+   sliding panel (see the 1180px media query), and these three are its
+   controls: the hamburger opens it, the backdrop and the × close it. */
+.mnav-btn{display:none;position:fixed;top:14px;left:14px;z-index:210;width:44px;height:44px;border-radius:50%;
+  align-items:center;justify-content:center;border:1px solid var(--b2);
+  background:radial-gradient(120% 120% at 30% 20%,var(--b2),rgba(0,0,0,.88));
+  box-shadow:0 10px 26px rgba(0,0,0,.5),0 0 0 5px rgba(var(--rgbCore),.12);cursor:pointer}
+.mnav-btn svg{width:20px;height:20px;stroke:var(--markLit);fill:none;stroke-width:2;stroke-linecap:round}
+.mnav-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:198;backdrop-filter:blur(2px)}
+.mnav-close{display:none;position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;
+  align-items:center;justify-content:center;color:var(--ts);border:1px solid var(--bd);
+  background:rgba(0,0,0,.25);cursor:pointer;font-size:18px;line-height:1}
 /* ═══ MAIN ═══ */
 .main{display:flex;flex-direction:column;gap:16px;min-width:0}
 .hero-row{display:grid;grid-template-columns:1.15fr 2fr 1.1fr;gap:16px;align-items:stretch}
@@ -1210,9 +1224,30 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .up{color:var(--green)}.dn{color:var(--red)}
 .rise{animation:rise .6s cubic-bezier(.2,.9,.3,1) backwards}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@media(max-width:1180px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row}.side-card{display:none}
+@media(max-width:1180px){.shell{grid-template-columns:1fr}
 .hero-row,.chart-shell,.row2,.row3{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.tick-grid{grid-template-columns:repeat(2,1fr)}
-.chart-shell>.card:first-child,.row2>.card:last-child{grid-column:auto}}
+.chart-shell>.card:first-child,.row2>.card:last-child{grid-column:auto}
+/* THIS USED TO BE .side{position:static;flex-direction:row}.side-card{display:none} — the
+   sidebar reflowed into a horizontal row and the member card was dropped to make room.
+   Past tablet width there is nowhere for eleven nav rows to go in a row, so it wrapped
+   into the same vertical list as the desktop sidebar anyway, just sitting in normal flow
+   above the tab instead of a drawer beside it — a full screen of nav before any content
+   on a phone. It slides now instead of reflowing: same sidebar, same card, off-canvas
+   until the hamburger asks for it. */
+.mnav-btn{display:flex}
+.mnav-backdrop.show{display:block}
+/* the hamburger is fixed top:14px;left:14px on every tab. Most tabs already
+   clear it by accident — the dashboard's own banner row sits above the
+   headline — but a tab whose first card starts flush at the top (Market
+   Intelligence) sat the button right over its heading. One reservation
+   here beats trusting every tab's own top margin to happen to be enough. */
+.shell>.main{padding-top:70px!important}
+.side{position:fixed;top:0;left:0;bottom:0;height:100vh;width:min(300px,84vw);z-index:200;
+  padding:16px;margin:0;background:var(--bg);box-shadow:0 0 60px rgba(0,0,0,.6);
+  transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.9,.3,1);overflow-y:auto}
+.side.mnav-open{transform:translateX(0)}
+.mnav-close{display:flex}
+}
 .verdict-note{font-size:11px;color:var(--soft);border-top:1px solid var(--rim);padding-top:9px}
 /* ══ EXECUTION BOT ══ */
 .bot-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
@@ -1867,7 +1902,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .rkd-r.on{background:rgba(var(--rgbBord),.26)}
 .rkd-r.on b{color:var(--p3)} .rkd-r.on i{color:var(--t1)}
 @media(max-width:760px){.rkd{left:12px;right:12px;width:auto}
-  .rfab{right:14px;bottom:66px}}   /* clear of the mobile bottom nav */
+  .rfab{right:14px;bottom:66px}
+  /* .jv-fab stacks above .rfab on every width — its bottom offset (86px)
+     was tuned against .rfab's desktop position (bottom:20px). .rfab moves
+     to bottom:66px right above, so .jv-fab has to move with it or the two
+     sit on top of each other instead of stacking. */
+  .jv-fab{right:14px;bottom:132px}}   /* clear of the mobile bottom nav */
 
 /* ── the scan across every instrument ── */
 .scn{margin:0 0 6px}
@@ -3026,6 +3066,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ttop{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10000;
   display:flex;flex-direction:column;gap:7px;align-items:center;pointer-events:none;
   width:min(420px,calc(100vw - 28px))}
+/* below 1180px the hamburger lives at top:14px;left:14px, in the same
+   nearly-full-width band this stack occupies — pushed down to clear it
+   rather than fighting a 10000 z-index the button was never going to win */
+@media(max-width:1180px){.ttop{top:70px}}
 .ttop-i{display:flex;align-items:center;gap:10px;width:100%;pointer-events:auto;cursor:pointer;
   padding:10px 12px;border-radius:13px;opacity:0;transform:translateY(-14px) scale(.96);
   border:1px solid rgba(var(--rgbSoft),.3);background:rgba(var(--g42),.97);
@@ -7281,6 +7325,12 @@ body{background:var(--bg0)}
 .sn-h2t{flex:1;min-width:0}
 .sn-h2t b{display:block;font-size:16px;font-weight:600;color:var(--t1);white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
+/* the ellipsis above assumes the countdown on the right leaves the title
+   most of the row's width — true at desktop width, not once the same row
+   has to fit both next to a big countdown number on a phone. Wrapping is
+   the safe failure here: the title takes a second line instead of losing
+   half its own name to "…". */
+@media(max-width:600px){.sn-h2t b{white-space:normal;overflow:visible;text-overflow:clip}}
 .sn-h2t i{display:block;font-style:normal;font-size:9.5px;color:var(--t3);margin-top:2px}
 .sn-h2c{flex:none;text-align:right}
 .sn-h2c b{display:block;font-size:19px;font-weight:600;color:var(--t1);
@@ -8439,8 +8489,15 @@ body{background:var(--bg0)}
 </style>
 <div class="shell">
 
+<!-- Mobile-only: hidden above 1180px (see .mnav-btn), opens the sidebar as a drawer -->
+<button id="mnav_btn" class="mnav-btn" onclick="mnavToggle()" aria-label="Open menu">
+  <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+</button>
+<div id="mnav_backdrop" class="mnav-backdrop" onclick="mnavClose()"></div>
+
 <!-- ═══════════ SIDEBAR ═══════════ -->
 <aside class="side">
+  <button class="mnav-close" onclick="mnavClose()" aria-label="Close menu">&times;</button>
   <nav class="side-nav rise">
     <div class="side-brand">
       <!-- THE MARK — a CA monogram, not the dial any more.
@@ -30227,7 +30284,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b141';
+var CA_BUILD='b142';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30248,7 +30305,7 @@ var CA_BUILD='b141';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Everything is back on one page. The four tabs hid the day score, the hour dial and the positions \u2014 which read as deleting them. Nothing is behind a click now.';
+var CA_WHATS_NEW='The sidebar is a proper menu on a phone now \u2014 a hamburger button opens it as a drawer instead of dumping every tab down the page above your content. Saturday\u2019s (and Monday/Wednesday/Friday\u2019s) reading no longer looks like it disagrees with itself.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -31653,6 +31710,28 @@ function tick(){
 
 function shareIt(){if(navigator.share)navigator.share({title:'Celestial Alpha'}).catch(function(){window.print();});else window.print();}
 
+/* ── THE SIDEBAR DRAWER, BELOW 1180PX ──────────────────────────────────
+   .side is the same sidebar at every width. Above 1180px it sits in its
+   own grid column, sticky, always visible — none of this runs. Below it,
+   the 1180px media query turns .side into a fixed off-canvas panel and
+   these three functions are its only job: slide it in, slide it out, and
+   lock the page behind it so scrolling the drawer does not scroll the
+   tab underneath. */
+function mnavOpen(){
+  var s=document.querySelector('.side'); if(s)s.classList.add('mnav-open');
+  var bd=document.getElementById('mnav_backdrop'); if(bd)bd.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function mnavClose(){
+  var s=document.querySelector('.side'); if(s)s.classList.remove('mnav-open');
+  var bd=document.getElementById('mnav_backdrop'); if(bd)bd.classList.remove('show');
+  document.body.style.overflow='';
+}
+function mnavToggle(){
+  var s=document.querySelector('.side');
+  if(s&&s.classList.contains('mnav-open'))mnavClose(); else mnavOpen();
+}
+
 
 /* ---------- INIT (Analytics) ---------- */
 document.addEventListener('DOMContentLoaded', function(){
@@ -31674,6 +31753,9 @@ try {
     try{ dashMatrixIdle('waiting for a price'); }catch(e){}
     /* both round buttons belong to the window, not to one tab */
     try{ riskFabSync(); riskDashSync(); }catch(e){}
+    /* a tap on any nav row should also put the drawer away — on the wide
+       layout .side never gets the .mnav-open class so this is a no-op there */
+    try{ var _sn=document.querySelector('.side-nav'); if(_sn)_sn.addEventListener('click',mnavClose); }catch(e){}
     try{ jvRender(); }catch(e){}
     /* a wake word that was switched on should still be on after a reload */
     try{ jvDot(); if(jvPrefs().wake)jvWakeStart(); else jvFirstRun(); }catch(e){}
