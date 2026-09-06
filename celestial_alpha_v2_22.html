@@ -6364,73 +6364,79 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
      risky spot, since .dh-t sits directly on it with no card behind it —
      ~4.8:1, still past the 3:1 floor for text that size with real margin
      left, not just barely legal. */
-  --bg0:#6C88A6; --card:#B4C8D8; --card2:#A9BECF;
-  --bg1:#6C88A6; --chartbg:#B4C8D8;
-  --b1:rgba(8,14,20,.12); --b2:rgba(8,14,20,.20); --bFaint:rgba(8,14,20,.07);
-  --bAct:#0A2C50;
-  --p3:#0A2C50; --pGlow:#4C7398; --pDeep:#95B1C8;
-  --p1:#3C4F62; --p2:#526A7E;
-  --soft:#222C36; --mid:#3A4854; --muted:#57646E; --text:#101820;
-  --t1:#0A1219; --t2:#222C36; --t3:#4C5964;
-  --up:#146B4A; --dn:#902E26; --warn:#7A5C1E; --cy:#0A2C50;
-  --elFire:#8A4A2E; --elEarth:#305E42; --elAir:#0A2C50; --elWater:#182C54;
-  --rgbUp:20,107,74; --rgbDn:144,46,38; --rgbWarn:122,92,30;
-  --rgbFire:138,74,46; --rgbEarth:48,94,66;
-  --rgbAir:10,44,80; --rgbWater:24,44,84;
-  --wash:rgba(8,14,20,.04); --washTo:rgba(var(--g35),.97);
-  --pDeepest:#06203C; --pWell:#A2BACD;
-  --sideBg:#081C33; --sideTop:#0B2340; --sideTop2:#06182C;
-  --navOn1:#95B1C8; --navOn2:#A3B9CB;
-  --cUp:#0A2C50; --cDn:#7E99B0; --gridLn:#9EB5C8; --axisTx:#3E4A56; --dialFace:177,198,216; --markDim:#7E99B0; --markLit:#0A2C50;
-  --g01:177,198,216; --g02:177,198,216; --g03:177,198,216; --g04:177,198,216; --g05:177,198,216; --g06:177,198,216;
-  --g07:177,198,216; --g08:177,198,216; --g09:177,198,216; --g10:177,198,216; --g11:177,198,216; --g12:177,198,216;
-  --g13:177,198,216; --g14:177,198,216; --g15:177,198,216; --g16:177,198,216; --g17:177,198,216; --g18:167,188,204;
-  --g19:177,198,216; --g20:167,188,204; --g21:177,198,216; --g22:167,188,204; --g23:177,198,216; --g24:177,198,216;
-  --g25:167,188,204; --g26:167,188,204; --g27:167,188,204; --g28:177,198,216; --g29:167,188,204; --g30:167,188,204;
-  --g31:167,188,204; --g32:167,188,204; --g33:167,188,204; --g34:161,182,196; --g35:167,188,204; --g36:167,188,204;
-  --g37:167,188,204; --g38:161,182,196; --g39:161,182,196; --g40:161,182,196; --g41:161,182,196; --g42:161,182,196;
-  --g43:161,182,196; --g44:153,174,187; --g45:153,174,187; --g46:149,188,198; --g47:175,173,191; --g48:161,182,196;
-  --g49:153,174,187; --g50:173,162,179; --g51:141,186,196; --g52:153,174,187; --g53:153,174,187; --g54:153,174,187;
-  --g55:153,174,187; --g56:147,168,183; --g57:147,168,183; --g58:147,168,183; --g59:147,168,183;
-  --g60:147,168,183; --g61:147,168,183; --g62:147,168,183;
-  --rgbAcc:8,14,20; --rgbRim:8,14,20; --rgbVio:122,92,30;
-  --rgbLit:149,177,200; --rgbDeep:6,10,14; --rgbTrue:10,44,80;
-  --rgbAmy:8,14,20; --rgbCore:8,14,20; --rgbSoft:62,74,87;
-  --rgbBord:10,44,80; --rgbInfo:10,44,80; --rgbMid:70,80,90;
-  --bg:#6C88A6; --s1:#6C88A6; --s2:#B4C8D8; --s3:#A9BECF; --s4:#9DB5CA;
-  --navy:#6C88A6; --navy2:#B4C8D8; --sec:#6C88A6;
-  --rim:rgba(8,14,20,.12); --rim2:rgba(8,14,20,.19); --rim3:rgba(10,44,80,.34);
-  --muted:#57646E; --mid:#3A4854; --soft:#222C36; --text:#101820; --white:#0A1219;
-  /* same reversal as Platinum, same reason: bold means darkest here, not lightest */
-  --accent:#0A2C50; --acc2:#06203C; --acc3:#031124;
-  --purple:#0A2C50; --violet:#0A2C50; --blue:#0A2C50;
-  --tw:#0A1219; --ts:#222C36; --tm:#4C5964; --tf:#5C6874;
-  --bd:rgba(8,14,20,.12); --bd2:rgba(8,14,20,.19);
-  --green:#146B4A; --red:#902E26; --amber:#7A5C1E; --yellow:#7A5C1E;
-  --gold:#7A5C1E; --purple-glow:rgba(10,44,80,.18);
+  /* SEVENTH PASS: SWAPPED. The sidebar's colour is the main theme's colour
+     now, blended with black; the old main colour moved to the sidebar and
+     the pictures instead. Concretely: bg0/card/the g-tokens every card
+     draws from are Frost's own dark-navy-blended-with-black values (the
+     same ones, not a re-derivation — one navy identity, still), and the
+     sidebar carries the lighter blue that used to be the page background.
+     Every text/accent token had to flip with its background rather than
+     just the two colours trading places — light text on the now-dark
+     content, dark text on the now-light sidebar (that half lives in the
+     .side-scoped block right after this one, the same mechanism the last
+     several passes already used to give the sidebar its own values). */
+  --bg0:#050F1C; --card:#0A2C50; --card2:#123A64;
+  --bg1:#081627; --chartbg:#040A12;
+  --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
+  --bAct:#6FA8DE;
+  --p3:#86BEEC; --pGlow:#CDE6F8; --pDeep:#1B2E48;
+  --p1:#7C93AE; --p2:#9AB4CE;
+  --soft:#CBDCEC; --mid:#93AAC4; --muted:#6E86A2; --text:#E4EEF7;
+  --t1:#F0F6FC; --t2:#C7D9EA; --t3:#8FA6C0;
+  --up:#4FAE85; --dn:#D0655C; --warn:#E0B24C; --cy:#6FA8DE;
+  --elFire:#D0805C; --elEarth:#5C9A80; --elAir:#6FB0E4; --elWater:#5A82CE;
+  --rgbUp:79,174,133; --rgbDn:208,101,92; --rgbWarn:224,178,76;
+  --rgbFire:208,128,92; --rgbEarth:92,154,128;
+  --rgbAir:111,176,228; --rgbWater:90,130,206;
+  --wash:rgba(255,255,255,.022); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#4E7EB0; --pWell:#0D2440;
+  --sideBg:#6C88A6; --sideTop:#B4C8D8; --sideTop2:#6C88A6;
+  --navOn1:#194A78; --navOn2:#0F2C4A;
+  --cUp:#86BEEC; --cDn:#3E5C7E; --gridLn:#163350; --axisTx:#7E96B4; --dialFace:3,9,17; --markDim:#3E5C7E; --markLit:#86BEEC;
+  --g01:3,29,55; --g02:3,29,55; --g03:3,29,55; --g04:3,29,55; --g05:3,29,55; --g06:3,29,55;
+  --g07:3,29,55; --g08:3,29,55; --g09:3,29,55; --g10:3,29,55; --g11:3,29,55; --g12:3,29,55;
+  --g13:3,29,55; --g14:3,29,55; --g15:3,29,55; --g16:3,29,55; --g17:3,29,55; --g18:9,38,67;
+  --g19:3,29,55; --g20:9,38,67; --g21:3,29,55; --g22:9,38,67; --g23:3,29,55; --g24:3,29,55;
+  --g25:9,38,67; --g26:9,38,67; --g27:9,38,67; --g28:3,29,55; --g29:9,38,67; --g30:9,38,67;
+  --g31:9,38,67; --g32:9,38,67; --g33:9,38,67; --g34:13,44,75; --g35:9,38,67; --g36:9,38,67;
+  --g37:9,38,67; --g38:13,44,75; --g39:13,44,75; --g40:13,44,75; --g41:13,44,75; --g42:13,44,75;
+  --g43:13,44,75; --g44:18,50,82; --g45:18,50,82; --g46:12,65,81; --g47:46,44,68; --g48:13,44,75;
+  --g49:18,50,82; --g50:52,46,70; --g51:9,69,83; --g52:18,50,82; --g53:18,50,82; --g54:18,50,82;
+  --g55:18,50,82; --g56:34,66,100; --g57:34,66,100; --g58:34,66,100; --g59:34,66,100;
+  --g60:34,66,100; --g61:34,66,100; --g62:34,66,100;
+  --rgbAcc:160,196,228; --rgbRim:160,196,228; --rgbVio:127,180,222;
+  --rgbLit:210,230,246; --rgbDeep:84,110,140; --rgbTrue:127,180,222;
+  --rgbAmy:160,196,228; --rgbCore:160,196,228; --rgbSoft:140,168,196;
+  --rgbBord:127,180,222; --rgbInfo:127,180,222; --rgbMid:84,110,140;
+  --bg:#050F1C; --s1:#081627; --s2:#0A2C50; --s3:#123A64; --s4:#194878;
+  --navy:#081627; --navy2:#0A2C50; --sec:#081627;
+  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(127,180,222,.34);
+  --muted:#6E86A2; --mid:#93AAC4; --soft:#CBDCEC; --text:#E4EEF7; --white:#F0F6FC;
+  --accent:#86BEEC; --acc2:#A0CCF0; --acc3:#CDE6F8;
+  --purple:#86BEEC; --violet:#86BEEC; --blue:#6FB0E4;
+  --tw:#F0F6FC; --ts:#C7D9EA; --tm:#8FA6C0; --tf:#7E96B4;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.13);
+  --green:#4FAE85; --red:#D0655C; --amber:#E0B24C; --yellow:#E0B24C;
+  --gold:#E0B24C; --purple-glow:rgba(127,180,222,.14);
 }
-/* THE SIDEBAR ITSELF, NOW NAVY. .side-nav and .side-card paint with the
-   shared g41/g21 background-layer tokens, the same ones every other card
-   on the page uses — redefining them globally would turn every card navy,
-   not just the sidebar. Redefined here, scoped to .side, they only ever
-   resolve to these values for the sidebar's own descendants; every other
-   card elsewhere on the page keeps reading the theme's real g41/g21
-   (a light blue) unaffected. Same trick for the text-tone tokens, so the
-   nav labels and the member card read light-on-navy instead of the
-   theme's normal dark-on-light. */
+/* THE SIDEBAR NOW CARRIES THE OLD MAIN-THEME BLUE, LIGHT. .side-nav and
+   .side-card paint with the shared g41/g21 background-layer tokens, the
+   same ones every other card on the page uses — redefining them globally
+   would turn every card light again, undoing the swap above. Redefined
+   here, scoped to .side, they only resolve to these values for the
+   sidebar's own descendants. Every text/accent token flips back to
+   dark-on-light here too, the opposite of the main theme now, and the
+   logo (--markDim/--markLit) gets its own dark strokes so it still reads
+   against a light panel instead of disappearing into it. */
 [data-theme="frostlight"] .side{
-  /* .side-nav paints with g41/g21 (one declaration, easy). .side-card has
-     THREE layered declarations elsewhere in this sheet from earlier passes
-     over the file, and the one that actually wins uses rgbCore and g34
-     instead — missed on the first attempt, which is why the card stayed
-     pale while the nav panel above it went navy. Both pairs covered now. */
-  --g41:8,24,44; --g21:6,18,34; --g34:8,24,44; --rgbCore:6,18,34;
-  --t1:#EEF4FA; --t2:#C7D9EA; --t3:#8CA6C0; --tw:#EEF4FA; --ts:#C7D9EA; --tm:#8CA6C0; --tf:#7492AE;
-  --soft:#DCE7F1; --mid:#A9C2D8; --muted:#7C97B2; --text:#EEF4FA;
-  --p3:#8FBEEA; --p2:#6C93B8; --p1:#4C6A88;
-  --b1:rgba(255,255,255,.10); --b2:rgba(255,255,255,.18); --bFaint:rgba(255,255,255,.06);
-  --bd:rgba(255,255,255,.10); --bd2:rgba(255,255,255,.16);
-  --rgbAcc:143,190,234; --rgbRim:143,190,234;
+  --g41:177,198,216; --g21:167,188,204; --g34:177,198,216; --rgbCore:8,14,20;
+  --t1:#0A1219; --t2:#222C36; --t3:#4C5964; --tw:#0A1219; --ts:#222C36; --tm:#4C5964; --tf:#5C6874;
+  --soft:#222C36; --mid:#3A4854; --muted:#57646E; --text:#101820;
+  --p3:#0A2C50; --p2:#3C4F62; --p1:#526A7E;
+  --b1:rgba(8,14,20,.12); --b2:rgba(8,14,20,.20); --bFaint:rgba(8,14,20,.07);
+  --bd:rgba(8,14,20,.12); --bd2:rgba(8,14,20,.19);
+  --markDim:#9AB4C8; --markLit:#0A2C50;
+  --rgbAcc:10,44,80; --rgbRim:10,44,80; --pGlow:#0A2C50;
 }
 /* the hero art and sidebar portrait are one shared purple-toned image in
    every theme; both frost themes desaturate and re-tint it toward the same
@@ -30582,7 +30588,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b159';
+var CA_BUILD='b160';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30603,7 +30609,7 @@ var CA_BUILD='b159';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost now shares one navy identity with Frost Light instead of two separately-tuned blues — the same navy stretched from black up through it, rather than a different dark-theme blue standing in for it.';
+var CA_WHATS_NEW='Frost Light, swapped: the content area now carries the sidebar’s navy (blended with black), and the sidebar carries the lighter blue the content used to have. Every text colour flipped with its background.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
