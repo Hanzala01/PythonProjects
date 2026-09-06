@@ -8729,6 +8729,80 @@ body{background:var(--bg0)}
    position it and fade its left edge away from the quote. */
 .side-card{overflow:hidden}
 
+/* ═══ THE ASPECT RING ═══════════════════════════════════════════════════
+   Ten bodies on a ring at their real longitudes — 0° at the top, degrees
+   running clockwise — with the day's tightest angle read out in the middle.
+   Not one colour here is a literal: every fill and stroke comes from the
+   theme tokens, so the ring is charcoal on Charcoal and navy on Frost
+   without a per-theme rule being written for it. The disc uses --card and
+   the chips --card2 for the same reason — those two are the surface pair
+   every theme already defines and calibrates its text against, so the
+   glyphs stay legible on all nine rather than on the one it was drawn in.
+   ══════════════════════════════════════════════════════════════════════ */
+.aspw{position:relative;width:100%;max-width:288px;aspect-ratio:1;
+  cursor:pointer;align-self:center}
+/* A HERO ROW IS ONLY AS TALL AS ITS TALLEST COLUMN, AND THE RING IS NOW
+   THAT COLUMN. The strip it replaced was 46px; the ring is 288, which left
+   the other two columns sitting at the top of the row with eighty-odd
+   pixels of bare page under them — the ring would have bought its own
+   presence with exactly the kind of empty space this board keeps being
+   told to stop leaving. So the columns are told to use the height instead:
+   the ticker's Fear & Greed band takes the slack in the middle, and the
+   badge / portrait / quote column spreads down its side rather than
+   stacking at the top of it. These four rules sit here, at the end of the
+   sheet, because .dh is declared three times further up and none of those
+   passes used !important — last one wins, which is the only reliable way
+   to change this grid in this file. */
+.dh{align-items:stretch}
+.dh-ticks{grid-template-rows:auto 1fr}
+.dh-fng{display:flex}
+.dh-fng .fng-mini{flex:1}
+/* the "not enough bars loaded" state is a block, so in a card that now has
+   height to spare its two lines sat against the top edge with the rest of
+   the panel blank under them. Centred, the same two lines read as a card
+   waiting for data rather than a card that failed to draw. */
+.dh-fng .fng-mini.off{display:flex;flex-direction:column;justify-content:center}
+.dh-r{justify-content:space-between}
+.aspw-svg{display:block;width:100%;height:100%;overflow:visible}
+.aspw-ring{fill:none;stroke:rgba(var(--rgbAcc),.32);stroke-width:1}
+.aspw-tick{stroke:rgba(var(--rgbAcc),.24);stroke-width:1}
+.aspw-tick.maj{stroke:rgba(var(--rgbAcc),.6);stroke-width:1.5}
+/* --t3 rather than --tf for the ring's two quietest lines. --tf is the
+   faintest tier the themes define, and measured against the page it came
+   out at 2.4:1 on Celestial and 3.0:1 on Platinum — under AA for text this
+   small, on two of the nine. --t3 is the next step up and clears 4.5:1 on
+   every one of them, worst case 4.52 on Platinum. */
+.aspw-deg{fill:var(--t3);font-size:8.4px;letter-spacing:.03em;text-anchor:middle;
+  dominant-baseline:central;font-family:'Inter',system-ui,sans-serif}
+/* the two bodies in the featured angle, joined across the ring — drawn
+   before the disc so the chord shows only in the gap outside it */
+.aspw-chord{stroke:var(--p3);stroke-width:1.1;opacity:.45}
+.aspw-disc{fill:var(--card);stroke:rgba(var(--rgbAcc),.28);stroke-width:1}
+.aspw-pc{fill:var(--card2);stroke:rgba(var(--rgbAcc),.4);stroke-width:1}
+.aspw-pg{fill:var(--t2);font-size:11.5px;text-anchor:middle;dominant-baseline:central}
+.aspw-p.on .aspw-pc{fill:rgba(var(--rgbAcc),.24);stroke:var(--p3);stroke-width:1.7}
+.aspw-p.on .aspw-pg{fill:var(--t1)}
+.aspw:hover .aspw-disc{stroke:rgba(var(--rgbAcc),.5)}
+
+.aspw-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:62%;display:flex;flex-direction:column;align-items:center;
+  text-align:center;pointer-events:none}
+.aspw-eye{font-size:7.5px;font-weight:600;letter-spacing:.15em;color:var(--t3);
+  text-transform:uppercase;white-space:nowrap}
+.aspw-h{margin-top:5px;font-size:13px;font-weight:600;line-height:1.2;color:var(--t1);
+  letter-spacing:-.01em;
+  font-family:'Inter',system-ui,sans-serif}
+.aspw-h i{font-style:normal;color:var(--p3)}
+.aspw-say{margin-top:5px;font-size:8.4px;line-height:1.38;color:var(--t3)}
+.aspw-orb{margin-top:4px;font-size:7.8px;letter-spacing:.02em;color:var(--t3);
+  font-variant-numeric:tabular-nums}
+.aspw-pill{margin-top:7px;padding:3px 9px;border-radius:999px;font-size:8.2px;
+  font-weight:600;letter-spacing:.05em;white-space:nowrap;
+  border:1px solid rgba(var(--rgbAcc),.4);color:var(--t2)}
+.aspw-pill.up{border-color:rgba(var(--rgbUp),.55);color:var(--up)}
+.aspw-pill.dn{border-color:rgba(var(--rgbDn),.55);color:var(--dn)}
+.aspw-quiet{font-size:9px;line-height:1.45;color:var(--t3)}
+
 /* ═══ A PHONE, NOT A SQUEEZED LAPTOP — BELOW 600PX ═══
    Every grid above this point was tuned for a column with real width: a
    three-part hero, six stat tiles across, four ticker tiles across (some
@@ -8769,6 +8843,20 @@ body{background:var(--bg0)}
   .tick .p{font-size:11.5px!important}
   .tick .c{font-size:8.5px!important}
   .tick .spark,.tick .spark svg{width:32px!important;height:20px!important}
+  /* the ring is the one thing on this hero a phone has room to do BETTER
+     than the laptop — a full-width circle instead of a third of a row — so
+     it grows here rather than shrinking, and the type inside grows with it */
+  .aspw{max-width:300px!important;margin:0 auto!important}
+  /* only a nudge, not a jump: the phone ring is 300px against the laptop's
+     288, so type that scaled with the SCREEN rather than with the circle
+     pushed the headline onto two lines and the lean pill out to the disc
+     edge on the one layout that had no column to spare */
+  .aspw-mid{width:66%!important}
+  .aspw-eye{font-size:8px!important}
+  .aspw-h{font-size:14px!important}
+  .aspw-say{font-size:9.2px!important}
+  .aspw-orb{font-size:8.4px!important}
+  .aspw-pill{font-size:8.8px!important;padding:4px 10px!important}
 }
 </style>
 <div class="shell">
@@ -8861,10 +8949,19 @@ body{background:var(--bg0)}
 
   <!-- ══ HERO ══ -->
   <section class="dh rise">
+    <!-- ══ TODAY'S TRANSIT ══
+         A slogan and a four-cell strip used to stand here. The slogan said
+         the same thing every day of the year, and the strip repeated, in
+         summary, what the Timing tab already says in full — neither earned
+         the best position on the board. What does earn it is the sky the
+         rest of the engine reads from: which two bodies are in angle right
+         now, how exact that angle is, how long it holds, and which way it
+         leans on the asset in view. When the angle widens past orb the ring
+         moves to the next one on its own, because it is recomputed from the
+         live ephemeris rather than written down. Clicking it still opens the
+         Timing tab, which is what the strip did. -->
     <div class="dh-l">
-      <h1 class="dh-t">Precision in Timing.<br>Mastery in <span>Execution.</span></h1>
-      <div class="dh-s">AI-Powered &nbsp;·&nbsp; Cycle-Based &nbsp;·&nbsp; Probability Driven</div>
-      <div class="dh-tim" id="dh_timing"></div>
+      <div class="aspw" id="dh_wheel"></div>
     </div>
     <div class="dh-ticks">
         <div class="tick"><div class="tick-l"><div class="s">XAU/USD</div><div class="p" id="tk_xau">0.00</div><div class="c" id="tkc_xau">—</div></div><div class="spark" id="sp_xau"></div></div>
@@ -22316,12 +22413,20 @@ function fmtIn(mins){
    asset is labelled background and pushed to the bottom. */
 var PLANET_NAME={sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',
   jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'};
+/* `short` is the same reading as `plain`, cut to what fits inside the aspect
+   ring on the dashboard. It is a second phrasing of one fact, not a second
+   opinion — if one of these two ever has to change, both do. */
 var ASPECTS=[
-  {a:0,  n:'Conjunction',s:'☌',tone:0, plain:'Two bodies sit on the same degree — whatever they rule is amplified. Direction comes from where they are, not from the angle itself.'},
-  {a:60, n:'Sextile',    s:'⚹',tone:1, plain:'An easy, supportive angle. Moves tend to be steady and to follow through rather than snap back.'},
-  {a:90, n:'Square',     s:'□',tone:-1,plain:'Friction. Expect sharp, choppy price, levels fought over, and stops taken on both sides.'},
-  {a:120,n:'Trine',      s:'△',tone:1, plain:'The smoothest angle. Trends run with the least resistance — the best backdrop for holding a winner.'},
-  {a:180,n:'Opposition', s:'☍',tone:-1,plain:'A tug of war. Reversals and false breaks cluster around it — good for fading, bad for chasing.'}
+  {a:0,  n:'Conjunction',s:'☌',tone:0, short:'Amplifier — this pair’s theme gets louder, not redirected.',
+   plain:'Two bodies sit on the same degree — whatever they rule is amplified. Direction comes from where they are, not from the angle itself.'},
+  {a:60, n:'Sextile',    s:'⚹',tone:1, short:'Soft aspect — a smooth, supportive momentum window.',
+   plain:'An easy, supportive angle. Moves tend to be steady and to follow through rather than snap back.'},
+  {a:90, n:'Square',     s:'□',tone:-1,short:'Hard aspect — friction, chop, and levels fought over.',
+   plain:'Friction. Expect sharp, choppy price, levels fought over, and stops taken on both sides.'},
+  {a:120,n:'Trine',      s:'△',tone:1, short:'Flowing aspect — the least resistance a trend ever gets.',
+   plain:'The smoothest angle. Trends run with the least resistance — the best backdrop for holding a winner.'},
+  {a:180,n:'Opposition', s:'☍',tone:-1,short:'Facing aspect — a tug of war; fades work, chasing does not.',
+   plain:'A tug of war. Reversals and false breaks cluster around it — good for fading, bad for chasing.'}
 ];
 function aspectsFor(key){var m=ABIAS[key]||ABIAS.default;return m;}
 /* how much a given body matters to this asset, and whether it currently sits
@@ -30571,7 +30676,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b161';
+var CA_BUILD='b162';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30592,7 +30697,7 @@ var CA_BUILD='b161';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost Light, darker still: sidebar and content both pushed a shade further toward black, decorative pictures now tint to the sidebar’s colour, and a faint, slow-moving glow was added behind the page.';
+var CA_WHATS_NEW='The dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -33100,7 +33205,7 @@ function goTab(name,btn){
     try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml()+vbReferenceHtml();}catch(e){}
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
   }
-  if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashMember();}catch(e){console.error('dash:',e);}}
+  if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashAspectWheel();dashMember();}catch(e){console.error('dash:',e);}}
   if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();renderApprovals();
     try{jbAutoSeed();}catch(e){}
     try{jbPaint();}catch(e){console.error('journal board:',e);}
@@ -36443,14 +36548,17 @@ function renderSentimentV3(){
    Stat cards, the journal calendar, the equity curve and the recent-trades
    table all read the real journal. They show zero until there are trades;
    the reference design's figures are placeholders and are not copied in. */
-/* ══ HERO TIMING STRIP ══
-   The headline block had dead space and the dashboard never said WHEN.
-   This is not a second engine — it calls the same timBestDays / timBlocks /
-   timHorizon the Timing tab calls, and prints the single best upcoming
-   window for the asset that was last analysed. One line, four facts:
-   which day, which clock hours, which way, and how long the push should
-   hold. Clicking it opens the Timing tab on that exact date, so the short
-   version and the long version can never disagree. */
+/* ══ HERO TIMING STRIP — NO LONGER ON THE HERO ══
+   This filled the four-cell NEXT BULL strip under the old headline. The
+   aspect ring took that slot; the strip and the slogan above it were both
+   removed, and what the strip said in summary the Timing tab says in full.
+
+   The function is kept rather than deleted because it is reached from three
+   render paths, it has always guarded on its element being present, and it
+   is the working code for that read — if the strip is ever wanted back, in
+   this hero or another panel, it needs an element with id dh_timing and
+   nothing else. With no such element on the page it returns on the first
+   line and costs nothing. */
 function dashTimingSrMin(){
   var v=(document.getElementById('xrise')||{}).value||'06:20';
   var p=String(v).split(':'), m=(+p[0])*60+(+p[1]);
@@ -36509,6 +36617,259 @@ function dashTiming(){
       +'<div class="dt-c"><i>Window</i><b>'+fmtT(plan.block.start)+'–'+fmtT(plan.block.end)+'</b></div>'
       +'<div class="dt-c grow"><i>Holds</i><b>'+escHtml(plan.hz.label)+'</b></div>'
     +'</div>'+live;
+}
+
+/* ══ TODAY'S TRANSIT — THE ASPECT RING ═══════════════════════════════════
+   The hero's left column used to carry a slogan and a summary strip. It
+   carries the sky now: the ten bodies on a ring at their real longitudes,
+   0° at the top and the degrees running clockwise, with the day's tightest
+   angle read out in the middle.
+
+   None of this is a second engine. The positions come from getEph, the
+   angles from liveAspects and the directional read from the same ABIAS
+   table the bias meter uses — the ring is a view of what the console
+   already computes, not another opinion about it. That matters, because a
+   dashboard whose hero disagrees with its own Timing tab is worse than one
+   with a slogan in that slot.
+   ══════════════════════════════════════════════════════════════════════ */
+var ASPW_SYM={sun:'☉',moon:'☽',mercury:'☿',venus:'♀',mars:'♂',
+              jupiter:'♃',saturn:'♄',uranus:'♅',neptune:'♆',pluto:'♇'};
+var ASPW_NAME={sun:'Sun',moon:'Moon',mercury:'Mercury',venus:'Venus',mars:'Mars',
+               jupiter:'Jupiter',saturn:'Saturn',uranus:'Uranus',neptune:'Neptune',pluto:'Pluto'};
+/* the bodies that move enough for an angle of theirs to be a TODAY */
+var ASPW_FAST={sun:1,moon:1,mercury:1,venus:1,mars:1};
+var ASPW_ORB=5;
+
+function aspwXY(r,lon){
+  var a=(lon-90)*Math.PI/180;          /* 0° at the top, running clockwise */
+  return [150+r*Math.cos(a),150+r*Math.sin(a)];
+}
+function aspwSep(eph,a,b){
+  var d=Math.abs(eph[a].lon-eph[b].lon)%360;
+  return d>180?360-d:d;
+}
+/* Every body's speed in degrees per day, from ONE pair of ephemerides.
+   lonRate returns the same number, but it runs two full ephemerides per
+   body it is asked about, and the ring asks about ten of them at once. */
+function aspwRates(date){
+  var ms=6*3600000;
+  var e1=getEphemeris(new Date(+date-ms)), e2=getEphemeris(new Date(+date+ms));
+  var out={};
+  for(var i=0;i<EPH_ORDER.length;i++){
+    var b=EPH_ORDER[i], d=e2[b].lon-e1[b].lon;
+    if(d>180)d-=360; if(d<-180)d+=360;
+    out[b]=d*2;
+  }
+  return out;
+}
+
+/* ══ WHICH ANGLE GETS THE MIDDLE OF THE RING ══
+   liveAspects returns every pair inside orb, sorted by how exact it is, and
+   on most days that list is led by two outer planets that have been within
+   a degree of each other since spring and will still be in autumn. True,
+   and not a transit for today. The ring wants the angle that is actually
+   moving: at least one fast body, a relative speed that will carry it out
+   of orb inside a fortnight, and among those, the most exact. If nothing
+   fast is in orb it falls back to the tightest angle there is rather than
+   showing an empty ring. */
+function aspwPick(eph,rates){
+  var all=[];
+  try{ all=liveAspects(eph,ASPW_ORB)||[]; }catch(e){ return null; }
+  if(!all.length)return null;
+  var best=null,bs=-1;
+  for(var i=0;i<all.length;i++){
+    var x=all[i];
+    var fast=(ASPW_FAST[x.a]?1:0)+(ASPW_FAST[x.b]?1:0);
+    if(!fast)continue;
+    var rel=Math.abs((rates[x.a]||0)-(rates[x.b]||0));
+    if(!(rel>0.02))continue;                       /* effectively parked */
+    var s=(1-x.orb/ASPW_ORB)*0.62+Math.min(1,rel/1.2)*0.26+fast*0.06;
+    if(s>bs){bs=s;best=x;}
+  }
+  return best||all[0];
+}
+
+/* Applying or separating, and how long before the angle leaves orb.
+   THE SPEED CANNOT BE READ OFF THE ORB, WHICH IS WHAT THIS DID FIRST and
+   why a Moon–Mars conjunction 0.3° from exact claimed to hold for four
+   days. The orb is an absolute distance from the exact angle, so across
+   the moment of exactness it falls to nothing and climbs back out — a V,
+   not a line. Sampling it six hours either side of a pair that perfects in
+   between measures the width of that V, which is near zero however fast
+   the two bodies are actually moving.
+
+   The angle between them, though, does move at a steady rate, and that
+   rate is simply the difference of the two speeds — which aspwRates has
+   already worked out for every body on the ring. Direction still has to be
+   observed rather than assumed (retrogrades reverse it often enough to
+   matter), so that one question, and only that one, is settled by stepping
+   an hour forward and seeing whether the orb got smaller. */
+function aspwHold(x,eph,rates,date){
+  var oNow=Math.abs(aspwSep(eph,x.a,x.b)-x.asp.a), applying=false;
+  try{
+    var e1=getEphemeris(new Date(+date+3600000));
+    applying=Math.abs(aspwSep(e1,x.a,x.b)-x.asp.a)<oNow;
+  }catch(e){}
+  var rel=Math.abs((rates[x.a]||0)-(rates[x.b]||0));   /* degrees per day */
+  var deg=applying?(x.orb+ASPW_ORB):(ASPW_ORB-x.orb);
+  return {applying:applying,days:(rel>0.0005?deg/rel:null)};
+}
+function aspwHoldTxt(h){
+  if(h.days==null)return 'holds for weeks';
+  if(h.days<1){
+    var hr=Math.max(1,Math.round(h.days*24));
+    return 'holds '+hr+(hr===1?' hour':' hours');
+  }
+  var lo=Math.floor(h.days), hi=Math.ceil(h.days);
+  if(lo===hi)return 'holds '+lo+(lo===1?' day':' days');
+  return 'holds '+lo+'–'+hi+' days';
+}
+
+/* ══ WHAT THE ANGLE IS WORTH, AND WHAT THAT NUMBER IS CALLED ══
+   The board this ring is modelled on prints this figure as a PROBABILITY.
+   This one does not, for the reason already written out at length over the
+   day card: a probability is a claim about how often a reading RESOLVES,
+   and nothing here has measured how often THIS pair at THIS angle resolved
+   on this asset. Relabelling it would be the one change in this whole
+   feature that made the console less true than it was.
+
+   What can be stated is the lean, built from three things the engine
+   already knows: which way the two bodies' current signs lean on this asset
+   (bodyRole, off the same ABIAS table the bias meter reads), how much those
+   two bodies matter to this asset at all, and how cleanly the angle lets
+   that lean express itself — a trine gets out of the way, a square fights
+   it, a conjunction only amplifies whatever is already there. Scaled by how
+   exact the angle is, and labelled LEAN, which is what it is.
+
+   When neither body sits on this asset's table there is no view to state,
+   and it says so with a flat 50 rather than inventing a tilt. */
+function aspwLean(x,asset,eph){
+  var map;
+  try{ map=aspectsFor(getAstroKey(asset||'Gold')); }catch(e){ return null; }
+  var ra=bodyRole(map,x.a,eph), rb=bodyRole(map,x.b,eph), w=ra.w+rb.w;
+  if(!w)return {pct:50,dir:null,word:'SIDEWAYS',w:0};
+  var signNet=ra.sign*ra.w+rb.sign*rb.w;
+  var dir=signNet>0?'bull':signNet<0?'bear':null;
+  if(!dir)return {pct:50,dir:null,word:'SIDEWAYS',w:w};
+  var clarity=x.asp.tone>0?1:(x.asp.tone===0?0.72:0.55);
+  var exact=1-(x.orb/ASPW_ORB)*0.35;
+  return {pct:50+Math.round(26*(Math.abs(signNet)/w)*clarity*exact),
+          dir:dir, word:(dir==='bull'?'RISE':'FALL'), w:w};
+}
+
+/* Ten bodies on one ring will sit on top of each other the moment a cluster
+   forms, and a stack of unreadable glyphs is worse than a ring that is off
+   by a couple of degrees — so chips landing closer than a chip's width get
+   nudged apart. The tick marks and the degree labels are untouched, and the
+   exact position is in each chip's tooltip, so nothing that claims to be
+   precise here has been moved. */
+function aspwSpread(items,minSep){
+  var a=items.slice().sort(function(p,q){return p.ang-q.ang;});
+  if(a.length<2)return a;
+  for(var pass=0;pass<30;pass++){
+    var moved=false;
+    for(var i=0;i<a.length;i++){
+      var j=(i+1)%a.length, d=a[j].ang-a[i].ang;
+      if(d<0)d+=360;
+      if(d<minSep){
+        var push=(minSep-d)/2;
+        a[i].ang-=push; a[j].ang+=push; moved=true;
+      }
+    }
+    if(!moved)break;
+  }
+  return a;
+}
+
+function dashAspectWheel(){
+  var host=document.getElementById('dh_wheel');
+  if(!host)return;
+  var now=new Date(), eph=null, rates=null, asset='Gold';
+  try{ eph=getEph(); rates=aspwRates(now); }catch(e){}
+  if(!eph||!rates){host.style.display='none';return;}
+  host.style.display='';
+  try{ asset=timAsset(); }catch(e){}
+
+  var X=aspwPick(eph,rates), i, p;
+
+  var svg='<svg class="aspw-svg" viewBox="0 0 300 300">';
+  svg+='<circle class="aspw-ring" cx="150" cy="150" r="141"/>';
+  for(i=0;i<360;i+=15){
+    var maj=(i%45===0), p0=aspwXY(maj?130:134,i), p1=aspwXY(141,i);
+    svg+='<line class="aspw-tick'+(maj?' maj':'')+'" x1="'+p0[0].toFixed(1)+'" y1="'+p0[1].toFixed(1)
+        +'" x2="'+p1[0].toFixed(1)+'" y2="'+p1[1].toFixed(1)+'"/>';
+  }
+  for(i=0;i<360;i+=45){
+    p=aspwXY(120,i);
+    svg+='<text class="aspw-deg" x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'">'+i+'°</text>';
+  }
+  /* the chord is drawn before the disc, so it shows only in the gap outside
+     it — the two bodies joined across the ring, not a line over the text */
+  if(X){
+    var ca=aspwXY(141,eph[X.a].lon), cb=aspwXY(141,eph[X.b].lon);
+    svg+='<line class="aspw-chord" x1="'+ca[0].toFixed(1)+'" y1="'+ca[1].toFixed(1)
+        +'" x2="'+cb[0].toFixed(1)+'" y2="'+cb[1].toFixed(1)+'"/>';
+  }
+  svg+='<circle class="aspw-disc" cx="150" cy="150" r="106"/>';
+
+  var chips=aspwSpread(EPH_ORDER.map(function(b){return {b:b,ang:rev(eph[b].lon)};}),10);
+  for(i=0;i<chips.length;i++){
+    var c=chips[i], on=!!(X&&(c.b===X.a||c.b===X.b)), s=signOf(eph[c.b].lon);
+    p=aspwXY(141,c.ang);
+    svg+='<g class="aspw-p'+(on?' on':'')+'">'
+       +'<title>'+escHtml(ASPW_NAME[c.b]+' · '+degMin(s.deg)+' '+s.sign)+'</title>'
+       +'<circle class="aspw-pc" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="11"/>'
+       +'<text class="aspw-pg" x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'">'+ASPW_SYM[c.b]+'</text>'
+       +'</g>';
+  }
+  svg+='</svg>';
+
+  var mid, tip;
+  if(!X){
+    mid='<div class="aspw-mid"><div class="aspw-eye">Today’s transit</div>'
+       +'<div class="aspw-quiet">No major angle inside '+ASPW_ORB+'° right now — '
+       +'the engine is reading placement only.</div></div>';
+    tip='No aspect within orb. Click to open the Timing engine.';
+  }else{
+    var L=aspwLean(X,asset,eph)||{pct:50,dir:null,word:'SIDEWAYS'};
+    var H=aspwHold(X,eph,rates,now);
+    /* the asset rides on the PILL, not on the eyebrow where it started.
+       The angle in the middle of this ring is the same angle whatever is
+       being traded; the lean underneath it is the only line on the card
+       that is about one instrument, so that is the line that names it. */
+    mid='<div class="aspw-mid">'
+      +'<div class="aspw-eye">Today’s transit</div>'
+      +'<div class="aspw-h">'+escHtml(ASPW_NAME[X.a])+' <i>'+escHtml(X.asp.n)+'</i> '
+        +escHtml(ASPW_NAME[X.b])+'</div>'
+      +'<div class="aspw-say">'+escHtml(X.asp.short)+'</div>'
+      +'<div class="aspw-orb">Orb '+X.orb.toFixed(1)+'° · '
+        +(H.applying?'applying':'separating')+' · '+aspwHoldTxt(H)+'</div>'
+      +'<div class="aspw-pill '+(L.dir==='bull'?'up':L.dir==='bear'?'dn':'')+'">'
+        +escHtml(asset).toUpperCase()+' · '+L.pct+'% LEAN — '+L.word+'</div>'
+      +'</div>';
+    tip=ASPW_NAME[X.a]+' '+X.asp.n+' '+ASPW_NAME[X.b]+' — '+X.asp.plain
+       +'\nThe '+L.pct+'% is a lean on '+asset+', not a measured probability.'
+       +'\nClick to open the Timing engine.';
+  }
+  host.innerHTML=svg+mid;
+  host.title=tip;
+  host.onclick=function(){try{goTab('timing');}catch(e){}};
+}
+
+/* THE RING MOVES ON ITS OWN.
+   "When that angle is done, the next one comes" is not a carousel. The
+   angle genuinely widens past orb, liveAspects stops returning it, and a
+   different pair becomes the tightest one — so the only way for the ring to
+   be right about that is to recompute from the live ephemeris instead of
+   remembering what it last drew. Once a minute is enough: getEph caches for
+   sixty seconds anyway, and the fastest body on the ring covers about a
+   third of a degree in that time. */
+var _aspwTimer=null;
+function aspwStart(){
+  if(_aspwTimer)clearInterval(_aspwTimer);
+  _aspwTimer=setInterval(function(){
+    try{ if(document.getElementById('dh_wheel'))dashAspectWheel(); }catch(e){}
+  },60000);
 }
 
 /* ══ MEMBER NAME ══
@@ -37346,7 +37707,7 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
     renderDashNews();
     var ca=document.getElementById('ch_asset');if(ca)ca.textContent=assetName;
     try{ tsCopyBind(); }catch(e){}
-    dashCalendar();dashAiLine();dashTiming();
+    dashCalendar();dashAiLine();dashTiming();dashAspectWheel();
   }catch(e){
     console.error('dash live:',e);
     /* A CARD THAT FAILS HALFWAY MUST NOT LOOK LIKE A CARD WITH NOTHING IN IT.
@@ -40875,7 +41236,7 @@ unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
 setTimeout(loadTickers,800);
 setTimeout(loadSparklines,9000);
-try{dashCalendar();dashTiming();dashMember();}catch(e){}
+try{dashCalendar();dashTiming();dashAspectWheel();aspwStart();dashMember();}catch(e){}
 try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
 try{ntfStart();}catch(e){console.error("notifications:",e);}
