@@ -6262,20 +6262,19 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       blue. This one is the actual sky-blue in that reference, brighter and
       colder, on a richer navy than Midnight's near-black. ── */
 [data-theme="frost"]{
-  /* THE MUTED ACCENT KILLED THE CONTRAST THE LAST PASS WAS ALSO TRYING TO
-     PROTECT. Matching the picture's navy was right; matching its softest,
-     lowest-contrast highlight for the ACCENT — the one thing on every
-     screen that has to read instantly as "this is the important number" —
-     was not. A photo can afford a hazy, low-contrast highlight because
-     nothing on it needs to be read at a glance; a dashboard can't. Back to
-     a properly saturated ice-blue for the accent, kept on the navy ground
-     from the last pass rather than reverting that too. Sidebar and cards
-     were also nearly indistinguishable — both were resolving to close to
-     the same g41/g21 pair — so the sidebar gets its own scoped values now
-     the same way Frost Light's does, one real step darker than the cards
-     sitting next to it instead of blending into them. */
-  --bg0:#070E1A; --card:#0E1D33; --card2:#152943;
-  --bg1:#0A1526; --chartbg:#050B14;
+  /* THE SAME NAVY AS THE LIGHT THEME, BLENDED WITH BLACK AND GREY THIS
+     TIME INSTEAD OF RE-DERIVED SEPARATELY. Frost and Frost Light had been
+     tuned as two independent palettes that happened to share a name —
+     each one's own navy, arrived at by its own reasoning, rather than
+     one navy identity worn two ways. #0A2C50 is Frost Light's accent, the
+     navy that round after round of feedback actually landed on; it is
+     the card tone here now, not a separately-chosen dark-theme blue.
+     Black underneath it for the deepest layer (bg0), a lighter step of
+     the same navy above it for card2 — the "black and grey" asked for is
+     the range this one navy is stretched across, not a separate grey
+     material bolted on beside it. */
+  --bg0:#050F1C; --card:#0A2C50; --card2:#123A64;
+  --bg1:#081627; --chartbg:#040A12;
   --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
   --bAct:#6FA8DE;
   --p3:#86BEEC; --pGlow:#CDE6F8; --pDeep:#1B2E48;
@@ -6288,27 +6287,27 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --rgbFire:208,128,92; --rgbEarth:92,154,128;
   --rgbAir:111,176,228; --rgbWater:90,130,206;
   --wash:rgba(255,255,255,.022); --washTo:rgba(var(--g35),.97);
-  --pDeepest:#4E7EB0; --pWell:#101E34;
-  --sideBg:#040912; --sideTop:#091220; --sideTop2:#060D18;
-  --navOn1:#1E3550; --navOn2:#132236;
-  --cUp:#86BEEC; --cDn:#3E5C7E; --gridLn:#1C2E48; --axisTx:#7E96B4; --dialFace:5,10,18; --markDim:#3E5C7E; --markLit:#86BEEC;
-  --g01:7,14,26; --g02:7,14,26; --g03:7,14,26; --g04:7,14,26; --g05:7,14,26; --g06:7,14,26;
-  --g07:7,14,26; --g08:7,14,26; --g09:7,14,26; --g10:7,14,26; --g11:7,14,26; --g12:7,14,26;
-  --g13:7,14,26; --g14:7,14,26; --g15:7,14,26; --g16:7,14,26; --g17:7,14,26; --g18:13,23,38;
-  --g19:7,14,26; --g20:13,23,38; --g21:7,14,26; --g22:13,23,38; --g23:7,14,26; --g24:7,14,26;
-  --g25:13,23,38; --g26:13,23,38; --g27:13,23,38; --g28:7,14,26; --g29:13,23,38; --g30:13,23,38;
-  --g31:13,23,38; --g32:13,23,38; --g33:13,23,38; --g34:17,29,46; --g35:13,23,38; --g36:13,23,38;
-  --g37:13,23,38; --g38:17,29,46; --g39:17,29,46; --g40:17,29,46; --g41:17,29,46; --g42:17,29,46;
-  --g43:17,29,46; --g44:22,35,53; --g45:22,35,53; --g46:16,50,52; --g47:50,29,39; --g48:17,29,46;
-  --g49:22,35,53; --g50:56,31,41; --g51:13,54,54; --g52:22,35,53; --g53:22,35,53; --g54:22,35,53;
-  --g55:22,35,53; --g56:38,51,71; --g57:38,51,71; --g58:38,51,71; --g59:38,51,71;
-  --g60:38,51,71; --g61:38,51,71; --g62:38,51,71;
+  --pDeepest:#4E7EB0; --pWell:#0D2440;
+  --sideBg:#030810; --sideTop:#081627; --sideTop2:#050F1C;
+  --navOn1:#194A78; --navOn2:#0F2C4A;
+  --cUp:#86BEEC; --cDn:#3E5C7E; --gridLn:#163350; --axisTx:#7E96B4; --dialFace:3,9,17; --markDim:#3E5C7E; --markLit:#86BEEC;
+  --g01:3,29,55; --g02:3,29,55; --g03:3,29,55; --g04:3,29,55; --g05:3,29,55; --g06:3,29,55;
+  --g07:3,29,55; --g08:3,29,55; --g09:3,29,55; --g10:3,29,55; --g11:3,29,55; --g12:3,29,55;
+  --g13:3,29,55; --g14:3,29,55; --g15:3,29,55; --g16:3,29,55; --g17:3,29,55; --g18:9,38,67;
+  --g19:3,29,55; --g20:9,38,67; --g21:3,29,55; --g22:9,38,67; --g23:3,29,55; --g24:3,29,55;
+  --g25:9,38,67; --g26:9,38,67; --g27:9,38,67; --g28:3,29,55; --g29:9,38,67; --g30:9,38,67;
+  --g31:9,38,67; --g32:9,38,67; --g33:9,38,67; --g34:13,44,75; --g35:9,38,67; --g36:9,38,67;
+  --g37:9,38,67; --g38:13,44,75; --g39:13,44,75; --g40:13,44,75; --g41:13,44,75; --g42:13,44,75;
+  --g43:13,44,75; --g44:18,50,82; --g45:18,50,82; --g46:12,65,81; --g47:46,44,68; --g48:13,44,75;
+  --g49:18,50,82; --g50:52,46,70; --g51:9,69,83; --g52:18,50,82; --g53:18,50,82; --g54:18,50,82;
+  --g55:18,50,82; --g56:34,66,100; --g57:34,66,100; --g58:34,66,100; --g59:34,66,100;
+  --g60:34,66,100; --g61:34,66,100; --g62:34,66,100;
   --rgbAcc:160,196,228; --rgbRim:160,196,228; --rgbVio:127,180,222;
   --rgbLit:210,230,246; --rgbDeep:84,110,140; --rgbTrue:127,180,222;
   --rgbAmy:160,196,228; --rgbCore:160,196,228; --rgbSoft:140,168,196;
   --rgbBord:127,180,222; --rgbInfo:127,180,222; --rgbMid:84,110,140;
-  --bg:#070E1A; --s1:#0A1526; --s2:#0E1D33; --s3:#152943; --s4:#1B3350;
-  --navy:#0A1526; --navy2:#0E1D33; --sec:#0A1526;
+  --bg:#050F1C; --s1:#081627; --s2:#0A2C50; --s3:#123A64; --s4:#194878;
+  --navy:#081627; --navy2:#0A2C50; --sec:#081627;
   --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(127,180,222,.34);
   --muted:#6E86A2; --mid:#93AAC4; --soft:#CBDCEC; --text:#E4EEF7; --white:#F0F6FC;
   --accent:#86BEEC; --acc2:#A0CCF0; --acc3:#CDE6F8;
@@ -6323,7 +6322,7 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
    same way Frost Light's sidebar is, one real step darker than the cards
    next to it. */
 [data-theme="frost"] .side{
-  --g41:6,12,22; --g21:4,8,16; --g34:6,12,22; --rgbCore:4,8,16;
+  --g41:4,16,30; --g21:2,10,20; --g34:4,16,30; --rgbCore:2,10,20;
 }
 
 /* ── FROST LIGHT — the same wallpaper reference, in daylight: an icy
@@ -30583,7 +30582,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b158';
+var CA_BUILD='b159';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30604,7 +30603,7 @@ var CA_BUILD='b158';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost: the accent is properly saturated ice-blue again — matching the wallpaper’s navy was right, matching its softest highlight for the one colour that has to pop was not. Sidebar is also a real step darker than the cards now instead of blending into them.';
+var CA_WHATS_NEW='Frost now shares one navy identity with Frost Light instead of two separately-tuned blues — the same navy stretched from black up through it, rather than a different dark-theme blue standing in for it.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
