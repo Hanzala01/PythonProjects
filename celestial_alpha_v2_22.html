@@ -6325,8 +6325,20 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
      off-white with a navy logo on it — the one part of the screen that is
      now unambiguously "navy", the way the request named it as a colour to
      add rather than a text tint. */
-  --bg0:#C7D9E8; --card:#D0E1EE; --card2:#C5D7E5;
-  --bg1:#CBDCEA; --chartbg:#D0E1EE;
+  /* FIFTH PASS. "Add it in more places, white should be the least of it" —
+     the sidebar went navy, the page background around the cards did not.
+     bg0 is the page itself: every margin, every gap between cards, and
+     anywhere a headline sits without a card behind it (.dh has no
+     background of its own — it was always just body's bg0 showing
+     through). Cards stay the lighter blue from the last pass so they
+     still read as distinct surfaces and dense card text stays as
+     legible as it was; the page around them is the deep tone now, so
+     white/pale is the minority colour on the screen instead of the
+     majority. Checked headline contrast specifically, since .dh-t sits
+     directly on bg0 with no card behind it: ~6.6:1, comfortably past
+     the 3:1 floor for text that size. */
+  --bg0:#7C9CBE; --card:#D0E1EE; --card2:#C5D7E5;
+  --bg1:#7C9CBE; --chartbg:#D0E1EE;
   --b1:rgba(16,26,36,.10); --b2:rgba(16,26,36,.17); --bFaint:rgba(16,26,36,.06);
   --bAct:#0E3A66;
   --p3:#0E3A66; --pGlow:#5C87AE; --pDeep:#B1CADE;
@@ -6358,8 +6370,8 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --rgbLit:177,202,222; --rgbDeep:10,18,25; --rgbTrue:14,58,102;
   --rgbAmy:16,24,32; --rgbCore:16,24,32; --rgbSoft:70,83,96;
   --rgbBord:14,58,102; --rgbInfo:14,58,102; --rgbMid:80,90,100;
-  --bg:#C7D9E8; --s1:#CBDCEA; --s2:#D0E1EE; --s3:#C5D7E5; --s4:#B9CEE0;
-  --navy:#CBDCEA; --navy2:#D0E1EE; --sec:#CBDCEA;
+  --bg:#7C9CBE; --s1:#7C9CBE; --s2:#D0E1EE; --s3:#C5D7E5; --s4:#B9CEE0;
+  --navy:#7C9CBE; --navy2:#D0E1EE; --sec:#7C9CBE;
   --rim:rgba(16,26,36,.10); --rim2:rgba(16,26,36,.16); --rim3:rgba(14,58,102,.30);
   --muted:#57646E; --mid:#3A4854; --soft:#222C36; --text:#101820; --white:#0A1219;
   /* same reversal as Platinum, same reason: bold means darkest here, not lightest */
@@ -30543,7 +30555,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b152';
+var CA_BUILD='b153';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30564,7 +30576,7 @@ var CA_BUILD='b152';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost Light: less pale, more navy \u2014 the ground is a real blue now instead of off-white, and the sidebar is an actual navy panel instead of the same light ground with a navy logo on it.';
+var CA_WHATS_NEW='Frost Light: the page background itself (every margin, every gap between cards) is a deep navy-blue now, not just the sidebar \u2014 cards stay light so they still read, but pale is the minority colour on the screen instead of the majority.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
