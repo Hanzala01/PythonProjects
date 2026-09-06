@@ -3515,6 +3515,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cset-tb .sw.midnight{background:linear-gradient(135deg,#07090D 45%,#7FA3D6)}
 .cset-tb .sw.platinum{background:linear-gradient(135deg,#F4F4F1 45%,#9C7A22);border:1px solid rgba(0,0,0,.12)}
 .cset-tb .sw.charcoal{background:linear-gradient(135deg,#0B0D10 45%,#A1A1A1)}
+.cset-tb .sw.frost{background:linear-gradient(135deg,#0A1626 45%,#86BEEC)}
+.cset-tb .sw.frostlight{background:linear-gradient(135deg,#EEF4FA 45%,#3D7AB5);border:1px solid rgba(0,0,0,.12)}
 
 /* ── HIERARCHY: one hero per card, and air between sections ─────────────
    Applied to both themes. The complaint the Qamar screenshot answers is not
@@ -6252,6 +6254,118 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --green:#49A47E; --red:#C15E56; --amber:#D7A83A; --yellow:#D7A83A;
   --gold:#D7A83A; --purple-glow:rgba(127,163,214,.14);
 }
+
+/* ── FROST — a deep navy ground and a frosted ice-blue accent, built off a
+      shared wallpaper reference (a frosted-glass blue gradient) rather than
+      an institutional brief. Closest relative in this file is Midnight, but
+      Midnight's accent is steel — desaturated on purpose, a quant-terminal
+      blue. This one is the actual sky-blue in that reference, brighter and
+      colder, on a richer navy than Midnight's near-black. ── */
+[data-theme="frost"]{
+  --bg0:#0A1626; --card:#102038; --card2:#16283F;
+  --bg1:#0D1B2E; --chartbg:#08111E;
+  --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
+  --bAct:#6FA8DE;
+  --p3:#86BEEC; --pGlow:#CDE6F8; --pDeep:#17283F;
+  --p1:#7C93AE; --p2:#9AB4CE;
+  --soft:#CBDCEC; --mid:#93AAC4; --muted:#6E86A2; --text:#E4EEF7;
+  --t1:#F0F6FC; --t2:#C7D9EA; --t3:#8FA6C0;
+  --up:#4FAE85; --dn:#D0655C; --warn:#E0B24C; --cy:#6FA8DE;
+  --elFire:#D0805C; --elEarth:#5C9A80; --elAir:#6FB0E4; --elWater:#5A82CE;
+  --rgbUp:79,174,133; --rgbDn:208,101,92; --rgbWarn:224,178,76;
+  --rgbFire:208,128,92; --rgbEarth:92,154,128;
+  --rgbAir:111,176,228; --rgbWater:90,130,206;
+  --wash:rgba(255,255,255,.022); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#4E7EB0; --pWell:#122036;
+  --sideBg:#081220; --sideTop:#0D1B2E; --sideTop2:#0A1626;
+  --navOn1:#1A2E48; --navOn2:#132236;
+  --cUp:#86BEEC; --cDn:#3E5C7E; --gridLn:#182A42; --axisTx:#7E96B4; --dialFace:8,14,24; --markDim:#3E5C7E; --markLit:#86BEEC;
+  --g01:10,22,37; --g02:10,22,37; --g03:10,22,37; --g04:10,22,37; --g05:10,22,37; --g06:10,22,37;
+  --g07:10,22,37; --g08:10,22,37; --g09:10,22,37; --g10:10,22,37; --g11:10,22,37; --g12:10,22,37;
+  --g13:10,22,37; --g14:10,22,37; --g15:10,22,37; --g16:10,22,37; --g17:10,22,37; --g18:16,30,48;
+  --g19:10,22,37; --g20:16,30,48; --g21:10,22,37; --g22:16,30,48; --g23:10,22,37; --g24:10,22,37;
+  --g25:16,30,48; --g26:16,30,48; --g27:16,30,48; --g28:10,22,37; --g29:16,30,48;
+  --g30:16,30,48; --g31:16,30,48; --g32:16,30,48; --g33:16,30,48; --g34:20,35,54;
+  --g35:16,30,48; --g36:16,30,48; --g37:16,30,48; --g38:20,35,54; --g39:20,35,54;
+  --g40:20,35,54; --g41:20,35,54; --g42:20,35,54; --g43:20,35,54; --g44:25,41,61;
+  --g45:25,41,61; --g46:19,55,59; --g47:53,35,47; --g48:20,35,54; --g49:25,41,61;
+  --g50:59,37,49; --g51:16,59,63; --g52:25,41,61; --g53:25,41,61; --g54:25,41,61;
+  --g55:25,41,61; --g56:41,57,79; --g57:41,57,79; --g58:41,57,79; --g59:41,57,79;
+  --g60:41,57,79; --g61:41,57,79; --g62:41,57,79;
+  --rgbAcc:160,196,228; --rgbRim:160,196,228; --rgbVio:127,180,222;
+  --rgbLit:210,230,246; --rgbDeep:84,110,140; --rgbTrue:127,180,222;
+  --rgbAmy:160,196,228; --rgbCore:160,196,228; --rgbSoft:140,168,196;
+  --rgbBord:127,180,222; --rgbInfo:127,180,222; --rgbMid:84,110,140;
+  --bg:#0A1626; --s1:#0D1B2E; --s2:#102038; --s3:#16283F; --s4:#1C3049;
+  --navy:#0D1B2E; --navy2:#102038; --sec:#0D1B2E;
+  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(127,180,222,.34);
+  --muted:#6E86A2; --mid:#93AAC4; --soft:#CBDCEC; --text:#E4EEF7; --white:#F0F6FC;
+  --accent:#86BEEC; --acc2:#A0CCF0; --acc3:#CDE6F8;
+  --purple:#86BEEC; --violet:#86BEEC; --blue:#6FB0E4;
+  --tw:#F0F6FC; --ts:#C7D9EA; --tm:#8FA6C0; --tf:#7E96B4;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.13);
+  --green:#4FAE85; --red:#D0655C; --amber:#E0B24C; --yellow:#E0B24C;
+  --gold:#E0B24C; --purple-glow:rgba(127,180,222,.14);
+}
+
+/* ── FROST LIGHT — the same wallpaper reference, in daylight: an icy
+      blue-white ground instead of navy, the accent turned to its darkest,
+      most saturated step for legibility rather than its lightest — the
+      same reversal Platinum needed for the same reason, a light ground
+      reading "bold" as dark rather than pale. ── */
+[data-theme="frostlight"]{
+  --bg0:#EEF4FA; --card:#FFFFFF; --card2:#F0F6FB;
+  --bg1:#F7FAFD; --chartbg:#FFFFFF;
+  --b1:rgba(16,26,36,.09); --b2:rgba(16,26,36,.16); --bFaint:rgba(16,26,36,.05);
+  --bAct:#3D7AB5;
+  --p3:#3D7AB5; --pGlow:#9EC7E8; --pDeep:#DBEAF6;
+  --p1:#5A6E82; --p2:#788CA0;
+  --soft:#384450; --mid:#586878; --muted:#758391; --text:#18232E;
+  --t1:#101A24; --t2:#384450; --t3:#687685;
+  --up:#188C60; --dn:#B33C32; --warn:#9E7628; --cy:#2D6C96;
+  --elFire:#B0603C; --elEarth:#3F7A5A; --elAir:#2D6C96; --elWater:#3E5AA8;
+  --rgbUp:24,140,96; --rgbDn:179,60,50; --rgbWarn:158,118,40;
+  --rgbFire:176,96,60; --rgbEarth:63,122,90;
+  --rgbAir:45,108,150; --rgbWater:62,90,168;
+  --wash:rgba(16,26,36,.028); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#1E5082; --pWell:#E2EEF8;
+  --sideBg:#F7FAFD; --sideTop:#FFFFFF; --sideTop2:#F3F8FC;
+  --navOn1:#DBEAF6; --navOn2:#EBF1F7;
+  --cUp:#3D7AB5; --cDn:#B4CCE2; --gridLn:#E0E8F0; --axisTx:#6C7A88; --dialFace:250,252,254; --markDim:#B4CCE2; --markLit:#3D7AB5;
+  --g01:244,250,255; --g02:244,250,255; --g03:244,250,255; --g04:244,250,255; --g05:244,250,255; --g06:244,250,255;
+  --g07:244,250,255; --g08:244,250,255; --g09:244,250,255; --g10:244,250,255; --g11:244,250,255; --g12:244,250,255;
+  --g13:244,250,255; --g14:244,250,255; --g15:244,250,255; --g16:244,250,255; --g17:244,250,255; --g18:234,240,244;
+  --g19:244,250,255; --g20:234,240,244; --g21:244,250,255; --g22:234,240,244; --g23:244,250,255; --g24:244,250,255;
+  --g25:234,240,244; --g26:234,240,244; --g27:234,240,244; --g28:244,250,255; --g29:234,240,244;
+  --g30:234,240,244; --g31:234,240,244; --g32:234,240,244; --g33:234,240,244; --g34:228,234,236;
+  --g35:234,240,244; --g36:234,240,244; --g37:234,240,244; --g38:228,234,236; --g39:228,234,236;
+  --g40:228,234,236; --g41:228,234,236; --g42:228,234,236; --g43:228,234,236; --g44:220,226,227;
+  --g45:220,226,227; --g46:216,240,238; --g47:242,225,231; --g48:228,234,236; --g49:220,226,227;
+  --g50:240,214,219; --g51:208,238,236; --g52:220,226,227; --g53:220,226,227; --g54:220,226,227;
+  --g55:220,226,227; --g56:214,220,223; --g57:214,220,223; --g58:214,220,223; --g59:214,220,223;
+  --g60:214,220,223; --g61:214,220,223; --g62:214,220,223;
+  --rgbAcc:24,32,40; --rgbRim:24,32,40; --rgbVio:158,118,40;
+  --rgbLit:219,234,246; --rgbDeep:16,26,36; --rgbTrue:61,122,181;
+  --rgbAmy:24,32,40; --rgbCore:24,32,40; --rgbSoft:88,100,112;
+  --rgbBord:61,122,181; --rgbInfo:45,108,150; --rgbMid:96,106,116;
+  --bg:#EEF4FA; --s1:#F7FAFD; --s2:#FFFFFF; --s3:#F0F6FB; --s4:#E4EBF2;
+  --navy:#F7FAFD; --navy2:#FFFFFF; --sec:#F7FAFD;
+  --rim:rgba(16,26,36,.09); --rim2:rgba(16,26,36,.15); --rim3:rgba(61,122,181,.34);
+  --muted:#758391; --mid:#586878; --soft:#384450; --text:#18232E; --white:#101A24;
+  /* same reversal as Platinum, same reason: bold means darkest here, not lightest */
+  --accent:#3D7AB5; --acc2:#2E6091; --acc3:#204870;
+  --purple:#3D7AB5; --violet:#3D7AB5; --blue:#2D6C96;
+  --tw:#101A24; --ts:#384450; --tm:#687685; --tf:#8C98A4;
+  --bd:rgba(16,26,36,.09); --bd2:rgba(16,26,36,.15);
+  --green:#188C60; --red:#B33C32; --amber:#9E7628; --yellow:#9E7628;
+  --gold:#9E7628; --purple-glow:rgba(61,122,181,.12);
+}
+/* the hero art and sidebar portrait are one shared purple-toned image in
+   every theme; both frost themes desaturate and re-tint it toward the same
+   ice blue as the rest of the palette instead of leaving it purple. */
+[data-theme="frost"] .dh-art,[data-theme="frost"] .sc-portrait,
+[data-theme="frostlight"] .dh-art,[data-theme="frostlight"] .sc-portrait{
+  filter:grayscale(1) sepia(1) hue-rotate(165deg) saturate(2.4) brightness(1.05)}
 
 /* ── CHARCOAL — the request was exact: black, gray, charcoal, off-white,
       and not one thing that reads as a colour, the accent included. Every
@@ -13917,7 +14031,9 @@ var CA_THEMES=[
   {id:'newsroom', name:'Newsroom',say:'charcoal and slate — a research-terminal read, colour rationed'},
   {id:'midnight', name:'Midnight',say:'near-black and steel-navy — the coolest of the six'},
   {id:'platinum', name:'Platinum',say:'near-white, black ink, a restrained gold accent — the light-mode option'},
-  {id:'charcoal', name:'Charcoal',say:'black, grey and off-white only — no accent colour anywhere, not even gold'}
+  {id:'charcoal', name:'Charcoal',say:'black, grey and off-white only — no accent colour anywhere, not even gold'},
+  {id:'frost',    name:'Frost',   say:'deep navy and a frosted ice-blue accent'},
+  {id:'frostlight',name:'Frost Light',say:'the same frost, in daylight — icy white ground, deep blue accent'}
 ];
 var CA_THEME_IDS=CA_THEMES.map(function(t){return t.id;});
 function themeGet(){
@@ -13980,7 +14096,7 @@ function renderCelestialSettings(){
 
    +'<div class="cset-s"><i>Look</i>'
      +'<div class="cset-row">'
-       +'<div><b>Theme</b><s>Seven palettes, the same tokens underneath — the dashboard, the Timing '
+       +'<div><b>Theme</b><s>Nine palettes, the same tokens underneath — the dashboard, the Timing '
          +'Engine, the Analytics and everything they compute are identical in every one of them; '
          +'only the colours move. Celestial is the original, purple accent and all, kept exactly '
          +'as it was and still one tap away.</s></div>'
@@ -30394,7 +30510,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b147';
+var CA_BUILD='b148';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30415,7 +30531,7 @@ var CA_BUILD='b147';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The hero illustration and its quote are gone on a phone, not just smaller \u2014 decoration with nothing to read was still costing real height after two rounds of shrinking it. The bell and member badge stay, compact, up top.';
+var CA_WHATS_NEW='Two new themes: Frost and Frost Light \u2014 a frosted ice-blue accent on deep navy, and the same palette in daylight on an icy white ground. Nine themes now, same tokens underneath all of them.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
