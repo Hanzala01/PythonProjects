@@ -6262,14 +6262,21 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       blue. This one is the actual sky-blue in that reference, brighter and
       colder, on a richer navy than Midnight's near-black. ── */
 [data-theme="frost"]{
-  /* a touch more black mixed in, the same taste the Light side got asked
-     for over several rounds — this side started closer to it already
-     (it was navy, not off-white), so it only needed one small step, not
-     six. Ice-blue accent untouched: it is light text on a dark ground
-     here, the opposite of the Light theme, so it stays bright rather
-     than following the background down. */
-  --bg0:#060D18; --card:#0C172A; --card2:#121F31;
-  --bg1:#091220; --chartbg:#040810;
+  /* CONTRAST THROUGH MATERIAL, NOT JUST SHADE. Everything so far was one
+     hue at different depths — navy on navy on navy — which is coherent
+     but flat: nothing for the eye to land on. The ask was to combine the
+     blue family with actual charcoal/grey/black rather than staying
+     monochrome, so the content surfaces (bg0, card, card2, every g-token
+     a card's internals draw from) are true neutral charcoal now — R=G=B,
+     the same conversion the Charcoal theme uses, not a dark blue. The
+     sidebar stays navy on purpose (it was the one part of the screen
+     asked for by name as "add navy," a few rounds back — that request
+     doesn't go away because the content area turned neutral) and the
+     ice-blue accent stays exactly what it was: the one colour left in a
+     charcoal room, which is what actually makes it read as an accent
+     instead of just another shade of the same background. */
+  --bg0:#0C0C0C; --card:#161616; --card2:#1D1D1D;
+  --bg1:#111111; --chartbg:#080808;
   --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
   --bAct:#6FA8DE;
   --p3:#86BEEC; --pGlow:#CDE6F8; --pDeep:#17283F;
@@ -6285,24 +6292,24 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --pDeepest:#4E7EB0; --pWell:#0E1728;
   --sideBg:#040912; --sideTop:#091220; --sideTop2:#060D18;
   --navOn1:#16253A; --navOn2:#0F1928;
-  --cUp:#86BEEC; --cDn:#3E5C7E; --gridLn:#142134; --axisTx:#7E96B4; --dialFace:4,5,10; --markDim:#3E5C7E; --markLit:#86BEEC;
-  --g01:6,13,23; --g02:6,13,23; --g03:6,13,23; --g04:6,13,23; --g05:6,13,23; --g06:6,13,23;
-  --g07:6,13,23; --g08:6,13,23; --g09:6,13,23; --g10:6,13,23; --g11:6,13,23; --g12:6,13,23;
-  --g13:6,13,23; --g14:6,13,23; --g15:6,13,23; --g16:6,13,23; --g17:6,13,23; --g18:12,21,34;
-  --g19:6,13,23; --g20:12,21,34; --g21:6,13,23; --g22:12,21,34; --g23:6,13,23; --g24:6,13,23;
-  --g25:12,21,34; --g26:12,21,34; --g27:12,21,34; --g28:6,13,23; --g29:12,21,34; --g30:12,21,34;
-  --g31:12,21,34; --g32:12,21,34; --g33:12,21,34; --g34:16,26,40; --g35:12,21,34; --g36:12,21,34;
-  --g37:12,21,34; --g38:16,26,40; --g39:16,26,40; --g40:16,26,40; --g41:16,26,40; --g42:16,26,40;
-  --g43:16,26,40; --g44:21,32,47; --g45:21,32,47; --g46:15,46,45; --g47:49,26,33; --g48:16,26,40;
-  --g49:21,32,47; --g50:55,28,35; --g51:12,50,49; --g52:21,32,47; --g53:21,32,47; --g54:21,32,47;
-  --g55:21,32,47; --g56:37,48,65; --g57:37,48,65; --g58:37,48,65; --g59:37,48,65;
-  --g60:37,48,65; --g61:37,48,65; --g62:37,48,65;
+  --cUp:#86BEEC; --cDn:#3E5C7E; --gridLn:#1F1F1F; --axisTx:#7E96B4; --dialFace:5,5,5; --markDim:#3E5C7E; --markLit:#86BEEC;
+  --g01:12,12,12; --g02:12,12,12; --g03:12,12,12; --g04:12,12,12; --g05:12,12,12; --g06:12,12,12;
+  --g07:12,12,12; --g08:12,12,12; --g09:12,12,12; --g10:12,12,12; --g11:12,12,12; --g12:12,12,12;
+  --g13:12,12,12; --g14:12,12,12; --g15:12,12,12; --g16:12,12,12; --g17:12,12,12; --g18:20,20,20;
+  --g19:12,12,12; --g20:20,20,20; --g21:12,12,12; --g22:20,20,20; --g23:12,12,12; --g24:12,12,12;
+  --g25:20,20,20; --g26:20,20,20; --g27:20,20,20; --g28:12,12,12; --g29:20,20,20; --g30:20,20,20;
+  --g31:20,20,20; --g32:20,20,20; --g33:20,20,20; --g34:25,25,25; --g35:20,20,20; --g36:20,20,20;
+  --g37:20,20,20; --g38:25,25,25; --g39:25,25,25; --g40:25,25,25; --g41:25,25,25; --g42:25,25,25;
+  --g43:25,25,25; --g44:30,30,30; --g45:30,30,30; --g46:30,30,30; --g47:30,30,30; --g48:25,25,25;
+  --g49:30,30,30; --g50:30,30,30; --g51:30,30,30; --g52:30,30,30; --g53:30,30,30; --g54:30,30,30;
+  --g55:30,30,30; --g56:47,47,47; --g57:47,47,47; --g58:47,47,47; --g59:47,47,47;
+  --g60:47,47,47; --g61:47,47,47; --g62:47,47,47;
   --rgbAcc:160,196,228; --rgbRim:160,196,228; --rgbVio:127,180,222;
   --rgbLit:210,230,246; --rgbDeep:84,110,140; --rgbTrue:127,180,222;
   --rgbAmy:160,196,228; --rgbCore:160,196,228; --rgbSoft:140,168,196;
   --rgbBord:127,180,222; --rgbInfo:127,180,222; --rgbMid:84,110,140;
-  --bg:#060D18; --s1:#091220; --s2:#0C172A; --s3:#121F31; --s4:#18273B;
-  --navy:#091220; --navy2:#0C172A; --sec:#091220;
+  --bg:#0C0C0C; --s1:#111111; --s2:#161616; --s3:#1D1D1D; --s4:#252525;
+  --navy:#111111; --navy2:#161616; --sec:#111111;
   --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(127,180,222,.34);
   --muted:#6E86A2; --mid:#93AAC4; --soft:#CBDCEC; --text:#E4EEF7; --white:#F0F6FC;
   --accent:#86BEEC; --acc2:#A0CCF0; --acc3:#CDE6F8;
@@ -30570,7 +30577,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b155';
+var CA_BUILD='b156';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30591,7 +30598,7 @@ var CA_BUILD='b155';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost (the dark one) got the same "more black mixed in" treatment as Frost Light \u2014 richer, slightly blacker navy throughout. The ice-blue accent stayed bright on purpose: light text on a dark ground reads best that way.';
+var CA_WHATS_NEW='Frost: the content area is true neutral charcoal now instead of navy-on-navy \u2014 the sidebar keeps its navy, the ice-blue accent stays the one colour in the room. Contrast through material, not just shade.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
