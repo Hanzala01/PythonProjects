@@ -6262,38 +6262,36 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       blue. This one is the actual sky-blue in that reference, brighter and
       colder, on a richer navy than Midnight's near-black. ── */
 [data-theme="frost"]{
-  /* BACK TO THE ACTUAL PICTURE. The charcoal pass was a wrong turn — it
-     read "combine with charcoal/black" as "replace the content area's
-     blue with neutral grey," which drifted away from the wallpaper this
-     theme was named after: a deep navy ground with a soft frosted-glass
-     lighter-blue haze across it, not a grey room with a blue accent.
-     Sampled off the reference image directly this time rather than
-     reasoning about it in the abstract: the navy in it reads close to
-     #0F1F35 at its lighter (mid-card) points and goes near-black at its
-     deepest corners, and the frosted highlight is a soft, DESATURATED
-     blue-grey — closer to mist than to a saturated sky-blue, which is
-     what the accent had been. Content is navy again, blended with black
-     at the darkest layer for the depth that was actually being asked
-     for, and the accent itself is softer/mistier to match the swoosh in
-     the image rather than reading as a bright UI-blue dropped onto it. */
+  /* THE MUTED ACCENT KILLED THE CONTRAST THE LAST PASS WAS ALSO TRYING TO
+     PROTECT. Matching the picture's navy was right; matching its softest,
+     lowest-contrast highlight for the ACCENT — the one thing on every
+     screen that has to read instantly as "this is the important number" —
+     was not. A photo can afford a hazy, low-contrast highlight because
+     nothing on it needs to be read at a glance; a dashboard can't. Back to
+     a properly saturated ice-blue for the accent, kept on the navy ground
+     from the last pass rather than reverting that too. Sidebar and cards
+     were also nearly indistinguishable — both were resolving to close to
+     the same g41/g21 pair — so the sidebar gets its own scoped values now
+     the same way Frost Light's does, one real step darker than the cards
+     sitting next to it instead of blending into them. */
   --bg0:#070E1A; --card:#0E1D33; --card2:#152943;
   --bg1:#0A1526; --chartbg:#050B14;
   --b1:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12); --bFaint:rgba(255,255,255,.04);
-  --bAct:#8EA8C0;
-  --p3:#9AB2C8; --pGlow:#C6D4E2; --pDeep:#1B2E48;
-  --p1:#7C93AE; --p2:#93A8BE;
+  --bAct:#6FA8DE;
+  --p3:#86BEEC; --pGlow:#CDE6F8; --pDeep:#1B2E48;
+  --p1:#7C93AE; --p2:#9AB4CE;
   --soft:#CBDCEC; --mid:#93AAC4; --muted:#6E86A2; --text:#E4EEF7;
   --t1:#F0F6FC; --t2:#C7D9EA; --t3:#8FA6C0;
-  --up:#4FAE85; --dn:#D0655C; --warn:#E0B24C; --cy:#8EA8C0;
-  --elFire:#D0805C; --elEarth:#5C9A80; --elAir:#8EA8C0; --elWater:#5A82CE;
+  --up:#4FAE85; --dn:#D0655C; --warn:#E0B24C; --cy:#6FA8DE;
+  --elFire:#D0805C; --elEarth:#5C9A80; --elAir:#6FB0E4; --elWater:#5A82CE;
   --rgbUp:79,174,133; --rgbDn:208,101,92; --rgbWarn:224,178,76;
   --rgbFire:208,128,92; --rgbEarth:92,154,128;
-  --rgbAir:142,168,192; --rgbWater:90,130,206;
+  --rgbAir:111,176,228; --rgbWater:90,130,206;
   --wash:rgba(255,255,255,.022); --washTo:rgba(var(--g35),.97);
-  --pDeepest:#5A7EA0; --pWell:#101E34;
+  --pDeepest:#4E7EB0; --pWell:#101E34;
   --sideBg:#040912; --sideTop:#091220; --sideTop2:#060D18;
   --navOn1:#1E3550; --navOn2:#132236;
-  --cUp:#9AB2C8; --cDn:#3E5C7E; --gridLn:#1C2E48; --axisTx:#7E96B4; --dialFace:5,10,18; --markDim:#3E5C7E; --markLit:#9AB2C8;
+  --cUp:#86BEEC; --cDn:#3E5C7E; --gridLn:#1C2E48; --axisTx:#7E96B4; --dialFace:5,10,18; --markDim:#3E5C7E; --markLit:#86BEEC;
   --g01:7,14,26; --g02:7,14,26; --g03:7,14,26; --g04:7,14,26; --g05:7,14,26; --g06:7,14,26;
   --g07:7,14,26; --g08:7,14,26; --g09:7,14,26; --g10:7,14,26; --g11:7,14,26; --g12:7,14,26;
   --g13:7,14,26; --g14:7,14,26; --g15:7,14,26; --g16:7,14,26; --g17:7,14,26; --g18:13,23,38;
@@ -6305,20 +6303,27 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --g49:22,35,53; --g50:56,31,41; --g51:13,54,54; --g52:22,35,53; --g53:22,35,53; --g54:22,35,53;
   --g55:22,35,53; --g56:38,51,71; --g57:38,51,71; --g58:38,51,71; --g59:38,51,71;
   --g60:38,51,71; --g61:38,51,71; --g62:38,51,71;
-  --rgbAcc:154,178,200; --rgbRim:154,178,200; --rgbVio:154,178,200;
-  --rgbLit:198,212,226; --rgbDeep:84,110,140; --rgbTrue:154,178,200;
-  --rgbAmy:154,178,200; --rgbCore:154,178,200; --rgbSoft:140,168,196;
-  --rgbBord:154,178,200; --rgbInfo:142,168,192; --rgbMid:84,110,140;
+  --rgbAcc:160,196,228; --rgbRim:160,196,228; --rgbVio:127,180,222;
+  --rgbLit:210,230,246; --rgbDeep:84,110,140; --rgbTrue:127,180,222;
+  --rgbAmy:160,196,228; --rgbCore:160,196,228; --rgbSoft:140,168,196;
+  --rgbBord:127,180,222; --rgbInfo:127,180,222; --rgbMid:84,110,140;
   --bg:#070E1A; --s1:#0A1526; --s2:#0E1D33; --s3:#152943; --s4:#1B3350;
   --navy:#0A1526; --navy2:#0E1D33; --sec:#0A1526;
-  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(154,178,200,.32);
+  --rim:rgba(255,255,255,.08); --rim2:rgba(255,255,255,.13); --rim3:rgba(127,180,222,.34);
   --muted:#6E86A2; --mid:#93AAC4; --soft:#CBDCEC; --text:#E4EEF7; --white:#F0F6FC;
-  --accent:#9AB2C8; --acc2:#B0C2D4; --acc3:#C6D4E2;
-  --purple:#9AB2C8; --violet:#9AB2C8; --blue:#8EA8C0;
+  --accent:#86BEEC; --acc2:#A0CCF0; --acc3:#CDE6F8;
+  --purple:#86BEEC; --violet:#86BEEC; --blue:#6FB0E4;
   --tw:#F0F6FC; --ts:#C7D9EA; --tm:#8FA6C0; --tf:#7E96B4;
   --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.13);
   --green:#4FAE85; --red:#D0655C; --amber:#E0B24C; --yellow:#E0B24C;
-  --gold:#E0B24C; --purple-glow:rgba(154,178,200,.14);
+  --gold:#E0B24C; --purple-glow:rgba(127,180,222,.14);
+}
+/* the sidebar and cards were both settling near the same g41/g21 pair,
+   which is why they read as one flat surface instead of two — scoped the
+   same way Frost Light's sidebar is, one real step darker than the cards
+   next to it. */
+[data-theme="frost"] .side{
+  --g41:6,12,22; --g21:4,8,16; --g34:6,12,22; --rgbCore:4,8,16;
 }
 
 /* ── FROST LIGHT — the same wallpaper reference, in daylight: an icy
@@ -30578,7 +30583,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b157';
+var CA_BUILD='b158';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30599,7 +30604,7 @@ var CA_BUILD='b157';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Frost, re-sampled off the actual wallpaper it was named after: navy again (the charcoal pass was a wrong turn), blended with black at the deepest layer, the accent softer and mistier to match the frosted swoosh in the picture instead of a bright UI-blue.';
+var CA_WHATS_NEW='Frost: the accent is properly saturated ice-blue again — matching the wallpaper’s navy was right, matching its softest highlight for the one colour that has to pop was not. Sidebar is also a real step darker than the cards now instead of blending into them.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
