@@ -6314,11 +6314,18 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
       same reversal Platinum needed for the same reason, a light ground
       reading "bold" as dark rather than pale. ── */
 [data-theme="frostlight"]{
-  --bg0:#EEF4FA; --card:#FFFFFF; --card2:#F0F6FB;
-  --bg1:#F7FAFD; --chartbg:#FFFFFF;
+  /* THE FIRST PASS OF THIS THEME WAS TOO WHITE, LITERALLY — bg0/card sat at
+     238-255 on every channel, which is closer to a phone flashlight than
+     paper. Every surface token here is the same one darkened by the same
+     amount (24,20,16 off each channel) rather than picked fresh, so the
+     whole theme dims as one piece and nothing drifts out of relation to
+     anything else. Still a light theme — dark text on a light ground —
+     just a soft overcast one instead of a bright one. */
+  --bg0:#D6E0EA; --card:#E7EBEF; --card2:#D8E2EB;
+  --bg1:#DFE6ED; --chartbg:#E7EBEF;
   --b1:rgba(16,26,36,.09); --b2:rgba(16,26,36,.16); --bFaint:rgba(16,26,36,.05);
   --bAct:#3D7AB5;
-  --p3:#3D7AB5; --pGlow:#9EC7E8; --pDeep:#DBEAF6;
+  --p3:#3D7AB5; --pGlow:#9EC7E8; --pDeep:#C3D6E6;
   --p1:#5A6E82; --p2:#788CA0;
   --soft:#384450; --mid:#586878; --muted:#758391; --text:#18232E;
   --t1:#101A24; --t2:#384450; --t3:#687685;
@@ -6328,28 +6335,28 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
   --rgbFire:176,96,60; --rgbEarth:63,122,90;
   --rgbAir:45,108,150; --rgbWater:62,90,168;
   --wash:rgba(16,26,36,.028); --washTo:rgba(var(--g35),.97);
-  --pDeepest:#1E5082; --pWell:#E2EEF8;
-  --sideBg:#F7FAFD; --sideTop:#FFFFFF; --sideTop2:#F3F8FC;
-  --navOn1:#DBEAF6; --navOn2:#EBF1F7;
-  --cUp:#3D7AB5; --cDn:#B4CCE2; --gridLn:#E0E8F0; --axisTx:#6C7A88; --dialFace:250,252,254; --markDim:#B4CCE2; --markLit:#3D7AB5;
-  --g01:244,250,255; --g02:244,250,255; --g03:244,250,255; --g04:244,250,255; --g05:244,250,255; --g06:244,250,255;
-  --g07:244,250,255; --g08:244,250,255; --g09:244,250,255; --g10:244,250,255; --g11:244,250,255; --g12:244,250,255;
-  --g13:244,250,255; --g14:244,250,255; --g15:244,250,255; --g16:244,250,255; --g17:244,250,255; --g18:234,240,244;
-  --g19:244,250,255; --g20:234,240,244; --g21:244,250,255; --g22:234,240,244; --g23:244,250,255; --g24:244,250,255;
-  --g25:234,240,244; --g26:234,240,244; --g27:234,240,244; --g28:244,250,255; --g29:234,240,244;
-  --g30:234,240,244; --g31:234,240,244; --g32:234,240,244; --g33:234,240,244; --g34:228,234,236;
-  --g35:234,240,244; --g36:234,240,244; --g37:234,240,244; --g38:228,234,236; --g39:228,234,236;
-  --g40:228,234,236; --g41:228,234,236; --g42:228,234,236; --g43:228,234,236; --g44:220,226,227;
-  --g45:220,226,227; --g46:216,240,238; --g47:242,225,231; --g48:228,234,236; --g49:220,226,227;
-  --g50:240,214,219; --g51:208,238,236; --g52:220,226,227; --g53:220,226,227; --g54:220,226,227;
-  --g55:220,226,227; --g56:214,220,223; --g57:214,220,223; --g58:214,220,223; --g59:214,220,223;
-  --g60:214,220,223; --g61:214,220,223; --g62:214,220,223;
+  --pDeepest:#1E5082; --pWell:#CADAE8;
+  --sideBg:#DFE6ED; --sideTop:#E7EBEF; --sideTop2:#DBE4EC;
+  --navOn1:#C3D6E6; --navOn2:#D3DDE7;
+  --cUp:#3D7AB5; --cDn:#B4CCE2; --gridLn:#C8D4E0; --axisTx:#6C7A88; --dialFace:220,230,239; --markDim:#B4CCE2; --markLit:#3D7AB5;
+  --g01:220,230,239; --g02:220,230,239; --g03:220,230,239; --g04:220,230,239; --g05:220,230,239; --g06:220,230,239;
+  --g07:220,230,239; --g08:220,230,239; --g09:220,230,239; --g10:220,230,239; --g11:220,230,239; --g12:220,230,239;
+  --g13:220,230,239; --g14:220,230,239; --g15:220,230,239; --g16:220,230,239; --g17:220,230,239; --g18:210,220,228;
+  --g19:220,230,239; --g20:210,220,228; --g21:220,230,239; --g22:210,220,228; --g23:220,230,239; --g24:220,230,239;
+  --g25:210,220,228; --g26:210,220,228; --g27:210,220,228; --g28:220,230,239; --g29:210,220,228;
+  --g30:210,220,228; --g31:210,220,228; --g32:210,220,228; --g33:210,220,228; --g34:204,214,220;
+  --g35:210,220,228; --g36:210,220,228; --g37:210,220,228; --g38:204,214,220; --g39:204,214,220;
+  --g40:204,214,220; --g41:204,214,220; --g42:204,214,220; --g43:204,214,220; --g44:196,206,211;
+  --g45:196,206,211; --g46:192,220,222; --g47:218,205,215; --g48:204,214,220; --g49:196,206,211;
+  --g50:216,194,203; --g51:184,218,220; --g52:196,206,211; --g53:196,206,211; --g54:196,206,211;
+  --g55:196,206,211; --g56:190,200,207; --g57:190,200,207; --g58:190,200,207; --g59:190,200,207;
+  --g60:190,200,207; --g61:190,200,207; --g62:190,200,207;
   --rgbAcc:24,32,40; --rgbRim:24,32,40; --rgbVio:158,118,40;
-  --rgbLit:219,234,246; --rgbDeep:16,26,36; --rgbTrue:61,122,181;
+  --rgbLit:195,214,230; --rgbDeep:16,26,36; --rgbTrue:61,122,181;
   --rgbAmy:24,32,40; --rgbCore:24,32,40; --rgbSoft:88,100,112;
   --rgbBord:61,122,181; --rgbInfo:45,108,150; --rgbMid:96,106,116;
-  --bg:#EEF4FA; --s1:#F7FAFD; --s2:#FFFFFF; --s3:#F0F6FB; --s4:#E4EBF2;
-  --navy:#F7FAFD; --navy2:#FFFFFF; --sec:#F7FAFD;
+  --bg:#D6E0EA; --s1:#DFE6ED; --s2:#E7EBEF; --s3:#D8E2EB; --s4:#CCD7E2;
+  --navy:#DFE6ED; --navy2:#E7EBEF; --sec:#DFE6ED;
   --rim:rgba(16,26,36,.09); --rim2:rgba(16,26,36,.15); --rim3:rgba(61,122,181,.34);
   --muted:#758391; --mid:#586878; --soft:#384450; --text:#18232E; --white:#101A24;
   /* same reversal as Platinum, same reason: bold means darkest here, not lightest */
@@ -30510,7 +30517,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b148';
+var CA_BUILD='b149';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30531,7 +30538,7 @@ var CA_BUILD='b148';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Two new themes: Frost and Frost Light \u2014 a frosted ice-blue accent on deep navy, and the same palette in daylight on an icy white ground. Nine themes now, same tokens underneath all of them.';
+var CA_WHATS_NEW='Frost Light was too bright \u2014 every surface dimmed by the same amount, so it is a soft overcast light theme now instead of a glaring white one.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
