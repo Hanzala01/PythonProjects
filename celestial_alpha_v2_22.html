@@ -24159,11 +24159,17 @@ function qamHitRate(asset,dir){
 var QAM_DAYWIN={
   Sunday:   {ruler:'Sun',     name:'Direction / Trend Window',
              say:'Trend days. What starts in the first session tends to hold into the close.'},
-  Monday:   {ruler:'Moon',    name:'Emotional / Reactive Window',
+  /* muted: this window's own words are about reduced follow-through — gaps
+     get filled, mean-reverts, wait for confirmation, the smallest size of
+     the week. A confident directional lean can still land on one of these
+     days (the lean and the window are answering different questions), and
+     when it does the page has to say so or the pill and the headline read
+     as arguing with each other. See qamDayReconcile. */
+  Monday:   {ruler:'Moon',    name:'Emotional / Reactive Window', muted:true,
              say:'Reactive and mood-led. Gaps get filled, conviction is thin, size down.'},
   Tuesday:  {ruler:'Mars',    name:'Aggressive / Liquidation Window',
              say:'Fast rallies or sudden sharp sell-offs. A day for decisive, aggressive moves rather than drift.'},
-  Wednesday:{ruler:'Mercury', name:'News / Whipsaw Window',
+  Wednesday:{ruler:'Mercury', name:'News / Whipsaw Window', muted:true,
              say:'Headline-driven. Two-way moves and false breaks — wait for the second test.'},
   Thursday: {ruler:'Jupiter', name:'Expansion / Breakout Window',
              say:'Ranges tend to widen. Breakouts carry further than they should, and overshoot.'},
@@ -24173,11 +24179,27 @@ var QAM_DAYWIN={
      someone's wording is not building the thing, and Venus-as-value-day
      is a perfectly good reading of the same system. What is worth taking
      from another build is the METHOD it uses, never its sentences. */
-  Friday:   {ruler:'Venus',   name:'Value / Range Window',
+  Friday:   {ruler:'Venus',   name:'Value / Range Window', muted:true,
              say:'Mean-reverting and position-squaring. Fade the edges rather than chase the middle.'},
-  Saturday: {ruler:'Saturn',  name:'Compression / Grind Window',
+  Saturday: {ruler:'Saturn',  name:'Compression / Grind Window', muted:true,
              say:'Slow, heavy and range-bound. Little follow-through — the smallest size of the week.'}
 };
+
+/* THE PILL CAN LOOK LIKE IT IS ARGUING WITH THE HEADLINE. A day can carry a
+   strong directional lean (Sun-Moon-planet bias for the day, computed the
+   same way every day of the week) while also landing on a window whose own
+   description is about reduced follow-through — Monday, Wednesday, Friday
+   and Saturday above. Shown together with no comment ("69% lean — RISE"
+   sitting right over "slow, heavy, little follow-through") that reads as a
+   contradiction, because it looks like one number is fighting the other.
+   It is not: the lean answers which way, the window answers how far. This
+   says that once, so the masthead and the day card can both use it instead
+   of leaving the reader to reconcile two true numbers on their own. */
+function qamDayReconcile(W,dir,pct){
+  if(!W||!W.muted||!dir||pct==null||pct<60)return null;
+  return 'This lean is about which way, not how far — it does not cancel what the '
+    +'window says about follow-through. Expect it to stall rather than run.';
+}
 /* THE DAY'S READING, AS VALUES RATHER THAN MARKUP.
    qamDayCard built these and immediately turned them into HTML, so the
    card at the top of the tab — which needs the same day name, the same
@@ -24206,7 +24228,8 @@ function qamDayData(){
     word: fall?'FALL' : rise?'RISE' : 'SIDEWAYS',
     /* when hit is present the card may say PROBABILITY and mean it; when it
        is null the card says LEAN, which is all the engine can support */
-    hit: H, pct: H?H.pct:(fall?(100-A.bull):A.bull), measured: !!H
+    hit: H, pct: H?H.pct:(fall?(100-A.bull):A.bull), measured: !!H,
+    note: qamDayReconcile(W, fall?'down':rise?'up':null, H?H.pct:(fall?(100-A.bull):A.bull))
   };
 }
 
@@ -24275,6 +24298,8 @@ function qamDayCard(){
        headline, so the card still says which day it is reading. */
     +'<div class="qdc-of">'+escHtml(W.name)+'</div>'
     +(sharpen?'<div class="qdc-s">'+escHtml(sharpen)+'</div>':'')
+    +(function(){ var note=qamDayReconcile(W, fall?'down':rise?'up':null, pct);
+        return note?'<div class="qdc-s">'+escHtml(note)+'</div>':''; })()
     +'<div class="qdc-f"><span class="qdc-r">'+escHtml(W.ruler)+' Day</span>'
       +'<span class="qdc-m">'
       /* WHEN IT HAS BEEN MEASURED, THE CARD SHOWS THE WORKING RATHER THAN
@@ -27820,6 +27845,7 @@ function tgMast(st,v,chips){
        +'"><b>'+D.pct+'%</b> '+(D.measured?'probability':'lean')+' &mdash; '+pillWord+'</div>':'')
     +'<h1>'+escHtml(D&&D.name?D.name:'The day')+'</h1>'
     +(D&&D.say?'<p class="tg-say">'+escHtml(D.say)+'</p>':'')
+    +(D&&D.note?'<p class="tg-say tg-reco">'+escHtml(D.note)+'</p>':'')
     /* THE ONE QUESTION THE MASTHEAD WAS NOT ANSWERING. Everything it needed
        was already on the page in stat tiles — the lean, the month's rating,
        whether a heavy aspect lands today — but scattered across four boxes
@@ -30201,7 +30227,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b140';
+var CA_BUILD='b141';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
