@@ -13628,7 +13628,32 @@ function jvClaude(q){
     },
     body:JSON.stringify({
       model:JV_MODEL,
-      max_tokens:900,
+      /* ══ 2400, NOT 900 — AND WHY THE EFFORT IS SET ═══════════════════════
+         JARVIS ANSWERED NOTHING, AND IT WAS THIS LINE.
+         Every question that reached Claude came back as "(no answer came
+         back)" — no error, no warning, and nothing spoken, because an empty
+         answer is also an empty thing to say out loud. The question was
+         never the problem; the ceiling was.
+
+         Thinking is ON BY DEFAULT on Opus 5. Omitting the thinking
+         parameter runs adaptive thinking — which is the opposite of what
+         omitting it meant on 4.8 and 4.7, where it meant no thinking at
+         all — and at the default effort of "high" the model will happily
+         spend nine hundred tokens reasoning about a one-line question. The
+         reply then arrives with stop_reason "max_tokens", carrying a
+         thinking block and no text block whatsoever. This code filters the
+         content for text, found none, and printed the fallback line.
+
+         Two changes. "low" effort is the honest setting for what is
+         actually being asked here: four short sentences, read aloud, off a
+         board state that is already written out in the prompt above — this
+         is not a reasoning problem, and paying for it as one made it
+         slower and more expensive as well as broken. And the ceiling now
+         has room underneath it for the thinking that still happens, so a
+         long answer truncates the ANSWER rather than being eaten before
+         the answer starts. */
+      max_tokens:2400,
+      output_config:{effort:'low'},
       system:'You are the voice of Celestial Alpha, a trading and timing board. Answer in at most four '
         +'short sentences, plainly, for speaking aloud — no markdown, no lists, no headings. You may use '
         +'the board state below. Never invent a price, a level or a number that is not in it; if something '
@@ -13648,9 +13673,26 @@ function jvClaude(q){
     }
     var txt=(res.d.content||[]).filter(function(b){return b.type==='text';})
              .map(function(b){return b.text;}).join(' ').trim();
-    if(res.d.stop_reason==='refusal')txt=txt||'Claude declined to answer that one.';
-    jvPush('bot',txt||'(no answer came back)');
-    jvRender(); jvSpeak(txt); jvPill(txt||'(no answer came back)','said');
+    /* ══ AN EMPTY ANSWER HAS TO SAY WHY IT IS EMPTY ══
+       "(no answer came back)" was true and useless. It names the symptom
+       and hides every possible cause behind it, which is how the max_tokens
+       bug above survived as long as it did — the screen said the same six
+       words whether the model had been cut off, had declined, or had
+       genuinely finished with nothing to add. The response always carries
+       which of those it was, so it is printed. */
+    if(!txt){
+      var sd=res.d.stop_details||{}, why;
+      if(res.d.stop_reason==='max_tokens')
+        why='Claude ran out of room before it got to the answer — ask that one more briefly.';
+      else if(res.d.stop_reason==='refusal')
+        why='Claude declined that one'+(sd.category?' ('+sd.category+')':'')+'.';
+      else
+        why='Claude came back with nothing to say — stop reason: '
+           +(res.d.stop_reason||'none given')+'.';
+      jvPush('sys',why); jvRender(); return;
+    }
+    jvPush('bot',txt);
+    jvRender(); jvSpeak(txt); jvPill(txt,'said');
   }).catch(function(e){
     JV_BUSY=false;
     jvPush('sys','Could not reach Claude from the page: '+e.message
@@ -30676,7 +30718,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b162';
+var CA_BUILD='b163';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30697,7 +30739,7 @@ var CA_BUILD='b162';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
