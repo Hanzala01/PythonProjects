@@ -1819,6 +1819,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .jvp-in{display:flex;gap:7px;align-items:center;padding:11px 13px;border-top:1px solid var(--b1);flex:none}
 .jvp-mic{width:34px;height:34px;flex:none;border-radius:50%;cursor:pointer;font-size:11px;
   border:1px solid var(--b2);background:rgba(var(--g11),.8);color:var(--p3);transition:.2s var(--ease)}
+/* being listened to should look different from being ignored: the button
+   pulses while the recogniser is live, and what it has heard so far shows
+   in a greyed bubble until it is committed */
+.jvm.interim{opacity:.5;font-style:italic}
+.jvp-mic.hot{animation:jvHot 1.1s ease-in-out infinite}
+@keyframes jvHot{0%,100%{box-shadow:0 0 0 0 rgba(var(--rgbAcc),.45)}
+                 50%{box-shadow:0 0 0 7px rgba(var(--rgbAcc),0)}}
+@media(prefers-reduced-motion:reduce){.jvp-mic.hot{animation:none}}
 .jvp-mic:hover:not(:disabled){border-color:var(--bAct);color:var(--pGlow)}
 .jvp-mic:disabled{opacity:.35;cursor:not-allowed}
 .jvp-mic.hot{border-color:var(--dn);color:var(--dn);background:rgba(239,68,68,.14)}
@@ -3008,6 +3016,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   box-shadow:0 20px 60px rgba(0,0,0,.6);
   transition:opacity .2s,transform .22s cubic-bezier(.2,.9,.25,1),visibility .2s}
 .ntf-panel.open{opacity:1;visibility:visible;transform:none}
+/* WHILE CLOSED IT WAS STILL TAKING UP ROOM, OFF THE RIGHT EDGE.
+   The panel hides with visibility:hidden rather than display:none so it can
+   animate, and until ntfToggle has positioned it once it sits at its
+   authored offset — which on a 375px phone put its right edge at 603 and
+   added ninety-eight pixels of horizontal scroll to every tab. Invisible,
+   unreachable, and the page drifted sideways because of it. Parked at the
+   origin while closed; ntfToggle still places it on open, and the rule
+   stops applying the moment .open is added, so the transition is intact. */
+.ntf-panel:not(.open){left:0!important;top:0!important}
 @media(max-width:900px){.ntf-panel{width:min(330px,calc(100vw - 24px))}}
 .ntf-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
 .ntf-h b{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--acc3)}
@@ -8044,6 +8061,14 @@ body{background:var(--bg0)}
   font-size:clamp(28px,4vw,44px);line-height:1.12;font-weight:600;
   letter-spacing:0;color:var(--t1);margin:18px 0 0}
 #pane_timing .tg-say{font-size:14px;line-height:1.65;color:var(--t2);max-width:60ch;margin:14px 0 0}
+/* the measured record. Bordered on the leading edge rather than boxed: it is
+   a footnote to the pill above it, not a competing headline, and the colour
+   of that edge is the one thing that has to be visible at a glance — whether
+   the past agrees with today's call. */
+#pane_timing .tg-rec{font-size:12.5px;line-height:1.6;color:var(--t3);max-width:60ch;
+  margin:12px 0 0;padding:8px 0 8px 12px;border-left:2px solid var(--b2)}
+#pane_timing .tg-rec.against{border-left-color:var(--amber);color:var(--t2)}
+#pane_timing .tg-rec.backs{border-left-color:var(--green)}
 #pane_timing .tg-date{font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
   color:var(--t3);margin-top:16px}
 /* the masthead's own answer to "how does today read" — one sentence, set
@@ -8902,6 +8927,52 @@ body{background:var(--bg0)}
 .aspw-pill.up{border-color:rgba(var(--rgbUp),.55);color:var(--up)}
 .aspw-pill.dn{border-color:rgba(var(--rgbDn),.55);color:var(--dn)}
 .aspw-quiet{font-size:9px;line-height:1.45;color:var(--t3)}
+
+/* ═══ THE PAGE SCROLLS, NOT A BOX INSIDE IT — BELOW 1200PX ═══════════════
+   THE DASHBOARD WOULD NOT SCROLL ON A PHONE. FOUR SCROLL CONTAINERS DEEP
+   IS WHY, AND THE FIRST OF THEM IS THE REAL ONE:
+
+       html { height:100%; overflow-y:auto }
+       body { overflow-y:auto }
+       .main { overflow-y:auto }
+       #pane_dashboard { overflow-y:auto; height:100% }
+
+   Pinning html to the viewport height AND making it a scroll container is
+   the specific pattern iOS Safari handles badly — it will not give that
+   element momentum scrolling, and a finger on it frequently does nothing
+   at all, while a mouse wheel on a desktop browser scrolls it perfectly.
+   That is exactly the shape of this bug: every desktop check passed, the
+   real phone was dead. Nesting three more scrollers inside it does not
+   help — an inner container that has run out of scroll does not reliably
+   hand the gesture on to its parent on iOS the way it does on a desktop,
+   and #pane_dashboard has about forty pixels of its own to burn first.
+
+   Above 1200 that whole arrangement is deliberate and stays: the viewport
+   is fixed, the sidebar holds still, and the pane scrolls inside the
+   shell. Below it the sidebar is a drawer, nothing needs to be held in
+   place, and the honest answer is the one the browser is best at — let the
+   document scroll and get every box out of the way.
+
+   Not reproducible in this repo's headless Chromium, which chains inner
+   scrolls out to the document and scrolled fine either way. That is worth
+   stating plainly rather than claiming a proof: what is verified here is
+   that after the change there is exactly one scroller on a phone and a
+   simulated finger drives it from top to bottom.
+   ══════════════════════════════════════════════════════════════════════ */
+@media(max-width:1200px){
+  /* html is the one that has to stop being a fixed-height scroll box.
+     Body keeps its overflow-x:hidden guard against sideways scroll, and
+     per spec a hidden x-axis forces the y-axis to compute as auto rather
+     than visible — which is harmless here: with html visible the overflow
+     propagates to the viewport, so body is the propagation root and not a
+     second scroller. Writing visible on body would read as a change that
+     the cascade cannot actually make. */
+  html{height:auto!important;overflow-y:visible!important}
+  body{height:auto!important;min-height:100%}
+  .main{overflow:visible!important}
+  .pane{overflow:visible!important;height:auto!important;min-height:0!important}
+  #pane_dashboard{overflow:visible!important;height:auto!important}
+}
 
 /* ═══ A TABLET, NOT A STRETCHED PHONE — 601 TO 1180PX ═══════════════════
    iPad mini through iPad Pro, Galaxy Tab, Surface, a folded-open Fold: all
@@ -13399,9 +13470,9 @@ function elStop(){
   EL_AUDIO=null;
 }
 /* the built-in voice — the floor everything falls back to */
-function jvSpeakLocal(text){
+function jvSpeakLocal(text,onEnd){
   try{
-    if(!window.speechSynthesis)return;
+    if(!window.speechSynthesis){ if(onEnd)onEnd(); return; }
     speechSynthesis.cancel();
     var u=new SpeechSynthesisUtterance(String(text).replace(/[*_`#]/g,''));
     u.rate=1.02; u.pitch=0.95;
@@ -13409,14 +13480,20 @@ function jvSpeakLocal(text){
     var pick=vs.filter(function(v){return /en-GB|en_GB/.test(v.lang);})[0]
            ||vs.filter(function(v){return /^en/.test(v.lang);})[0];
     if(pick)u.voice=pick;
+    /* the moment it stops talking is the moment the mic can open again */
+    u.onend=function(){ if(onEnd)onEnd(); try{jvSpeechDone();}catch(e){} };
+    u.onerror=function(){ if(onEnd)onEnd(); try{jvSpeechDone();}catch(e){} };
     speechSynthesis.speak(u);
-  }catch(e){}
+  }catch(e){ if(onEnd)onEnd(); }
 }
 function jvSpeak(text,cb){
   var P=jvPrefs();
-  if(!P.voice)return;
+  /* WITH SPEAKING OFF THE TURN IS STILL OVER, and the follow-up ear has to
+     open anyway — otherwise conversation mode would work only for people
+     who have the voice switched on. */
+  if(!P.voice){ try{jvSpeechDone();}catch(e){} return; }
   var clean=String(text).replace(/[*_`#]/g,'').trim();
-  if(!clean)return;
+  if(!clean){ try{jvSpeechDone();}catch(e){} return; }
   if(!elKeyLooksRight(P.elKey)||EL_DEAD){ jvSpeakLocal(clean); if(cb)cb(null); return; }
   elSpeak(clean,P,function(err){
     if(err){ jvSpeakLocal(clean); }
@@ -13455,6 +13532,10 @@ function elSpeak(text,P,done){
     EL_URL=URL.createObjectURL(b);
     EL_AUDIO=new Audio(EL_URL);
     EL_AUDIO.onplaying=function(){ done(null); };
+    /* onplaying is the callback elSpeak already had and it fires when the
+       clip STARTS — right for "did the voice work", useless for "has it
+       finished". Conversation mode needs the end. */
+    EL_AUDIO.onended=function(){ try{jvSpeechDone();}catch(e){} };
     EL_AUDIO.onerror=function(){ done('the audio would not play'); };
     var pr=EL_AUDIO.play();
     /* autoplay is refused until the tab has been interacted with, and a voice
@@ -13514,23 +13595,83 @@ function elTest(btn){
 function jvCanHear(){
   return !!(window.SpeechRecognition||window.webkitSpeechRecognition);
 }
-function jvListen(){
+/* ══ WHY THIS DID NOT FEEL LIKE AN ASSISTANT ═════════════════════════════
+   The answers were never the problem — they were already here, and half of
+   them need no key and no network. Four things about the LISTENING made it
+   feel like a form with a microphone bolted on rather than something you
+   talk to, and every one of them is in this function.
+
+   IT SHOWED NOTHING WHILE YOU SPOKE. interimResults was false, so the page
+   sat perfectly still from the moment you pressed the button until you had
+   finished a whole sentence. Every assistant anyone has used puts the words
+   on screen as they are recognised, and that stream is the only feedback
+   that the microphone is actually hearing you. This is the single biggest
+   reason it felt dead.
+
+   IT TALKED OVER YOU. Starting to listen did not stop it speaking, so its
+   own voice was still coming out of the speaker and going straight back
+   into the microphone. Assistants stop mid-word the instant you interrupt.
+   jvHush is called before the recogniser starts.
+
+   IT FORGOT YOU AFTER EVERY ANSWER. One question, one tap, mic closed. The
+   natural second question — "and Bitcoin?" — meant reaching for the button
+   again. The ear now reopens once when it has finished speaking, so a
+   follow-up just works. Once, not in a loop: a page that reopened its own
+   microphone forever is a page that never stops listening, and that is a
+   different thing from an assistant.
+
+   IT CALLED SILENCE AN ERROR. Saying nothing put "Heard nothing." in the
+   transcript, which no assistant does — it just stops.
+   ══════════════════════════════════════════════════════════════════════ */
+var JV_INTERIM='';         /* heard so far this turn, not yet committed */
+var JV_VOICE_TURN=false;   /* did the question arrive by voice */
+var JV_FOLLOW=null;
+
+/* stop talking. Both voices — the ElevenLabs clip and the browser's own. */
+function jvHush(){
+  try{ elStop(); }catch(e){}
+  try{ if(window.speechSynthesis)speechSynthesis.cancel(); }catch(e){}
+}
+function jvFollowCancel(){ if(JV_FOLLOW){ clearTimeout(JV_FOLLOW); JV_FOLLOW=null; } }
+function jvSpeechDone(){
+  jvFollowCancel();
+  if(!JV_VOICE_TURN)return;          /* typed questions do not open the mic */
+  JV_VOICE_TURN=false;
+  if(!JV_OPEN||JV_LISTENING)return;
+  JV_FOLLOW=setTimeout(function(){
+    JV_FOLLOW=null;
+    if(JV_OPEN&&!JV_LISTENING&&!JV_BUSY)jvListen(true);
+  },350);
+}
+
+function jvListen(isFollowUp){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){ jvPush('sys','This browser has no speech recognition — Chrome and Edge have it, Firefox and Safari do not. Type instead.'); return; }
+  if(!SR){ jvPush('sys','This browser has no speech recognition — Chrome and Edge have it, Firefox and Safari do not. Type instead.'); jvRender(); return; }
   if(JV_LISTENING){ try{JV_REC.stop();}catch(e){} return; }
+  jvFollowCancel();
+  jvHush();                          /* barge-in */
   try{
     JV_REC=new SR();
-    JV_REC.lang='en-GB'; JV_REC.interimResults=false; JV_REC.maxAlternatives=1;
-    JV_REC.onstart=function(){ JV_LISTENING=true; jvRender(); };
-    JV_REC.onerror=function(e){ JV_LISTENING=false;
-      jvPush('sys', e.error==='not-allowed'
-        ? 'Microphone permission was refused. The browser asks once — allow it in the address bar and try again.'
-        : e.error==='no-speech' ? 'Heard nothing.' : 'Microphone error: '+e.error);
+    JV_REC.lang='en-GB'; JV_REC.interimResults=true; JV_REC.maxAlternatives=1;
+    JV_REC.onstart=function(){ JV_LISTENING=true; JV_INTERIM=''; jvRender(); };
+    JV_REC.onerror=function(e){
+      JV_LISTENING=false; JV_INTERIM='';
+      /* silence and a deliberate stop are not failures worth a line */
+      if(e.error!=='no-speech'&&e.error!=='aborted')
+        jvPush('sys', e.error==='not-allowed'
+          ? 'Microphone permission was refused. The browser asks once — allow it in the address bar and try again.'
+          : 'Microphone error: '+e.error);
       jvRender(); };
-    JV_REC.onend=function(){ JV_LISTENING=false; jvRender(); };
+    JV_REC.onend=function(){ JV_LISTENING=false; JV_INTERIM=''; jvRender(); };
     JV_REC.onresult=function(e){
-      var t=e.results[0][0].transcript;
-      jvAsk(t);
+      var fin='', mid='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        var r=e.results[i];
+        if(r.isFinal)fin+=r[0].transcript; else mid+=r[0].transcript;
+      }
+      if(mid&&!fin){ JV_INTERIM=mid; jvRender(); return; }
+      fin=String(fin).trim();
+      if(fin){ JV_INTERIM=''; try{JV_REC.stop();}catch(e2){} jvAsk(fin,true); }
     };
     JV_REC.start();
   }catch(e){ JV_LISTENING=false; jvPush('sys','Could not start the microphone: '+e.message); jvRender(); }
@@ -13920,9 +14061,11 @@ function jvClaude(q){
     jvRender();
   });
 }
-function jvAsk(q){
+function jvAsk(q,viaVoice){
   q=(q||'').trim();
   if(!q)return;
+  JV_VOICE_TURN=!!viaVoice;
+  jvFollowCancel();
   jvPush('me',q); jvRender();
   var a=null;
   try{ a=jvLocal(q); }catch(e){ a=null; }
@@ -13932,8 +14075,11 @@ function jvAsk(q){
 function jvSend(){
   var el=document.getElementById('jv_in');
   if(!el)return;
+  /* reaching for the keyboard settles it: no follow-up ear, no voice still
+     talking over what is being typed */
+  jvFollowCancel(); jvHush();
   var v=el.value; el.value='';
-  jvAsk(v);
+  jvAsk(v,false);
 }
 function jvToggle(on){
   JV_OPEN=(on==null)?!JV_OPEN:!!on;
@@ -14680,10 +14826,14 @@ function jvRender(){
         :'<div class="jvm sys">Ask for the call, the trend, the levels, the next window, the risk, '
          +'or say “run the scan”. Everything on this board I answer with no key and no network.</div>')
       +(JV_BUSY?'<div class="jvm bot busy">thinking…</div>':'')
+      /* the words as they are being recognised, in the reader's own bubble
+         and greyed until they are committed — the one piece of feedback
+         that says the microphone is actually hearing something */
+      +(JV_INTERIM?'<div class="jvm me interim">'+escHtml(JV_INTERIM)+'…</div>':'')
     +'</div>'
     +'<div class="jvp-in">'
       +'<button class="jvp-mic'+(JV_LISTENING?' hot':'')+'" onclick="jvListen()" '
-        +(jvCanHear()?'':'disabled ')+'title="'+(jvCanHear()?'Hold a thought and speak':'This browser cannot listen')+'">'
+        +(jvCanHear()?'':'disabled ')+'title="'+(jvCanHear()?(JV_LISTENING?'Listening — tap to stop':'Tap and speak'):'This browser cannot listen')+'">'
         +(JV_LISTENING?'■':'●')+'</button>'
       +'<input id="jv_in" placeholder="'+(jvCanHear()?'Speak or type…':'Type — this browser cannot listen')+'" '
         +'onkeydown="if(event.key===\'Enter\')jvSend()">'
@@ -28526,6 +28676,36 @@ function tgTodaySay(D,T){
                  : 'no heavy aspect lands today');
   return bits.length ? ('Today, in one line: '+bits.join(' · ')+'.') : '';
 }
+/* ══ THE RECORD, SAID AS A RECORD ════════════════════════════════════════
+   qamHitRate walks this asset's own candles, finds every past day the bias
+   engine read the way it reads today, and counts how many of them actually
+   resolved that way. That is a real measured frequency and it deserves to
+   be on the masthead — but it is a statement about the PAST, and the pill
+   above it is a statement about TODAY. Printing one number in the other's
+   clothes is what produced a green "29% probability — RISE".
+
+   So it says all three parts out loud: how many days are in the sample,
+   how many went the called way, and what that means for the call standing
+   over it. When the record contradicts the lean it says so — that is the
+   whole value of having measured it, and it is the half backed by evidence.
+
+   Below thirty samples qamHitRate returns nothing at all, so there is no
+   "3 of 4 days" arithmetic to mislead anyone here. */
+function tgRecord(D){
+  if(!D||!D.measured||!D.hit||!D.hit.n)return null;
+  var h=D.hit, pct=h.pct;
+  var side=D.dir==='up'?'up':D.dir==='down'?'down':'sideways';
+  var tone = pct<=45?'against' : pct>=55?'backs' : 'flat';
+  var verdict =
+      tone==='against' ? 'The record argues against today’s lean — and the record is the '
+                        +'measured half of the two.'
+    : tone==='backs'   ? 'The record backs today’s lean.'
+    :                    'That is close to a coin flip, so the record neither backs nor '
+                        +'contradicts today’s lean.';
+  return {tone:tone, pct:pct, n:h.n,
+    line:'Track record on '+D.asset+': of the '+h.n+' days this engine has read the same way, '
+        +h.win+' went '+side+' — '+pct+'%. '+verdict};
+}
 function tgMast(st,v,chips){
   var D=null;  try{ D=(typeof qamDayData==='function')?qamDayData():null; }catch(e){}
   var ws=[];   try{ ws=timTodayWindows(st)||[]; }catch(e){}
@@ -28542,19 +28722,36 @@ function tgMast(st,v,chips){
      before; only the order and the weight given to each piece changed. */
   var pillDir = D ? (D.dir==='up'?'up':D.dir==='down'?'down':'flat') : 'flat';
   var pillWord = D ? (D.dir==='up'?'RISE':D.dir==='down'?'FALL':'SIDEWAYS') : null;
+  var REC = tgRecord(D);
 
   var h='<header class="tg-mast"><div class="tg-mrow"><div class="tg-mL">'
     +'<div class="tg-eye">Time engine &middot; '+escHtml(D?D.asset:timAsset())+'</div>'
     /* PROBABILITY when it has actually been measured against this asset's
        own candles, LEAN when it has not — the word changes with the
        evidence, never for the look of it */
-    +(D?'<div class="tg-pill '+pillDir+'" title="'+(D.measured
-          ? escHtml('Measured: of '+D.hit.n+' days this engine read the same way on '+D.asset
-              +', '+D.hit.win+' resolved this way.')
-          : 'Not measured — no daily candles loaded for this asset, so this is a lean score, not a hit rate.')
-       +'"><b>'+D.pct+'%</b> '+(D.measured?'probability':'lean')+' &mdash; '+pillWord+'</div>':'')
+    /* ══ THE PILL SAYS WHAT THE ENGINE CALLS TODAY. FULL STOP. ══
+       It used to print D.pct, which is the MEASURED HIT RATE when there is
+       one, while taking its colour and its direction word from D.dir, which
+       comes from the lean. Those are two different quantities and on a bad
+       day they point opposite ways — the screenshot that started this read
+       "29% PROBABILITY — RISE" in green, directly above a line saying the
+       day "leans up 61%". Both numbers were true and the pair was nonsense:
+       29% was the record (this call has resolved up on 29% of the days it
+       has been made on this asset), 61% was the call itself, and nothing on
+       screen said which was which.
+
+       The pill is the call now, and only the call: the lean, with the lean's
+       own direction and colour. The record is a separate claim about the
+       past and gets its own line underneath, in words, including when it
+       disagrees — a 29% record on a bullish call is the most useful thing on
+       this page and it was being disguised as agreement with the call. */
+    +(D?'<div class="tg-pill '+pillDir+'" title="'+escHtml('The engine’s reading for today on '
+          +D.asset+'. A lean over its own year, not a probability — the measured record is '
+          +'stated separately below.')
+       +'"><b>'+D.lean+'%</b> lean &mdash; '+pillWord+'</div>':'')
     +'<h1>'+escHtml(D&&D.name?D.name:'The day')+'</h1>'
     +(D&&D.say?'<p class="tg-say">'+escHtml(D.say)+'</p>':'')
+    +(REC?'<p class="tg-rec '+REC.tone+'">'+escHtml(REC.line)+'</p>':'')
     +(D&&D.note?'<p class="tg-say tg-reco">'+escHtml(D.note)+'</p>':'')
     /* THE ONE QUESTION THE MASTHEAD WAS NOT ANSWERING. Everything it needed
        was already on the page in stat tiles — the lean, the month's rating,
@@ -30937,7 +31134,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b166';
+var CA_BUILD='b167';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30958,7 +31155,7 @@ var CA_BUILD='b166';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='Three fixes: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
