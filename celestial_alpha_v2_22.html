@@ -8834,6 +8834,26 @@ body{background:var(--bg0)}
    passes used !important — last one wins, which is the only reliable way
    to change this grid in this file. */
 .dh{align-items:stretch}
+/* THE RING'S COLUMN WAS THE GREEDY ONE, AND IT HAD NOTHING TO SPEND IT ON.
+   The hero is three columns and the first of them was 1fr, so it swallowed
+   every spare pixel — 486px of column for a 288px circle at 1366, leaving
+   two hundred pixels of bare page between the ring and the tickers, which
+   is the same dead space the tablet band was written to remove. The ring is
+   a fixed-size object and should take exactly its own width; the tickers
+   are the elastic thing here, and giving them the 1fr closes the gap and
+   widens the four price tiles at the same time — they were down to 104px on
+   a 1366 screen for no reason other than which column held the fr. */
+.dh{grid-template-columns:auto 1fr auto}
+/* AND THE TILES THEMSELVES WERE PINNED TO 104PX BY A FIX FOR A HERO THAT
+   NO LONGER EXISTS. The rule sits under @media(max-width:1450px) and its
+   own comment explains it: "the hero is headline + 4 tickers + the member
+   block on one row; at this width the three tracks no longer fit". The
+   headline has been gone since the ring replaced it, and the ring is a
+   fixed 288px rather than an elastic block of type, so the squeeze that
+   rule was defending against cannot happen any more. Left alone it just
+   moved the dead space from beside the ring to inside the ticker column —
+   632px of column holding 416px of tile at 1366. They fill it now. */
+.dh-ticks{grid-template-columns:repeat(4,1fr)}
 .dh-ticks{grid-template-rows:auto 1fr}
 .dh-fng{display:flex}
 .dh-fng .fng-mini{flex:1}
@@ -8882,6 +8902,91 @@ body{background:var(--bg0)}
 .aspw-pill.up{border-color:rgba(var(--rgbUp),.55);color:var(--up)}
 .aspw-pill.dn{border-color:rgba(var(--rgbDn),.55);color:var(--dn)}
 .aspw-quiet{font-size:9px;line-height:1.45;color:var(--t3)}
+
+/* ═══ A TABLET, NOT A STRETCHED PHONE — 601 TO 1180PX ═══════════════════
+   iPad mini through iPad Pro, Galaxy Tab, Surface, a folded-open Fold: all
+   of them land in this band, in portrait and most of them in landscape too.
+   Nothing here was overflowing — the audit across twelve real tablet sizes
+   came back clean on every tab — but "does not overflow" is not "looks
+   deliberate", and three things were wrong.
+
+   ONE COLUMN WAS THE WRONG ANSWER, AND FOR A REASON THAT EXPIRED. The
+   rule that stacks these rows is @media(max-width:1200px), written when
+   1200px meant a small laptop that still had the sidebar taking 250px of
+   it. Below 1180 the sidebar is a drawer now, so the whole width is
+   content — a tablet at 768 has more usable width than the laptop that
+   rule was written for, and it was being handed a phone layout. Two
+   columns, with the chart keeping the full row because a price chart is
+   the one card here that turns width directly into information.
+
+   THE RING WAS ALONE IN A 744PX COLUMN. A 288px circle centred in a
+   full-width row leaves roughly 230px of nothing on either side of it,
+   which is the exact "why is there so much empty space" this board keeps
+   being pulled up on. It sits beside the tickers now and the row has a
+   reason to be as wide as it is.
+
+   THE BAND ENDS AT 1200, NOT AT 1180 WHERE THE DRAWER DOES. Those twenty
+   pixels are not a rounding choice: the rule being corrected here is the
+   1200px one, and between 1181 and 1200 the sidebar is back on screen
+   while that rule still stacks everything — iPad Pro 11 in landscape is
+   1194 and lands exactly in it, sidebar showing and the ring alone in a
+   934px column. Matching this band to the range of the rule it corrects
+   closes that gap instead of leaving a twenty-pixel seam for one of the
+   commonest tablets on earth to fall into.
+
+   THE CHART HAD NO HEIGHT AT ALL. .drow-a is a fixed 430px on desktop and
+   .ch-body is flex:1;min-height:0 inside it — correct while a parent
+   dictates the height, and a collapse to zero the moment the row goes to
+   auto, which is what stacking did. The plot was drawing into nothing. It
+   gets an explicit height here instead of inheriting one.
+   ══════════════════════════════════════════════════════════════════════ */
+@media(min-width:601px) and (max-width:1200px){
+  /* the hero: ring on the left, tickers filling the rest.
+     auto-fit was the first attempt and it left a hole: the Fear & Greed
+     band under the tiles spans 1/-1, so it keeps the trailing track alive
+     and auto-fit cannot collapse it — at 1133 that was a fifth 156px
+     column with nothing in it. Explicit counts, two below 900 and four
+     above, leave no track for the span to prop open. */
+  .dh{grid-template-columns:auto 1fr!important;align-items:center!important;
+    height:auto!important;min-height:0!important;gap:16px!important}
+  .dh-ticks{grid-template-columns:repeat(2,1fr)!important}
+  .dh-art,.dh-q{display:none!important}
+
+  /* rows size to their contents; the desktop heights were measured for a
+     three-across row and starve a two-across one */
+  .drow-a,.drow-b,.drow-c{height:auto!important;min-height:0!important}
+  .drow-a>.card,.drow-b>.card,.drow-c>.card{height:auto!important}
+  .drow-a{grid-template-columns:1fr 1fr!important}
+  .drow-a>.card:first-child{grid-column:1/-1!important}
+  .drow-b,.drow-c{grid-template-columns:repeat(2,1fr)!important}
+  /* drow-b holds three cards, so the third would sit alone at half width —
+     it takes the full row instead of leaving a gap beside itself */
+  .drow-b>.card:nth-child(3){grid-column:1/-1!important}
+
+  .ch-body{min-height:360px!important}
+  .stats{grid-template-columns:repeat(3,1fr)!important}
+}
+/* past nine hundred there is room for all six stat tiles in one row again */
+@media(min-width:901px) and (max-width:1200px){
+  .stats{grid-template-columns:repeat(6,1fr)!important}
+  .dh-ticks{grid-template-columns:repeat(4,1fr)!important}
+}
+
+/* ═══ THE NARROW DESKTOPS, 1201 TO 1460 ═══
+   A MISS FROM THE BUILD THAT ADDED THE WEEKDAY BARS. That row was set to
+   430px against the card as it measures at 1500px and wider, and 1500 is
+   the only width it was checked at. Below that the third column narrows —
+   245px at 1500, 185px at 1201 — the holiday notice and the summary line
+   wrap onto more rows, and the card ends up 11 to 40px short of its own
+   contents and scrolling inside itself. iPad Pro 12.9 in landscape is
+   1366 and sat squarely in it, which is how it turned up.
+   The row takes the height, only across the widths that need it. The
+   upper edge is 1472 rather than a rounder 1460 because 1460 left a
+   twelve-pixel sliver still overflowing at 1461 — swept a pixel at a
+   time rather than guessed at. */
+@media(min-width:1201px) and (max-width:1472px){
+  .drow-a{height:475px}
+}
 
 /* ═══ A PHONE, NOT A SQUEEZED LAPTOP — BELOW 600PX ═══
    Every grid above this point was tuned for a column with real width: a
@@ -30832,7 +30937,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b165';
+var CA_BUILD='b166';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30853,7 +30958,7 @@ var CA_BUILD='b165';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='A phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='Tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
