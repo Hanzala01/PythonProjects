@@ -942,10 +942,39 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    there and none of this applies. Below it, .side itself becomes the
    sliding panel (see the 1180px media query), and these three are its
    controls: the hamburger opens it, the backdrop and the × close it. */
-.mnav-btn{display:none;position:fixed;top:14px;left:14px;z-index:210;width:44px;height:44px;border-radius:50%;
-  align-items:center;justify-content:center;border:1px solid var(--b2);
-  background:radial-gradient(120% 120% at 30% 20%,var(--b2),rgba(0,0,0,.88));
-  box-shadow:0 10px 26px rgba(0,0,0,.5),0 0 0 5px rgba(var(--rgbCore),.12);cursor:pointer}
+/* THE HAMBURGER IS A BAR ITEM NOW, NOT A FLOATING CIRCLE.
+   It was position:fixed with a drop shadow and a glow ring, because it had
+   to read as a control while sitting on top of whatever tab was behind it.
+   Inside a bar it has a bar behind it, so the shadow and the ring come off —
+   they were compensating for a problem the bar solves. */
+.mnav-btn{display:none;width:40px;height:40px;border-radius:12px;flex:none;
+  align-items:center;justify-content:center;border:1px solid var(--b1);
+  background:rgba(var(--rgbCore),.10);cursor:pointer;padding:0}
+.mnav-btn:active{background:rgba(var(--rgbCore),.20)}
+
+/* ═══ THE PHONE HEADER ═══
+   1fr auto 1fr is the whole centring argument: the outer cells are forced
+   equal whatever they contain, so the mark sits on the true centre line of
+   the screen and stays there when the badge on the right changes width. */
+.mtop{display:none;position:fixed;top:0;left:0;right:0;z-index:205;
+  grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;
+  padding:10px 12px;background:var(--bg0);border-bottom:1px solid var(--b1)}
+.mtop>.mnav-btn{justify-self:start}
+.mtop-brand{display:flex;align-items:center;gap:8px;min-width:0}
+.mtop-brand svg{width:26px;height:26px;flex:none}
+.mtop-brand b{font-family:'Space Grotesk','Inter',system-ui,sans-serif;font-size:15px;
+  font-weight:700;letter-spacing:.14em;color:var(--t1);white-space:nowrap}
+.mtop-right{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+/* THE MEMBER NAME IS THE ONE THING THAT DOES NOT FIT, AND THE ONE THING
+   THAT LOSES NOTHING BY GOING. Bell, mark and badge cannot all be full size
+   in 390px with the mark truly centred. Of the three, the name is pure
+   label — it is not a control, it does not change, and the avatar beside it
+   still opens the setter when tapped. The bell has a live count on it and
+   the mark is the reason the bar exists. */
+.mtop-right .dh-badge>div{display:none}
+.mtop-right .dh-r,.mtop-right .dh-top{display:flex;align-items:center;gap:8px;
+  width:auto!important;flex-direction:row!important}
+.mtop-right .dh-art,.mtop-right .dh-q{display:none!important}
 .mnav-btn svg{width:20px;height:20px;stroke:var(--markLit);fill:none;stroke-width:2;stroke-linecap:round}
 .mnav-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:198;backdrop-filter:blur(2px)}
 .mnav-close{display:none;position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;
@@ -1235,13 +1264,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    on a phone. It slides now instead of reflowing: same sidebar, same card, off-canvas
    until the hamburger asks for it. */
 .mnav-btn{display:flex}
+.mtop{display:grid}
 .mnav-backdrop.show{display:block}
-/* the hamburger is fixed top:14px;left:14px on every tab. Most tabs already
-   clear it by accident — the dashboard's own banner row sits above the
-   headline — but a tab whose first card starts flush at the top (Market
-   Intelligence) sat the button right over its heading. One reservation
-   here beats trusting every tab's own top margin to happen to be enough. */
-.shell>.main{padding-top:70px!important}
+/* The same reservation as before, for the same reason — the header is
+   fixed, so every tab needs to start below it or its first heading ends up
+   underneath the bar. The number is the bar's own height (40px control +
+   10px padding top and bottom + the border) plus a little air, rather than
+   the guess it was when it only had to clear a floating circle. */
+.shell>.main{padding-top:72px!important}
 .side{position:fixed;top:0;left:0;bottom:0;height:100vh;width:min(300px,84vw);z-index:200;
   padding:16px;margin:0;background:var(--bg);box-shadow:0 0 60px rgba(0,0,0,.6);
   transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.9,.3,1);overflow-y:auto}
@@ -8911,10 +8941,41 @@ body{background:var(--bg0)}
 </style>
 <div class="shell">
 
-<!-- Mobile-only: hidden above 1180px (see .mnav-btn), opens the sidebar as a drawer -->
-<button id="mnav_btn" class="mnav-btn" onclick="mnavToggle()" aria-label="Open menu">
-  <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-</button>
+<!-- ═══════════ THE PHONE HEADER ═══════════
+     Hidden above 1180px, where the sidebar is on screen and carries the
+     mark itself. Below it the sidebar is off-canvas, and the product had no
+     name anywhere on a phone until you opened the drawer — the boot screen
+     says CAELUS, the desktop sidebar says CAELUS, and the one view a
+     stranger is most likely to see said nothing at all.
+
+     The bar costs no height. Seventy pixels were already being reserved at
+     the top of every tab so the floating hamburger would not sit on a
+     heading; that reservation is now a bar with three things in it instead
+     of a gap with one circle floating in it.
+
+     Centring is done with 1fr auto 1fr, so the two outer cells are always
+     equal and the mark is optically centred rather than centred-ish. The
+     hamburger has moved in here as a flex child; it is the same button with
+     the same handler, no longer position:fixed. -->
+<header class="mtop" id="mtop">
+  <button id="mnav_btn" class="mnav-btn" onclick="mnavToggle()" aria-label="Open menu">
+    <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="mtop-brand">
+    <svg viewBox="0 0 40 40" role="img" aria-label="CAELUS">
+      <path d="M31.4 12.2A14 14 0 1 0 31.4 27.8" fill="none" style="stroke:var(--markDim)"
+            stroke-width="4.4" stroke-linecap="butt"/>
+      <path d="M14.4 27L20 12.4L25.6 27M16.9 21.4H23.1" fill="none" style="stroke:var(--markLit)"
+            stroke-width="2.6" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </svg>
+    <b>CAELUS</b>
+  </div>
+  <!-- the bell and the member badge are MOVED here on a phone, not copied —
+       two elements cannot share an id, and every handler on them addresses
+       them by id. mtopSync does the move, and moves them back to the hero
+       above 1180px. -->
+  <div class="mtop-right" id="mtop_right"></div>
+</header>
 <div id="mnav_backdrop" class="mnav-backdrop" onclick="mnavClose()"></div>
 
 <!-- ═══════════ SIDEBAR ═══════════ -->
@@ -8998,7 +9059,7 @@ body{background:var(--bg0)}
   <div class="dstale" id="dash_stale" style="display:none"></div>
 
   <!-- ══ HERO ══ -->
-  <section class="dh rise">
+  <section class="dh rise" id="dh_hero">
     <!-- ══ TODAY'S TRANSIT ══
          A slogan and a four-cell strip used to stand here. The slogan said
          the same thing every day of the year, and the strip repeated, in
@@ -9021,7 +9082,7 @@ body{background:var(--bg0)}
         <!-- the empty band under the tiles -->
         <div class="dh-fng" id="dh_fng"></div>
     </div>
-    <div class="dh-r">
+    <div class="dh-r" id="dh_r">
       <div class="dh-top">
         <div id="ntf_wrap" class="ntf-wrap">
           <button id="ntf_bell" class="ntf-bell" type="button" onclick="ntfToggle()"
@@ -30771,7 +30832,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b164';
+var CA_BUILD='b165';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30792,7 +30853,7 @@ var CA_BUILD='b164';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='A phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -33301,6 +33362,7 @@ function goTab(name,btn){
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
   }
   if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashAspectWheel();volDayPaint();dashMember();}catch(e){console.error('dash:',e);}}
+  try{mtopSync();}catch(e){}
   if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();renderApprovals();
     try{jbAutoSeed();}catch(e){}
     try{jbPaint();}catch(e){console.error('journal board:',e);}
@@ -36712,6 +36774,44 @@ function dashTiming(){
       +'<div class="dt-c"><i>Window</i><b>'+fmtT(plan.block.start)+'–'+fmtT(plan.block.end)+'</b></div>'
       +'<div class="dt-c grow"><i>Holds</i><b>'+escHtml(plan.hz.label)+'</b></div>'
     +'</div>'+live;
+}
+
+/* ══ ONE BELL, TWO PLACES TO PUT IT ═══════════════════════════════════
+   The notification bell and the member badge belong at the top right on a
+   phone and in the hero on a desktop, and the honest way to do that is to
+   MOVE the one element rather than write it twice and hide one copy. Two
+   copies would mean two elements carrying id ntf_bell, ntf_panel, dh_user
+   and dh_ini — and every handler on them, plus the unread count, addresses
+   them by id, so the second copy would be the one nothing could find.
+
+   It moves on the breakpoint rather than on a resize poll, and it is also
+   called after a tab switch: nothing rebuilds .dh today, but a renderer
+   that started to would silently put the bell back in the hero on a phone,
+   and a bell nobody can reach is a bad way to find that out.
+
+   A side effect worth naming, because it is the point of the change as much
+   as the bar is: with the badge gone from the hero, the aspect ring becomes
+   the first thing on the dashboard on a phone, which is where it was asked
+   to be. */
+var _mtopMQ=null;
+function mtopSync(){
+  try{
+    var slot=document.getElementById('mtop_right'),
+        r=document.getElementById('dh_r'),
+        hero=document.getElementById('dh_hero');
+    if(!slot||!r||!hero)return;
+    var narrow=_mtopMQ?_mtopMQ.matches:(window.innerWidth<=1180);
+    var target=narrow?slot:hero;
+    if(r.parentElement!==target)target.appendChild(r);
+  }catch(e){}
+}
+function mtopStart(){
+  try{
+    _mtopMQ=window.matchMedia('(max-width:1180px)');
+    if(_mtopMQ.addEventListener)_mtopMQ.addEventListener('change',mtopSync);
+    else if(_mtopMQ.addListener)_mtopMQ.addListener(mtopSync);
+  }catch(e){ _mtopMQ=null; }
+  mtopSync();
 }
 
 /* ══ WHICH DAY THIS THING MOVES ON, AND WHICH DAYS ARE SHUT ═════════════
@@ -41535,7 +41635,7 @@ unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
 setTimeout(loadTickers,800);
 setTimeout(loadSparklines,9000);
-try{dashCalendar();dashTiming();dashAspectWheel();aspwStart();volDayPaint();dashMember();}catch(e){}
+try{dashCalendar();dashTiming();dashAspectWheel();aspwStart();volDayPaint();dashMember();mtopStart();}catch(e){}
 try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
 try{ntfStart();}catch(e){console.error("notifications:",e);}
