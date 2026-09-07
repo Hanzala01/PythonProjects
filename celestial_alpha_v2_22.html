@@ -6875,7 +6875,18 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
 /* The fixed row height is the design and it stays. Growing it to fit made
    the whole dashboard taller, which is not a fix — the card was only
    overflowing because a row inside it had stolen the sidebar's height. */
-.drow-a{min-height:0;height:380px}
+/* 380 WAS SIZED FOR THIS ROW WITHOUT THE WEEKDAY BARS IN IT.
+   Market Pulse is the third card in a row with a fixed height, so anything
+   added to it has to come out of somewhere — and on a holiday, when the
+   notice is showing, the measured reading was forty-odd pixels past the
+   bottom and had to be scrolled to inside the card. Nothing decorative in
+   that card is worth cutting for it (the orrery is already pinned to 112px
+   by the pass further down), so the row itself takes the height. The chart
+   beside it is the other thing that grows, which is no loss at all.
+   Written here rather than at either of the two earlier .drow-a rules
+   because this is the one that wins — see the note on the aspect ring's
+   grid rules for why that keeps happening in this file. */
+.drow-a{min-height:0;height:430px}
 .drow-b{min-height:0;height:166px}
 .drow-c{min-height:0;height:193px}
 .drow-a>.card,.drow-b>.card,.drow-c>.card{height:100%;overflow:hidden}
@@ -8729,6 +8740,45 @@ body{background:var(--bg0)}
    position it and fade its left edge away from the quote. */
 .side-card{overflow:hidden}
 
+/* ═══ VOLATILITY BY DAY ═════════════════════════════════════════════════
+   Five bars in the Market Pulse card, under a "Volatility" cell that until
+   now said one vague word. Same rule as the ring above it: every colour is
+   a theme token, so it follows all nine without a per-theme rule. */
+.vbd{margin-top:10px;padding-top:9px;border-top:1px solid var(--b1)}
+.vbd-h{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.vbd-h b{color:var(--t2);letter-spacing:.03em}
+.vbd-hol{margin-top:7px;padding:6px 8px;border-radius:7px;font-size:9.8px;line-height:1.45;
+  color:var(--t2);border:1px solid rgba(var(--rgbWarn),.34);background:rgba(var(--rgbWarn),.08)}
+/* THE AMBER SIGNALS; THE WORDS STAY READABLE.
+   Both of these were --warn to begin with, which measured 3.65:1 on the
+   one light theme — under AA for text this size, on Platinum only. The
+   colour is doing warning-signal work, not text work, so it keeps the jobs
+   it is good at (the dot, the border, the tinted ground, the tall bar) and
+   the words go back to the ordinary text token, which clears 4.5:1 on all
+   nine. Emphasis comes from weight instead, which never had this problem. */
+.vbd-hol b{color:var(--t1);font-weight:700}
+.vbd-hol em{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--warn);
+  margin-right:6px;vertical-align:middle}
+.vbd-hol.soon{border-color:var(--b2);background:rgba(var(--rgbAcc),.06)}
+.vbd-hol.soon b{color:var(--t1)}
+.vbd-hol.soon em{background:var(--t3)}
+.vbd-bars{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;align-items:end;
+  height:44px;margin-top:8px}
+.vbd-b{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  height:100%;gap:4px;cursor:default}
+.vbd-b u{display:block;width:100%;border-radius:3px 3px 0 0;text-decoration:none;
+  background:rgba(var(--rgbAcc),.28);border:1px solid rgba(var(--rgbAcc),.4);border-bottom:0}
+.vbd-b i{font-style:normal;font-size:8.5px;font-weight:600;color:var(--t3);line-height:1}
+.vbd-b.hi u{background:rgba(var(--rgbWarn),.36);border-color:rgba(var(--rgbWarn),.62)}
+.vbd-b.hi i{color:var(--t1);font-weight:700}
+.vbd-b.lo u{background:rgba(var(--rgbAcc),.13)}
+/* today gets an underline rather than another fill — the bars already carry
+   two meanings and a third colour on them would make all three harder to read */
+.vbd-b.now i{color:var(--t1);text-decoration:underline;text-underline-offset:2px}
+.vbd-l{margin-top:7px;font-size:9.3px;line-height:1.5;color:var(--t3)}
+.vbd-na{margin-top:8px;font-size:9.5px;line-height:1.55;color:var(--t3)}
+
 /* ═══ THE ASPECT RING ═══════════════════════════════════════════════════
    Ten bodies on a ring at their real longitudes — 0° at the top, degrees
    running clockwise — with the day's tightest angle read out in the middle.
@@ -9105,6 +9155,9 @@ body{background:var(--bg0)}
           <div class="mp-c"><div class="k">Volatility</div><div class="v" id="v_vol">&mdash;</div></div>
           <div class="mp-c"><div class="k">Trend</div><div class="v" id="v_trend">&mdash;</div></div>
         </div>
+        <!-- which weekday this instrument actually ranges on, and whether
+             today is a day the market is shut. Filled by volDayPaint. -->
+        <div id="v_volday"></div>
         <div class="mp-news"><span>News Impact Filter</span><b id="v_news_imp">&mdash;</b></div>
         <div id="v_news_line" class="mp-nl">&mdash;</div>
         <button class="cta ghost" onclick="goTab('sentiment',document.querySelector('.nav-item[onclick*=&quot;sentiment&quot;]'))">View Calendar</button>
@@ -30718,7 +30771,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b163';
+var CA_BUILD='b164';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -30739,7 +30792,7 @@ var CA_BUILD='b163';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -33247,7 +33300,7 @@ function goTab(name,btn){
     try{var r=document.getElementById('qv_ref');if(r)r.innerHTML=qvReferenceHtml()+vbReferenceHtml();}catch(e){}
     try{apiProbeAll();}catch(e){console.error('api health:',e);}
   }
-  if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashAspectWheel();dashMember();}catch(e){console.error('dash:',e);}}
+  if(name==='dashboard'){try{dashCalendar();dashAiLine();dashTiming();dashAspectWheel();volDayPaint();dashMember();}catch(e){console.error('dash:',e);}}
   if(name==='portfolio'){renderPnlCalendar();updatePortStats();renderJ();renderPort();renderApprovals();
     try{jbAutoSeed();}catch(e){}
     try{jbPaint();}catch(e){console.error('journal board:',e);}
@@ -36661,6 +36714,210 @@ function dashTiming(){
     +'</div>'+live;
 }
 
+/* ══ WHICH DAY THIS THING MOVES ON, AND WHICH DAYS ARE SHUT ═════════════
+   Two questions that belong together, because the answer to one keeps
+   ruining the answer to the other.
+
+   THE FIRST IS MEASURED, NOT ASSERTED. Every trading floor has folklore
+   about which weekday is the wild one, and none of it is worth repeating
+   here when the asset's own daily bars can be counted instead. This walks
+   the loaded history, buckets each session by its weekday, and averages
+   the true range as a fraction of the close. What comes back is that
+   weekday's range against a normal day on THIS instrument — not on
+   equities in general, and not on somebody's memory of last quarter.
+
+   THE SECOND IS DERIVED FROM RULES. A market holiday is not a forecast, it
+   is a published calendar, and every date on it comes from one of three
+   rules: a fixed date, the nth given weekday of a month, or an offset from
+   Easter. So the calendar is computed rather than typed in, and it does
+   not go stale in a year's time the way a hardcoded list of dates would.
+
+   WHY THEY BELONG TOGETHER: a holiday is exactly the day the weekday
+   average will not describe. The feed already carries holidays for the
+   week it covers and already says thin books and wider spreads; what it
+   cannot say is that today is one, because the shipped snapshot only
+   reaches a few days out. This can, for any date, in either direction.
+   ══════════════════════════════════════════════════════════════════════ */
+var VBD_DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+/* the nth given weekday of a month, and the last one — Labor Day, MLK,
+   Thanksgiving, Memorial Day and four of the UK bank holidays are all one
+   of these two and nothing more */
+function vbdNthDow(y,m,dow,n){
+  var first=new Date(y,m,1);
+  return new Date(y,m,1+((dow-first.getDay()+7)%7)+(n-1)*7);
+}
+function vbdLastDow(y,m,dow){
+  var last=new Date(y,m+1,0);
+  return new Date(y,m,last.getDate()-((last.getDay()-dow+7)%7));
+}
+/* the anonymous Gregorian computus. Good Friday and Easter Monday are the
+   only moving feasts a market calendar needs, and both hang off this one
+   date, so it is worth the twelve lines rather than a table that runs out. */
+function vbdEaster(y){
+  var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,
+      f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),
+      h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,
+      l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),
+      t=h+l-7*m+114;
+  return new Date(y,Math.floor(t/31)-1,(t%31)+1);
+}
+function vbdKey(d){
+  return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+}
+/* US and UK observe a weekend holiday differently, and the difference is
+   not cosmetic — it decides which session is actually thin. A US fixed-date
+   holiday on a Saturday is taken on the Friday before and on a Sunday the
+   Monday after; a UK bank holiday always moves forward to the next working
+   day, and Boxing Day moves past whatever Christmas was moved to. */
+function vbdUsObs(d){
+  var w=d.getDay();
+  if(w===6)return new Date(d.getFullYear(),d.getMonth(),d.getDate()-1);
+  if(w===0)return new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);
+  return d;
+}
+function vbdUkObs(d,taken){
+  var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  while(x.getDay()===0||x.getDay()===6||(taken&&taken[vbdKey(x)]))
+    x=new Date(x.getFullYear(),x.getMonth(),x.getDate()+1);
+  return x;
+}
+var _vbdHol={};
+function vbdHolidays(y){
+  if(_vbdHol[y])return _vbdHol[y];
+  var E=vbdEaster(y), out={}, taken={};
+  var gf=new Date(y,E.getMonth(),E.getDate()-2);
+  function add(d,n,mkt){
+    var k=vbdKey(d);
+    if(!out[k])out[k]={key:k,d:d,names:[],mkts:[]};
+    if(out[k].names.indexOf(n)<0)out[k].names.push(n);
+    if(out[k].mkts.indexOf(mkt)<0)out[k].mkts.push(mkt);
+  }
+  /* US — the days the NYSE and the CME floor are closed */
+  add(vbdUsObs(new Date(y,0,1)),'New Year’s Day','US');
+  add(vbdNthDow(y,0,1,3),'Martin Luther King Jr. Day','US');
+  add(vbdNthDow(y,1,1,3),'Presidents’ Day','US');
+  add(gf,'Good Friday','US');
+  add(vbdLastDow(y,4,1),'Memorial Day','US');
+  add(vbdUsObs(new Date(y,5,19)),'Juneteenth','US');
+  add(vbdUsObs(new Date(y,6,4)),'Independence Day','US');
+  add(vbdNthDow(y,8,1,1),'Labor Day','US');
+  add(vbdNthDow(y,10,4,4),'Thanksgiving','US');
+  add(vbdUsObs(new Date(y,11,25)),'Christmas Day','US');
+  /* UK — the England and Wales bank holidays. Worth carrying as well as
+     the US ones: the feed files these under GBP and metals and cable both
+     go quiet on them, whatever New York is doing. */
+  var ny=vbdUkObs(new Date(y,0,1)); taken[vbdKey(ny)]=1;
+  add(ny,'New Year’s Day','UK');
+  add(gf,'Good Friday','UK');
+  add(new Date(y,E.getMonth(),E.getDate()+1),'Easter Monday','UK');
+  add(vbdNthDow(y,4,1,1),'Early May bank holiday','UK');
+  add(vbdLastDow(y,4,1),'Spring bank holiday','UK');
+  add(vbdLastDow(y,7,1),'Summer bank holiday','UK');
+  var xm=vbdUkObs(new Date(y,11,25)); taken[vbdKey(xm)]=1;
+  add(xm,'Christmas Day','UK');
+  add(vbdUkObs(new Date(y,11,26),taken),'Boxing Day','UK');
+  _vbdHol[y]=out;
+  return out;
+}
+function vbdHolidayOn(d){ return vbdHolidays(d.getFullYear())[vbdKey(d)]||null; }
+function vbdNextHoliday(from,within){
+  for(var i=1;i<=(within||21);i++){
+    var d=new Date(from.getFullYear(),from.getMonth(),from.getDate()+i);
+    var h=vbdHolidayOn(d);
+    if(h)return{h:h,days:i,d:d};
+  }
+  return null;
+}
+
+/* A DATE-ONLY STRING PARSES AS UTC MIDNIGHT, which is the previous day
+   everywhere west of Greenwich. This whole reading is a weekday, so taking
+   that shortcut would file a whole timezone's bars in the wrong column —
+   every Monday counted as a Sunday, and Sunday is not in the table. */
+function vbdRowDate(r){
+  var s=String((r&&r.date)||''), m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  var d=new Date(s);
+  return isNaN(+d)?null:d;
+}
+function vbdByDay(){
+  var rows=(typeof HIST_ROWS!=='undefined'&&HIST_ROWS)||null;
+  if(!rows||rows.length<120)return null;
+  var sum=[0,0,0,0,0,0,0], cnt=[0,0,0,0,0,0,0], all=0, n=0, i;
+  for(i=1;i<rows.length;i++){
+    var d=vbdRowDate(rows[i]); if(!d)continue;
+    var c=+rows[i].close, hi=+rows[i].high, lo=+rows[i].low, rng;
+    /* high minus low is the real range; where the feed gave no high and low
+       the close-to-close move is the only honest stand-in, and it under-
+       states every day equally, so the RATIO the card prints survives it */
+    if(hi>0&&lo>0&&hi>=lo&&c>0) rng=(hi-lo)/c;
+    else { var p=+rows[i-1].close; if(!(p>0&&c>0))continue; rng=Math.abs(c/p-1); }
+    if(!isFinite(rng)||rng<=0)continue;
+    var w=d.getDay();
+    sum[w]+=rng; cnt[w]++; all+=rng; n++;
+  }
+  if(!n)return null;
+  var mean=all/n, out=[];
+  for(var w=1;w<=5;w++){
+    /* under a dozen of a given weekday is not a tendency, it is a handful
+       of days wearing a multiplier — the same bar this console applies to
+       every other measured claim on it */
+    if(cnt[w]<12)return null;
+    out.push({d:w,name:VBD_DOW[w],n:cnt[w],pct:sum[w]/cnt[w]*100,
+              ratio:(sum[w]/cnt[w])/mean});
+  }
+  var hiD=out[0], loD=out[0];
+  out.forEach(function(x){ if(x.ratio>hiD.ratio)hiD=x; if(x.ratio<loD.ratio)loD=x; });
+  return{days:out,hi:hiD,lo:loD,n:n};
+}
+
+/* the reading as values, so the strip below and anything else that wants it
+   later are reading one computation rather than each doing their own */
+function volDayData(){
+  var now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  var asset='this asset'; try{ asset=timAsset(); }catch(e){}
+  return{date:today, weekday:VBD_DOW[today.getDay()], asset:asset,
+         hol:vbdHolidayOn(today), next:vbdNextHoliday(today,21), by:vbdByDay()};
+}
+function volDayHtml(){
+  var V=volDayData(), h='<div class="vbd">';
+  h+='<div class="vbd-h"><span>Volatility by day</span><b>'+escHtml(String(V.asset).toUpperCase())+'</b></div>';
+  if(V.hol){
+    h+='<div class="vbd-hol"><em></em><b>Today is '+escHtml(V.hol.names.join(' / '))+'</b> — '
+      +escHtml(V.hol.mkts.join(' and '))+' shut. Thin books and wider spreads: a smaller range '
+      +'than the weekday below, and levels that break on less size.</div>';
+  }else if(V.next&&V.next.days<=5){
+    h+='<div class="vbd-hol soon"><em></em><b>'+escHtml(V.next.h.names.join(' / '))+' '
+      +(V.next.days===1?'tomorrow':'in '+V.next.days+' days')+'</b> — '
+      +escHtml(V.next.h.mkts.join(' and '))+' shut, so that session runs thin.</div>';
+  }
+  if(!V.by){
+    h+='<div class="vbd-na">Load 120 daily bars and this measures which weekday this instrument '
+      +'has actually ranged most on, rather than repeating what everyone says.</div>';
+  }else{
+    h+='<div class="vbd-bars">';
+    for(var i=0;i<V.by.days.length;i++){
+      var x=V.by.days[i];
+      h+='<div class="vbd-b'+(x===V.by.hi?' hi':'')+(x===V.by.lo?' lo':'')
+          +(x.d===V.date.getDay()?' now':'')+'" title="'+escHtml(x.name+' — average range '
+          +x.pct.toFixed(2)+'% of price, '+x.ratio.toFixed(2)+'× a normal day, over '
+          +x.n+' sessions')+'">'
+        +'<u style="height:'+Math.max(9,Math.round(x.ratio/V.by.hi.ratio*100))+'%"></u>'
+        +'<i>'+x.name+'</i></div>';
+    }
+    h+='</div>'
+      +'<div class="vbd-l">'+escHtml(V.by.hi.name)+' is the wide one at '+V.by.hi.ratio.toFixed(2)
+      +'×, '+escHtml(V.by.lo.name)+' the quiet one at '+V.by.lo.ratio.toFixed(2)
+      +'×, over '+V.by.n+' measured sessions.</div>';
+  }
+  return h+'</div>';
+}
+function volDayPaint(){
+  var el=document.getElementById('v_volday');
+  if(!el)return;
+  try{ el.innerHTML=volDayHtml(); }catch(e){ el.innerHTML=''; }
+}
+
 /* ══ TODAY'S TRANSIT — THE ASPECT RING ═══════════════════════════════════
    The hero's left column used to carry a slogan and a summary strip. It
    carries the sky now: the ten bodies on a ring at their real longitudes,
@@ -37749,7 +38006,7 @@ function renderDashLive(assetName,price,sig,astro,pb,cb,trend,levels){
     renderDashNews();
     var ca=document.getElementById('ch_asset');if(ca)ca.textContent=assetName;
     try{ tsCopyBind(); }catch(e){}
-    dashCalendar();dashAiLine();dashTiming();dashAspectWheel();
+    dashCalendar();dashAiLine();dashTiming();dashAspectWheel();volDayPaint();
   }catch(e){
     console.error('dash live:',e);
     /* A CARD THAT FAILS HALFWAY MUST NOT LOOK LIKE A CARD WITH NOTHING IN IT.
@@ -41278,7 +41535,7 @@ unlock();
 /* load live ticker prices on startup (staggered for AV rate limits) */
 setTimeout(loadTickers,800);
 setTimeout(loadSparklines,9000);
-try{dashCalendar();dashTiming();dashAspectWheel();aspwStart();dashMember();}catch(e){}
+try{dashCalendar();dashTiming();dashAspectWheel();aspwStart();volDayPaint();dashMember();}catch(e){}
 try{psxLoadSymbols(function(l){if(l)console.info('PSX: '+l.length+' equities available');});}catch(e){}
 try{initMotion();startQuotes();startSideRotator();botLoad();renderBot();}catch(e){console.error("init:",e);}
 try{ntfStart();}catch(e){console.error("notifications:",e);}
