@@ -14774,7 +14774,11 @@ function renderCelestialSettings(){
 
    +'<div class="cset-s"><i>Look</i>'
      +'<div class="cset-row">'
-       +'<div><b>Theme</b><s>Nine palettes, the same tokens underneath — the dashboard, the Timing '
+       /* the count comes from the array. Written as a word it was "Eight"
+          once and "Nine" until Harbour landed, and a sentence that has to be
+          hand-edited every time a theme is added is a sentence that will be
+          wrong. */
+       +'<div><b>Theme</b><s>'+CA_THEMES.length+' palettes, the same tokens underneath — the dashboard, the Timing '
          +'Engine, the Analytics and everything they compute are identical in every one of them; '
          +'only the colours move. Celestial is the original, purple accent and all, kept exactly '
          +'as it was and still one tap away.</s></div>'
@@ -28823,7 +28827,11 @@ function tgTodaySay(D,T){
    they do not. */
 var TG_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 function tgDayCheck(asset){
-  var loaded=''; try{ loaded=String(_lastAsset||''); }catch(e){}
+  /* HIST_ASSET is written by loadHistory beside the bars themselves and is
+     the only thing that actually knows whose they are; _lastAsset is the
+     fallback for history that predates it. */
+  var loaded='';
+  try{ loaded=String(window.HIST_ASSET||_lastAsset||''); }catch(e){}
   if(!loaded||String(asset||'').toLowerCase()!==loaded.toLowerCase())return null;
   var by=null; try{ by=vbdByDay(); }catch(e){}
   if(!by)return null;
@@ -31323,7 +31331,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b168';
+var CA_BUILD='b169';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -31344,7 +31352,7 @@ var CA_BUILD='b168';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -34973,6 +34981,17 @@ function loadHistory(assetName,cb){
   if(el&&!window.SCAN_QUIET)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history\u2026</div>';
   function done(rows,src){
     HIST_ROWS=rows;
+    /* WHICH ASSET THESE BARS BELONG TO, RECORDED WITH THEM.
+       Nothing wrote that down. HIST_ROWS was global and anonymous, and the
+       only nearby name — _lastAsset — is set by the ANALYSIS pass, not by
+       this one. So anything wanting to say "measured on Gold" had to either
+       trust an unrelated variable or guess, and load-history-without-
+       analysis (the ordinary case: open the app, watch the chart draw) left
+       it empty. That is exactly what made the new Time Engine headline fall
+       back to its old fixed label for anyone who had not run an analysis —
+       the check refused to run because it could not prove whose bars these
+       were. Now it can. */
+    try{ window.HIST_ASSET=assetName; }catch(e){}
     /* THE SCAN DOES NOT NEED A CHART.
        Redrawing the candles and recomputing the monthly range for each of
        fifteen instruments made a scan take about fifteen seconds per asset —
