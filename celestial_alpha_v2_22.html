@@ -1571,6 +1571,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .fng-mini{display:flex;align-items:center;gap:14px;padding:8px 14px;border-radius:12px;
   border:1px solid var(--b1);background:rgba(var(--g34),.55)}
 .fng-mini .fng-dial{width:86px;flex:none}
+.dh-fng .fng-mini .fng-dial{width:118px}
 .fng-l{min-width:0;flex:1}
 .fng-l i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.13em;
   text-transform:uppercase;color:var(--t3)}
@@ -3564,6 +3565,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cset-tb .sw.charcoal{background:linear-gradient(135deg,#0B0D10 45%,#A1A1A1)}
 .cset-tb .sw.frost{background:linear-gradient(135deg,#0A1626 45%,#86BEEC)}
 .cset-tb .sw.frostlight{background:linear-gradient(135deg,#EEF4FA 45%,#3D7AB5);border:1px solid rgba(0,0,0,.12)}
+.cset-tb .sw.harbour{background:linear-gradient(135deg,#FFFFFF 58%,#0B2647)}
 
 /* ── HIERARCHY: one hero per card, and air between sections ─────────────
    Applied to both themes. The complaint the Qamar screenshot answers is not
@@ -6448,6 +6450,104 @@ body{height:auto!important;min-height:100%;overflow-y:auto!important;overflow-x:
 }
 /* the hero art and sidebar portrait are one shared purple-toned image in
    every theme; Frost re-tints it toward its own vivid ice-blue accent. */
+/* ══ HARBOUR — WHITE GROUND, NAVY STRUCTURE ══════════════════════════════
+   Asked for as roughly sixty per cent white and forty per cent navy, and
+   that ratio is a layout instruction as much as a palette one: white is
+   the ground everything is read ON — page, cards, chart — and navy is
+   everything that gives the page its shape, which is where the other forty
+   lands. The sidebar is solid navy, the accent, the mark, the chart's own
+   candles and the headings are navy, and the content sits on white.
+
+   Built from Platinum rather than from nothing, because Platinum is the
+   only other light theme here and it already solved the two problems a
+   light theme has in this file: a "wash" has to read as a shadow instead
+   of a glow, and the accent ramp has to run DARKER toward acc3 rather than
+   lighter, since on a white ground the boldest step is the darkest one.
+   Both of those carry over; only the hue changes. The sixty-two background
+   tokens are Platinum's own ramp with the grey cooled toward navy, so the
+   steps between surfaces keep the spacing that was tuned there.
+   ══════════════════════════════════════════════════════════════════════ */
+[data-theme="harbour"]{
+
+  --bg0:#F5F8FC; --card:#FFFFFF; --card2:#EAF1F9;
+  --bg1:#FAFCFE; --chartbg:#FFFFFF;
+  --b1:rgba(11,38,71,.11); --b2:rgba(11,38,71,.19); --bFaint:rgba(11,38,71,.06);
+  --bAct:#123A6B;
+  --p3:#123A6B; --pGlow:#1B5599; --pDeep:#DCE8F6;
+  --p1:#4A5F76; --p2:#67809A;
+  --soft:#2C4258; --mid:#465C74; --muted:#647A92; --text:#0C1B30;
+  --t1:#0A1728; --t2:#2C4258; --t3:#5B7085;
+  --up:#1B7F55; --dn:#B03A2E; --warn:#9A6C15; --cy:#1B5599;
+  --elFire:#A85736; --elEarth:#3A7150; --elAir:#1B5599; --elWater:#2A4C93;
+  --rgbUp:27,127,85; --rgbDn:176,58,46; --rgbWarn:154,108,21;
+  --rgbFire:168,87,54; --rgbEarth:58,113,80;
+  --rgbAir:27,85,153; --rgbWater:42,76,147;
+  --wash:rgba(11,38,71,.03); --washTo:rgba(var(--g35),.97);
+  --pDeepest:#0B2647; --pWell:#E8F0FA;
+  --sideBg:#0B2647; --sideTop:#123A6B; --sideTop2:#0B2647;
+  --navOn1:#DCE8F6; --navOn2:#EAF1F9;
+  --cUp:#123A6B; --cDn:#9DB8D6; --gridLn:#DCE5F0; --axisTx:#5B7085; --dialFace:250,252,254; --markDim:#9DB8D6; --markLit:#123A6B;
+  --g01:241,246,255; --g02:241,246,255; --g03:241,246,255; --g04:241,246,255; --g05:241,246,255; --g06:241,246,255;
+  --g07:241,246,255; --g08:241,246,255; --g09:241,246,255; --g10:241,246,255; --g11:241,246,255; --g12:241,246,255;
+  --g13:241,246,255; --g14:241,246,255; --g15:241,246,255; --g16:241,246,255; --g17:241,246,255; --g18:230,235,245;
+  --g19:241,246,255; --g20:230,235,245; --g21:241,246,255; --g22:230,235,245; --g23:241,246,255; --g24:241,246,255;
+  --g25:230,235,245; --g26:230,235,245; --g27:230,235,245; --g28:241,246,255; --g29:230,235,245;
+  --g30:230,235,245; --g31:230,235,245; --g32:230,235,245; --g33:230,235,245; --g34:224,229,239;
+  --g35:230,235,245; --g36:230,235,245; --g37:230,235,245; --g38:224,229,239; --g39:224,229,239;
+  --g40:224,229,239; --g41:224,229,239; --g42:224,229,239; --g43:224,229,239; --g44:216,221,231;
+  --g45:216,221,231; --g46:224,229,239; --g47:223,228,238; --g48:224,229,239; --g49:216,221,231;
+  --g50:214,219,229; --g51:221,226,236; --g52:216,221,231; --g53:216,221,231; --g54:216,221,231;
+  --g55:216,221,231; --g56:210,215,225; --g57:210,215,225; --g58:210,215,225; --g59:210,215,225;
+  --g60:210,215,225; --g61:210,215,225; --g62:210,215,225;
+  /* on a white ground a "wash" has to read as a shadow, not a glow — so the
+     accent channels most CSS here uses as a low-alpha highlight point to a
+     dark ink tone instead of white, and the one true accent stays gold */
+  --rgbAcc:11,38,71; --rgbRim:11,38,71; --rgbVio:18,58,107;
+  --rgbLit:220,232,246; --rgbDeep:10,23,40; --rgbTrue:18,58,107;
+  --rgbAmy:11,38,71; --rgbCore:11,38,71; --rgbSoft:74,95,118;
+  --rgbBord:18,58,107; --rgbInfo:27,85,153; --rgbMid:86,106,128;
+  --bg:#F5F8FC; --s1:#FAFCFE; --s2:#FFFFFF; --s3:#EAF1F9; --s4:#DCE8F6;
+  --navy:#FAFCFE; --navy2:#FFFFFF; --sec:#FAFCFE;
+  --rim:rgba(11,38,71,.11); --rim2:rgba(11,38,71,.18); --rim3:rgba(18,58,107,.34);
+  --muted:#647A92; --mid:#465C74; --soft:#2C4258; --text:#0C1B30; --white:#0A1728;
+  /* EVERY OTHER THEME BRIGHTENS ACROSS accent → acc2 → acc3, BECAUSE EVERY
+     OTHER THEME IS DARK. acc3 is meant to be the boldest, most-legible step
+     — the one used where nothing else may be used, a masthead wordmark
+     among them — and "boldest" against a near-black ground means lightest.
+     Copied forward with the same three values lifted toward white, acc3
+     landed at a pale gold that all but disappeared against Platinum's own
+     near-white ground: the one theme where boldest means darkest instead.
+     The progression is reversed here, only here, so acc3 stays what it is
+     everywhere else — the strongest, most legible version of the accent
+     for whatever ground the theme actually has. */
+  --accent:#123A6B; --acc2:#0E2E55; --acc3:#0B2647;
+  --purple:#123A6B; --violet:#123A6B; --blue:#1B5599;
+  --tw:#0A1728; --ts:#2C4258; --tm:#5B7085; --tf:#7C8EA2;
+  --bd:rgba(11,38,71,.11); --bd2:rgba(11,38,71,.18);
+  --green:#1B7F55; --red:#B03A2E; --amber:#9A6C15; --yellow:#9A6C15;
+  --gold:#9A6C15; --purple-glow:rgba(18,58,107,.13);
+}
+/* The sidebar is the navy block, so everything inside it inverts: the text
+   tones, the borders and the nav marker all flip to light-on-navy while the
+   main column stays dark-on-white. Same mechanism as Frost Light — custom
+   properties cascade, so overriding them on .side changes only that
+   subtree. The member card is included deliberately: it draws from
+   rgbCore + g34 rather than the g41/g21 pair the nav uses, and leaving
+   those two out is how it ended up the wrong colour twice before. */
+[data-theme="harbour"] .side{
+  --g41:11,38,71; --g21:8,30,57; --g34:11,38,71; --rgbCore:255,255,255;
+  --t1:#FFFFFF; --t2:#CDDCEC; --t3:#93AAC4; --tw:#FFFFFF; --ts:#CDDCEC;
+  --tm:#93AAC4; --tf:#7E94AC;
+  --soft:#CDDCEC; --mid:#A8BDD2; --muted:#8AA0B8; --text:#FFFFFF;
+  --p3:#8FC2F2; --p2:#6E9BC8; --p1:#5A82AC;
+  --b1:rgba(255,255,255,.13); --b2:rgba(255,255,255,.22); --bFaint:rgba(255,255,255,.07);
+  --bd:rgba(255,255,255,.13); --bd2:rgba(255,255,255,.21);
+  --markDim:#4E7099; --markLit:#8FC2F2;
+  --rgbAcc:255,255,255; --rgbRim:255,255,255; --pGlow:#8FC2F2;
+}
+[data-theme="harbour"] .dh-art,[data-theme="harbour"] .sc-portrait{
+  filter:grayscale(1) sepia(1) hue-rotate(178deg) saturate(2.2) brightness(.86)}
+
 [data-theme="frost"] .dh-art,[data-theme="frost"] .sc-portrait{
   filter:grayscale(1) sepia(1) hue-rotate(165deg) saturate(2.4) brightness(1.05)}
 /* Frost Light's pictures get the sidebar's own colour instead — a more
@@ -8882,6 +8982,18 @@ body{background:var(--bg0)}
 .dh-ticks{grid-template-rows:auto 1fr}
 .dh-fng{display:flex}
 .dh-fng .fng-mini{flex:1}
+/* ══ THE HOLE IN THE MIDDLE OF THE FEAR & GREED BAND ══
+   .fng-l is flex:1 and .fng-h is flex:none, which was right when this card
+   was a narrow tile: the label took the slack and the four numbers sat at
+   the end. Since the band was widened to fill the ticker column it is the
+   wrong split — the label is two short lines that cannot use six hundred
+   pixels, so it held the space empty and pushed the numbers hard against
+   the right edge, with nothing at all in between. The label takes what it
+   needs now and the numbers spread across the rest, so the width carries
+   information instead of a gap. */
+.dh-fng .fng-l{flex:0 1 auto;max-width:44ch}
+.dh-fng .fng-h{flex:1;justify-content:space-evenly;gap:10px}
+.dh-fng .fng-h span{text-align:center}
 /* the "not enough bars loaded" state is a block, so in a card that now has
    height to spare its two lines sat against the top edge with the rest of
    the panel blank under them. Centred, the same two lines read as a card
@@ -14598,7 +14710,8 @@ var CA_THEMES=[
   {id:'platinum', name:'Platinum',say:'near-white, black ink, a restrained gold accent — the light-mode option'},
   {id:'charcoal', name:'Charcoal',say:'black, grey and off-white only — no accent colour anywhere, not even gold'},
   {id:'frost',    name:'Frost',   say:'deep navy and a frosted ice-blue accent'},
-  {id:'frostlight',name:'Frost Light',say:'the same frost, in daylight — icy white ground, deep blue accent'}
+  {id:'frostlight',name:'Frost Light',say:'the same frost, in daylight — icy white ground, deep blue accent'},
+  {id:'harbour',name:'Harbour',say:'a white ground with navy structure — the sidebar, the mark and the chart carry the blue'}
 ];
 var CA_THEME_IDS=CA_THEMES.map(function(t){return t.id;});
 function themeGet(){
@@ -25083,6 +25196,10 @@ function qamDayData(){
   var H=null; try{ H=qamHitRate(asset,A.dir); }catch(e){}
   return {
     dayName:dayName, ruler:W.ruler, name:W.name, say:W.say, asset:asset,
+    /* the window's own claim about the day, as a flag rather than prose, so
+       the masthead can check it against the asset's bars instead of just
+       repeating it */
+    quietClaim: !!W.muted,
     dir: fall?'down' : rise?'up' : null,
     lean: fall?(100-A.bull) : A.bull,
     word: fall?'FALL' : rise?'RISE' : 'SIDEWAYS',
@@ -28676,6 +28793,70 @@ function tgTodaySay(D,T){
                  : 'no heavy aspect lands today');
   return bits.length ? ('Today, in one line: '+bits.join(' · ')+'.') : '';
 }
+/* ══ THE HEADLINE WAS THE SAME EVERY TUESDAY, ON EVERY ASSET ════════════
+   QAM_DAYWIN is seven rows keyed on the day of the week, so "Aggressive /
+   Liquidation Window" was the headline on every Tuesday that has ever
+   existed and will ever exist, for Gold and Bitcoin and Apple alike. As the
+   biggest text on the page that is a claim, and it is one nothing had ever
+   checked. Two things are wrong with it at once: no day of the week behaves
+   the same way every week, and no two instruments behave the same way on
+   the same weekday.
+
+   The planetary day stays — it is the frame this whole console is built on
+   and it earns its place. What it stops doing is speaking as if it were a
+   measurement. The headline is now built from what actually varies: which
+   asset is in view, and what that asset's own bars say this weekday does.
+   vbdByDay already counts exactly that (it is what the Volatility-by-day
+   strip on the dashboard reads), so the check costs nothing new.
+
+   And the frame gets marked. Each row already carries `muted` — the quiet
+   days are flagged, the active ones are not — which is the window's claim
+   in one bit. Against the measured range it either holds for this asset or
+   it does not, and the line under the headline says which. A Tuesday that
+   ranges 0.86x a normal day on Gold is a Tuesday whose window claim is
+   wrong about Gold, and that is worth more than repeating the claim.
+
+   ONE TRAP WORTH NAMING: vbdByDay reads HIST_ROWS, which belongs to
+   whatever was last ANALYSED, while this tab has its own asset picker. Read
+   naively it would measure Gold's bars and print Bitcoin's name over them.
+   The check only runs when the two agree, and says it is unverified when
+   they do not. */
+var TG_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function tgDayCheck(asset){
+  var loaded=''; try{ loaded=String(_lastAsset||''); }catch(e){}
+  if(!loaded||String(asset||'').toLowerCase()!==loaded.toLowerCase())return null;
+  var by=null; try{ by=vbdByDay(); }catch(e){}
+  if(!by)return null;
+  var w=new Date().getDay(), hit=null;
+  for(var i=0;i<by.days.length;i++)if(by.days[i].d===w)hit=by.days[i];
+  return hit?{ratio:hit.ratio,n:hit.n,name:hit.name}:null;
+}
+function tgHeadline(D,chk,hol){
+  var day=TG_DAYS[new Date().getDay()];
+  if(!D)return 'The day';
+  if(hol)return day+' on '+D.asset+' \u2014 a holiday session';
+  if(!chk)return D.name||'The day';        /* unmeasured: the frame's own name */
+  var r=chk.ratio;
+  var word = r>=1.15 ? 'wide and fast'
+           : r>=1.05 ? 'a shade wider than usual'
+           : r<=0.85 ? 'quiet'
+           : r<=0.95 ? 'a shade quieter than usual'
+           :           'an ordinary day';
+  return day+' on '+D.asset+' \u2014 '+word;
+}
+function tgFrameSay(D,chk){
+  if(!D||!D.name)return null;
+  var head=D.ruler+' day, the '+D.name.replace(/ Window$/,'').toLowerCase()+' window. '+D.say;
+  if(!chk)
+    return head+' Nothing has checked that against '+D.asset+'\u2019s own bars yet \u2014 run the '
+      +'analysis on '+D.asset+' with 120 daily candles loaded and this line says whether it holds.';
+  var quiet = chk.ratio<=1.0;
+  var holds = (D.quietClaim===quiet);
+  return head+' Measured on '+D.asset+': this weekday has ranged '+chk.ratio.toFixed(2)
+    +'\u00d7 a normal day over '+chk.n+' sessions, so the window\u2019s claim '
+    +(holds?'holds for this asset.':'does not hold for this asset \u2014 take the headline, not the label.');
+}
+
 /* ══ THE RECORD, SAID AS A RECORD ════════════════════════════════════════
    qamHitRate walks this asset's own candles, finds every past day the bias
    engine read the way it reads today, and counts how many of them actually
@@ -28723,6 +28904,8 @@ function tgMast(st,v,chips){
   var pillDir = D ? (D.dir==='up'?'up':D.dir==='down'?'down':'flat') : 'flat';
   var pillWord = D ? (D.dir==='up'?'RISE':D.dir==='down'?'FALL':'SIDEWAYS') : null;
   var REC = tgRecord(D);
+  var CHK = D ? tgDayCheck(D.asset) : null;
+  var HOL = null; try{ HOL=vbdHolidayOn(new Date()); }catch(e){}
 
   var h='<header class="tg-mast"><div class="tg-mrow"><div class="tg-mL">'
     +'<div class="tg-eye">Time engine &middot; '+escHtml(D?D.asset:timAsset())+'</div>'
@@ -28749,8 +28932,14 @@ function tgMast(st,v,chips){
           +D.asset+'. A lean over its own year, not a probability — the measured record is '
           +'stated separately below.')
        +'"><b>'+D.lean+'%</b> lean &mdash; '+pillWord+'</div>':'')
-    +'<h1>'+escHtml(D&&D.name?D.name:'The day')+'</h1>'
-    +(D&&D.say?'<p class="tg-say">'+escHtml(D.say)+'</p>':'')
+    /* the headline is this asset on this day, measured — not a label that
+       has been true of every Tuesday since the table was written */
+    +'<h1>'+escHtml(tgHeadline(D,CHK,HOL))+'</h1>'
+    +(HOL?'<p class="tg-say"><b>'+escHtml(HOL.names.join(' / '))+'</b> \u2014 '
+        +escHtml(HOL.mkts.join(' and '))+' shut, so the range will be thinner than any '
+        +'weekday average suggests.</p>':'')
+    +(function(){ var f=tgFrameSay(D,CHK);
+        return f?'<p class="tg-say">'+escHtml(f)+'</p>':''; })()
     +(REC?'<p class="tg-rec '+REC.tone+'">'+escHtml(REC.line)+'</p>':'')
     +(D&&D.note?'<p class="tg-say tg-reco">'+escHtml(D.note)+'</p>':'')
     /* THE ONE QUESTION THE MASTHEAD WAS NOT ANSWERING. Everything it needed
@@ -31134,7 +31323,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b167';
+var CA_BUILD='b168';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -31155,7 +31344,7 @@ var CA_BUILD='b167';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='Three fixes: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -34631,6 +34820,30 @@ function drawCandles(rows,label){
   var W=900,H=280,padL=8,padR=58,padB=18,padT=10;
   var hi=Math.max.apply(null,data.map(function(r){return +r.high;}));
   var lo=Math.min.apply(null,data.map(function(r){return +r.low;}));
+  /* ══ THE PLAN HAS TO FIT ON THE CHART, OR IT IS NOT ON THE CHART ══
+     The window used to come from the candles alone, and every line below
+     is drawn only if it lands inside it — so a stop or a target sitting
+     just outside ninety days of range was not clipped, it was silently
+     dropped. The panel beside the chart listed an entry, a stop and three
+     targets; the chart showed whichever of them happened to fall inside a
+     range computed without them. That is the "chart isn't showing the
+     levels" complaint exactly, and it is worst when it matters most —
+     after a run, when the plan sits outside the recent range.
+     The setup's own prices are folded into the range before it is fixed,
+     so everything the panel names is on the picture. */
+  var _plan=[];
+  try{
+    var PS=window._lastSig;
+    if(PS&&PS.style&&isFinite(PS.entry)){
+      var _full=PS.tp-PS.entry;
+      _plan=[PS.entry,PS.sl,PS.entry+_full*0.5,PS.entry+_full*0.8,PS.tp]
+              .filter(function(v){return isFinite(v)&&v>0;});
+    }
+  }catch(e){ _plan=[]; }
+  if(_plan.length){
+    hi=Math.max(hi,Math.max.apply(null,_plan));
+    lo=Math.min(lo,Math.min.apply(null,_plan));
+  }
   var span=(hi-lo)||(hi*0.01)||1;hi+=span*0.06;lo-=span*0.06;
   var iw=W-padL-padR,ih=H-padT-padB;
   function X(i){return padL+(i+0.5)*(iw/data.length);}
@@ -34664,19 +34877,21 @@ function drawCandles(rows,label){
     var eTop=Y(S.entry+band), eBot=Y(S.entry-band);
     svg+='<rect x="'+xL+'" y="'+Math.min(eTop,eBot).toFixed(1)+'" width="'+(xR-xL)+'" height="'
       +Math.max(2,Math.abs(eBot-eTop)).toFixed(1)+'" style="fill:'+palRgb('--rgbAcc','.16','139,92,246')+';stroke:'+palRgb('--rgbRim','.45','167,139,250')+'" stroke-width="1"/>'
-      +'<text x="'+(xL+10)+'" y="'+(Math.min(eTop,eBot)-4).toFixed(1)+'" style="fill:var(--acc3)" font-size="10" font-family="Inter">Entry Zone</text>';
+      +'<text x="'+(xL+10)+'" y="'+(Math.min(eTop,eBot)-4).toFixed(1)+'" style="fill:var(--acc3)" font-size="10" font-family="Inter" font-weight="700">Entry '+(+S.entry).toFixed(dp)+'</text>';
     if(isFinite(S.sl)&&S.sl>lo&&S.sl<hi){
       svg+='<line x1="'+xL+'" y1="'+Y(S.sl).toFixed(1)+'" x2="'+xR+'" y2="'+Y(S.sl).toFixed(1)
-        +'" stroke="#EF4444" stroke-width="1.2" stroke-dasharray="5 4"/>'
-        +'<text x="'+(xR-8)+'" y="'+(Y(S.sl)-5).toFixed(1)+'" text-anchor="end" fill="#f87171" font-size="10" font-family="Inter">Stop Loss</text>';
+        +'" stroke="#EF4444" stroke-width="1.6" stroke-dasharray="5 4"/>'
+        /* the number, not just the word — a level without its price is a
+           line you still have to go and look up somewhere else */
+        +'<text x="'+(xR-8)+'" y="'+(Y(S.sl)-5).toFixed(1)+'" text-anchor="end" fill="#f87171" font-size="10" font-family="Inter" font-weight="700">Stop Loss '+(+S.sl).toFixed(dp)+'</text>';
     }
     var full=S.tp-S.entry;
     [[0.5,'TP 1'],[0.8,'TP 2'],[1,'TP 3']].forEach(function(t){
       var v=S.entry+full*t[0];
       if(!(v>lo&&v<hi))return;
       svg+='<line x1="'+xL+'" y1="'+Y(v).toFixed(1)+'" x2="'+xR+'" y2="'+Y(v).toFixed(1)
-        +'" stroke="rgba(52,211,153,'+(0.35+t[0]*0.45).toFixed(2)+')" stroke-width="1" stroke-dasharray="3 3"/>'
-        +'<text x="'+(xR-8)+'" y="'+(Y(v)-4).toFixed(1)+'" text-anchor="end" fill="#34d399" font-size="9.5" font-family="Inter">'+t[1]+'</text>';
+        +'" stroke="rgba(52,211,153,'+(0.55+t[0]*0.4).toFixed(2)+')" stroke-width="1.4" stroke-dasharray="3 3"/>'
+        +'<text x="'+(xR-8)+'" y="'+(Y(v)-4).toFixed(1)+'" text-anchor="end" fill="#34d399" font-size="9.5" font-family="Inter" font-weight="700">'+t[1]+' '+v.toFixed(dp)+'</text>';
     });
   }
   /* resistance band from the strongest aligned level above price */
@@ -38006,7 +38221,12 @@ function fngMiniHtml(rows){
 
   var b=fngBand(A.v);
   return '<div class="fng fng-mini">'
-   +'<div class="fng-dial">'+fngGauge(A.v,'m',48)+'<b style="color:'+b.c+'">'+A.v+'</b></div>'
+   /* 64 rather than 48: this band is now the full width of the ticker
+      column and as tall as the hero row, and a 48px dial in it left the
+      height doing nothing. The gauge is the one element here that gets
+      better with size — it is the reading, everything beside it is a
+      caption on it. */
+   +'<div class="fng-dial">'+fngGauge(A.v,'m',64)+'<b style="color:'+b.c+'">'+A.v+'</b></div>'
    +'<div class="fng-l"><i>'+escHtml(asset)+' Fear &amp; Greed</i>'
      +'<b style="color:'+b.c+'">'+b.w+'</b>'
      +'<s>computed from '+escHtml(asset)+'&rsquo;s own daily bars — not a published index</s></div>'
