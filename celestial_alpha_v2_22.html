@@ -1579,7 +1579,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .fng-l s{display:block;text-decoration:none;font-size:9px;color:var(--t3);margin-top:2px}
 .fng-h{display:flex;gap:16px;flex:none}
 .fng-h span{text-align:right}
-.fng-h i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);letter-spacing:.06em}
+.fng-h i{display:block;font-style:normal;font-size:8.5px;color:var(--t3);letter-spacing:.06em;
+  /* "In range" and "Up days" wrapped to two lines while "Momentum" and
+     "Calm" stayed on one, so the four numbers underneath sat at three
+     different heights. One line each and they share a baseline again. */
+  white-space:nowrap}
 .fng-h b{display:block;font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--t2)}
 .fng-mini.off{display:block;font-size:10px;color:var(--t3);padding:10px 14px}
 .fng-full{margin:14px 0 0;padding:15px 16px;border-radius:16px;border:1px solid var(--b1);
@@ -8993,6 +8997,10 @@ body{background:var(--bg0)}
    thumbnail, and the price sits above it instead of beside it */
 .dh-ticks .tick{flex-direction:column;align-items:stretch;justify-content:center;gap:4px}
 .dh-ticks .tick .spark,.dh-ticks .tick .spark svg{width:100%!important;height:38px!important}
+/* if every feed for an instrument is down there is no sparkline to draw,
+   and 38px of reserved nothing under the price is worse than a compact
+   tile — the space is only worth taking when there is a line in it */
+.dh-ticks .tick .spark:empty{display:none}
 /* the band takes its natural height and sits centred in what is left, so
    the leftover reads as breathing room above and below a compact card
    rather than as a card two-thirds full of nothing */
@@ -31349,7 +31357,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b170';
+var CA_BUILD='b171';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -31370,7 +31378,7 @@ var CA_BUILD='b170';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='The four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -33383,19 +33391,60 @@ function drawSpark(id,closes,up){
 }
 /* one history call per ticker, staggered so Polygon's five-a-minute budget is
    not spent on decoration before the analysis needs it */
+/* ══ THE SPARKLINES HUNG ON ONE FEED, AND WAITED A MINUTE TO DO IT ══
+   Every tile asked Polygon and nothing else. Polygon is the one source
+   here with a five-a-minute budget and a cooldown, so a spent budget, a
+   rate limit or a plain failure left all four tiles permanently blank —
+   and blank is exactly what the space under the price is for. The chart
+   has had a fallback chain for this since it was written (Polygon, then
+   Twelve Data, then EODHD); the sparklines just never used it.
+
+   They do now, and there is a fourth source that costs nothing and is
+   instant: the daily bars already in memory. When a tile's instrument is
+   the one that was last loaded, HIST_ROWS is that instrument's history
+   and its sparkline can be drawn on the spot rather than waited for.
+
+   The stagger stays — the budget it protects is real — but it only
+   applies to tiles that actually have to go and ask. */
+function sparkDaily(name,cb){
+  var sym=String(name||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  function eod(){
+    if(!eodhdSymbol(sym))return cb(null);
+    eodhdDaily(sym,60,function(r){ cb(r&&r.length>4?r:null); });
+  }
+  function twelve(){
+    if(!twelveSymbol(sym))return eod();
+    twelveDaily(sym,60,function(r){ (r&&r.length>4)?cb(r):eod(); });
+  }
+  if(!polygonSymbol(sym))return twelve();
+  polygonDaily(sym,45,function(r){ (r&&r.length>4)?cb(r):twelve(); });
+}
+function sparkPaint(k,rows){
+  var c=rows.slice(-30).map(function(r){return +r.close;}).filter(isFinite);
+  if(c.length<4)return false;
+  _sparkDone[k]=1;
+  drawSpark(k,c,c[c.length-1]>=c[0]);
+  return true;
+}
 function loadSparklines(){
-  var keys=Object.keys(SPARK_MAP), i=0;
+  var keys=Object.keys(SPARK_MAP);
+  /* free one first, from history already loaded, before any request goes out */
+  try{
+    var have=String(window.HIST_ASSET||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    if(have&&window.HIST_ROWS&&HIST_ROWS.length>4)
+      keys.forEach(function(k){
+        if(!_sparkDone[k]&&SPARK_MAP[k].toUpperCase().replace(/[^A-Z0-9]/g,'')===have)
+          sparkPaint(k,HIST_ROWS);
+      });
+  }catch(e){}
+  var i=0;
   (function next(){
     if(i>=keys.length)return;
-    var k=keys[i++], name=SPARK_MAP[k];
-    if(_sparkDone[k]){next();return;}
-    polygonDaily(name,45,function(rows){
-      if(rows&&rows.length>4){
-        _sparkDone[k]=1;
-        var c=rows.slice(-30).map(function(r){return +r.close;}).filter(isFinite);
-        drawSpark(k,c,c[c.length-1]>=c[0]);
-      }
-      setTimeout(next,13000);          /* stay inside 5 requests a minute */
+    var k=keys[i++];
+    if(_sparkDone[k]){next();return;}   /* already drawn — no request, no wait */
+    sparkDaily(SPARK_MAP[k],function(rows){
+      if(rows)sparkPaint(k,rows);
+      setTimeout(next,13000);           /* stay inside the five-a-minute budget */
     });
   })();
 }
