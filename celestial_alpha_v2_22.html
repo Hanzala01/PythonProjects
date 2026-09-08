@@ -7053,6 +7053,27 @@ body{background:var(--bg0);color:var(--t1);font-family:'Inter',system-ui,sans-se
    of the 717px available, which is why the plot looked half-drawn ── */
 .ch-plot{display:block!important;position:relative}
 .ch-plot > svg{width:100%!important;height:100%!important;display:block;flex:none}
+/* ══ THE CHART'S LABELS, IN REAL PIXELS ══
+   Positioned over the plot rather than drawn inside the svg, because the
+   svg is stretched by different amounts on each axis and would squash
+   them. Percentages are exact here: preserveAspectRatio="none" maps the
+   viewBox linearly, so a y of Y/280 lands on the same line the svg drew.
+   pointer-events:none so none of this is in the way of the chart. */
+.ch-plot .pchip,.ch-plot .plv{position:absolute;transform:translateY(-50%);
+  pointer-events:none;white-space:nowrap;font-family:'Inter',system-ui,sans-serif;z-index:2}
+.ch-plot .pchip{left:1.2%;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;
+  color:#fff;letter-spacing:.01em;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.ch-plot .pchip.e{background:var(--accent)}
+.ch-plot .pchip.x{background:#DC2626}
+.ch-plot .pchip.t{background:#0F9D6E}
+.ch-plot .plv{right:6.8%;font-size:9px;font-weight:600;letter-spacing:.02em;
+  text-shadow:0 0 3px var(--chartbg),0 0 3px var(--chartbg),0 0 2px var(--chartbg)}
+.ch-plot .plv.r{color:#B9843F}
+.ch-plot .plv.s{color:#4E86A0}
+@media(max-width:600px){
+  .ch-plot .pchip{font-size:9px;padding:2px 6px}
+  .ch-plot .plv{font-size:8.5px}
+}
 .ch-plot .plot-label{position:absolute;left:10px;bottom:8px;font-size:9.5px;color:var(--t3);
   pointer-events:none;letter-spacing:.02em}
 
@@ -8222,6 +8243,27 @@ body{background:var(--bg0)}
 #pane_timing .tg-rail{position:sticky;top:0;z-index:24;display:flex;gap:6px;overflow-x:auto;
   padding:11px 2px 12px;margin:16px 0 0;
   background:linear-gradient(180deg,var(--bg) 68%,rgba(0,0,0,0))}
+/* ══ THE CHAPTER RAIL WAS STICKING TO THE WRONG EDGE, AND SEE-THROUGH ══
+   Two faults, and together they made the Timing tab look broken on a
+   phone. It sticks to top:0 — which on mobile is BEHIND the fixed CAELUS
+   header, not below it — so the chapter chips sat under the bar. And its
+   background is a gradient that fades to nothing at 68%, which is a nice
+   effect over a pane that scrolls inside itself and a hole over a page
+   that scrolls as a document: every card passing underneath showed
+   straight through the lower third of the rail. That is the overlap in the
+   screenshot — a window card and the chapter list drawn on top of each
+   other. Below the drawer breakpoint it parks under the header and paints
+   solid. */
+@media(max-width:1200px){
+  /* Not sticky at all on a phone. Parking it under the header fixed the
+     overlap but left a worse problem visible: the chips are laid out for a
+     wide row and each one takes nearly the full width here, so the "rail"
+     is a 283px block — pinning that to the top would hold a third of the
+     screen hostage on every scroll. A chapter index that scrolls away with
+     the page is the ordinary thing on a phone. The solid background stays
+     regardless: the fade-to-transparent is what let cards show through it. */
+  #pane_timing .tg-rail{position:static;background:var(--bg)}
+}
 #pane_timing .tg-rail::-webkit-scrollbar{height:0}
 #pane_timing .tg-rb{flex:0 0 auto;display:flex;align-items:baseline;gap:8px;padding:8px 14px;
   border-radius:999px;border:1px solid var(--b1);background:rgba(255,255,255,.022);
@@ -31357,7 +31399,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b173';
+var CA_BUILD='b174';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -31378,7 +31420,7 @@ var CA_BUILD='b173';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -34944,6 +34986,22 @@ function drawCandles(rows,label){
   /* the setup drawn on the chart itself — entry band, stop and the three
      targets. A trading chart with no plan on it is just a picture. */
   var S=window._lastSig, xL=padL, xR=W-padR;
+  /* ══ THE LABELS LEAVE THE SVG ═══════════════════════════════════════
+     This chart is drawn with preserveAspectRatio="none", so the drawing is
+     stretched to whatever box it lands in — and the two axes are stretched
+     by DIFFERENT amounts. Measured: on a desktop card the box is 695x298
+     against a 900x280 viewBox, so x is scaled 0.77 and y 1.06; on a phone
+     it is 355x260, x scaled 0.39 and y 0.93. Lines do not care. Type does:
+     at 0.39 by 0.93 every character is squeezed to two-fifths of its width
+     while keeping nearly all its height, which is why these labels read as
+     oversized and wrong however small the font-size was set — and why they
+     looked acceptable on a desktop and awful on a phone. Shrinking the
+     number could never fix a distortion.
+     The lines stay in the svg where the stretch is harmless. Every label
+     is an HTML element positioned over the chart instead, so it renders in
+     real pixels at a real weight on every screen. */
+  var ov='';
+  function ovTop(v){ return (Y(v)/H*100).toFixed(2)+'%'; }
   /* ══ THE PLAN HAS TO BE READABLE, NOT MERELY PRESENT ══
      These were thin dashed lines with 9.5px labels floating over the
      candles, on an svg drawn with preserveAspectRatio="none" — which
@@ -34955,7 +35013,7 @@ function drawCandles(rows,label){
      is actually looking at, and covering those to label a level would be
      trading one unreadable thing for another. */
   var _tagY=[];
-  function planTag(y,txt,fill){
+  function planTag(y,txt,cls){
     /* two targets a few points apart print their chips on top of each other
        — TP2 and TP3 did exactly that. The LINE stays on the true price; only
        the chip is nudged clear, which is the ordinary convention and keeps
@@ -34967,11 +35025,8 @@ function drawCandles(rows,label){
       y+=19;
     }
     _tagY.push(y);
-    var w=Math.max(52,txt.length*6.6+14);
-    return '<rect x="'+(xL+3)+'" y="'+(y-9).toFixed(1)+'" width="'+w.toFixed(0)
-      +'" height="17" rx="3.5" style="fill:'+fill+'"/>'
-      +'<text x="'+(xL+10)+'" y="'+(y+3.6).toFixed(1)+'" font-size="11.5" font-family="Inter" '
-      +'font-weight="700" fill="#fff">'+txt+'</text>';
+    ov+='<div class="pchip '+cls+'" style="top:'+(y/H*100).toFixed(2)+'%">'+escHtml(txt)+'</div>';
+    return '';
   }
   /* a setup whose target or stop has been reached is history; its lines
      coming back on every repaint is the same complaint in another place */
@@ -34981,11 +35036,11 @@ function drawCandles(rows,label){
     var eTop=Y(S.entry+band), eBot=Y(S.entry-band);
     svg+='<rect x="'+xL+'" y="'+Math.min(eTop,eBot).toFixed(1)+'" width="'+(xR-xL)+'" height="'
       +Math.max(2,Math.abs(eBot-eTop)).toFixed(1)+'" style="fill:'+palRgb('--rgbAcc','.16','139,92,246')+';stroke:'+palRgb('--rgbRim','.45','167,139,250')+'" stroke-width="1"/>'
-      +planTag(Y(S.entry),'ENTRY '+(+S.entry).toFixed(dp),palHex('--accent','#7C3AED'));
+      +planTag(Y(S.entry),'ENTRY '+(+S.entry).toFixed(dp),'e');
     if(isFinite(S.sl)&&S.sl>lo&&S.sl<hi){
       svg+='<line x1="'+xL+'" y1="'+Y(S.sl).toFixed(1)+'" x2="'+xR+'" y2="'+Y(S.sl).toFixed(1)
         +'" stroke="#EF4444" stroke-width="2" stroke-dasharray="6 4"/>'
-        +planTag(Y(S.sl),'STOP '+(+S.sl).toFixed(dp),'#DC2626');
+        +planTag(Y(S.sl),'STOP '+(+S.sl).toFixed(dp),'x');
     }
     var full=S.tp-S.entry;
     [[0.5,'TP 1'],[0.8,'TP 2'],[1,'TP 3']].forEach(function(t){
@@ -34993,7 +35048,7 @@ function drawCandles(rows,label){
       if(!(v>lo&&v<hi))return;
       svg+='<line x1="'+xL+'" y1="'+Y(v).toFixed(1)+'" x2="'+xR+'" y2="'+Y(v).toFixed(1)
         +'" stroke="rgba(16,185,129,'+(0.7+t[0]*0.3).toFixed(2)+')" stroke-width="1.8" stroke-dasharray="4 3"/>'
-        +planTag(Y(v),t[1].replace(' ','')+' '+v.toFixed(dp),'#0F9D6E');
+        +planTag(Y(v),t[1].replace(' ','')+' '+v.toFixed(dp),'t');
     });
   }
   /* THE "RESISTANCE ZONE" BAND IS GONE, AND WAS THE SAME LEVEL TWICE.
@@ -35040,10 +35095,9 @@ function drawCandles(rows,label){
       lvY.push(ly);
       var isRes=(+Lv.price)>lastC2, lc=isRes?'#B9843F':'#4E86A0';
       svg+='<line x1="'+xL+'" y1="'+ly.toFixed(1)+'" x2="'+xR+'" y2="'+ly.toFixed(1)
-        +'" stroke="'+lc+'" stroke-opacity=".34" stroke-width="1" stroke-dasharray="2 6"/>'
-        +'<text x="'+(xR-6)+'" y="'+(ly-3).toFixed(1)+'" text-anchor="end" font-size="7.6" '
-        +'font-family="Inter" font-weight="600" fill="'+lc+'" stroke="'+CBG+'" stroke-width="2.2" '
-        +'paint-order="stroke" stroke-linejoin="round">'+(isRes?'R ':'S ')+(+Lv.price).toFixed(dp)+'</text>';
+        +'" stroke="'+lc+'" stroke-opacity=".34" stroke-width="1" stroke-dasharray="2 6"/>';
+      ov+='<div class="plv '+(isRes?'r':'s')+'" style="top:'+(ly/H*100).toFixed(2)+'%">'
+        +(isRes?'R ':'S ')+escHtml((+Lv.price).toFixed(dp))+'</div>';
     }
   }catch(e){}
 
@@ -35071,7 +35125,7 @@ function drawCandles(rows,label){
   var chg=((+last.close-+first.close)/+first.close*100);
   /* the caption is absolutely placed so the svg keeps the full plot height —
      as a sibling in normal flow it was stealing rows from the chart */
-  el.innerHTML=svg
+  el.innerHTML=svg+ov
     +'<div class="plot-label" style="display:flex;justify-content:space-between;right:10px">'
     +'<span>'+escHtml(label||'')+' · '+data.length+'D daily</span>'
     +'<span style="margin-left:auto">'+first.date+' → '+last.date
