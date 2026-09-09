@@ -8221,13 +8221,33 @@ body{background:var(--bg0)}
 /* the asset picker, as a control on the masthead rather than a boxed card
    of its own. Twelve names do not fit a right-hand column, so it takes the
    full width under the title where it reads as one row. */
-#pane_timing .tg-band{margin:22px 0 0}
-#pane_timing .tg-band .tk-asset{display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+/* ══ A NOWRAP ROW NEEDS AN EXPLICIT FLOOR TO SHRINK TO ══
+   Making the chips nowrap+overflow-x:auto was not enough on its own: a
+   flex item defaults to min-width:auto, so the 12-chip row reported its
+   min-content width up the tree and dragged the WHOLE PANE wider than the
+   phone. The page did not show a scrollbar for it because b175's
+   overflow-x:clip on .pane was quietly absorbing it — which is exactly how
+   a real overflow hides as a "nothing is wrong" measurement. The headline,
+   the date line and the right-hand scale card were all being cut off.
+   min-width:0 lets the row shrink; overflow:hidden on the band stops it
+   reporting outward. */
+#pane_timing .tg-band{margin:18px 0 0;min-width:0;max-width:100%;overflow:hidden}
+/* ══ TWELVE CHIPS, ONE ROW ══
+   Wrapping put four rows of instrument chips between the headline and the
+   first actual reading — measured at 412px, more vertical space than any
+   of the four scale cards it was pushing down. It scrolls sideways now:
+   every instrument still reachable, one row instead of four. The selected
+   one is scrolled into view so it is never the one off-screen. */
+#pane_timing .tg-band .tk-asset{display:flex;flex-wrap:nowrap;align-items:center;gap:6px;
+  overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  min-width:0;max-width:100%;padding-bottom:2px!important;
   margin:0!important;padding:0!important;background:none!important;border:none!important;
   box-shadow:none!important;border-radius:0!important}
 #pane_timing .tg-band .tk-asset .lb{font-size:9px;font-weight:800;letter-spacing:.22em;
   text-transform:uppercase;color:var(--t3);margin-right:8px}
-#pane_timing .tg-band .ab-pick{padding:7px 13px;border-radius:999px;border:1px solid var(--b1);
+#pane_timing .tg-band .tk-asset::-webkit-scrollbar{height:0}
+#pane_timing .tg-band .tk-asset .lb{flex:none}
+#pane_timing .tg-band .ab-pick{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--b1);
   background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:var(--t2);
   cursor:pointer;transition:.16s;transform:none}
 #pane_timing .tg-band .ab-pick:hover{border-color:rgba(var(--rgbAcc),.5);color:var(--t1);transform:none}
@@ -8283,6 +8303,94 @@ body{background:var(--bg0)}
   #pane_timing .tg-rail{position:static;background:var(--bg)}
 }
 #pane_timing .tg-rail::-webkit-scrollbar{height:0}
+/* ══ THE FOUR SCALES ══════════════════════════════════════════════════
+   Four cards, largest span to smallest, in reading order. On a phone they
+   stack, which IS the order — month at the top, this hour at the bottom —
+   so the shape of the answer is the same however wide the screen. */
+/* ══ THE FLEX ITEM THAT WOULD NOT SHRINK ══
+   #pane_timing is display:flex and #tim_new is its item, so it carried the
+   default min-width:auto and sized itself to its own min-content — 1096px
+   inside a 412px phone. Every child then laid out at 1096 and the right
+   half of the headline, the date line and the scale cards ran off the
+   screen. It did not show up as page overflow because b175's
+   overflow-x:clip on .pane absorbs exactly this, which is why the check
+   that catches it has to lift the clip first — a measurement taken through
+   it reads zero no matter how broken the layout is. */
+#pane_timing #tim_new{min-width:0;max-width:100%}
+#pane_timing .tg-mast,#pane_timing .tg-mrow,#pane_timing .tg-mL{min-width:0;max-width:100%}
+/* EXPLICIT COUNTS, NOT auto-fit. There are exactly four cards and exactly
+   eight tiles, and auto-fit answers a question nobody asked: it left a
+   phantom 0px fifth track on the desktop measurement, the same artifact
+   that cost a round back in b164. A fixed number of items gets a fixed
+   number of columns. */
+#pane_timing .ts-grid{display:grid;gap:10px;margin:18px 0 6px;min-width:0;
+  grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1100px){#pane_timing .ts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#pane_timing .ts-grid{grid-template-columns:minmax(0,1fr)}}
+#pane_timing .ts-card{border:1px solid var(--rim);border-radius:14px;background:var(--s2);
+  padding:15px 16px;display:flex;flex-direction:column;gap:7px;min-width:0}
+#pane_timing .ts-eye{font-family:'Space Grotesk';font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--t3);line-height:1.5}
+#pane_timing .ts-eye b{color:var(--t2);font-weight:700;letter-spacing:.08em}
+#pane_timing .ts-word{font-family:'Space Grotesk';font-weight:800;font-size:23px;line-height:1.1;
+  color:var(--t1);display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+/* the theme's own green and red, for the reason the release card learned:
+   a fixed pair fails on the pale themes */
+#pane_timing .ts-word.up{color:var(--green)}
+#pane_timing .ts-word.dn{color:var(--red)}
+#pane_timing .ts-word.nn{color:var(--t2)}
+#pane_timing .ts-word u{text-decoration:none;font-size:10px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--t3)}
+#pane_timing .ts-say{font-size:11px;line-height:1.6;color:var(--t2)}
+#pane_timing .ts-foot{font-size:10px;line-height:1.55;color:var(--t3);margin-top:auto;
+  padding-top:6px;border-top:1px solid var(--rim)}
+
+/* ══ THE WINDOWS ══ */
+#pane_timing .tw-head{font-family:'Space Grotesk';font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--t3);margin:26px 0 10px}
+#pane_timing .tw-grid{display:grid;gap:8px;min-width:0;
+  grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1100px){#pane_timing .tw-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* two-up on a phone: eight full-width tiles is 880px of scrolling to reach
+   the last one, and the tiles are three short lines each */
+@media(max-width:760px){#pane_timing .tw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #pane_timing .tw-tile s{-webkit-line-clamp:2}}
+#pane_timing .tw-tile{text-align:left;border:1px solid var(--rim);border-radius:12px;
+  background:var(--s2);padding:13px 14px;cursor:pointer;display:block;width:100%;
+  transition:border-color .18s,transform .18s,background .18s}
+#pane_timing .tw-tile:hover{border-color:var(--bAct);transform:translateY(-2px);background:var(--s3)}
+#pane_timing .tw-tile:focus-visible{outline:2px solid var(--p3);outline-offset:2px}
+#pane_timing .tw-tile u{display:block;text-decoration:none;font-family:'Space Grotesk';
+  font-size:9px;letter-spacing:.16em;color:var(--t3)}
+#pane_timing .tw-tile b{display:block;font-family:'Space Grotesk';font-weight:800;font-size:14px;
+  color:var(--t1);margin:3px 0 5px}
+#pane_timing .tw-tile s{display:block;text-decoration:none;font-size:10px;line-height:1.55;
+  color:var(--t3);
+  /* three lines is a description; the whole paragraph is the chapter itself */
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ══ THE SHEET ════════════════════════════════════════════════════════
+   The chapters are hidden, not removed — same nodes, same ids, same
+   sub-renders writing into them. Opening one turns the container into a
+   full-height sheet and shows that single section. */
+#tg_chapters{display:none}
+#tg_chapters.on{display:block;position:fixed;inset:0;z-index:300;
+  background:var(--bg0);animation:tgIn .2s var(--ease)}
+@keyframes tgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#tg_chapters.on .tg-sheet{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:0 clamp(14px,3vw,30px) 60px}
+#tg_chapters.on .tg-ch{display:none;margin-top:16px}
+#tg_chapters.on .tg-ch.open{display:block}
+#tg_chapters .tg-bar{position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:10px;
+  padding:12px 0 10px;background:var(--bg0);border-bottom:1px solid var(--rim)}
+#tg_chapters .tg-bar b{font-family:'Space Grotesk';font-weight:800;font-size:13px;color:var(--t1);flex:1}
+#tg_chapters .tg-x{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--rim);
+  background:var(--s2);color:var(--t1);font-size:19px;line-height:1;cursor:pointer}
+#tg_chapters .tg-x:hover{border-color:var(--bAct)}
+/* the rail travels into the sheet, so you can move between chapters while
+   you are deep in one rather than closing and reopening */
+#tg_chapters .tg-rail{position:sticky;top:56px;z-index:3;background:var(--bg0);padding:8px 0}
+body.tg-locked{overflow:hidden}
 /* ══ THE RELEASE CARD ══════════════════════════════════════════════════
    Built to read at the size the reference does — one word you can see from
    across the room, one percentage under it, one bar — with every figure
@@ -29030,12 +29138,205 @@ function tgRail(){
       +'<u>'+c[0]+'</u><b>'+escHtml(c[2])+'</b></button>';
   }).join('')+'</nav>';
 }
-function tgJump(id){
-  try{
-    var el=document.getElementById('tgc_'+id);
-    if(el)el.scrollIntoView({block:'start',behavior:'smooth'});
-  }catch(e){}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE FOUR SCALES — WHAT THE TAB OPENS WITH
+
+   The complaint was that this tab is too complex, and it was right. Eight
+   chapters were laid end to end on one page, every one of them expanded,
+   and someone opening it for the first time met the whole engine at once
+   with no idea which end to start from.
+
+   What a person actually wants to know, in this order, is the size of the
+   thing they are standing in:
+
+       THIS MONTH   what the month is doing, astrologically
+       THIS WEEK    which day in it carries the most windows
+       TODAY        the planetary day, whose planet it is, and its lean
+       RIGHT NOW    this hour — bullish, bearish or neither
+
+   Four readings, four sentences. Everything else — all eight chapters,
+   unchanged, every block still on the page — is behind a window you click
+   when you want to go deeper. Nothing was deleted to achieve this; it was
+   only moved off the first screen.
+
+   Every one of the four is read off the engine that already produces it —
+   mmMonth, timHoursFor, qamDayData, timVerdict — so none of them can drift
+   from the chapter it summarises. Where an engine cannot answer, the card
+   says so rather than filling the gap.
+   ══════════════════════════════════════════════════════════════════════ */
+
+function tsAsset(){ var a='Gold'; try{ a=timAsset(); }catch(e){} return a; }
+
+/* ── THIS MONTH ── from the same mmMonth the month map is built from ── */
+function tsMonth(){
+  var now=timDate(), M=null;
+  try{ M=mmMonth(now.getFullYear(),now.getMonth(),tsAsset()); }catch(e){ M=null; }
+  if(!M||!M.days||!M.days.length)return null;
+  var fav=0, avoid=0;
+  M.days.forEach(function(d){
+    if(d.cls&&d.cls.v==='FAVOURABLE')fav++;
+    else if(d.cls&&d.cls.v==='AVOID')avoid++;
+  });
+  var dom=now.getDate();
+  var ph=(M.amd||[]).filter(function(r){return dom>=r.from&&dom<=r.to;})[0]||null;
+  return {
+    title:now.toLocaleDateString('en',{month:'long'}),
+    word: ph?ph.phase.toUpperCase():(fav>avoid?'FAVOURABLE':avoid>fav?'GUARDED':'MIXED'),
+    tone: ph? (ph.phase==='distribution'?'up':ph.phase==='manipulation'?'dn':'nn')
+            : (fav>avoid?'up':avoid>fav?'dn':'nn'),
+    say: ph?ph.say:'no phase run covers today',
+    foot: fav+' clear day'+(fav===1?'':'s')+' against '+avoid+' to sit out'
+      +(M.anchor?' · the month turns on the '+M.anchor.dom+' ('+M.anchor.what+')':'')
+  };
 }
+
+/* ── THIS WEEK ── the same hour ranking the week grid draws ── */
+function tsWeek(){
+  var st=null; try{ st=timState(); }catch(e){}
+  if(!st||st.srMin==null)return null;
+  var DAYN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var base=timDate(), best=null, today=null;
+  for(var i=0;i<7;i++){
+    var d=new Date(base.getFullYear(),base.getMonth(),base.getDate()+i);
+    var hrs=[]; try{ hrs=timHoursFor(d.getDay(),st.srMin,st.vib); }catch(e){ hrs=[]; }
+    var strong=0, lit=0;
+    hrs.forEach(function(x){ if(x.rank===2)strong++; if(x.rank>0)lit++; });
+    var row={i:i,name:DAYN[d.getDay()],strong:strong,lit:lit};
+    if(i===0)today=row;
+    /* ties go to the EARLIER day — "best day this week" has to mean the
+       next one you can act on, not the last one that happens to match */
+    if(!best||strong>best.strong)best=row;
+  }
+  if(!best)return null;
+  var isToday=(best.i===0);
+  return {
+    title:'next seven days',
+    word: best.strong? (isToday?'TODAY':best.name.toUpperCase()) : 'NO PRIME DAY',
+    tone: best.strong?(isToday?'up':'nn'):'dn',
+    say: best.strong
+      ? (isToday?'Today':best.name)+' carries the most windows this week — '
+        +best.strong+' hour'+(best.strong===1?'':'s')+' on '+tsAsset()+'’s own number'
+        +(isToday?'.':', in '+best.i+' day'+(best.i===1?'':'s')+'.')
+      : 'No day this week has an hour that carries '+tsAsset()+'’s number directly.',
+    foot: today?('today: '+today.strong+' direct, '+today.lit+' lit in all'):''
+  };
+}
+
+/* ── TODAY ── the planetary day and its ruler, from qamDayData ── */
+function tsDay(){
+  var D=null; try{ D=qamDayData(); }catch(e){ D=null; }
+  if(!D)return null;
+  return {
+    title:D.dayName+' · '+D.ruler+'’s day',
+    word:D.word,
+    tone:D.dir==='up'?'up':D.dir==='down'?'dn':'nn',
+    /* MEASURED OR LEANING, NEVER BOTH WORDS FOR ONE NUMBER. The same rule
+       the masthead follows: a percentage is only called a probability when
+       it was measured against this asset's own candles. */
+    pct:D.pct, measured:D.measured,
+    say:D.say||'',
+    foot:(D.measured?'measured on '+tsAsset()+'’s own bars':'a lean, not a measured rate')
+  };
+}
+
+/* ── RIGHT NOW ── the live planetary hour, plus the live lean ── */
+function tsNow(){
+  var st=null; try{ st=timState(); }catch(e){}
+  if(!st)return null;
+  var V=null; try{ V=timVerdict(st); }catch(e){ V=null; }
+  var hr=(st.live!=null&&st.live>=1&&st.hours&&st.hours[st.live-1])?st.hours[st.live-1]:null;
+  /* the direction AT THIS MOMENT, not at noon — this is the one card of the
+     four whose answer changes inside a single day, so it is the one that
+     must not be read off a midday ephemeris */
+  var A=null;
+  try{ var t=new Date(); A=calcAstroBias(tsAsset(),getEphemeris(t),t); }catch(e){ A=null; }
+  var word = !A ? 'NO READ' : A.dir==='bull'?'BULLISH' : A.dir==='bear'?'BEARISH' : 'NEUTRAL';
+  var tone = !A ? 'nn' : A.dir==='bull'?'up' : A.dir==='bear'?'dn' : 'nn';
+  return {
+    title: hr? (hr.name+'’s hour'+(st.minsLeft!=null?' · '+st.minsLeft+' min left':''))
+             : (st.planning?'planning another day':'no hour set'),
+    word:word, tone:tone,
+    pct: A? (A.dir==='bear'?100-A.bull:A.bull) : null, measured:false,
+    say: V?V.line:'',
+    foot: hr? (hr.rank===2?'this hour carries '+tsAsset()+'’s number — a prime window'
+             : hr.rank===1?'this hour supports '+tsAsset()+'’s number'
+             : 'this hour is not on '+tsAsset()+'’s cycle')
+            : 'set the current time and this follows it'
+  };
+}
+
+function tsCard(kind,eyebrow,D){
+  if(!D)return '<div class="ts-card"><div class="ts-eye">'+escHtml(eyebrow)+'</div>'
+    +'<div class="ts-word nn">—</div>'
+    +'<div class="ts-say">Not available yet — this needs a sunrise time and an instrument.</div></div>';
+  return '<div class="ts-card '+kind+'">'
+    +'<div class="ts-eye">'+escHtml(eyebrow)+(D.title?' · <b>'+escHtml(D.title)+'</b>':'')+'</div>'
+    +'<div class="ts-word '+D.tone+'">'+escHtml(D.word)
+      +(D.pct!=null?'<u>'+Math.round(D.pct)+'% '+(D.measured?'probability':'lean')+'</u>':'')
+    +'</div>'
+    +(D.say?'<div class="ts-say">'+escHtml(D.say)+'</div>':'')
+    +(D.foot?'<div class="ts-foot">'+escHtml(D.foot)+'</div>':'')
+    +'</div>';
+}
+function tsHtml(){
+  return '<div class="ts-grid">'
+    +tsCard('m','This month',(function(){try{return tsMonth();}catch(e){return null;}})())
+    +tsCard('w','This week', (function(){try{return tsWeek(); }catch(e){return null;}})())
+    +tsCard('d','Today',     (function(){try{return tsDay();  }catch(e){return null;}})())
+    +tsCard('n','Right now', (function(){try{return tsNow();  }catch(e){return null;}})())
+    +'</div>';
+}
+
+/* ══ THE WINDOWS ══════════════════════════════════════════════════════
+   The eight chapters, as eight things to open rather than eight things
+   already open. They are still rendered, still in the DOM, still built by
+   exactly the same functions — the container they sit in is hidden, and
+   opening one shows it as a sheet. Nothing is moved between parents and
+   nothing is rebuilt on open, so every sub-render that writes into a
+   chapter keeps working the way it always did. */
+function tsWindows(){
+  return '<div class="tw-head">Go deeper</div>'
+    +'<div class="tw-grid">'+TG_CHAPTERS.map(function(c){
+      return '<button class="tw-tile" onclick="tgOpen(\''+c[1]+'\')">'
+        +'<u>'+c[0]+'</u><b>'+escHtml(c[2])+'</b><s>'+escHtml(c[3])+'</s></button>';
+    }).join('')+'</div>';
+}
+function tgOpen(id){
+  var host=document.getElementById('tg_chapters');
+  if(!host)return;
+  host.classList.add('on');
+  host.querySelectorAll('.tg-ch').forEach(function(s){
+    s.classList.toggle('open', s.getAttribute('data-ch')===id);
+  });
+  host.querySelectorAll('.tg-rb').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-ch')===id);
+  });
+  document.body.classList.add('tg-locked');
+  var sc=host.querySelector('.tg-sheet'); if(sc)sc.scrollTop=0;
+  /* the two chapters that need a laid-out box to paint into are repainted
+     on open, because until this moment they had none */
+  if(id==='release'){ try{ pnPaint(); }catch(e){} }
+  if(id==='month'){ try{ renderMonthMap(); }catch(e){} }
+}
+function tgClose(){
+  var host=document.getElementById('tg_chapters');
+  if(host){ host.classList.remove('on');
+            host.querySelectorAll('.tg-ch').forEach(function(s){s.classList.remove('open');}); }
+  document.body.classList.remove('tg-locked');
+}
+/* Escape closes it, the way every sheet on this page already does */
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var h=document.getElementById('tg_chapters');
+    if(h&&h.classList.contains('on'))tgClose();
+  }
+});
+
+/* THE RAIL IS A SWITCH NOW, NOT A SCROLL POSITION. It used to move you
+   down one long page; the chapters are windows, so it opens one. Same
+   buttons, same ids, one line of behaviour changed. */
+function tgJump(id){ try{ tgOpen(id); }catch(e){} }
 /* the rail highlights the chapter you are standing in. It is a scroll
    position indicator, not a switch — every chapter stays on the page. */
 /* AN OBSERVER WAS THE WRONG TOOL. IntersectionObserver hands you only the
@@ -29055,8 +29356,16 @@ function tgSpy(){
         _tgScroll.q=true;
         requestAnimationFrame(function(){
           _tgScroll.q=false;
-          var h=document.getElementById('tim_new');
-          if(!h||!h.offsetParent)return;
+          /* ══ THE SPY IS RETIRED, NOT DELETED ══
+             It existed to light the rail button for whichever chapter you
+             had scrolled to on one long page. There is no long page any
+             more: the chapters are windows and exactly one is open, so the
+             rail state is set by tgOpen and a scroll position cannot
+             improve on it. Measured before this: on a phone, opening "The
+             call" lit "The working", because the spy ran over eight hidden
+             sections whose rects are all zero and took the last one.
+             The listener stays wired so nothing that calls tgSpy breaks. */
+          return;
           var secs=h.querySelectorAll('.tg-ch');
           if(!secs.length)return;
           var cur=secs[0].getAttribute('data-ch');
@@ -29263,10 +29572,17 @@ function tgMast(st,v,chips){
     +(HOL?'<p class="tg-say"><b>'+escHtml(HOL.names.join(' / '))+'</b> \u2014 '
         +escHtml(HOL.mkts.join(' and '))+' shut, so the range will be thinner than any '
         +'weekday average suggests.</p>':'')
-    +(function(){ var f=tgFrameSay(D,CHK);
-        return f?'<p class="tg-say">'+escHtml(f)+'</p>':''; })()
-    +(REC?'<p class="tg-rec '+REC.tone+'">'+escHtml(REC.line)+'</p>':'')
-    +(D&&D.note?'<p class="tg-say tg-reco">'+escHtml(D.note)+'</p>':'')
+    /* ══ THE MASTHEAD IS A HEADER AGAIN ══
+       Measured on a 412px phone: this block alone filled the entire first
+       screen — pill, headline, three paragraphs of prose, a quoted track
+       record, a verdict, a date and twelve asset chips — before the reader
+       reached anything about the month, the week or the hour. It was the
+       single biggest reason this tab read as complex.
+       The three paragraphs and the four stat tiles moved into chapter 01,
+       one click away, byte for byte the same markup from the same
+       functions. NOTHING WAS DELETED. What is left here is the identity of
+       the tab and the one-line verdict: the asset, the day, whose planet
+       rules it, the lean, and today in a sentence. */
     /* THE ONE QUESTION THE MASTHEAD WAS NOT ANSWERING. Everything it needed
        was already on the page in stat tiles — the lean, the month's rating,
        whether a heavy aspect lands today — but scattered across four boxes
@@ -29279,6 +29595,27 @@ function tgMast(st,v,chips){
       +(D&&D.ruler?' &middot; ruled by '+escHtml(D.ruler):'')+'</div>'
   +'</div></div><div class="tg-band">'+chips+'</div>';
 
+  return h+'</header>';
+}
+
+/* THE FOUR READOUTS, AND THE PROSE THAT USED TO SIT ABOVE THEM.
+   Same code, same values, one click further in — chapter 01 opens with
+   them. They are also the four the new scale cards summarise, so having
+   both on one screen was saying everything twice. */
+function tgMastDetail(st,v){
+  var D=null;  try{ D=(typeof qamDayData==='function')?qamDayData():null; }catch(e){}
+  var T=null;  try{ T=tgTodayCls(); }catch(e){}
+  var ws=[];   try{ ws=timTodayWindows(st)||[]; }catch(e){}
+  var live=ws.filter(function(w){ return w.live; })[0]||null;
+  var next=live||ws.filter(function(w){ return !w.gone; })[0]||null;
+  var REC=tgRecord(D);
+  var CHK=D?tgDayCheck(D.asset):null;
+  var h='<div class="tg-mdet">'
+    +(function(){ var f=tgFrameSay(D,CHK);
+        return f?'<p class="tg-say">'+escHtml(f)+'</p>':''; })()
+    +(REC?'<p class="tg-rec '+REC.tone+'">'+escHtml(REC.line)+'</p>':'')
+    +(D&&D.note?'<p class="tg-say tg-reco">'+escHtml(D.note)+'</p>':'')
+  +'</div>';
   /* ── the four readouts ─────────────────────────────────────────────── */
   var s='<div class="tg-stats">';
 
@@ -29308,10 +29645,10 @@ function tgMast(st,v,chips){
       +'<b>'+escHtml(T.cls.v)+'</b><s>'+escHtml(T.cls.why||T.cls.tag)+'</s></div>';
   }else{
     s+='<div class="tg-st"><i>The month rates today</i><b>&mdash;</b>'
-      +'<s>open chapter 06 for the map</s></div>';
+      +'<s>open the month window for the map</s></div>';
   }
 
-  return h+s+'</div></header>';
+  return h+s+'</div>';
 }
 
 /* ══ THE TRANSIT WHEEL — the tightest live aspect, drawn ═══════════════ */
@@ -29514,12 +29851,25 @@ function renderTiming(){
      page, the way it was asked for. */
   host.innerHTML=
     tgMast(st,v,chips)
+   /* ══ THE FIRST SCREEN IS FOUR SENTENCES ══
+      Month, week, day, this hour — the four sizes of the same question, in
+      the order someone actually asks them. Everything that used to be laid
+      out below this is still built, still by the same functions, but it now
+      lives in the sheet under it and opens one window at a time. */
+   +tsHtml()
+   +tsWindows()
+   +'<div id="tg_chapters"><div class="tg-sheet">'
+     +'<div class="tg-bar"><b>Timing Engine</b>'
+       +'<button class="tg-x" onclick="tgClose()" aria-label="Close">&times;</button></div>'
    +tgRail()
 
    /* ── 01 · NOW ─────────────────────────────────────────────────────── */
    +tgCh('01','now','Now',
       'What to do in the next few hours — the day, the windows left in it, and the levels price has not reached yet',
-      (function(){ try{ return newDayHtml(st); }catch(e){ return ''; } })()
+      /* the masthead's prose and its four readouts, which used to fill the
+         first screen. Same functions, same output, one click in. */
+      (function(){ try{ return tgMastDetail(st,v); }catch(e){ return ''; } })()
+     +(function(){ try{ return newDayHtml(st); }catch(e){ return ''; } })()
      /* I DELETED THIS ONCE AND I HAD NO RIGHT TO. The short panel leads
         because it answers fastest; the full card follows because it carries
         the holds and the aspect lines the short one does not. Both, always. */
@@ -29635,7 +29985,8 @@ function renderTiming(){
        +'<span>the complete toolkit and every calendar in one place</span></summary>'
        +'<div class="tk-tools">'
          +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
-       +'</div></details>');
+       +'</div></details>')
+   +'</div></div>';
 
   ttApply();
   /* the rail follows the scroll; it never hides a chapter */
@@ -29650,6 +30001,9 @@ function renderTiming(){
      later, and the live setups were nowhere in the DOM at all. It goes
      here, after the markup it writes into exists. */
   try{ renderIntra(); }catch(e){}
+  /* the chosen instrument must not be the one off the right edge */
+  try{ var on=host.querySelector('.tg-band .ab-pick.on');
+       if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
   /* same reason as renderIntra above: pn_host only exists once this has run */
   try{ pnPaint(); }catch(e){}
 }
@@ -31655,7 +32009,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b177';
+var CA_BUILD='b178';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -31676,7 +32030,7 @@ var CA_BUILD='b177';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The Timing Engine has a new chapter: The release. The next high-impact release, a direction, a confidence, a bull/chop/bear split and a countdown to the moment the read locks at T−5. Every figure in it is measured rather than asserted, and three things it deliberately will not do are the reason to trust the rest. It will not talk about the first three minutes: this page holds daily candles and nothing finer, so it says which side of the range the resting stops are on — which daily bars do support — and states the limit in the card. It will not invent event dates: the split comes from finding every past occurrence of the release and reading what your instrument’s candle actually did, which needs exact past dates, and only payrolls (first Friday of the month) and the published FOMC decisions have them. CPI and PPI have no fixed day of month, so when one of those is next the card says outright that it is not measuring that release and shows payroll days instead, labelled in the first line you read. And it will not print a percentage off a small sample: under twelve past releases no split is shown at all. The confidence is the winning share discounted for how many events it rests on, so sixty per cent off twelve and sixty off forty are not printed as the same claim. The yardstick is fixed before the event it grades — a release day’s own range never sets the threshold that classifies it. The study runs on its own deeper daily series and never touches the board’s history, so nothing else on the page moves. Previously: The assistant works. Four things were stopping it and they were all real. On a phone the what’s-new note you are reading was rendered unclamped — a card 1172px tall covering 85% of the screen, with a click handler on it — so for the first seconds after every new build EVERY tap in that area hit the toast instead of the page, the assistant button included. It is four lines now, and no toast can ever be taller than a third of the screen. The assistant had no memory: each question was sent alone with nothing before it, so a follow-up like “and what about silver” arrived with no idea what silver was being compared to. It sends the thread now. Its offline brain was matching triggers inside other words — “and who did they beat” was answered with the greeting menu, because “hey” sits inside “they” — so questions that should have gone to Claude never got there. And it needed you to paste an Anthropic key before it would answer anything outside this board, which almost nobody does; it can now go through your bridge, which holds the key server-side exactly as the price and news keys already are. Set CELESTIAL_ANTHROPIC_KEY on the bridge and it answers for everyone with nothing to configure. Also: the bridge default was http://127.0.0.1:8770 even on a live https site, where a browser blocks that call as mixed content before it is sent — on a domain it now assumes the same host. Previously: The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='The Time Engine opens with four sentences instead of the whole engine. This month, this week, today, right now — the four sizes of the same question, in the order you actually ask them: what the month is doing astrologically, which day this week carries the most windows, whose planet rules today and which way it leans, and whether this hour is bullish, bearish or neither. Everything else is behind a window you click. All eight chapters are still there, still built by the same functions, byte for byte — they open one at a time in a sheet instead of lying end to end on one page with every one of them already expanded. Nothing was deleted to make this simpler; it was moved one click in. The masthead was the single biggest offender and is a header again: on a phone it filled the entire first screen on its own with a pill, a headline, three paragraphs, a quoted track record, a verdict, a date and twelve wrapped instrument chips. The prose and the four readouts moved into the first window, the chips are one scrolling row, and the whole landing went from roughly three phone screens to one and a half. Also fixed on the way: the timing pane was laying itself out 1096px wide inside a 412px phone — the right half of the headline and the date ran off the edge — because it is a flex item that had never been told it may shrink. It did not show up as page overflow because the clip added in b175 absorbs exactly that, so the check for it now lifts the clip first: a measurement taken through a clip reads zero however broken the layout is. Previously: The Timing Engine has a new chapter: The release. The next high-impact release, a direction, a confidence, a bull/chop/bear split and a countdown to the moment the read locks at T−5. Every figure in it is measured rather than asserted, and three things it deliberately will not do are the reason to trust the rest. It will not talk about the first three minutes: this page holds daily candles and nothing finer, so it says which side of the range the resting stops are on — which daily bars do support — and states the limit in the card. It will not invent event dates: the split comes from finding every past occurrence of the release and reading what your instrument’s candle actually did, which needs exact past dates, and only payrolls (first Friday of the month) and the published FOMC decisions have them. CPI and PPI have no fixed day of month, so when one of those is next the card says outright that it is not measuring that release and shows payroll days instead, labelled in the first line you read. And it will not print a percentage off a small sample: under twelve past releases no split is shown at all. The confidence is the winning share discounted for how many events it rests on, so sixty per cent off twelve and sixty off forty are not printed as the same claim. The yardstick is fixed before the event it grades — a release day’s own range never sets the threshold that classifies it. The study runs on its own deeper daily series and never touches the board’s history, so nothing else on the page moves. Previously: The assistant works. Four things were stopping it and they were all real. On a phone the what’s-new note you are reading was rendered unclamped — a card 1172px tall covering 85% of the screen, with a click handler on it — so for the first seconds after every new build EVERY tap in that area hit the toast instead of the page, the assistant button included. It is four lines now, and no toast can ever be taller than a third of the screen. The assistant had no memory: each question was sent alone with nothing before it, so a follow-up like “and what about silver” arrived with no idea what silver was being compared to. It sends the thread now. Its offline brain was matching triggers inside other words — “and who did they beat” was answered with the greeting menu, because “hey” sits inside “they” — so questions that should have gone to Claude never got there. And it needed you to paste an Anthropic key before it would answer anything outside this board, which almost nobody does; it can now go through your bridge, which holds the key server-side exactly as the price and news keys already are. Set CELESTIAL_ANTHROPIC_KEY on the bridge and it answers for everyone with nothing to configure. Also: the bridge default was http://127.0.0.1:8770 even on a live https site, where a browser blocks that call as mixed content before it is sent — on a domain it now assumes the same host. Previously: The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -34721,7 +35075,9 @@ function pnStart(){
   if(PN_TICK)return;
   PN_TICK=setInterval(function(){
     var el=document.getElementById('pn_cd');
-    if(!el||!el.offsetParent){ clearInterval(PN_TICK); PN_TICK=null; return; }
+    /* isConnected, not offsetParent: the release chapter lives in a
+       closed sheet most of the time, and "hidden" is not "gone" */
+    if(!el||!el.isConnected){ clearInterval(PN_TICK); PN_TICK=null; return; }
     var lock=+el.getAttribute('data-lock');
     el.textContent=pnCountdown(lock-Date.now());
     el.classList.toggle('hot',(lock-Date.now())<=60*60000);
