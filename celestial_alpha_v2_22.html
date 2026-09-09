@@ -9151,6 +9151,18 @@ body{background:var(--bg0)}
   body{height:auto!important;min-height:100%}
   .main{overflow:visible!important}
   .pane{overflow:visible!important;height:auto!important;min-height:0!important}
+  /* ══ ONE TAB WAS ZOOMING THE WHOLE PAGE OUT ══
+     Measured: window.innerWidth is 412 on every tab except Trading Journal,
+     where it is 474 on a 412px phone. Something in there will not lay out
+     narrower, so the browser widens the layout viewport and scales the
+     whole page down to fit — which is why everything on it looks smaller
+     and sits off to one side rather than centred. It is not a margin
+     problem, it is a zoom.
+     overflow-x:clip is the right tool and hidden is not: clip bounds the
+     box without turning it into a scroll container, so the document-scroll
+     fix above survives untouched. The wide table keeps its own
+     overflow-x:auto wrapper and is still swipeable inside it. */
+  .pane{overflow-x:clip!important}
   #pane_dashboard{overflow:visible!important;height:auto!important}
 }
 
@@ -31399,7 +31411,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b174';
+var CA_BUILD='b175';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -31420,7 +31432,7 @@ var CA_BUILD='b174';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -34957,6 +34969,14 @@ function drawCandles(rows,label){
               .filter(function(v){return isFinite(v)&&v>0;});
     }
   }catch(e){ _plan=[]; }
+  /* the levels get the same treatment as the plan: a level outside the
+     candle range was silently dropped, which is the other half of "no
+     level is showing" — it was there, it just had nowhere to be drawn */
+  try{
+    (window._lastLevels||[]).filter(function(l){
+      return l&&isFinite(+l.price)&&(+l.score||0)>=5;}).slice(0,4)
+      .forEach(function(l){ _plan.push(+l.price); });
+  }catch(e){}
   if(_plan.length){
     hi=Math.max(hi,Math.max.apply(null,_plan));
     lo=Math.min(lo,Math.min.apply(null,_plan));
@@ -35075,9 +35095,15 @@ function drawCandles(rows,label){
   try{
     var CBG=palHex('--chartbg','#0A0A0F');
     var lastC2=+data[data.length-1].close;
+    /* THE SAME FOUR THE LIQUIDITY ZONES CARD LISTS, NOT A DIFFERENT FOUR.
+       rndZones picks levels.filter(score>=5).slice(0,4); this picked the
+       top-scoring ones that happened to fall inside a price window computed
+       without them. Same array, two different filters, two panels on one
+       screen disagreeing about what "the levels" are — which is exactly the
+       "they don't match" complaint. One rule now, and it is that card's
+       rule, because that card is the one that names them. */
     var lvAll=(window._lastLevels||[]).filter(function(l){
-      return l&&isFinite(+l.price)&&+l.price>lo&&+l.price<hi;});
-    lvAll.sort(function(a,b){return (+b.score||0)-(+a.score||0);});
+      return l&&isFinite(+l.price)&&(+l.score||0)>=5;}).slice(0,4);
     var lvY=[];
     /* SIZE AND WEIGHT ARE NOT FREE ON THIS CHART. It is drawn with
        preserveAspectRatio="none", so the svg is stretched to whatever box
@@ -35088,15 +35114,26 @@ function drawCandles(rows,label){
        the chart: reference marks shouting over the price they are meant to
        annotate. They are annotation. Smaller, lighter, thinner halo, and
        four instead of six — the candles are the subject. */
-    for(var li=0;li<lvAll.length&&lvY.length<4;li++){
-      var Lv=lvAll[li], ly=Y(+Lv.price), clash=false;
-      for(var qi=0;qi<lvY.length;qi++)if(Math.abs(lvY[qi]-ly)<16){clash=true;break;}
-      if(clash)continue;
-      lvY.push(ly);
+    /* EVERY ONE OF THEM GETS DRAWN. This used to skip a level whose label
+       would have collided with one already placed, so two levels a few
+       points apart meant only one appeared on the chart while the card
+       beside it still listed both — half of the "no level is showing" and
+       all of the "they do not match". Dropping a level to avoid overlapping
+       text solves the wrong problem: the LINE is the level and always goes
+       on at its true price, and only the LABEL steps aside. */
+    for(var li=0;li<lvAll.length;li++){
+      var Lv=lvAll[li], ly=Y(+Lv.price), lyLab=ly;
+      for(var _n=0;_n<30;_n++){
+        var clash=false;
+        for(var qi=0;qi<lvY.length;qi++)if(Math.abs(lvY[qi]-lyLab)<15){clash=true;break;}
+        if(!clash)break;
+        lyLab+=15;
+      }
+      lvY.push(lyLab);
       var isRes=(+Lv.price)>lastC2, lc=isRes?'#B9843F':'#4E86A0';
       svg+='<line x1="'+xL+'" y1="'+ly.toFixed(1)+'" x2="'+xR+'" y2="'+ly.toFixed(1)
         +'" stroke="'+lc+'" stroke-opacity=".34" stroke-width="1" stroke-dasharray="2 6"/>';
-      ov+='<div class="plv '+(isRes?'r':'s')+'" style="top:'+(ly/H*100).toFixed(2)+'%">'
+      ov+='<div class="plv '+(isRes?'r':'s')+'" style="top:'+(lyLab/H*100).toFixed(2)+'%">'
         +(isRes?'R ':'S ')+escHtml((+Lv.price).toFixed(dp))+'</div>';
     }
   }catch(e){}
