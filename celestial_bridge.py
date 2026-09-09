@@ -427,8 +427,9 @@ CAL_TTL = 3600
 # This endpoint is different: it serves a public calendar that anyone can
 # fetch from ForexFactory directly. It carries its own allow-all header so a
 # file:// page can read it, and nothing else here does.
-def _public(payload: dict) -> JSONResponse:
-    return JSONResponse(payload, headers={"Access-Control-Allow-Origin": "*"})
+def _public(payload: dict, status: int = 200) -> JSONResponse:
+    return JSONResponse(payload, status_code=status,
+                        headers={"Access-Control-Allow-Origin": "*"})
 
 
 @app.options("/calendar")
@@ -583,6 +584,100 @@ def px_bls(series: str, token: str = ""):
         lambda: ("https://api.bls.gov/publicAPI/v2/timeseries/data/"
                  + urllib.parse.quote(series)
                  + (("?registrationkey=" + urllib.parse.quote(token)) if token else "")))
+
+
+@app.post("/px/claude")
+async def px_claude(request: Request):
+    """The assistant's way to Claude that does not need the visitor to own
+    an Anthropic key.
+
+    WHY THIS EXISTS. The page can call api.anthropic.com directly, and it
+    does — but only with a key pasted into Settings by hand. Practically
+    nobody does that, so for practically everybody the assistant answered
+    the handful of questions its offline brain recognises and refused the
+    rest. It read as broken because, as an assistant, it was.
+
+    The key cannot go in the page: anyone who opens the file reads it.
+    That is not a reason to have no answer, it is a reason to put the key
+    where keys already live on this server — EODHD, GNews and BLS are all
+    held here for exactly the same reason, through the same _key() helper.
+    Set CELESTIAL_ANTHROPIC_KEY in this server's environment and the
+    assistant works for every visitor with nothing to configure.
+
+    Not cached: _px caches by URL for repeated identical GETs, which is
+    right for a price series and wrong for a conversation.
+
+    WHY THE BODY IS READ BY HAND INSTEAD OF DECLARED AS Body(...).
+    ORIGINS is a deliberate allowlist and widening it is not on: the data
+    routes behind it hold the journal and answer to a bearer token, and the
+    comment on that list is right that a wide-open policy would let any site
+    you visit read them. But a POST sent as application/json is not a
+    CORS-simple request, so the browser preflights it, and the middleware
+    turns that preflight away for every origin not on the list — including
+    file:// (Origin: null) and any domain this page is actually hosted on.
+    The every other /px route escapes this only by being a GET.
+
+    So this one is kept CORS-simple: the page sends text/plain and the JSON
+    is parsed here. Nothing is relaxed for the routes that hold data, and
+    this route holds none — no credentials, no user rows, a proxy to a
+    public API on a key this server owns, exactly like /calendar. Every
+    return path goes through _public so the allow-origin header is on the
+    errors too; without that a browser reads a failure as a CORS error and
+    the real reason never reaches the panel.
+    """
+    import json as _json
+    import urllib.error
+    import urllib.request
+
+    try:
+        payload = _json.loads((await request.body()).decode("utf-8", "replace"))
+        if not isinstance(payload, dict):
+            raise ValueError("not an object")
+    except Exception:                                   # noqa: BLE001
+        return _public({"error": {"message": "body must be a JSON object"}}, status=400)
+
+    try:
+        key = _key("ANTHROPIC", str(payload.get("token") or "").strip())
+    except HTTPException as e:
+        return _public({"error": {"message": e.detail}}, status=e.status_code)
+    body = {
+        "model": payload.get("model") or "claude-opus-5",
+        "max_tokens": int(payload.get("max_tokens") or 2400),
+        "system": payload.get("system") or "",
+        "messages": payload.get("messages") or [],
+    }
+    # the effort setting travels from the page so the two call sites cannot
+    # drift apart on it — it is the difference between an answer and an
+    # empty reply on a thinking-by-default model
+    if payload.get("output_config"):
+        body["output_config"] = payload["output_config"]
+    if not body["messages"]:
+        return _public({"error": {"message": "no messages"}}, status=400)
+
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=_json.dumps(body).encode("utf-8"),
+        headers={
+            "content-type": "application/json",
+            "x-api-key": key,
+            "anthropic-version": "2023-06-01",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as f:
+            return _public(_json.loads(f.read().decode("utf-8", "replace")))
+    except urllib.error.HTTPError as e:                 # noqa: PERF203
+        # Anthropic's own error body is far more useful than "502" — it says
+        # whether the key is wrong, the credit is out or the model is unknown,
+        # so it is passed through rather than flattened.
+        try:
+            detail = _json.loads(e.read().decode("utf-8", "replace"))
+        except Exception:                               # noqa: BLE001
+            detail = {"error": {"message": f"HTTP {e.code}"}}
+        return _public(detail, status=e.code)
+    except Exception as e:                              # noqa: BLE001
+        return _public({"error": {"message": f"anthropic unreachable: {e}"}}, status=502)
 
 
 @app.options("/px/{rest:path}")

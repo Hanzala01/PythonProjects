@@ -3137,8 +3137,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ttop-i.warn .ttop-d{background:#FBBF24}
 .ttop-b{flex:1;min-width:0}
 .ttop-b b{display:block;font-size:11px;font-weight:800;color:var(--t1);line-height:1.3}
-.ttop-b s{display:block;text-decoration:none;font-size:9px;line-height:1.5;color:var(--t3);
+/* ══ A TOAST THAT COVERS THE SCREEN IS NOT A TOAST, IT IS A MODAL ══
+   This was unclamped, and the what's-new note it carries is several
+   thousand characters. Measured on a 412px phone: the card rendered
+   1172px tall, covering 85% of the viewport — and .ttop-i is
+   pointer-events:auto with a click handler on it, so for the ~7 seconds
+   it lived there EVERY tap in that area hit the toast instead of the
+   page. elementFromPoint over the assistant button returned the toast's
+   own dismiss cross. That is the whole of "I tap it and nothing
+   happens": the button was never reached.
+   Four lines is a notification. The full text is not lost — it is in the
+   bell, which is where notifications are read at leisure. */
+.ttop-b s{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
+  text-decoration:none;font-size:9px;line-height:1.5;color:var(--t3);
   margin-top:2px}
+/* and a ceiling on the card itself, so no future toast — whatever text is
+   handed to it — can become a wall across the page again. The cap goes on
+   .ttop-i and not on the .ttop stack deliberately: .ttop-i is the element
+   the retire animation transforms, so its clipping box travels with it and
+   the flight to the bell is not cut off, which clipping the stack would do. */
+.ttop-i{max-height:34vh;overflow:hidden}
 .ttop-i u{text-decoration:none;font-size:15px;line-height:1;color:var(--t3);flex:none;
   padding:0 2px;transition:color .18s}
 .ttop-i u:hover{color:var(--t1)}
@@ -13932,7 +13950,30 @@ function jvLocal(q){
     }
   }catch(e){}
   var s=jvState(), L=' '+q.toLowerCase().replace(/[?.!,]/g,' ')+' ';
-  var has=function(){ for(var i=0;i<arguments.length;i++) if(L.indexOf(arguments[i])>=0)return true; return false; };
+  /* ══ IT WAS MATCHING INSIDE WORDS, AND THAT ATE THE CONVERSATION ══
+     This was a bare indexOf, so a trigger matched anywhere in the sentence
+     including in the middle of an unrelated word. Measured: "and who did
+     they beat" was answered with the greeting menu, because 'hey' is inside
+     "t-h-e-y". The question never reached Claude at all — the local brain
+     returned a non-null answer, and jvAsk stops the moment it gets one.
+     That is the whole shape of "it does not work like an assistant": ask a
+     follow-up, get a menu of commands back.
+
+     The fix is a word boundary at the START of the term only, not at both
+     ends. Both ends would be wrong here — these triggers are deliberately
+     stems, and 'level' has to keep matching "levels", 'kya kar sakt' has to
+     keep matching "sakte". A leading boundary kills 'hey' inside "they"
+     while leaving every one of those intact. Terms carrying a trailing
+     space ('hi ', 'bas ') keep it, which is how they already avoid
+     swallowing "his" and "basis". */
+  var has=function(){
+    for(var i=0;i<arguments.length;i++){
+      var t=String(arguments[i]);
+      try{ if(new RegExp('\\b'+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(L))return true; }
+      catch(e){ if(L.indexOf(t)>=0)return true; }
+    }
+    return false;
+  };
   var named=jvAssetIn(L);
 
   /* ── stop talking, and say it again ──
@@ -14160,26 +14201,54 @@ function jvContext(){
   if(s.scan.length)L.push('Scan setups: '+s.scan.map(function(x){return x.a+' '+(x.bull?'buy':'sell');}).join(', '));
   return L.join('\n');
 }
+/* ══ IT HAD NO MEMORY OF THE LAST THING IT SAID ══════════════════════
+   Every call sent messages:[{role:'user',content:q}] — one turn, no
+   history, so "and what about silver?" arrived with nothing before it and
+   "say that again in plain English" had nothing to say again. Whatever
+   else was wrong, that alone stops it being an assistant and makes it a
+   search box that talks.
+
+   Three rules the API enforces and the log does not: system turns are not
+   part of the exchange, the first message must be the user's, and roles
+   have to alternate. Refusals and status lines live in the same log as the
+   conversation, so dropping them can leave two of the reader's turns
+   touching — those are joined rather than dropped, because both were
+   really said. */
+function jvHistory(){
+  var out=[];
+  for(var i=0;i<JV_LOG.length;i++){
+    var m=JV_LOG[i];
+    if(m.w!=='me'&&m.w!=='bot')continue;
+    var role=(m.w==='me')?'user':'assistant';
+    if(out.length&&out[out.length-1].role===role){ out[out.length-1].content+='\n'+m.t; continue; }
+    out.push({role:role,content:String(m.t)});
+  }
+  while(out.length&&out[0].role!=='user')out.shift();
+  /* a dozen turns is plenty of thread for four-sentence answers, and keeps
+     a long session from quietly growing into a large bill per question */
+  if(out.length>12){ out=out.slice(out.length-12); while(out.length&&out[0].role!=='user')out.shift(); }
+  return out;
+}
+
+/* null = not tried yet, true/false = what the last attempt found */
+var JV_BRIDGE_OK=null;
+
 function jvClaude(q){
   var key=jvPrefs().key;
-  if(!key){
-    jvPush('sys','I do not recognise that one, and there is no Claude key set — open Settings below to add one, or ask me about the board.');
-    jvRender(); return;
-  }
+  var body=jvBody(q);
   JV_BUSY=true; jvRender();
-  fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{
-      'content-type':'application/json',
-      'x-api-key':key,
-      'anthropic-version':'2023-06-01',
-      /* the browser-access opt-in. Anthropic's own docs are blunt that this
-         exposes the key to anyone who can open the page, and are clear it is
-         only reasonable for a personal or internal tool. */
-      'anthropic-dangerous-direct-browser-access':'true'
-    },
-    body:JSON.stringify({
-      model:JV_MODEL,
+  /* THE KEY FIRST IF THERE IS ONE, THE BRIDGE IF THERE IS NOT.
+     A key pasted into this browser is the user's own and costs them
+     directly, so it is used when present. Without one the request goes to
+     the bridge, which holds the key server-side — the same arrangement
+     EODHD, GNews and BLS have had all along. Only when neither exists is
+     there nothing to do, and then it says so in terms of what it CAN do. */
+  if(key)jvDirect(q,body,key);
+  else jvViaBridge(q,body,true);
+}
+function jvBody(q){
+  return {
+    model:JV_MODEL,
       /* ══ 2400, NOT 900 — AND WHY THE EFFORT IS SET ═══════════════════════
          JARVIS ANSWERED NOTHING, AND IT WAS THIS LINE.
          Every question that reached Claude came back as "(no answer came
@@ -14211,47 +14280,113 @@ function jvClaude(q){
         +'the board state below. Never invent a price, a level or a number that is not in it; if something '
         +'is not there, say it is not on the board. Never promise a trade will work.\n\nBOARD STATE:\n'
         +jvContext(),
-      messages:[{role:'user',content:q}]
-    })
+      /* the thread, not just the last line — see jvHistory. The reader's
+         current question is already the last entry in the log, so it is
+         not appended again here. */
+      messages:jvHistory()
+  };
+}
+/* the page's own key, straight to Anthropic */
+function jvDirect(q,body,key){
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-api-key':key,
+      'anthropic-version':'2023-06-01',
+      /* the browser-access opt-in. Anthropic's own docs are blunt that this
+         exposes the key to anyone who can open the page, and are clear it is
+         only reasonable for a personal or internal tool. */
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify(body)
   }).then(function(r){
     return r.json().then(function(d){ return{ok:r.ok,status:r.status,d:d}; });
+  }).then(function(res){ jvReply(res); })
+  .catch(function(e){
+    /* the key is there but the call could not leave the page — a network
+       that blocks the endpoint, or an offline tab. The bridge is a second
+       route to the same place, so it is worth one attempt before giving up. */
+    jvViaBridge(q,body,false,e.message);
+  });
+}
+/* the bridge's key, held server-side, so nothing has to be pasted here */
+function jvViaBridge(q,body,noKey,priorErr){
+  var ctl=null; try{ ctl=new AbortController(); }catch(e){}
+  var t=setTimeout(function(){ try{ if(ctl)ctl.abort(); }catch(e){} },30000);
+  fetch(bridgeURL()+'/px/claude',{
+    method:'POST',
+    /* text/plain, and it matters. application/json makes this a preflighted
+       request, and the bridge's CORS allowlist — which is right to be an
+       allowlist, it guards the journal — turns that preflight away for every
+       origin not on it, file:// and the live domain included. text/plain
+       keeps the request CORS-simple, so it is sent rather than blocked; the
+       bridge parses the JSON itself. The body is unchanged. */
+    headers:{'content-type':'text/plain'},
+    body:JSON.stringify(body),
+    signal:ctl?ctl.signal:undefined
+  }).then(function(r){
+    clearTimeout(t);
+    return r.json().then(function(d){ return{ok:r.ok,status:r.status,d:d}; });
   }).then(function(res){
-    JV_BUSY=false;
-    if(!res.ok){
-      var m=(res.d&&res.d.error&&res.d.error.message)||('HTTP '+res.status);
-      jvPush('sys','Claude refused that: '+m
-        +(res.status===401?' — the key is wrong or has been revoked.':''));
-      jvRender(); return;
-    }
-    var txt=(res.d.content||[]).filter(function(b){return b.type==='text';})
-             .map(function(b){return b.text;}).join(' ').trim();
-    /* ══ AN EMPTY ANSWER HAS TO SAY WHY IT IS EMPTY ══
-       "(no answer came back)" was true and useless. It names the symptom
-       and hides every possible cause behind it, which is how the max_tokens
-       bug above survived as long as it did — the screen said the same six
-       words whether the model had been cut off, had declined, or had
-       genuinely finished with nothing to add. The response always carries
-       which of those it was, so it is printed. */
-    if(!txt){
-      var sd=res.d.stop_details||{}, why;
-      if(res.d.stop_reason==='max_tokens')
-        why='Claude ran out of room before it got to the answer — ask that one more briefly.';
-      else if(res.d.stop_reason==='refusal')
-        why='Claude declined that one'+(sd.category?' ('+sd.category+')':'')+'.';
-      else
-        why='Claude came back with nothing to say — stop reason: '
-           +(res.d.stop_reason||'none given')+'.';
-      jvPush('sys',why); jvRender(); return;
-    }
-    jvPush('bot',txt);
-    jvRender(); jvSpeak(txt); jvPill(txt,'said');
+    JV_BRIDGE_OK=res.ok;
+    jvReply(res);
   }).catch(function(e){
+    clearTimeout(t);
+    JV_BRIDGE_OK=false;
     JV_BUSY=false;
-    jvPush('sys','Could not reach Claude from the page: '+e.message
-      +'. A browser blocks cross-site calls unless the endpoint allows them; if this keeps failing you '
-      +'need to run the request through your own small proxy rather than from the file.');
+    /* SAY WHAT IT CAN DO, NOT ONLY WHAT IT CANNOT.
+       The old line named the missing key and stopped there, which reads as
+       a dead assistant. Everything about this board is answered here with
+       no key and no network at all — that is most of what it is for, and it
+       is worth saying in the same breath as the limitation. */
+    jvPush('sys', (noKey
+        ? 'That one is outside the board, and I have no way to Claude right now — no key in Settings, and no bridge answering. '
+        : 'I could not reach Claude'+(priorErr?' ('+priorErr+')':'')+', and the bridge did not answer either. ')
+      +'I can still tell you the call, the trend, the levels, the windows, the risk and the scan — all of that is worked out in this page with nothing switched on.');
     jvRender();
   });
+}
+/* one reply handler for both routes, because the bridge returns Anthropic's
+   own JSON verbatim — including its error body and status */
+function jvReply(res){
+  JV_BUSY=false;
+  if(!res.ok){
+    var m=(res.d&&res.d.error&&res.d.error.message)||('HTTP '+res.status);
+    /* A KEY PROBLEM IS NOT A DEAD END, and the reply should not read like
+       one. It is the single most likely failure on a fresh install — no key
+       pasted, none set on the bridge — and the board answers are all still
+       there, so they are offered in the same breath rather than leaving the
+       reader looking at a bare error. */
+    var keyish=(res.status===401||res.status===400||res.status===403)
+               &&/key|credit|balance|token/i.test(m);
+    jvPush('sys','Claude refused that: '+m
+      +(res.status===401?' — the key is wrong or has been revoked.':'')
+      +(keyish?(/[.!?]$/.test(m)?'':'.')+' Meanwhile I can still give you the call, the trend, the levels, the windows, the risk and the scan — none of that needs a key.':''));
+    jvRender(); return;
+  }
+  var txt=(res.d.content||[]).filter(function(b){return b.type==='text';})
+           .map(function(b){return b.text;}).join(' ').trim();
+  /* ══ AN EMPTY ANSWER HAS TO SAY WHY IT IS EMPTY ══
+     "(no answer came back)" was true and useless. It names the symptom
+     and hides every possible cause behind it, which is how the max_tokens
+     bug above survived as long as it did — the screen said the same six
+     words whether the model had been cut off, had declined, or had
+     genuinely finished with nothing to add. The response always carries
+     which of those it was, so it is printed. */
+  if(!txt){
+    var sd=res.d.stop_details||{}, why;
+    if(res.d.stop_reason==='max_tokens')
+      why='Claude ran out of room before it got to the answer — ask that one more briefly.';
+    else if(res.d.stop_reason==='refusal')
+      why='Claude declined that one'+(sd.category?' ('+sd.category+')':'')+'.';
+    else
+      why='Claude came back with nothing to say — stop reason: '
+         +(res.d.stop_reason||'none given')+'.';
+    jvPush('sys',why); jvRender(); return;
+  }
+  jvPush('bot',txt);
+  jvRender(); jvSpeak(txt); jvPill(txt,'said');
 }
 function jvAsk(q,viaVoice){
   q=(q||'').trim();
@@ -15008,6 +15143,11 @@ function jvRender(){
   var old=document.getElementById('jv_fab'); if(old)old.remove();
   var launch=document.getElementById('jv_launch');
   if(launch)launch.classList.toggle('hide',JV_OPEN);
+  /* the risk button sits at bottom:20px, inside the open panel's footprint —
+     on a phone it lands squarely on the Settings row, so it stands down while
+     the panel is up rather than being a second thing to tap by accident */
+  try{ var rf=document.getElementById('risk_fab');
+       if(rf)rf.style.display=JV_OPEN?'none':''; }catch(e){}
   if(!JV_OPEN){ el.innerHTML=''; return; }
 
   var P=jvPrefs();
@@ -15021,7 +15161,19 @@ function jvRender(){
           return '<div class="jvm '+m.w+'">'+escHtml(m.t)+'</div>';
         }).join('')
         :'<div class="jvm sys">Ask for the call, the trend, the levels, the next window, the risk, '
-         +'or say “run the scan”. Everything on this board I answer with no key and no network.</div>')
+         +'or say “run the scan”. Everything on this board I answer with no key and no network.'
+         /* ══ AND SAY, UP FRONT, WHETHER IT CAN GO OUTSIDE THE BOARD ══
+            An assistant that silently cannot answer general questions until
+            you find a collapsed Settings panel and paste an API key reads as
+            an assistant that does not work. The second line is the honest
+            state of the outside route, said before the first question rather
+            than as a refusal after it. */
+         +'<br><br>'+(P.key
+             ? 'Anything else goes to Claude on your own key.'
+             : (JV_BRIDGE_OK===false
+                 ? 'For anything outside the board I need a route to Claude — the bridge is not answering, so add a key under Settings below.'
+                 : 'Anything else goes to Claude through your bridge; add your own key under Settings if you would rather not use it.'))
+         +'</div>')
       +(JV_BUSY?'<div class="jvm bot busy">thinking…</div>':'')
       /* the words as they are being recognised, in the reader's own bubble
          and greyed until they are committed — the one piece of feedback
@@ -31411,7 +31563,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b175';
+var CA_BUILD='b176';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -31432,7 +31584,7 @@ var CA_BUILD='b175';
   else go();
 })();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='The assistant works. Four things were stopping it and they were all real. On a phone the what’s-new note you are reading was rendered unclamped — a card 1172px tall covering 85% of the screen, with a click handler on it — so for the first seconds after every new build EVERY tap in that area hit the toast instead of the page, the assistant button included. It is four lines now, and no toast can ever be taller than a third of the screen. The assistant had no memory: each question was sent alone with nothing before it, so a follow-up like “and what about silver” arrived with no idea what silver was being compared to. It sends the thread now. Its offline brain was matching triggers inside other words — “and who did they beat” was answered with the greeting menu, because “hey” sits inside “they” — so questions that should have gone to Claude never got there. And it needed you to paste an Anthropic key before it would answer anything outside this board, which almost nobody does; it can now go through your bridge, which holds the key server-side exactly as the price and news keys already are. Set CELESTIAL_ANTHROPIC_KEY on the bridge and it answers for everyone with nothing to configure. Also: the bridge default was http://127.0.0.1:8770 even on a live https site, where a browser blocks that call as mixed content before it is sent — on a domain it now assumes the same host. Previously: The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -32991,7 +33143,21 @@ function addEmo(e){var i=document.getElementById('msg_in');i.value+=e;i.focus();
    The page looked for 7823; celestial_bridge.py listens on 8770. Anyone who
    had not typed the URL in by hand was pointing at nothing, which is a
    second reason the calendar never filled in. */
-function bridgeURL(){return (localStorage.getItem('ca_bridge')||'http://127.0.0.1:8770').replace(/\/+$/,'');}
+/* ══ AND OVER HTTPS THE DEFAULT COULD NOT BE TRIED AT ALL ══
+   http://127.0.0.1:8770 is the right guess for a page opened off the disk
+   or off localhost — it is the wrong guess, and an unusable one, for a page
+   served from a domain. A browser blocks an http:// request from an https://
+   page as mixed content before it is ever sent, so on the live site every
+   bridge call failed without so much as an attempt. On a domain the bridge
+   is far more likely to sit behind the same host than on the visitor's own
+   laptop, so that is what is assumed there. A value typed into Settings
+   still wins over both. */
+function bridgeURL(){
+  var stored=localStorage.getItem('ca_bridge');
+  if(stored)return stored.replace(/\/+$/,'');
+  try{ if(location.protocol==='https:')return location.origin.replace(/\/+$/,''); }catch(e){}
+  return 'http://127.0.0.1:8770';
+}
 function checkInvite(k){
   k=(k||'').trim().toUpperCase();
   var m=k.match(/^CA-([0-9A-Z]+)-([0-9A-Z]{4})-([0-9A-Z]{4})$/);
