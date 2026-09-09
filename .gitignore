@@ -5,16 +5,24 @@ celestial.db-wal
 celestial.db-shm
 celestial-backup-*.json
 
-# Per-build copies handed to you for download (celestial_alpha_b35.html and
-# friends). Each one is a byte-identical duplicate of celestial_alpha_v2_22.html
-# at that commit, renamed only so an older copy in the Downloads folder cannot
-# be mistaken for the current one. The source file is tracked; the copies are
-# 2MB each and the history already holds every build.
+# The copy handed over for download, named for its build. Byte-identical to
+# celestial_alpha_v2_22.html at that commit; the source is tracked and the
+# history holds every build, so these are disposable.
+#
+# CORRECTION, AND IT COST A ROUND. The note that used to sit here said the
+# delivered file should carry the SAME name every time so a new download
+# "REPLACES the old one in Downloads". Chrome does not do that. It appends a
+# counter — the screenshot that disproved it was opened from
+# "celestial_alpha (44).html", forty-four copies deep, and the one on screen
+# was an old one. A constant filename does not replace anything; it just
+# produces an unreadable pile.
+#
+# So the build goes IN the filename, where sorting the folder by name puts the
+# newest last and highest. And because a filename can still be mistaken, the
+# running page now prints its build directly under the CAELUS wordmark, top of
+# the sidebar and top of the phone header — the old marker was at the BOTTOM
+# of the sidebar, below the fold on a laptop, which is why it never helped.
 celestial_alpha_b*.html
-# The single delivered copy. Same name every time, so downloading a new one
-# REPLACES the old one in Downloads instead of sitting beside it. Four rounds
-# were lost to "nothing changed" when the file on screen was an older build —
-# there is only ever one now, and the tab prints its build number.
 celestial_alpha.html
 
 __pycache__/

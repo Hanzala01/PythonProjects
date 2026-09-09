@@ -962,6 +962,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .mtop>.mnav-btn{justify-self:start}
 .mtop-brand{display:flex;align-items:center;gap:8px;min-width:0}
 .mtop-brand svg{width:26px;height:26px;flex:none}
+.side-brand .t span b{font-weight:800;color:var(--t2)}
+/* the phone carries it under the wordmark, small and always on screen */
+.mtop-brand b i{display:block;font-style:normal;font-weight:600;font-size:8.5px;
+  letter-spacing:.12em;line-height:1.2;color:var(--t3);margin-top:1px}
 .mtop-brand b{font-family:'Space Grotesk','Inter',system-ui,sans-serif;font-size:15px;
   font-weight:700;letter-spacing:.14em;color:var(--t1);white-space:nowrap}
 .mtop-right{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
@@ -8292,7 +8296,17 @@ body{background:var(--bg0)}
 @keyframes tgpul{to{box-shadow:0 0 0 9px rgba(34,197,94,0)}}
 
 /* ── the chapter rail ─────────────────────────────────────────────────── */
-#pane_timing .tg-rail{position:sticky;top:0;z-index:24;display:flex;gap:6px;overflow-x:auto;
+/* ══ THE RAIL WAS A COLUMN THIS WHOLE TIME ══
+   `.nav,nav{display:flex;flex-direction:column}` is the sidebar's rule and
+   this element is a <nav>, so it inherited a column and the eight chapter
+   chips have been stacking vertically at every width — 1232px wide and
+   321px tall on a desktop, where it reads as a list rather than a rail.
+   b174 saw the symptom on a phone ("the rail is a 283px block") and
+   concluded the chips were laid out for a wide row; they were not, they
+   were laid out for a column by a selector meant for the sidebar. One
+   declaration fixes it and the rail becomes what its name says. */
+#pane_timing .tg-rail{position:sticky;top:0;z-index:24;display:flex;flex-direction:row;
+  flex-wrap:nowrap;gap:6px;overflow-x:auto;
   padding:11px 2px 12px;margin:16px 0 0;
   background:linear-gradient(180deg,var(--bg) 68%,rgba(0,0,0,0))}
 /* ══ THE CHAPTER RAIL WAS STICKING TO THE WRONG EDGE, AND SEE-THROUGH ══
@@ -8307,14 +8321,25 @@ body{background:var(--bg0)}
    other. Below the drawer breakpoint it parks under the header and paints
    solid. */
 @media(max-width:1200px){
-  /* Not sticky at all on a phone. Parking it under the header fixed the
-     overlap but left a worse problem visible: the chips are laid out for a
-     wide row and each one takes nearly the full width here, so the "rail"
-     is a 283px block — pinning that to the top would hold a third of the
-     screen hostage on every scroll. A chapter index that scrolls away with
-     the page is the ordinary thing on a phone. The solid background stays
-     regardless: the fade-to-transparent is what let cards show through it. */
-  #pane_timing .tg-rail{position:static;background:var(--bg)}
+  /* IT IS STICKY AGAIN, AND THIS TIME IT FITS.
+     The reason it was made static in b174 stands on its own terms: the
+     buttons were laid out for a wide row, each took nearly the full width
+     here, and the "rail" was a 283px block. Pinning a third of the screen
+     is worse than not pinning anything.
+     But the conclusion drawn from it was wrong. The rail is the phone's
+     only real answer to this tab's length — two-up does not shorten it
+     (measured: 21,861px became 22,184px) and nothing else shortens it
+     without hiding something. So the fix is not to shrink the distance,
+     it is to stop you having to travel it. The buttons are one compact
+     line each and the row scrolls sideways, which makes the rail about
+     36px rather than 283, and every chapter is one tap away from anywhere
+     on the page. It parks under the header rather than behind it. */
+  #pane_timing .tg-rail{position:sticky;top:56px;z-index:24;background:var(--bg0);
+    flex-wrap:nowrap;padding:7px 2px;margin:12px 0 0;border-bottom:1px solid var(--rim)}
+  #pane_timing .tg-rail .tg-rb{flex:none;display:flex;align-items:center;gap:5px;
+    padding:6px 10px;white-space:nowrap}
+  #pane_timing .tg-rail .tg-rb u{font-size:8.5px;opacity:.72}
+  #pane_timing .tg-rail .tg-rb b{font-size:11px}
 }
 #pane_timing .tg-rail::-webkit-scrollbar{height:0}
 /* ══ THE FOUR SCALES ══════════════════════════════════════════════════
@@ -8359,51 +8384,120 @@ body{background:var(--bg0)}
 #pane_timing .ts-foot{font-size:10px;line-height:1.55;color:var(--t3);margin-top:auto;
   padding-top:6px;border-top:1px solid var(--rim)}
 
-/* ══ THE WINDOWS ══ */
-#pane_timing .tw-head{font-family:'Space Grotesk';font-size:9px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--t3);margin:26px 0 10px}
-#pane_timing .tw-grid{display:grid;gap:8px;min-width:0;
-  grid-template-columns:repeat(4,minmax(0,1fr))}
-@media(max-width:1100px){#pane_timing .tw-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-/* two-up on a phone: eight full-width tiles is 880px of scrolling to reach
-   the last one, and the tiles are three short lines each */
-@media(max-width:760px){#pane_timing .tw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  #pane_timing .tw-tile s{-webkit-line-clamp:2}}
-#pane_timing .tw-tile{text-align:left;border:1px solid var(--rim);border-radius:12px;
-  background:var(--s2);padding:13px 14px;cursor:pointer;display:block;width:100%;
-  transition:border-color .18s,transform .18s,background .18s}
-#pane_timing .tw-tile:hover{border-color:var(--bAct);transform:translateY(-2px);background:var(--s3)}
-#pane_timing .tw-tile:focus-visible{outline:2px solid var(--p3);outline-offset:2px}
-#pane_timing .tw-tile u{display:block;text-decoration:none;font-family:'Space Grotesk';
-  font-size:9px;letter-spacing:.16em;color:var(--t3)}
-#pane_timing .tw-tile b{display:block;font-family:'Space Grotesk';font-weight:800;font-size:14px;
-  color:var(--t1);margin:3px 0 5px}
-#pane_timing .tw-tile s{display:block;text-decoration:none;font-size:10px;line-height:1.55;
-  color:var(--t3);
-  /* three lines is a description; the whole paragraph is the chapter itself */
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* ══ SMALLER, AND SIDE BY SIDE ════════════════════════════════════════
+   "old wala zyada acha tha, bas thoda easy aur scroll kam ho, cheze choti
+   ho jayein aur ek saath aa jayein."
 
-/* ══ THE SHEET ════════════════════════════════════════════════════════
-   The chapters are hidden, not removed — same nodes, same ids, same
-   sub-renders writing into them. Opening one turns the container into a
-   full-height sheet and shows that single section. */
-#tg_chapters{display:none}
-#tg_chapters.on{display:block;position:fixed;inset:0;z-index:300;
-  background:var(--bg0);animation:tgIn .2s var(--ease)}
-@keyframes tgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-#tg_chapters.on .tg-sheet{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:0 clamp(14px,3vw,30px) 60px}
-#tg_chapters.on .tg-ch{display:none;margin-top:16px}
-#tg_chapters.on .tg-ch.open{display:block}
-#tg_chapters .tg-bar{position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:10px;
-  padding:12px 0 10px;background:var(--bg0);border-bottom:1px solid var(--rim)}
-#tg_chapters .tg-bar b{font-family:'Space Grotesk';font-weight:800;font-size:13px;color:var(--t1);flex:1}
-#tg_chapters .tg-x{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--rim);
-  background:var(--s2);color:var(--t1);font-size:19px;line-height:1;cursor:pointer}
-#tg_chapters .tg-x:hover{border-color:var(--bAct)}
-/* the rail travels into the sheet, so you can move between chapters while
-   you are deep in one rather than closing and reopening */
-#tg_chapters .tg-rail{position:sticky;top:56px;z-index:3;background:var(--bg0);padding:8px 0}
+   The one-page layout is right; its problem was never structure, it was
+   that everything ran at full width in a single column, so eight chapters
+   became an enormous vertical distance. Two changes, no content hidden:
+
+   1 · THE BLOCKS SIT TWO ABREAST on a wide screen. Each chapter's own
+       sections flow into a two-column grid with align-items:start, so a
+       short block beside a tall one does not stretch to match it. Anything
+       that genuinely needs the full width — the week grid, the month map,
+       the wheels, the chart hosts — is told to span both.
+   2 · THE GAPS SHRINK. 46px between chapters, 22px under each heading and
+       full-size section padding were tuned for a page nobody minded
+       scrolling. They are roughly halved.
+
+   Nothing is collapsed and nothing is behind a click. */
+#pane_timing .tg-ch{margin:26px 0 0;scroll-margin-top:70px}
+#pane_timing .tg-chh{padding-bottom:10px;margin-bottom:14px}
+#pane_timing .tg-body{display:grid;gap:12px;align-items:start;
+  grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:1100px){#pane_timing .tg-body{grid-template-columns:minmax(0,1fr)}}
+/* a block that cannot be read at half width takes the whole row */
+#pane_timing .tg-body > .tg-wide,
+#pane_timing .tg-body > .wkgrid,
+#pane_timing .tg-body > .tk-hero,
+#pane_timing .tg-body > .cyc-hero,
+#pane_timing .tg-body > .mm-wrap,
+#pane_timing .tg-body > .te-strip,
+#pane_timing .tg-body > #ix_host,
+#pane_timing .tg-body > #mm_host{grid-column:1/-1}
+#pane_timing .tg-body > *{min-width:0}
+/* A LONE CHILD TAKES THE WHOLE ROW. Without this the promoted wrapper was
+   placed in ONE of the two columns and then split THAT in half — measured
+   at 281px per track instead of 612 — so the chapter got narrower content
+   and no shorter, which is the worst of both. */
+#pane_timing .tg-body > :only-child{grid-column:1/-1}
+/* ── and everything runs a little tighter ──────────────────────────────
+   Asked for as "cheze choti ho jayein". This is padding and leading, not
+   font sizes below the point of comfort: the body text stays at 11px+, the
+   headings lose weight and air rather than legibility. Scoped to this tab
+   so nothing else on the board shifts. */
+#pane_timing .tg-chh{gap:11px}
+#pane_timing .tg-num{transform:scale(.86);transform-origin:left center}
+#pane_timing .tg-cht b{font-size:19px;line-height:1.15}
+#pane_timing .tg-cht span{font-size:10.5px;line-height:1.5}
+#pane_timing .sec{border-radius:12px}
+#pane_timing .sec > summary{padding:10px 13px}
+#pane_timing .qam > *{margin-bottom:0}
+#pane_timing .qdc,#pane_timing .qam-top,#pane_timing .qgr,
+#pane_timing .qcy,#pane_timing .qam-state,#pane_timing .qam-list{min-width:0}
+/* ══ THE PHONE IS WHERE THE SCROLL ACTUALLY HURTS ═════════════════════
+   Two columns collapse to one below 1100px, so every desktop gain vanishes
+   on a phone — measured 21,826px there against 12,147 on a wide screen.
+   Density is the only lever left that hides nothing, so it is applied
+   properly rather than timidly: padding, gaps and the leading of long
+   prose. Body copy stays at 11px, which is the floor I will not go under;
+   what shrinks is the air around it and the size of headings that were
+   built for a desktop column. */
+@media(max-width:760px){
+  #pane_timing .tg-ch{margin:20px 0 0}
+  #pane_timing .tg-chh{padding-bottom:8px;margin-bottom:11px}
+  #pane_timing .tg-cht b{font-size:16px}
+  #pane_timing .tg-cht span{font-size:10px;line-height:1.45}
+  #pane_timing .tg-body{gap:9px}
+  #pane_timing .sec > summary{padding:9px 11px}
+  #pane_timing .sec > div,#pane_timing .sec > .secb{padding:9px 11px}
+  #pane_timing .card{border-radius:12px}
+  #pane_timing .card > .ch{padding:10px 12px}
+  #pane_timing .card > .cb{padding:10px 12px}
+  #pane_timing .cs{line-height:1.5}
+  /* ══ THE LISTS GO TWO-UP ══
+     Not guessed — profiled. Every container in this tab with four or more
+     children was measured on a 412px screen, and these are the ones that
+     are a LADDER of similar short blocks rather than one piece of content:
+
+        .pc-wrap   2515px, 8 planet cards      -> ~1260
+        .qam       4094px, 10 blocks           -> ~2050
+        .te-rows   1107px, 15 rows             -> ~570
+        .qam-list  1044px, 8 rows              (inside .qam — left alone)
+        .mm-work   1068px, 10 rows             -> ~550
+        .pt         735px, 11 rows             -> ~380
+        .nd         755px, 6 items             -> ~400
+
+     A NESTED ONE IS NOT ALSO SPLIT. .qam-list sits inside .qam; halving
+     both would leave its rows about 95px wide. One level per subtree. */
+  /* AND MOST OF THEM WENT BACK, BECAUSE IT MADE THE PAGE LONGER.
+     I applied two-up to all seven and measured: 21,861px became
+     22,184px. Worse. Halving the width of a text-bearing block on a
+     412px screen makes it wrap to more lines, and the taller of each
+     pair then sets the row height - moon went 4,245 to 4,492, the
+     month map 2,071 to 2,540. Two-up only pays where the children have
+     a fixed height and do not reflow, which of the seven is true for
+     exactly one: the planet cards. That one keeps it and measured
+     3,817 -> 3,485. The rest are reverted. */
+  /* AND THE LAST ONE WENT TOO. The planet cards did shorten the sky
+     chapter (3,817 -> 3,485), but the overflow check with the clip
+     lifted showed the pair needs 380px inside a 332px box at 360px
+     wide, and still 6px too much at 412. A saving that only exists
+     because the content is hanging out of its container is not a
+     saving. Two-up is a desktop win here and nothing else; on a phone
+     this tab is long because it has a lot to say, and the honest
+     answer to the length is the rail below, not a squeeze. */
+  #pane_timing .tg-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #pane_timing .tg-st{min-width:0}
+}
+/* the two that must not be halved */
+#pane_timing .tg-body > .mm,#pane_timing .tg-body > .qam-head,
+#pane_timing .tg-body > .qam-note,#pane_timing .tg-body > .qam-alert{grid-column:1/-1}
+/* the sections themselves carry less air */
+#pane_timing .tg-body .sec{margin:0}
+#pane_timing .tg-body .sec > summary{padding:10px 12px}
+#pane_timing .tg-body .sec > div,#pane_timing .tg-body .sec > .secb{padding:10px 12px}
 body.tg-locked{overflow:hidden}
 /* ══ THE RELEASE CARD ══════════════════════════════════════════════════
    Built to read at the size the reference does — one word you can see from
@@ -9560,7 +9654,7 @@ body.tg-locked{overflow:hidden}
       <path d="M14.4 27L20 12.4L25.6 27M16.9 21.4H23.1" fill="none" style="stroke:var(--markLit)"
             stroke-width="2.6" stroke-linecap="butt" stroke-linejoin="miter"/>
     </svg>
-    <b>CAELUS</b>
+    <b>CAELUS<i id="mtop_build">&mdash;</i></b>
   </div>
   <!-- the bell and the member badge are MOVED here on a phone, not copied —
        two elements cannot share an id, and every handler on them addresses
@@ -9595,7 +9689,14 @@ body.tg-locked{overflow:hidden}
         <path d="M14.4 27L20 12.4L25.6 27M16.9 21.4H23.1" fill="none" style="stroke:var(--markLit)"
               stroke-width="2.6" stroke-linecap="butt" stroke-linejoin="miter"/>
       </svg>
-      <div class="t">CAELUS<span>Powered by Celestial Alpha</span></div>
+      <!-- ══ THE BUILD GOES WHERE THE EYE ALREADY IS ══
+           There was already a build marker, and it was right at the
+           bottom of the sidebar under the member card — below the fold on
+           a laptop, so on the screen that prompted this it was not visible
+           at all and an old copy looked exactly like a new one. A version
+           number you have to scroll to is not a version number. It sits
+           under the wordmark now; the old marker stays where it was. -->
+      <div class="t">CAELUS<span>Powered by Celestial Alpha &middot; <b id="brand_build">build &mdash;</b></span></div>
       <!-- The interface-sound toggle used to sit here, beside the wordmark.
            A mute switch is a setting, not a piece of branding, and next to
            the logo it read as decoration nobody could name. It is a row in
@@ -29141,10 +29242,12 @@ var TG_CHAPTERS=[
 ];
 
 function tgCh(n,id,title,ask,body){
+  /* the body gets its own element so the two-column grid has a container
+     that is not the section itself — the heading has to stay full width */
   return '<section class="tg-ch" id="tgc_'+id+'" data-ch="'+id+'">'
     +'<div class="tg-chh"><div class="tg-num">'+n+'</div>'
     +'<div class="tg-cht"><b>'+escHtml(title)+'</b><span>'+escHtml(ask)+'</span></div></div>'
-    +body+'</section>';
+    +'<div class="tg-body">'+body+'</div></section>';
 }
 function tgRail(){
   return '<nav class="tg-rail">'+TG_CHAPTERS.map(function(c,i){
@@ -29180,6 +29283,50 @@ function tgRail(){
    says so rather than filling the gap.
    ══════════════════════════════════════════════════════════════════════ */
 
+/* ══ MONTHLY AND WEEKLY BIAS ══════════════════════════════════════════
+   Asked for directly, and the engine already had the ingredient: mmMonth
+   gives every day a `dirn` from mmDirection — benefic soft aspects pull up,
+   malefic hard aspects pull down, each weighted by orb and by whether it is
+   applying. One day's direction was already on the month map. Summed over a
+   span it is that span's bias, which is a different and more useful claim
+   than any single day's.
+
+   It is a COUNT AND A WEIGHT, both stated. Nine bull days against seven
+   bear is a thin lead; nine against one is not, and a single word would
+   have printed the same for both. Where the two sides are within a tenth of
+   each other the answer is BALANCED, which is a reading — the month is
+   being fought over — and not a failure to produce one. */
+function tsBiasOf(days){
+  if(!days||!days.length)return null;
+  var up=0,dn=0,bull=0,bear=0,neu=0;
+  days.forEach(function(d){
+    var x=d&&d.dirn; if(!x)return;
+    up+=(+x.up||0); dn+=(+x.dn||0);
+    if(x.dir==='bull')bull++; else if(x.dir==='bear')bear++; else neu++;
+  });
+  var tot=up+dn;
+  var lean = tot>0 ? Math.round(up/tot*100) : 50;
+  var gap=Math.abs(up-dn);
+  var dir = (tot===0||gap<tot*0.1) ? 'flat' : (up>dn?'bull':'bear');
+  return {up:+up.toFixed(2), dn:+dn.toFixed(2), bull:bull, bear:bear, neu:neu,
+          n:days.length, lean:lean, dir:dir,
+          word: dir==='bull'?'LEANS UP' : dir==='bear'?'LEANS DOWN' : 'BALANCED'};
+}
+/* the next n days as month-map day objects, crossing a month boundary when
+   the week does — the week does not care where the month ends */
+function tsDaysAhead(n){
+  var base=timDate(), asset=tsAsset(), out=[], seen={};
+  for(var i=0;i<n;i++){
+    var d=new Date(base.getFullYear(),base.getMonth(),base.getDate()+i);
+    var k=d.getFullYear()+'-'+d.getMonth();
+    if(!seen[k]){
+      try{ seen[k]=mmMonth(d.getFullYear(),d.getMonth(),asset); }catch(e){ seen[k]={days:[]}; }
+    }
+    var hit=(seen[k].days||[]).filter(function(x){return x.dom===d.getDate();})[0];
+    if(hit)out.push(hit);
+  }
+  return out;
+}
 function tsAsset(){ var a='Gold'; try{ a=timAsset(); }catch(e){} return a; }
 
 /* ── THIS MONTH ── from the same mmMonth the month map is built from ── */
@@ -29194,14 +29341,18 @@ function tsMonth(){
   });
   var dom=now.getDate();
   var ph=(M.amd||[]).filter(function(r){return dom>=r.from&&dom<=r.to;})[0]||null;
+  var B=tsBiasOf(M.days);
   return {
     title:now.toLocaleDateString('en',{month:'long'}),
-    word: ph?ph.phase.toUpperCase():(fav>avoid?'FAVOURABLE':avoid>fav?'GUARDED':'MIXED'),
-    tone: ph? (ph.phase==='distribution'?'up':ph.phase==='manipulation'?'dn':'nn')
-            : (fav>avoid?'up':avoid>fav?'dn':'nn'),
-    say: ph?ph.say:'no phase run covers today',
-    foot: fav+' clear day'+(fav===1?'':'s')+' against '+avoid+' to sit out'
-      +(M.anchor?' · the month turns on the '+M.anchor.dom+' ('+M.anchor.what+')':'')
+    word: B?B.word:(ph?ph.phase.toUpperCase():'MIXED'),
+    tone: B? (B.dir==='bull'?'up':B.dir==='bear'?'dn':'nn') : 'nn',
+    pct: B?B.lean:null, measured:false,
+    say: (ph?ph.phase.charAt(0).toUpperCase()+ph.phase.slice(1)+' — '+ph.say
+            :'no phase run covers today'),
+    foot: (B? (B.up===0&&B.dn===0?'no aspect pulling either way this month · '
+                : B.bull+' up days against '+B.bear+', '+B.neu+' neither · '):'')
+      +fav+' clear day'+(fav===1?'':'s')+' against '+avoid+' to sit out'
+      +(M.anchor?' · turns on the '+M.anchor.dom:'')
   };
 }
 
@@ -29224,15 +29375,21 @@ function tsWeek(){
   }
   if(!best)return null;
   var isToday=(best.i===0);
+  var B=null; try{ B=tsBiasOf(tsDaysAhead(7)); }catch(e){ B=null; }
   return {
     title:'next seven days',
-    word: best.strong? (isToday?'TODAY':best.name.toUpperCase()) : 'NO PRIME DAY',
-    tone: best.strong?(isToday?'up':'nn'):'dn',
-    say: best.strong
-      ? (isToday?'Today':best.name)+' carries the most windows this week — '
-        +best.strong+' hour'+(best.strong===1?'':'s')+' on '+tsAsset()+'’s own number'
-        +(isToday?'.':', in '+best.i+' day'+(best.i===1?'':'s')+'.')
-      : 'No day this week has an hour that carries '+tsAsset()+'’s number directly.',
+    word: B?B.word:(best.strong?(isToday?'TODAY':best.name.toUpperCase()):'NO PRIME DAY'),
+    tone: B? (B.dir==='bull'?'up':B.dir==='bear'?'dn':'nn') : 'nn',
+    pct: B?B.lean:null, measured:false,
+    say: (B? (B.up===0&&B.dn===0
+              ? 'Nothing active in the next seven days — this week gives timing, not direction. '
+              : B.bull+' up days against '+B.bear+' over the next seven. ')
+           :'')
+      +(best.strong
+        ? 'Most windows: '+(isToday?'today':best.name)+', '
+          +best.strong+' hour'+(best.strong===1?'':'s')+' on '+tsAsset()+'’s number'
+          +(isToday?'.':' in '+best.i+' day'+(best.i===1?'':'s')+'.')
+        : 'No day carries '+tsAsset()+'’s number directly.'),
     foot: today?('today: '+today.strong+' direct, '+today.lit+' lit in all'):''
   };
 }
@@ -29309,48 +29466,28 @@ function tsHtml(){
    opening one shows it as a sheet. Nothing is moved between parents and
    nothing is rebuilt on open, so every sub-render that writes into a
    chapter keeps working the way it always did. */
+/* the tile index from b178. The chapters are back in the flow and the rail
+   is the navigation again, so nothing calls this — it is left rather than
+   deleted because it is four lines and the next person to want an index
+   should not have to rewrite it. */
 function tsWindows(){
-  return '<div class="tw-head">Go deeper</div>'
-    +'<div class="tw-grid">'+TG_CHAPTERS.map(function(c){
-      return '<button class="tw-tile" onclick="tgOpen(\''+c[1]+'\')">'
-        +'<u>'+c[0]+'</u><b>'+escHtml(c[2])+'</b><s>'+escHtml(c[3])+'</s></button>';
+  return '<div class="tw-grid">'+TG_CHAPTERS.map(function(c){
+      return '<button class="tw-tile" onclick="tgJump(\''+c[1]+'\')">'
+        +'<u>'+c[0]+'</u><b>'+escHtml(c[2])+'</b></button>';
     }).join('')+'</div>';
 }
-function tgOpen(id){
-  var host=document.getElementById('tg_chapters');
-  if(!host)return;
-  host.classList.add('on');
-  host.querySelectorAll('.tg-ch').forEach(function(s){
-    s.classList.toggle('open', s.getAttribute('data-ch')===id);
-  });
-  host.querySelectorAll('.tg-rb').forEach(function(b){
-    b.classList.toggle('on', b.getAttribute('data-ch')===id);
-  });
-  document.body.classList.add('tg-locked');
-  var sc=host.querySelector('.tg-sheet'); if(sc)sc.scrollTop=0;
-  /* the two chapters that need a laid-out box to paint into are repainted
-     on open, because until this moment they had none */
-  if(id==='release'){ try{ pnPaint(); }catch(e){} }
-  if(id==='month'){ try{ renderMonthMap(); }catch(e){} }
-}
-function tgClose(){
-  var host=document.getElementById('tg_chapters');
-  if(host){ host.classList.remove('on');
-            host.querySelectorAll('.tg-ch').forEach(function(s){s.classList.remove('open');}); }
-  document.body.classList.remove('tg-locked');
-}
-/* Escape closes it, the way every sheet on this page already does */
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){
-    var h=document.getElementById('tg_chapters');
-    if(h&&h.classList.contains('on'))tgClose();
-  }
-});
+/* kept so anything still calling it lands somewhere sensible — with the
+   chapters back on the page, opening one means scrolling to it */
+function tgOpen(id){ try{ tgJump(id); }catch(e){} }
+function tgClose(){ try{ document.body.classList.remove('tg-locked'); }catch(e){} }
 
-/* THE RAIL IS A SWITCH NOW, NOT A SCROLL POSITION. It used to move you
-   down one long page; the chapters are windows, so it opens one. Same
-   buttons, same ids, one line of behaviour changed. */
-function tgJump(id){ try{ tgOpen(id); }catch(e){} }
+/* back to a scroll position, because the chapters are back on the page */
+function tgJump(id){
+  try{
+    var el=document.getElementById('tgc_'+id);
+    if(el)el.scrollIntoView({block:'start',behavior:'smooth'});
+  }catch(e){}
+}
 /* the rail highlights the chapter you are standing in. It is a scroll
    position indicator, not a switch — every chapter stays on the page. */
 /* AN OBSERVER WAS THE WRONG TOOL. IntersectionObserver hands you only the
@@ -29370,16 +29507,8 @@ function tgSpy(){
         _tgScroll.q=true;
         requestAnimationFrame(function(){
           _tgScroll.q=false;
-          /* ══ THE SPY IS RETIRED, NOT DELETED ══
-             It existed to light the rail button for whichever chapter you
-             had scrolled to on one long page. There is no long page any
-             more: the chapters are windows and exactly one is open, so the
-             rail state is set by tgOpen and a scroll position cannot
-             improve on it. Measured before this: on a phone, opening "The
-             call" lit "The working", because the spy ran over eight hidden
-             sections whose rects are all zero and took the last one.
-             The listener stays wired so nothing that calls tgSpy breaks. */
-          return;
+          var h=document.getElementById('tim_new');
+          if(!h||!h.offsetParent)return;
           var secs=h.querySelectorAll('.tg-ch');
           if(!secs.length)return;
           var cur=secs[0].getAttribute('data-ch');
@@ -29871,10 +30000,16 @@ function renderTiming(){
       out below this is still built, still by the same functions, but it now
       lives in the sheet under it and opens one window at a time. */
    +tsHtml()
-   +tsWindows()
-   +'<div id="tg_chapters"><div class="tg-sheet">'
-     +'<div class="tg-bar"><b>Timing Engine</b>'
-       +'<button class="tg-x" onclick="tgClose()" aria-label="Close">&times;</button></div>'
+   /* ══ THE WINDOWS ARE GONE AND THE PAGE IS BACK ══
+      b178 put the eight chapters behind tiles you clicked open. The verdict
+      on it was that the old one-page version was better — and it is: a
+      window costs a click and hides what you were not looking for, which on
+      a page whose whole argument is "here is the working" is the wrong
+      trade. Everything is in the flow again, in order, the way it was.
+      What stays from that round is the part that actually helped: the four
+      scale cards above, so the answer arrives before the working does. What
+      changed instead of hiding things is their SIZE — see the compact
+      block in the stylesheet. */
    +tgRail()
 
    /* ── 01 · NOW ─────────────────────────────────────────────────────── */
@@ -29999,8 +30134,7 @@ function renderTiming(){
        +'<span>the complete toolkit and every calendar in one place</span></summary>'
        +'<div class="tk-tools">'
          +'<button class="btn btn-g btn-sm" onclick="goTab(\'reference\',document.querySelector(\'.nav-item[onclick*=&quot;reference&quot;]\'))">Open toolkit &amp; calendars</button>'
-       +'</div></details>')
-   +'</div></div>';
+       +'</div></details>');
 
   ttApply();
   /* the rail follows the scroll; it never hides a chapter */
@@ -30015,6 +30149,21 @@ function renderTiming(){
      later, and the live setups were nowhere in the DOM at all. It goes
      here, after the markup it writes into exists. */
   try{ renderIntra(); }catch(e){}
+  /* ══ A CHAPTER WHOSE BODY IS ONE WRAPPER CANNOT GO TWO-UP ══
+     Measured: of the eight chapters, only three had several blocks directly
+     in the body — the rest handed over a single wrapper holding everything,
+     so the two-column grid had exactly one thing to place and the chapter
+     stayed a full-width column 2,200px tall. Where that wrapper holds four
+     or more blocks of its own, IT becomes the grid instead. The month map
+     is left alone on purpose: it is one calendar, not a stack of blocks,
+     and half width would make it unreadable. */
+  try{
+    host.querySelectorAll('.tg-body').forEach(function(bd){
+      if(bd.children.length!==1)return;
+      var only=bd.firstElementChild;
+      if(only&&only.children.length>=4)only.classList.add('tg-body');
+    });
+  }catch(e){}
   /* the chosen instrument must not be the one off the right edge */
   try{ var on=host.querySelector('.tg-band .ab-pick.on');
        if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
@@ -32023,7 +32172,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b179';
+var CA_BUILD='b180';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -32036,6 +32185,10 @@ var CA_BUILD='b179';
     try{
       var el=document.getElementById('sc_build');
       if(el)el.textContent='build '+CA_BUILD;
+      var bb=document.getElementById('brand_build');
+      if(bb)bb.textContent='build '+CA_BUILD;
+      var mb=document.getElementById('mtop_build');
+      if(mb)mb.textContent=CA_BUILD;
       if(document.title.indexOf(CA_BUILD)<0)
         document.title='Celestial Alpha · '+CA_BUILD;
     }catch(e){}
@@ -32075,8 +32228,8 @@ function caStaleCheck(){
     el.innerHTML='<b>This is an older file.</b>'
       +'<span>You are looking at build <u>'+escHtml(CA_BUILD)+'</u>, but build '
       +'<u>b'+seen+'</u> has already been opened in this browser. '
-      +'Open the newest download — it is always named celestial_alpha.html, '
-      +'and a new one replaces the old.</span>'
+      +'Open the newest download — the build is in its filename, so the '
+      +'highest number is the current one.</span>'
       +'<button aria-label="Dismiss">&times;</button>';
     el.querySelector('button').onclick=function(){ el.remove(); };
     document.body.appendChild(el);
@@ -32085,7 +32238,7 @@ function caStaleCheck(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',caStaleCheck);
 else caStaleCheck();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='If you ever open an older copy of this file again, it will say so. A build below the highest one this browser has already run is, with certainty, an older copy — that needs no server to work out, which matters because this page is usually opened from disk with nothing to ask. A red bar names both builds and tells you what to open, and it does not fade, because a message that disappears is no use to someone who looks up ten seconds later. The download is called celestial_alpha.html every single time, so a new one replaces the old one in your Downloads folder instead of sitting beside it — that was the rule and the last four builds were handed over with per-build names instead, which is exactly how an old file ended up on screen. Previously: The Time Engine opens with four sentences instead of the whole engine. This month, this week, today, right now — the four sizes of the same question, in the order you actually ask them: what the month is doing astrologically, which day this week carries the most windows, whose planet rules today and which way it leans, and whether this hour is bullish, bearish or neither. Everything else is behind a window you click. All eight chapters are still there, still built by the same functions, byte for byte — they open one at a time in a sheet instead of lying end to end on one page with every one of them already expanded. Nothing was deleted to make this simpler; it was moved one click in. The masthead was the single biggest offender and is a header again: on a phone it filled the entire first screen on its own with a pill, a headline, three paragraphs, a quoted track record, a verdict, a date and twelve wrapped instrument chips. The prose and the four readouts moved into the first window, the chips are one scrolling row, and the whole landing went from roughly three phone screens to one and a half. Also fixed on the way: the timing pane was laying itself out 1096px wide inside a 412px phone — the right half of the headline and the date ran off the edge — because it is a flex item that had never been told it may shrink. It did not show up as page overflow because the clip added in b175 absorbs exactly that, so the check for it now lifts the clip first: a measurement taken through a clip reads zero however broken the layout is. Previously: The Timing Engine has a new chapter: The release. The next high-impact release, a direction, a confidence, a bull/chop/bear split and a countdown to the moment the read locks at T−5. Every figure in it is measured rather than asserted, and three things it deliberately will not do are the reason to trust the rest. It will not talk about the first three minutes: this page holds daily candles and nothing finer, so it says which side of the range the resting stops are on — which daily bars do support — and states the limit in the card. It will not invent event dates: the split comes from finding every past occurrence of the release and reading what your instrument’s candle actually did, which needs exact past dates, and only payrolls (first Friday of the month) and the published FOMC decisions have them. CPI and PPI have no fixed day of month, so when one of those is next the card says outright that it is not measuring that release and shows payroll days instead, labelled in the first line you read. And it will not print a percentage off a small sample: under twelve past releases no split is shown at all. The confidence is the winning share discounted for how many events it rests on, so sixty per cent off twelve and sixty off forty are not printed as the same claim. The yardstick is fixed before the event it grades — a release day’s own range never sets the threshold that classifies it. The study runs on its own deeper daily series and never touches the board’s history, so nothing else on the page moves. Previously: The assistant works. Four things were stopping it and they were all real. On a phone the what’s-new note you are reading was rendered unclamped — a card 1172px tall covering 85% of the screen, with a click handler on it — so for the first seconds after every new build EVERY tap in that area hit the toast instead of the page, the assistant button included. It is four lines now, and no toast can ever be taller than a third of the screen. The assistant had no memory: each question was sent alone with nothing before it, so a follow-up like “and what about silver” arrived with no idea what silver was being compared to. It sends the thread now. Its offline brain was matching triggers inside other words — “and who did they beat” was answered with the greeting menu, because “hey” sits inside “they” — so questions that should have gone to Claude never got there. And it needed you to paste an Anthropic key before it would answer anything outside this board, which almost nobody does; it can now go through your bridge, which holds the key server-side exactly as the price and news keys already are. Set CELESTIAL_ANTHROPIC_KEY on the bridge and it answers for everyone with nothing to configure. Also: the bridge default was http://127.0.0.1:8770 even on a live https site, where a browser blocks that call as mixed content before it is sent — on a domain it now assumes the same host. Previously: The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='The Time Engine is one page again — the windows are gone, every chapter is back in the flow in order, nothing behind a click. What stays from that round is the part that helped: four cards at the top for the month, the week, today and this hour, so the answer arrives before the working does. The month and the week now carry a real directional bias, not just a phase: every day in the span is scored the way the month map already scores one — benefic soft aspects pull up, malefic hard aspects pull down, weighted by orb and by whether they are applying — and the card states the count and the lean together, because nine up days against seven is a thin lead and nine against one is not. Where both sides are level it says BALANCED, which is a reading and not a shrug. On a wide screen each chapter’s blocks now sit two abreast instead of in one long column. And the chapter rail was a column this whole time: it is a <nav>, the sidebar’s own rule makes every nav a vertical stack, so the eight chips have been stacking since they were built — 321px tall on a desktop, 273 on a phone, reading as a list rather than a rail. It is one compact scrolling row now, 42px on a phone, and it sticks under the header so any chapter is one tap away from anywhere on the page. That is the honest answer to the length: the page is long because it has a lot to say, and two-up was measured on a phone and made it LONGER, not shorter — halving the width of a text block just makes it wrap. So the distance did not shrink much; what changed is that you no longer have to travel it. Previously: The build number is now under the CAELUS wordmark — top of the sidebar, top of the phone header — so you can see which copy you have without scrolling or opening anything. There was already a marker and it sat at the BOTTOM of the sidebar, under the member card, below the fold on a laptop: a version number you have to scroll to is not a version number. And a correction to what the last build told you. It said the download would always be called celestial_alpha.html so a new one replaced the old. Chrome does not replace it — it appends a counter, and the screenshot that showed this was opened from celestial_alpha (44).html, forty-four copies deep. The build is in the filename again, so sorting your Downloads by name puts the newest last. Previously: If you ever open an older copy of this file again, it will say so. A build below the highest one this browser has already run is, with certainty, an older copy — that needs no server to work out, which matters because this page is usually opened from disk with nothing to ask. A red bar names both builds and tells you what to open, and it does not fade, because a message that disappears is no use to someone who looks up ten seconds later. The download is called celestial_alpha.html every single time, so a new one replaces the old one in your Downloads folder instead of sitting beside it — that was the rule and the last four builds were handed over with per-build names instead, which is exactly how an old file ended up on screen. Previously: The Time Engine opens with four sentences instead of the whole engine. This month, this week, today, right now — the four sizes of the same question, in the order you actually ask them: what the month is doing astrologically, which day this week carries the most windows, whose planet rules today and which way it leans, and whether this hour is bullish, bearish or neither. Everything else is behind a window you click. All eight chapters are still there, still built by the same functions, byte for byte — they open one at a time in a sheet instead of lying end to end on one page with every one of them already expanded. Nothing was deleted to make this simpler; it was moved one click in. The masthead was the single biggest offender and is a header again: on a phone it filled the entire first screen on its own with a pill, a headline, three paragraphs, a quoted track record, a verdict, a date and twelve wrapped instrument chips. The prose and the four readouts moved into the first window, the chips are one scrolling row, and the whole landing went from roughly three phone screens to one and a half. Also fixed on the way: the timing pane was laying itself out 1096px wide inside a 412px phone — the right half of the headline and the date ran off the edge — because it is a flex item that had never been told it may shrink. It did not show up as page overflow because the clip added in b175 absorbs exactly that, so the check for it now lifts the clip first: a measurement taken through a clip reads zero however broken the layout is. Previously: The Timing Engine has a new chapter: The release. The next high-impact release, a direction, a confidence, a bull/chop/bear split and a countdown to the moment the read locks at T−5. Every figure in it is measured rather than asserted, and three things it deliberately will not do are the reason to trust the rest. It will not talk about the first three minutes: this page holds daily candles and nothing finer, so it says which side of the range the resting stops are on — which daily bars do support — and states the limit in the card. It will not invent event dates: the split comes from finding every past occurrence of the release and reading what your instrument’s candle actually did, which needs exact past dates, and only payrolls (first Friday of the month) and the published FOMC decisions have them. CPI and PPI have no fixed day of month, so when one of those is next the card says outright that it is not measuring that release and shows payroll days instead, labelled in the first line you read. And it will not print a percentage off a small sample: under twelve past releases no split is shown at all. The confidence is the winning share discounted for how many events it rests on, so sixty per cent off twelve and sixty off forty are not printed as the same claim. The yardstick is fixed before the event it grades — a release day’s own range never sets the threshold that classifies it. The study runs on its own deeper daily series and never touches the board’s history, so nothing else on the page moves. Previously: The assistant works. Four things were stopping it and they were all real. On a phone the what’s-new note you are reading was rendered unclamped — a card 1172px tall covering 85% of the screen, with a click handler on it — so for the first seconds after every new build EVERY tap in that area hit the toast instead of the page, the assistant button included. It is four lines now, and no toast can ever be taller than a third of the screen. The assistant had no memory: each question was sent alone with nothing before it, so a follow-up like “and what about silver” arrived with no idea what silver was being compared to. It sends the thread now. Its offline brain was matching triggers inside other words — “and who did they beat” was answered with the greeting menu, because “hey” sits inside “they” — so questions that should have gone to Claude never got there. And it needed you to paste an Anthropic key before it would answer anything outside this board, which almost nobody does; it can now go through your bridge, which holds the key server-side exactly as the price and news keys already are. Set CELESTIAL_ANTHROPIC_KEY on the bridge and it answers for everyone with nothing to configure. Also: the bridge default was http://127.0.0.1:8770 even on a live https site, where a browser blocks that call as mixed content before it is sent — on a domain it now assumes the same host. Previously: The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
