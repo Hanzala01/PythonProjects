@@ -680,6 +680,99 @@ async def px_claude(request: Request):
         return _public({"error": {"message": f"anthropic unreachable: {e}"}}, status=502)
 
 
+@app.post("/px/local")
+async def px_local(request: Request):
+    """The same conversation, answered by a model on this machine.
+
+    WHY THIS EXISTS, GIVEN /px/claude ALREADY DOES. Every route the
+    assistant had needed somebody's Anthropic key — pasted into the browser,
+    or held here. Asked for it to be independent, and a key is the exact
+    opposite of that: it costs money per question, it travels over the
+    internet, and the day it is revoked the assistant is mute again.
+
+    A model running on this same computer needs none of that. The page
+    already calls Ollama directly and prefers it over everything else; this
+    route is for the case where the browser will not let it. Ollama answers
+    only the origins on its allowlist, and a page opened as a FILE has the
+    origin "null", which is not on it — so the direct call is refused unless
+    OLLAMA_ORIGINS is widened. This server has no such restriction talking to
+    localhost, and the page is already allowed to talk to this server, so
+    proxying through here removes the problem instead of asking the reader to
+    set an environment variable they have never heard of.
+
+    CELESTIAL_LOCAL_URL overrides the target (default Ollama on 11434);
+    CELESTIAL_LOCAL_MODEL overrides the model. Kept CORS-simple and routed
+    through _public for the same reasons /px/claude is — the note there
+    applies here word for word. No key is read, and nothing leaves this
+    machine.
+    """
+    import json as _json
+    import urllib.error
+    import urllib.request
+
+    try:
+        payload = _json.loads((await request.body()).decode("utf-8", "replace"))
+        if not isinstance(payload, dict):
+            raise ValueError("not an object")
+    except Exception:                                   # noqa: BLE001
+        return _public({"error": {"message": "body must be a JSON object"}}, status=400)
+
+    base = (os.environ.get("CELESTIAL_LOCAL_URL") or "http://127.0.0.1:11434").rstrip("/")
+    model = payload.get("model") or os.environ.get("CELESTIAL_LOCAL_MODEL") or "llama3.2"
+
+    # Anthropic puts the system prompt in its own field; Ollama takes it as an
+    # ordinary first message. Content can arrive as a string or as Anthropic's
+    # array of blocks, so both are flattened to text here rather than in two
+    # places on the page.
+    msgs = []
+    if payload.get("system"):
+        msgs.append({"role": "system", "content": str(payload["system"])})
+    for m in payload.get("messages") or []:
+        c = m.get("content")
+        if not isinstance(c, str):
+            c = " ".join(str(b.get("text") or "") for b in (c or []))
+        msgs.append({"role": m.get("role") or "user", "content": c})
+    if len(msgs) <= (1 if payload.get("system") else 0):
+        return _public({"error": {"message": "no messages"}}, status=400)
+
+    req = urllib.request.Request(
+        base + "/api/chat",
+        data=_json.dumps({
+            "model": model,
+            "messages": msgs,
+            "stream": False,
+            "options": {"num_predict": int(payload.get("max_tokens") or 420),
+                        "temperature": 0.4},
+        }).encode("utf-8"),
+        headers={"content-type": "application/json"},
+        method="POST",
+    )
+    try:
+        # a small model on a laptop CPU is slow, not broken — 60s is the
+        # /px/claude timeout and it is too short for this
+        with urllib.request.urlopen(req, timeout=180) as f:
+            d = _json.loads(f.read().decode("utf-8", "replace"))
+    except urllib.error.HTTPError as e:                 # noqa: PERF203
+        try:
+            detail = _json.loads(e.read().decode("utf-8", "replace"))
+        except Exception:                               # noqa: BLE001
+            detail = {"error": {"message": f"HTTP {e.code}"}}
+        return _public(detail, status=e.code)
+    except Exception as e:                              # noqa: BLE001
+        return _public(
+            {"error": {"message": f"no local model at {base} ({e}) — "
+                                  "install Ollama and run: ollama pull llama3.2"}},
+            status=502,
+        )
+
+    txt = str(((d or {}).get("message") or {}).get("content") or (d or {}).get("response") or "")
+    # the reply is handed back in Anthropic's shape so the page has one reply
+    # handler and not two — the difference between the routes stops here
+    return _public({"content": [{"type": "text", "text": txt}],
+                    "stop_reason": "end_turn",
+                    "model": model})
+
+
 @app.options("/px/{rest:path}")
 def px_preflight(rest: str):
     return _public({"ok": True})
