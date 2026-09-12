@@ -1,0 +1,2 @@
+psxdata>=1.1.0
+pandas>=2.0
