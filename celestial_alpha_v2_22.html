@@ -8647,6 +8647,95 @@ body.tg-locked{overflow:hidden}
 .pn-s.bull{background:#0A7A55;color:#fff}
 .pn-s.chop{background:var(--s4);color:var(--t2)}
 .pn-s.bear{background:#DC2626;color:#fff}
+/* ══ THE BOOKS · reports you load yourself ══════════════════════════
+   Every colour here is a token, and the three pillar states carry a WORD as
+   well as a hue — "growing well", "thin", "shrinking" — because a reader who
+   cannot separate red from green must still get the finding. */
+.bk-drop{border:1px dashed var(--rim3);border-radius:13px;padding:15px 16px;margin-bottom:12px;
+  background:rgba(var(--rgbAcc),.045)}
+.bk-dh b{display:block;font-family:'Space Grotesk';font-weight:800;font-size:13px;color:var(--t1)}
+.bk-dh s{display:block;text-decoration:none;margin:5px 0 11px;font-size:10.5px;line-height:1.6;
+  color:var(--t3);max-width:78ch}
+#bk_file{font-size:11px;color:var(--t2);max-width:100%}
+.bk-warn{border:1px solid rgba(245,158,11,.45);background:rgba(245,158,11,.08);
+  border-radius:11px;padding:12px 14px;font-size:11px;line-height:1.65;color:var(--t1);
+  margin-bottom:12px;max-width:80ch}
+.bk-form{border:1px solid var(--rim2);border-radius:13px;padding:14px 15px;margin-bottom:14px;
+  background:var(--s1)}
+.bk-fh b{font-family:'Space Grotesk';font-weight:800;font-size:12.5px;color:var(--t1)}
+.bk-fh s{display:block;text-decoration:none;margin-top:4px;font-size:10px;line-height:1.6;
+  color:var(--t3);max-width:82ch}
+.bk-ids{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.bk-ids label{display:flex;flex-direction:column;gap:3px;font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3)}
+.bk-ids input,.bk-ids select{padding:6px 9px;font-size:11.5px;border-radius:8px;
+  border:1px solid var(--b1);background:var(--s2);color:var(--t1);min-width:110px}
+.bk-rows{display:flex;flex-direction:column;gap:5px}
+.bk-r{display:grid;grid-template-columns:minmax(110px,1.1fr) 110px 110px minmax(120px,1.6fr);
+  gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--rim)}
+.bk-r.miss{opacity:.82}
+.bk-k{font-size:11px;color:var(--t2);font-weight:700}
+.bk-v{padding:5px 8px;font-size:11px;border-radius:7px;border:1px solid var(--b1);
+  background:var(--s2);color:var(--t1);width:100%}
+.bk-v.prev{opacity:.85}
+.bk-src{font-size:9px;line-height:1.45;color:var(--t3);overflow:hidden}
+.bk-src em{font-style:normal}
+.bk-act{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}
+.bk-tabs,.bk-mk{display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap}
+.bk-tabs span,.bk-mk span{padding:5px 12px;border-radius:99px;border:1px solid var(--b1);
+  font-size:10.5px;font-weight:700;color:var(--t3);cursor:pointer}
+.bk-tabs span.on,.bk-mk span.on{color:var(--t1);border-color:var(--rim3);
+  background:rgba(var(--rgbAcc),.10)}
+.bk-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.bk-chip{padding:5px 11px;border-radius:9px;border:1px solid var(--b1);cursor:pointer;
+  font-size:11px;font-weight:800;color:var(--t2);line-height:1.2}
+.bk-chip i{display:block;font-style:normal;font-size:8.5px;font-weight:600;color:var(--t3);margin-top:2px}
+.bk-chip.on{color:var(--t1);border-color:var(--rim3);background:rgba(var(--rgbAcc),.10)}
+.bk-coh{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.bk-coh b{font-family:'Space Grotesk';font-weight:800;font-size:16px;color:var(--t1)}
+.bk-coh span{display:block;font-size:10px;color:var(--t3);margin-top:3px}
+.bk-sum{margin:11px 0 13px;font-size:11px;line-height:1.65;color:var(--t2);max-width:84ch}
+.bk-sum b{color:var(--t1)}
+.bk-pil{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:9px}
+.bk-p{border:1px solid var(--b1);border-radius:11px;padding:11px 12px;background:var(--s1)}
+.bk-p.good{border-color:rgba(34,197,94,.38);background:rgba(34,197,94,.055)}
+.bk-p.bad{border-color:rgba(239,68,68,.38);background:rgba(239,68,68,.055)}
+.bk-p.mid{border-color:rgba(245,158,11,.34);background:rgba(245,158,11,.05)}
+.bk-pn{font-size:10px;letter-spacing:.03em;color:var(--t3);line-height:1.4}
+.bk-pv{font-family:'Space Grotesk';font-weight:800;font-size:22px;color:var(--t1);margin:5px 0 2px}
+.bk-pw{font-size:11px;font-weight:700;color:var(--t2)}
+.bk-ph{margin-top:6px;font-size:9px;color:var(--t3);line-height:1.5}
+.bk-pc{margin-top:6px;font-size:9.5px;line-height:1.5;color:var(--t2)}
+.bk-pc.better{color:var(--green)} .bk-pc.worse{color:var(--red)}
+.bk-py{margin-top:3px;font-size:9.5px;color:var(--t3)}
+.bk-raw{margin-top:13px;border:1px solid var(--rim);border-radius:11px;padding:9px 12px}
+.bk-raw summary{cursor:pointer;font-size:10.5px;font-weight:700;color:var(--t2)}
+.bk-rr{display:grid;grid-template-columns:minmax(110px,1fr) 90px minmax(130px,2fr);gap:8px;
+  padding:4px 0;border-bottom:1px solid var(--rim);font-size:10px;color:var(--t3);align-items:center}
+.bk-rr i{font-style:normal;color:var(--t2)}
+.bk-rr b{font-family:'Space Grotesk';color:var(--t1);font-size:11.5px}
+.bk-note{margin:9px 0 2px;font-size:9.5px;line-height:1.6;color:var(--t3);max-width:84ch}
+.bk-hist{margin-top:14px;overflow-x:auto}
+.bk-hh{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:7px}
+.bk-t{border-collapse:collapse;font-size:10.5px;min-width:340px}
+.bk-t th,.bk-t td{padding:5px 11px;border-bottom:1px solid var(--rim);text-align:right;color:var(--t2)}
+.bk-t th:first-child,.bk-t td:first-child{text-align:left;color:var(--t3)}
+.bk-t th{color:var(--t1);font-weight:800}
+.bk-secs{display:flex;flex-direction:column;gap:11px}
+.bk-sec{border:1px solid var(--b1);border-radius:12px;padding:12px 13px;background:var(--s1)}
+.bk-sech b{font-family:'Space Grotesk';font-weight:800;font-size:13px;color:var(--t1)}
+.bk-sech span{display:block;font-size:9.5px;color:var(--t3);margin-top:2px}
+.bk-secr{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0 8px}
+.bk-secp i{display:block;font-style:normal;font-size:9px;color:var(--t3);line-height:1.4}
+.bk-secp b{font-family:'Space Grotesk';font-weight:800;font-size:15px;color:var(--t1)}
+.bk-secn{display:block;text-decoration:none;font-size:9.5px;line-height:1.6;color:var(--t3);max-width:84ch}
+@media(max-width:640px){
+  .bk-r{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
+  .bk-k{grid-column:1/-1}
+  .bk-src{grid-column:1/-1}
+  .bk-rr{grid-template-columns:1fr auto}
+  .bk-rr span{grid-column:1/-1}
+}
 .pn-meas{padding:10px 18px;font-size:10px;line-height:1.6;color:var(--t3);
   border-bottom:1px solid var(--rim);background:var(--s1)}
 /* the live driver: its own band, so it never reads as a footnote to the
@@ -10478,6 +10567,25 @@ body.tg-locked{overflow:hidden}
             <div class="fx-tabs">
               <span id="fx_t_stock" class="on" onclick="fxTab('stock')">Company</span>
               <span id="fx_t_index" onclick="fxTab('index')">Index</span>
+              <span id="fx_t_books" onclick="fxTab('books')">My reports</span>
+            </div>
+            <!-- ══ REPORTS YOU LOAD YOURSELF ══
+                 The two tabs beside this one need a data feed and cover US
+                 listings only. PSX has no free feed at all — none, at any
+                 price this page could reach — so the only honest way to
+                 cover it is the reader's own downloaded statements. Drop the
+                 file, check what was read, save. -->
+            <div id="fx_books" class="hidden">
+              <div class="bk-drop">
+                <div class="bk-dh"><b>Add a report</b>
+                  <s>PSX or US. The annual or quarterly statement you downloaded —
+                  PDF, Excel or CSV. It is read here on this machine; nothing is uploaded
+                  anywhere, and the file itself is not kept.</s></div>
+                <input type="file" id="bk_file" accept=".pdf,.xlsx,.xlsm,.csv,.txt,image/*"
+                       onchange="bkOnFile(this)">
+              </div>
+              <div id="bk_stage"></div>
+              <div id="bk_body"></div>
             </div>
             <div id="fx_index" class="hidden">
               <div class="fx-mk">
@@ -32743,7 +32851,7 @@ function onDay(){
    counters that read from it were back to zero. That is why the trade count
    stayed at nought no matter how many signals were taken. It is stored now, and
    every path that changes it saves. */
-var CA_BUILD='b202';
+var CA_BUILD='b203';
 /* THE SIDEBAR SAID b80 WHILE THIS SAID b121, AND IT SAID IT IN PLAIN HTML.
    The build label was typed into the markup once and never touched again,
    so every build since has introduced itself as b80. That is why a new file
@@ -32809,7 +32917,7 @@ function caStaleCheck(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',caStaleCheck);
 else caStaleCheck();
 /* one line, rewritten with the build, so the toast says something real */
-var CA_WHATS_NEW='The health panel said “No key” about a route that needs no key. It probed the v2 endpoint and stopped at a gate that asks whether a key is set, so with none it reported BLS as disabled — while the data chain beside it was pulling current August prints from v1, which needs nothing. A panel that contradicts what the app is actually doing is worse than no panel: it sends you hunting for a key you do not need, which is exactly what happened. It now probes whichever endpoint the chain would really use — v2 with a key, v1 without one — and there is no gate, because there is nothing to gate on. Two messages were wrong in the same way. A refused request read “Responded, but not with usable data”, which is equally true of a spent quota, a wrong series id and a changed schema, and points at none of them; where the source can say which, it now does. And a metered refusal read “Request limit reached on this key” even with no key set — BLS’s free tier is metered per NETWORK, not per key, so that sentence sent the reader to a setting that was not the problem. Without a key it now says what is actually true: twenty-five a day shared across this network, and a free key from bls.gov lifts it to five hundred. Previously: The numbers are current again, and Core CPI is on the board. CPI, payrolls and PPI were reading “Jan 2025” in September 2026 with a label saying “older than usual”, which was honest and useless — twenty months late is not old data, it is the wrong number. The cause was not this page: DBnomics’ BLS mirror genuinely stops at 2025-01 on all three series, measured directly against the API the same minute the screen showed it. Nothing downstream of that mirror could ever have been current. The next stop in the chain was BLS proper, which is the v2 endpoint — a POST that refuses every request without a registration key — so with no key the only source that answered was the frozen one. BLS also publishes v1: a plain GET, no key, and it sends Access-Control-Allow-Origin so a page opened as a FILE can read it. The same minute the mirror returned 2025-01, v1 returned 2026-08. It is one line in the chain, above the mirror, and CPI now reads 334.131 for August 2026 instead of 319.086 for January 2025. Core CPI — ex food and energy, the print the market actually trades — was on no panel and in no chain at all. It sits beside headline CPI now, 337.765 for August, because the gap between the two is half the story on release day. The free endpoint allows twenty-five requests a day per NETWORK, not per user, so five series would spend it in five reloads and drop back to the frozen mirror. These are monthly numbers that cannot change between two reloads, so the results are now cached to disk for six hours and a reload costs nothing. A failed lookup is deliberately not cached — a quota resets at midnight and should be retried. And when the allowance does run out, the tile stops saying “older than usual” and says what fixes it instead: today’s free allowance is spent, and a free key from bls.gov lifts it to five hundred a day. Previously: Things stopped flickering. Sitting on Market Intelligence and touching nothing, the whole pane was being thrown away and rebuilt ten times in ten seconds — and nine of those rebuilds produced byte-identical markup. The release card and the macro table were rebuilt twenty times in the same ten seconds, nineteen of them identical. It happened on the dashboard and the Time Engine too: the pane was repainting on a timer while nobody was looking at it. Replacing markup is never free even when the result matches — the whole subtree is destroyed and recreated, which drops your scroll position, closes anything you had opened, kills a text selection mid-drag and restarts every animation. That is the shimmer, and all of it was wasted work. Two things fix it. Nothing is written unless the new markup actually differs from what is already there, so callers may fire on whatever timer they like and only real changes reach the screen. And the once-a-second full rebuild is gone at the root: after a release hour passes, every tick saw a deadline in the past and treated it as an event that had just happened, forever. It rebuilds once per deadline now, with a floor under it. Measured after: zero pane rebuilds, zero card rebuilds, zero hidden repaints on the other tabs — only the header clock still ticks, which is its job. Scroll position now survives a repaint, which it never did. Two more found while measuring. The pre-news card wrote “Measuring…” over itself on every paint, so a finished card flashed back to a spinner twice a second; the placeholder now appears only on an empty card. And “The dollar and the curve” has been an empty box on every visit — the function that fills it only ran from three places that all finish before this pane is built, so the fill was overwritten by the build every time. It runs with the other slot painters now, after the markup it writes into exists. Previously: The release card now says what is pushing price RIGHT NOW, and proves the relationship instead of asserting it. Every board that shows this prints “gold moves inverse to the dollar” as though it were a law — most days it is roughly true, and on the days it is not you are holding a card that is confidently wrong with no way to tell. So the relationship is measured and the measurement is printed beside the claim: the dollar’s own last move, the correlation of daily returns between it and your instrument, and the number of shared days that rests on. A rise in a negatively correlated driver reads as a push down; the sign comes from the data, not from a saying. Three refusals are the reason to trust the rest. Under sixty overlapping days it shows nothing — a correlation off three weeks is a number with no claim under it. Under |r| of 0.2 it reports the driver as noise and takes no direction from it, which is a useful thing to be told and the opposite of what an asserted inverse would have said. And the two series are matched BY DATE, not zipped by position, because your instrument trades days the fund does not and pairing Tuesday with Thursday would produce a confident number off nothing. The dollar here is UUP, the fund — the ICE index is licensed and returns no rows — and it is labelled as the proxy it is inside the sentence that reads a direction off it. The historical split above it stops calling itself the heaviest signal, because it never was one: it is a base rate off past release days, and it says so. And a crash was found while testing this, which would have taken the whole tab down today. When the release hour passed with Market Intelligence open, the countdown called the render, the render called the countdown, and the clock was still past its deadline — so it called again, and again, until the stack overflowed and nothing on the tab painted until a reload. It fired every single time a release went by. The rebuild now happens once per deadline, on a later turn of the loop, with a thirty-second floor underneath it. Previously: The local model refused arithmetic, and the prompt was why — twice over. The second reason was the order. The prompt ENDED with the board state, so the last thing the model read before answering was a block of board figures, and a small model weights the end of what it just read more heavily than anything above it. Saying “this rule is only about the board” at the top and then closing with nothing but board data argues against itself. The rule that has to survive that block is now repeated after it, last, where being last helps instead of hurting. The first reason: Asked what seven plus seven is, it answered that there is no such data on the board — in the voice of a board that had been asked nothing about itself. The instruction it was following said “you may use the board state; if something is not there, say it is not on the board”, which was written for Claude, and Claude inferred the line that was never actually drawn: that the rule covers board FACTS — prices, levels, numbers — and not every sentence a person might type. A three-billion-parameter model on a laptop does not infer it. It applied the rule to everything and refused general knowledge, language and sums alike. So the line is drawn in writing now. The prompt states two separate jobs: board questions come from the board state and nothing else, with no invented figures and nothing promised; everything else — arithmetic, definitions, ordinary conversation — is answered normally from what the model knows, and “that is not on the board” is explicitly wrong as a reply to a question that was never about the board. Both routes share the prompt, so Claude gets the clearer version too. This is a real cost of running on your own machine and it is worth naming: a small local model needs to be told what a large one works out for itself. The fix is one paragraph, paid once. Previously: The assistant does not need anybody. Every route it had ran on an Anthropic key — pasted into this browser, or held on the bridge — which means it cost money per question, sent the question over the internet, and went mute the day the key was revoked. That is the opposite of independent. A model running on your own computer needs none of it. Ollama on 11434 and OpenJarvis on 8000 are both found automatically when the panel opens, and if one is answering it is used ahead of everything else: free, offline, nothing leaving the machine, nothing to paste, nothing to renew. The key stays as the second choice and the bridge as the third, which is the order they should always have been in. Setting it up is two lines, once — install Ollama, “ollama pull llama3.2”, “OLLAMA_ORIGINS=* ollama serve” — and the panel prints them rather than implying the page can conjure a model out of nothing. The reason for that second line is the part most things get wrong silently. A page opened as a FILE has the origin “null”, which is not on Ollama’s default allowlist, so the call is refused before it is sent and nothing on screen says why. So the search runs twice: once normally, and if that fails, once in a mode that cannot read the answer but can tell a refused answer apart from nothing listening at all. Those are different problems with nothing in common as fixes, so they get different messages — “start Ollama”, or “Ollama is running and refusing this page”. And in that second case there is now a way through that needs no environment variable at all: the bridge has a /px/local route that reaches the model for you, and the panel tries it on its own. If the model answers the search and then stops before the question, the question is not dropped — it falls through to the key, then the bridge, and the panel stops advertising a model that is no longer there. Previously: Two rows on Market Intelligence were saying what the hero above them had already said. Every open release window carried its own countdown and its own beat‑and‑miss branches — so with CPI and PPI both open, the same clock and the same two branches appeared three times on one screen, and the tall pair pushed the thing you came for below the fold. The countdown belongs at the top, where the next release already is, so that is where it is now: one clock in the hero, with the condition written on it rather than under it — a real ticking number when the day is today or you set it yourself, the plain release hour when the day is still a window, and OPEN when the hour has gone. What survives from those rows is the only part that was not a repeat: the date box and Lock this date, now one compact line inside the hero instead of two cards below it. And the assistant’s key box is where you can see it. It answers everything about this board with no key and no network — that has always been true — but anything outside the board needs a route to Claude, and the box for that sat inside a collapsed Settings panel three scrolls down, so the honest answer to “how do I add one” was that you had to already know. When there is no key and no bridge answering, the box is now the panel itself: a field under the first message, with where to get a key, a reminder to set a spend limit, and the plain fact that it is stored in this browser and nowhere else. Paste it and the box disappears; empty it and it comes back. The sentence above it points at the box in front of you instead of at a panel you have to go and find. Previously: Market Intelligence carries its second name the way Trading Journal carries Portfolio — the tab now reads Market Intelligence with NEWS beside it, same small caps, same column. Two tabs, two names each, one pattern. The command palette learns the second name too: typing “news” finds the tab, and so does “trading journal”, which the palette knew only as Portfolio until now — a search that refuses the name printed in the sidebar is worse than not having a second name at all. Previously: On the day itself, the countdown is back. Two builds ago I took the clock off every open window, because eight minutes before the release hour it read 00:08:00 for a release that was probably not that day — right for the days it was wrong on, and one step too far. When the calendar’s own best date for a release IS today, counting to today’s release hour is counting to what the app actually thinks is about to happen, and refusing to show it withholds the one number you came for. So today it runs, with the condition written on the clock itself rather than in a paragraph underneath: “if it prints today”. On any other day inside the window there is still no clock, because on those days a clock really would be claiming something nothing supports. Lock the date and the “if” disappears. The same rule now governs the release card. Previously: The voice never worked on the domain either, and the app could not tell you why because it was asking the wrong question. It checked whether the page was opened as a FILE and nothing else — so a site served over plain http passed every check, reported the wake word as supported, switched it on, and then the browser refused the microphone with nothing anywhere naming the reason. Chrome gives the microphone only to a SECURE page: https, or localhost. Plain http on a domain is refused exactly like a file is. That is the question it asks now, and each case says its own fix — Chrome or Edge for the browser, serve the folder for a file, https for a site. And the simplest reason of all is now stated instead of assumed: the wake word ships OFF, so the panel says whether it is on. If it is off it says so and where the switch is; if it is on it says say “Celestial” and that the panel stays shut. Someone waiting for a name to do something will otherwise wait forever with nothing on screen suggesting there is a switch at all. Previously: Asked for it to work like Siri — say the name and it starts, no panel. That is already built and it does exactly that: the wake word answers out loud through a small pill and never opens the panel. What was missing was any explanation of why it never fired. Chrome refuses the microphone to any page opened as a FILE, which is how this one is usually opened, so the wake word cannot work at all — and the only place that said so was inside the switch you would have to find in Settings to turn it on, which is the last place you look when the problem is that nothing happens. It is the first thing the assistant panel says now, with the one line that fixes it: run python -m http.server 8080 in the folder and open localhost instead. And a leftover was found while looking: the SPOKEN path still demanded a pasted key. The typed path stopped needing one when the bridge route was added, but the voice branch checked for a key and refused out loud before the bridge ever got a chance — so the same question was answered when typed and refused when spoken. It goes through the same route as everything else now. Previously: The Trading Journal shows you when a trade is waiting on you. The approvals card moved into the notification bell a while back, which is the right home for something you decide on — but what was left behind on this tab was a container carrying the hidden attribute, with a comment beside it promising that “when something IS waiting the journal board shows a single line at the top”. It never did. The panel filled that box on every paint and the attribute threw all of it away, so opening the Trading Journal because a trade was waiting showed nothing about it anywhere: no rows, no pointer, no count. There is one line now, and only when the queue is not empty — how many are waiting, which ones, and a button that opens the bell where the Approve and Pass buttons live. It disappears again the moment the queue clears. The rows themselves stay in the bell: two copies of the same queue was the original problem and it was not worth recreating. One detail worth recording because it is the kind of thing that reads as “the button does nothing”: a document-level handler closes the bell on any click outside it, so the new line has to stop its own click from bubbling — without that, the same tap opened the panel and then closed it. Previously: The week and month bias printed the wrong side of their own number. The figure was always the BULL share, whichever way the reading went, so a week with nothing pulling upward came out as “LEANS DOWN 0% lean” — which reads as no lean at all when it means the exact opposite. It is the share of the side the word names now: nothing up and five down reads LEANS DOWN 100%, three up against seven down reads LEANS DOWN 70%, even reads BALANCED 50%. The day card has been doing this correctly since it was built; the two new ones were not. Found by going back over every request in this session one at a time and checking each was really in the file, which is a pass worth doing more often than I do. Previously: A setup that said “counter-trend” was never counter-trend. The direction is taken from the major trend, so a sell is only ever issued inside a downtrend and a buy inside an uptrend — the engine cannot produce a trade that fights a valid trend. So every setup that has ever carried those words was in fact WITH the trend, and the card contradicted itself in six lines: “Major trend: BEARISH”, “SELL”, and “counter-trend”. What the flag really detects is that the SKY disagrees with the trend — the astro read wants one way, the structure says the other, and the trade follows the structure. That is worth flagging and worth sizing down for, but calling it counter-trend said the opposite of the truth and told you to size down on the setups that follow the trend. The wording is corrected in all five places it printed: the setup card, the approval queue, the shared message, the bot’s skip reason and what the assistant says aloud. One use of the phrase is genuine and stays — the confirmation check that compares the trade against the Major Level you typed in, which really can point the other way. And the two percentages in a shared setup are named apart now: the confidence at the top is how good the SETUP is, the combined bias is how the sky and the structure add up on DIRECTION. They answer different questions, so 70% beside NEUTRAL 50% is not the message arguing with itself. Previously: It locks. The card has said “locks in at T−5” since the day it was built and nothing ever locked — the words were a label on a machine that did not exist, which is worse than not claiming it at all. There are three states now and the badge says which one you are looking at. LIVE, more than five minutes out: the read is recomputed on every paint and is allowed to change, and the clock counts to the lock, not to the release. LOCKED at T−5: the direction, the confidence and the bull/chop/bear split are frozen exactly as they stood the moment that line was crossed, written down, and served from that record afterwards — the clock switches to counting the release and the card says so. RELEASED: it keeps serving the locked record for two hours, so you can see what the call actually was rather than what the engine would say about it now that it knows more. That last part is the whole point of a lock: it was tested by poisoning the study at T−1 so a fresh calculation would have returned the opposite direction, and the card held its BEAR 59% without moving. A lock needs a known moment to hang on, so a release whose day is still a window does not lock and says NOT LOCKED — the day is a window. Set the day and it locks like everything else. Previously: The eight-minute countdown on CPI is gone, and so is every other clock that was counting to a day nobody published. A ticking countdown is a claim about WHEN something happens. A window has no when — that is what makes it a window — so eight minutes before the release hour it read 00:08:00 in the largest type on the row, for a release that was very probably not that day at all. The sentence underneath said so; nobody reads a sentence over a clock that size. This is the third shape of the same fault: the “in 5d” chip two builds ago, the open-window clock in the last one, and the release card’s own T−5 counter, which was printing 24:01:28 above a footnote reading “date is a window, not a fixed day”. All three are fixed by one rule, applied everywhere: only count down to a time you actually know. A window now shows the release hour as a plain time — 12:30, published, a fact — and says outright that there is no countdown on purpose, because a clock would be telling you it is today. Set the day yourself and the clock comes back, because then it is real. Previously: You can tell it the date. The calendar cannot derive the exact day of CPI or PPI — that was true and it stays true — but stopping there was the mistake. You usually know the day: it is on every broker’s calendar, it was in the news, you have been watching it all week. The app had no way to be told, so it kept printing a five-day window at someone who already had the answer. That is not caution, it is refusing help. Every release in the open-windows section now carries a date box and a Lock this date button. Set it and the window becomes a real dated countdown — “Fri, Sep 11 at 12:30, date you set” — with the same two branches under it. The clock counts to that instant, not to a guess. It is kept for that month only, so locking September’s CPI says nothing about October’s, and one button puts it back to a window. The label always says where the date came from: “date you set”, never dressed up as something the engine worked out. The release time was never the unknown — the BLS publishes at 08:30 Eastern every time — only the day was, and now there is somewhere to put it. Previously: PPI gets its own countdown and its own two branches. Market Intelligence had one hero and showed one release, so when CPI and PPI are both open through mid-month — which is most of any month — the second one got no headline, no clock and nothing about which way it would push price. It was on the card list in small type and read as absent. There is a section under the hero now with a row for every window that is open today, each carrying its own live countdown and its own beat-and-miss lines: a beat on inflation lifts the dollar and takes gold down, a miss does the reverse, both shown because which one lands is not knowable until it prints. And the countdown is a real one. The unknown was never the time — the BLS publishes at 08:30 Eastern every single time — it is the DAY. So the clock counts to today’s release hour and the line says what that means: if it lands today it lands then, and it may equally be any other day inside the window, and nothing here knows which. Once the hour has gone by it says so instead of quietly rolling into a number that means tomorrow. Previously: PPI was on the calendar and still read as missing, because two things on the same card contradicted each other. The countdown chip said “in 5d” directly above the line saying the window is open and it can print today — the chip was counting from the placeholder in the middle of the window, a date nobody ever published. An open window has no number of days to give, so it says “open now” instead, and the big clock on Market Intelligence says OPEN rather than ticking down to a guess. The honest limit stays what it was: the exact day is not derivable from a rule, and only the live feed knows it — start celestial_bridge.py and the real date arrives and overrides all of this. And the Time Engine stops pushing content off the right edge. Two columns were being handed to a chapter without checking whether its blocks actually fit in one: the Moon chapter’s columns are 443px wide and two of its blocks need 472 and 555, so 93px hung off the page at 1200px, 53 at 1280, 10 at 1366 and nothing at 1440 — which is exactly why checking only at 1500 and 412 never caught it, and 1366 is an ordinary laptop. A chapter now gets a second column only if every block in it fits, measured after layout rather than assumed. Checked at eleven widths from 360 to 1920: the Time Engine is clean at every one. Previously: The pre-news read — the direction, the confidence and the bull/chop/bear split — moved from the Time Engine to Market Intelligence, directly under the next-release countdown. It was in the wrong tab: the Time Engine is about planetary time, hours and days and months, and a macro release is a news event. Market Intelligence already carried the countdown, the forecast against the last print and the calendar, so the measured read now sits with the rest of its own subject. Same card, same engine, same numbers. The Time Engine is seven chapters again. Two layout faults there are fixed as well. Things were hanging off the right edge of the page: the four readouts carry a negative side margin, cut to bleed into the masthead’s padding, and they have not lived in the masthead since the last build — inside a chapter that margin simply pushed them 14px past the edge. And the empty space in the middle: two columns place blocks, they do not pack them, so a chapter holding one tall card and one short one was as tall as the tall card with the rest of the second column blank — 727px of nothing in The working. Columns are now decided after the layout is measured rather than assumed: a chapter gets two only if two actually fill, and if more than a quarter of the result comes out blank it goes back to one. Nothing hangs off the edge and nothing has a hole in it. Previously: PPI shows up. It was invisible for three separate reasons and all three are fixed. Its window ran the 13th to the 18th, which assumes producer prices always follow consumer prices — they often come first, so a release on the 10th fell outside the window and the app had nothing to show. The window runs the 9th to the 18th now. It was also rated Medium, and every surface that answers “what is the next release” filters for High, so PPI was excluded from all of them by definition whatever its date said; it is a top-tier US inflation print and it is rated High. And a windowed release used to disappear the moment its guessed date passed, even though the window was still open — the window’s end decides that now, not the placeholder. Most of all, when today falls inside a release window the calendar says so out loud: “Sep 9–18 — window OPEN, it can print today”, instead of printing a date four days out as though it were settled. Also: CPI was being placed on whatever the 12th happened to be, which this month is a Saturday — a day the BLS has never released on, shown with a confident weekday beside it. Window placeholders are nudged to a weekday. One thing worth knowing: the exact day is never derivable from a rule. With celestial_bridge.py running, the ForexFactory feed supplies the real date and overrides all of this guessing. Previously: The Time Engine is one page again — the windows are gone, every chapter is back in the flow in order, nothing behind a click. What stays from that round is the part that helped: four cards at the top for the month, the week, today and this hour, so the answer arrives before the working does. The month and the week now carry a real directional bias, not just a phase: every day in the span is scored the way the month map already scores one — benefic soft aspects pull up, malefic hard aspects pull down, weighted by orb and by whether they are applying — and the card states the count and the lean together, because nine up days against seven is a thin lead and nine against one is not. Where both sides are level it says BALANCED, which is a reading and not a shrug. On a wide screen each chapter’s blocks now sit two abreast instead of in one long column. And the chapter rail was a column this whole time: it is a <nav>, the sidebar’s own rule makes every nav a vertical stack, so the eight chips have been stacking since they were built — 321px tall on a desktop, 273 on a phone, reading as a list rather than a rail. It is one compact scrolling row now, 42px on a phone, and it sticks under the header so any chapter is one tap away from anywhere on the page. That is the honest answer to the length: the page is long because it has a lot to say, and two-up was measured on a phone and made it LONGER, not shorter — halving the width of a text block just makes it wrap. So the distance did not shrink much; what changed is that you no longer have to travel it. Previously: The build number is now under the CAELUS wordmark — top of the sidebar, top of the phone header — so you can see which copy you have without scrolling or opening anything. There was already a marker and it sat at the BOTTOM of the sidebar, under the member card, below the fold on a laptop: a version number you have to scroll to is not a version number. And a correction to what the last build told you. It said the download would always be called celestial_alpha.html so a new one replaced the old. Chrome does not replace it — it appends a counter, and the screenshot that showed this was opened from celestial_alpha (44).html, forty-four copies deep. The build is in the filename again, so sorting your Downloads by name puts the newest last. Previously: If you ever open an older copy of this file again, it will say so. A build below the highest one this browser has already run is, with certainty, an older copy — that needs no server to work out, which matters because this page is usually opened from disk with nothing to ask. A red bar names both builds and tells you what to open, and it does not fade, because a message that disappears is no use to someone who looks up ten seconds later. The download is called celestial_alpha.html every single time, so a new one replaces the old one in your Downloads folder instead of sitting beside it — that was the rule and the last four builds were handed over with per-build names instead, which is exactly how an old file ended up on screen. Previously: The Time Engine opens with four sentences instead of the whole engine. This month, this week, today, right now — the four sizes of the same question, in the order you actually ask them: what the month is doing astrologically, which day this week carries the most windows, whose planet rules today and which way it leans, and whether this hour is bullish, bearish or neither. Everything else is behind a window you click. All eight chapters are still there, still built by the same functions, byte for byte — they open one at a time in a sheet instead of lying end to end on one page with every one of them already expanded. Nothing was deleted to make this simpler; it was moved one click in. The masthead was the single biggest offender and is a header again: on a phone it filled the entire first screen on its own with a pill, a headline, three paragraphs, a quoted track record, a verdict, a date and twelve wrapped instrument chips. The prose and the four readouts moved into the first window, the chips are one scrolling row, and the whole landing went from roughly three phone screens to one and a half. Also fixed on the way: the timing pane was laying itself out 1096px wide inside a 412px phone — the right half of the headline and the date ran off the edge — because it is a flex item that had never been told it may shrink. It did not show up as page overflow because the clip added in b175 absorbs exactly that, so the check for it now lifts the clip first: a measurement taken through a clip reads zero however broken the layout is. Previously: The Timing Engine has a new chapter: The release. The next high-impact release, a direction, a confidence, a bull/chop/bear split and a countdown to the moment the read locks at T−5. Every figure in it is measured rather than asserted, and three things it deliberately will not do are the reason to trust the rest. It will not talk about the first three minutes: this page holds daily candles and nothing finer, so it says which side of the range the resting stops are on — which daily bars do support — and states the limit in the card. It will not invent event dates: the split comes from finding every past occurrence of the release and reading what your instrument’s candle actually did, which needs exact past dates, and only payrolls (first Friday of the month) and the published FOMC decisions have them. CPI and PPI have no fixed day of month, so when one of those is next the card says outright that it is not measuring that release and shows payroll days instead, labelled in the first line you read. And it will not print a percentage off a small sample: under twelve past releases no split is shown at all. The confidence is the winning share discounted for how many events it rests on, so sixty per cent off twelve and sixty off forty are not printed as the same claim. The yardstick is fixed before the event it grades — a release day’s own range never sets the threshold that classifies it. The study runs on its own deeper daily series and never touches the board’s history, so nothing else on the page moves. Previously: The assistant works. Four things were stopping it and they were all real. On a phone the what’s-new note you are reading was rendered unclamped — a card 1172px tall covering 85% of the screen, with a click handler on it — so for the first seconds after every new build EVERY tap in that area hit the toast instead of the page, the assistant button included. It is four lines now, and no toast can ever be taller than a third of the screen. The assistant had no memory: each question was sent alone with nothing before it, so a follow-up like “and what about silver” arrived with no idea what silver was being compared to. It sends the thread now. Its offline brain was matching triggers inside other words — “and who did they beat” was answered with the greeting menu, because “hey” sits inside “they” — so questions that should have gone to Claude never got there. And it needed you to paste an Anthropic key before it would answer anything outside this board, which almost nobody does; it can now go through your bridge, which holds the key server-side exactly as the price and news keys already are. Set CELESTIAL_ANTHROPIC_KEY on the bridge and it answers for everyone with nothing to configure. Also: the bridge default was http://127.0.0.1:8770 even on a live https site, where a browser blocks that call as mixed content before it is sent — on a domain it now assumes the same host. Previously: The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
+var CA_WHATS_NEW='Stocks, from the reports you download yourself. The Books covered US listings through a data feed and said outright that PSX names were not included — because there is no free PSX feed, at any price this page can reach. So the reports come from you: The Books has a third tab, My reports, and you drop the annual or quarterly statement into it. PDF, Excel or CSV. Everything happens on your machine; nothing is uploaded and the file itself is not kept, only the figures and a note of which document each one came from. A browser turns out to already carry everything this needs. An .xlsx is a zip of XML and a PDF keeps its text in compressed streams, and DecompressionStream opens both natively — so there is no library to load, which matters for a page opened from disk where a CDN script would simply never arrive. Tested against a real PDF, a real spreadsheet and a real CSV laid out the way a PSX statement is: eleven of eleven figures found in the PDF and the sheet, both years each, with the brackets accountants use for a loss read as negative rather than positive — getting that backwards would turn a loss into a profit, which is the worst mistake this could make. Two refusals are the reason to trust the rest. A scanned PDF is a picture of a page and no method can pull figures out of it; the app says exactly that and offers the form instead of guessing. And a line the document does not contain stays empty — the CSV tested carried six of the eleven figures, and the other five were left blank rather than filled with a zero. Every figure is shown with its source — the sheet row, the PDF page and the sentence it sat in — before anything is saved, and a figure you type over is credited to you, not to a page that never held it. Then it judges, and it shows its working. Five questions, each printing its own arithmetic on the card: is it growing (revenue against last year), does profit survive (profit after tax over revenue), how much is owed (debt over equity), is the profit real (cash from operations over profit after tax), and what it earns on its own money (return on equity). Green, amber or red, with the word beside the colour so the finding does not depend on telling red from green. A test whose figures are missing is blank and names the figure it wanted, because a zero is a reading and an absence is not. There is a sector view too, and it is honest about what it is: the median of the reports YOU have loaded, named company by company, with a line saying it is a sample rather than an index — and below three companies it says so outright. The median, not the mean, because one company with a wild swing would drag a mean somewhere no member of the group actually sits. Previously: The health panel said “No key” about a route that needs no key. It probed the v2 endpoint and stopped at a gate that asks whether a key is set, so with none it reported BLS as disabled — while the data chain beside it was pulling current August prints from v1, which needs nothing. A panel that contradicts what the app is actually doing is worse than no panel: it sends you hunting for a key you do not need, which is exactly what happened. It now probes whichever endpoint the chain would really use — v2 with a key, v1 without one — and there is no gate, because there is nothing to gate on. Two messages were wrong in the same way. A refused request read “Responded, but not with usable data”, which is equally true of a spent quota, a wrong series id and a changed schema, and points at none of them; where the source can say which, it now does. And a metered refusal read “Request limit reached on this key” even with no key set — BLS’s free tier is metered per NETWORK, not per key, so that sentence sent the reader to a setting that was not the problem. Without a key it now says what is actually true: twenty-five a day shared across this network, and a free key from bls.gov lifts it to five hundred. Previously: The numbers are current again, and Core CPI is on the board. CPI, payrolls and PPI were reading “Jan 2025” in September 2026 with a label saying “older than usual”, which was honest and useless — twenty months late is not old data, it is the wrong number. The cause was not this page: DBnomics’ BLS mirror genuinely stops at 2025-01 on all three series, measured directly against the API the same minute the screen showed it. Nothing downstream of that mirror could ever have been current. The next stop in the chain was BLS proper, which is the v2 endpoint — a POST that refuses every request without a registration key — so with no key the only source that answered was the frozen one. BLS also publishes v1: a plain GET, no key, and it sends Access-Control-Allow-Origin so a page opened as a FILE can read it. The same minute the mirror returned 2025-01, v1 returned 2026-08. It is one line in the chain, above the mirror, and CPI now reads 334.131 for August 2026 instead of 319.086 for January 2025. Core CPI — ex food and energy, the print the market actually trades — was on no panel and in no chain at all. It sits beside headline CPI now, 337.765 for August, because the gap between the two is half the story on release day. The free endpoint allows twenty-five requests a day per NETWORK, not per user, so five series would spend it in five reloads and drop back to the frozen mirror. These are monthly numbers that cannot change between two reloads, so the results are now cached to disk for six hours and a reload costs nothing. A failed lookup is deliberately not cached — a quota resets at midnight and should be retried. And when the allowance does run out, the tile stops saying “older than usual” and says what fixes it instead: today’s free allowance is spent, and a free key from bls.gov lifts it to five hundred a day. Previously: Things stopped flickering. Sitting on Market Intelligence and touching nothing, the whole pane was being thrown away and rebuilt ten times in ten seconds — and nine of those rebuilds produced byte-identical markup. The release card and the macro table were rebuilt twenty times in the same ten seconds, nineteen of them identical. It happened on the dashboard and the Time Engine too: the pane was repainting on a timer while nobody was looking at it. Replacing markup is never free even when the result matches — the whole subtree is destroyed and recreated, which drops your scroll position, closes anything you had opened, kills a text selection mid-drag and restarts every animation. That is the shimmer, and all of it was wasted work. Two things fix it. Nothing is written unless the new markup actually differs from what is already there, so callers may fire on whatever timer they like and only real changes reach the screen. And the once-a-second full rebuild is gone at the root: after a release hour passes, every tick saw a deadline in the past and treated it as an event that had just happened, forever. It rebuilds once per deadline now, with a floor under it. Measured after: zero pane rebuilds, zero card rebuilds, zero hidden repaints on the other tabs — only the header clock still ticks, which is its job. Scroll position now survives a repaint, which it never did. Two more found while measuring. The pre-news card wrote “Measuring…” over itself on every paint, so a finished card flashed back to a spinner twice a second; the placeholder now appears only on an empty card. And “The dollar and the curve” has been an empty box on every visit — the function that fills it only ran from three places that all finish before this pane is built, so the fill was overwritten by the build every time. It runs with the other slot painters now, after the markup it writes into exists. Previously: The release card now says what is pushing price RIGHT NOW, and proves the relationship instead of asserting it. Every board that shows this prints “gold moves inverse to the dollar” as though it were a law — most days it is roughly true, and on the days it is not you are holding a card that is confidently wrong with no way to tell. So the relationship is measured and the measurement is printed beside the claim: the dollar’s own last move, the correlation of daily returns between it and your instrument, and the number of shared days that rests on. A rise in a negatively correlated driver reads as a push down; the sign comes from the data, not from a saying. Three refusals are the reason to trust the rest. Under sixty overlapping days it shows nothing — a correlation off three weeks is a number with no claim under it. Under |r| of 0.2 it reports the driver as noise and takes no direction from it, which is a useful thing to be told and the opposite of what an asserted inverse would have said. And the two series are matched BY DATE, not zipped by position, because your instrument trades days the fund does not and pairing Tuesday with Thursday would produce a confident number off nothing. The dollar here is UUP, the fund — the ICE index is licensed and returns no rows — and it is labelled as the proxy it is inside the sentence that reads a direction off it. The historical split above it stops calling itself the heaviest signal, because it never was one: it is a base rate off past release days, and it says so. And a crash was found while testing this, which would have taken the whole tab down today. When the release hour passed with Market Intelligence open, the countdown called the render, the render called the countdown, and the clock was still past its deadline — so it called again, and again, until the stack overflowed and nothing on the tab painted until a reload. It fired every single time a release went by. The rebuild now happens once per deadline, on a later turn of the loop, with a thirty-second floor underneath it. Previously: The local model refused arithmetic, and the prompt was why — twice over. The second reason was the order. The prompt ENDED with the board state, so the last thing the model read before answering was a block of board figures, and a small model weights the end of what it just read more heavily than anything above it. Saying “this rule is only about the board” at the top and then closing with nothing but board data argues against itself. The rule that has to survive that block is now repeated after it, last, where being last helps instead of hurting. The first reason: Asked what seven plus seven is, it answered that there is no such data on the board — in the voice of a board that had been asked nothing about itself. The instruction it was following said “you may use the board state; if something is not there, say it is not on the board”, which was written for Claude, and Claude inferred the line that was never actually drawn: that the rule covers board FACTS — prices, levels, numbers — and not every sentence a person might type. A three-billion-parameter model on a laptop does not infer it. It applied the rule to everything and refused general knowledge, language and sums alike. So the line is drawn in writing now. The prompt states two separate jobs: board questions come from the board state and nothing else, with no invented figures and nothing promised; everything else — arithmetic, definitions, ordinary conversation — is answered normally from what the model knows, and “that is not on the board” is explicitly wrong as a reply to a question that was never about the board. Both routes share the prompt, so Claude gets the clearer version too. This is a real cost of running on your own machine and it is worth naming: a small local model needs to be told what a large one works out for itself. The fix is one paragraph, paid once. Previously: The assistant does not need anybody. Every route it had ran on an Anthropic key — pasted into this browser, or held on the bridge — which means it cost money per question, sent the question over the internet, and went mute the day the key was revoked. That is the opposite of independent. A model running on your own computer needs none of it. Ollama on 11434 and OpenJarvis on 8000 are both found automatically when the panel opens, and if one is answering it is used ahead of everything else: free, offline, nothing leaving the machine, nothing to paste, nothing to renew. The key stays as the second choice and the bridge as the third, which is the order they should always have been in. Setting it up is two lines, once — install Ollama, “ollama pull llama3.2”, “OLLAMA_ORIGINS=* ollama serve” — and the panel prints them rather than implying the page can conjure a model out of nothing. The reason for that second line is the part most things get wrong silently. A page opened as a FILE has the origin “null”, which is not on Ollama’s default allowlist, so the call is refused before it is sent and nothing on screen says why. So the search runs twice: once normally, and if that fails, once in a mode that cannot read the answer but can tell a refused answer apart from nothing listening at all. Those are different problems with nothing in common as fixes, so they get different messages — “start Ollama”, or “Ollama is running and refusing this page”. And in that second case there is now a way through that needs no environment variable at all: the bridge has a /px/local route that reaches the model for you, and the panel tries it on its own. If the model answers the search and then stops before the question, the question is not dropped — it falls through to the key, then the bridge, and the panel stops advertising a model that is no longer there. Previously: Two rows on Market Intelligence were saying what the hero above them had already said. Every open release window carried its own countdown and its own beat‑and‑miss branches — so with CPI and PPI both open, the same clock and the same two branches appeared three times on one screen, and the tall pair pushed the thing you came for below the fold. The countdown belongs at the top, where the next release already is, so that is where it is now: one clock in the hero, with the condition written on it rather than under it — a real ticking number when the day is today or you set it yourself, the plain release hour when the day is still a window, and OPEN when the hour has gone. What survives from those rows is the only part that was not a repeat: the date box and Lock this date, now one compact line inside the hero instead of two cards below it. And the assistant’s key box is where you can see it. It answers everything about this board with no key and no network — that has always been true — but anything outside the board needs a route to Claude, and the box for that sat inside a collapsed Settings panel three scrolls down, so the honest answer to “how do I add one” was that you had to already know. When there is no key and no bridge answering, the box is now the panel itself: a field under the first message, with where to get a key, a reminder to set a spend limit, and the plain fact that it is stored in this browser and nowhere else. Paste it and the box disappears; empty it and it comes back. The sentence above it points at the box in front of you instead of at a panel you have to go and find. Previously: Market Intelligence carries its second name the way Trading Journal carries Portfolio — the tab now reads Market Intelligence with NEWS beside it, same small caps, same column. Two tabs, two names each, one pattern. The command palette learns the second name too: typing “news” finds the tab, and so does “trading journal”, which the palette knew only as Portfolio until now — a search that refuses the name printed in the sidebar is worse than not having a second name at all. Previously: On the day itself, the countdown is back. Two builds ago I took the clock off every open window, because eight minutes before the release hour it read 00:08:00 for a release that was probably not that day — right for the days it was wrong on, and one step too far. When the calendar’s own best date for a release IS today, counting to today’s release hour is counting to what the app actually thinks is about to happen, and refusing to show it withholds the one number you came for. So today it runs, with the condition written on the clock itself rather than in a paragraph underneath: “if it prints today”. On any other day inside the window there is still no clock, because on those days a clock really would be claiming something nothing supports. Lock the date and the “if” disappears. The same rule now governs the release card. Previously: The voice never worked on the domain either, and the app could not tell you why because it was asking the wrong question. It checked whether the page was opened as a FILE and nothing else — so a site served over plain http passed every check, reported the wake word as supported, switched it on, and then the browser refused the microphone with nothing anywhere naming the reason. Chrome gives the microphone only to a SECURE page: https, or localhost. Plain http on a domain is refused exactly like a file is. That is the question it asks now, and each case says its own fix — Chrome or Edge for the browser, serve the folder for a file, https for a site. And the simplest reason of all is now stated instead of assumed: the wake word ships OFF, so the panel says whether it is on. If it is off it says so and where the switch is; if it is on it says say “Celestial” and that the panel stays shut. Someone waiting for a name to do something will otherwise wait forever with nothing on screen suggesting there is a switch at all. Previously: Asked for it to work like Siri — say the name and it starts, no panel. That is already built and it does exactly that: the wake word answers out loud through a small pill and never opens the panel. What was missing was any explanation of why it never fired. Chrome refuses the microphone to any page opened as a FILE, which is how this one is usually opened, so the wake word cannot work at all — and the only place that said so was inside the switch you would have to find in Settings to turn it on, which is the last place you look when the problem is that nothing happens. It is the first thing the assistant panel says now, with the one line that fixes it: run python -m http.server 8080 in the folder and open localhost instead. And a leftover was found while looking: the SPOKEN path still demanded a pasted key. The typed path stopped needing one when the bridge route was added, but the voice branch checked for a key and refused out loud before the bridge ever got a chance — so the same question was answered when typed and refused when spoken. It goes through the same route as everything else now. Previously: The Trading Journal shows you when a trade is waiting on you. The approvals card moved into the notification bell a while back, which is the right home for something you decide on — but what was left behind on this tab was a container carrying the hidden attribute, with a comment beside it promising that “when something IS waiting the journal board shows a single line at the top”. It never did. The panel filled that box on every paint and the attribute threw all of it away, so opening the Trading Journal because a trade was waiting showed nothing about it anywhere: no rows, no pointer, no count. There is one line now, and only when the queue is not empty — how many are waiting, which ones, and a button that opens the bell where the Approve and Pass buttons live. It disappears again the moment the queue clears. The rows themselves stay in the bell: two copies of the same queue was the original problem and it was not worth recreating. One detail worth recording because it is the kind of thing that reads as “the button does nothing”: a document-level handler closes the bell on any click outside it, so the new line has to stop its own click from bubbling — without that, the same tap opened the panel and then closed it. Previously: The week and month bias printed the wrong side of their own number. The figure was always the BULL share, whichever way the reading went, so a week with nothing pulling upward came out as “LEANS DOWN 0% lean” — which reads as no lean at all when it means the exact opposite. It is the share of the side the word names now: nothing up and five down reads LEANS DOWN 100%, three up against seven down reads LEANS DOWN 70%, even reads BALANCED 50%. The day card has been doing this correctly since it was built; the two new ones were not. Found by going back over every request in this session one at a time and checking each was really in the file, which is a pass worth doing more often than I do. Previously: A setup that said “counter-trend” was never counter-trend. The direction is taken from the major trend, so a sell is only ever issued inside a downtrend and a buy inside an uptrend — the engine cannot produce a trade that fights a valid trend. So every setup that has ever carried those words was in fact WITH the trend, and the card contradicted itself in six lines: “Major trend: BEARISH”, “SELL”, and “counter-trend”. What the flag really detects is that the SKY disagrees with the trend — the astro read wants one way, the structure says the other, and the trade follows the structure. That is worth flagging and worth sizing down for, but calling it counter-trend said the opposite of the truth and told you to size down on the setups that follow the trend. The wording is corrected in all five places it printed: the setup card, the approval queue, the shared message, the bot’s skip reason and what the assistant says aloud. One use of the phrase is genuine and stays — the confirmation check that compares the trade against the Major Level you typed in, which really can point the other way. And the two percentages in a shared setup are named apart now: the confidence at the top is how good the SETUP is, the combined bias is how the sky and the structure add up on DIRECTION. They answer different questions, so 70% beside NEUTRAL 50% is not the message arguing with itself. Previously: It locks. The card has said “locks in at T−5” since the day it was built and nothing ever locked — the words were a label on a machine that did not exist, which is worse than not claiming it at all. There are three states now and the badge says which one you are looking at. LIVE, more than five minutes out: the read is recomputed on every paint and is allowed to change, and the clock counts to the lock, not to the release. LOCKED at T−5: the direction, the confidence and the bull/chop/bear split are frozen exactly as they stood the moment that line was crossed, written down, and served from that record afterwards — the clock switches to counting the release and the card says so. RELEASED: it keeps serving the locked record for two hours, so you can see what the call actually was rather than what the engine would say about it now that it knows more. That last part is the whole point of a lock: it was tested by poisoning the study at T−1 so a fresh calculation would have returned the opposite direction, and the card held its BEAR 59% without moving. A lock needs a known moment to hang on, so a release whose day is still a window does not lock and says NOT LOCKED — the day is a window. Set the day and it locks like everything else. Previously: The eight-minute countdown on CPI is gone, and so is every other clock that was counting to a day nobody published. A ticking countdown is a claim about WHEN something happens. A window has no when — that is what makes it a window — so eight minutes before the release hour it read 00:08:00 in the largest type on the row, for a release that was very probably not that day at all. The sentence underneath said so; nobody reads a sentence over a clock that size. This is the third shape of the same fault: the “in 5d” chip two builds ago, the open-window clock in the last one, and the release card’s own T−5 counter, which was printing 24:01:28 above a footnote reading “date is a window, not a fixed day”. All three are fixed by one rule, applied everywhere: only count down to a time you actually know. A window now shows the release hour as a plain time — 12:30, published, a fact — and says outright that there is no countdown on purpose, because a clock would be telling you it is today. Set the day yourself and the clock comes back, because then it is real. Previously: You can tell it the date. The calendar cannot derive the exact day of CPI or PPI — that was true and it stays true — but stopping there was the mistake. You usually know the day: it is on every broker’s calendar, it was in the news, you have been watching it all week. The app had no way to be told, so it kept printing a five-day window at someone who already had the answer. That is not caution, it is refusing help. Every release in the open-windows section now carries a date box and a Lock this date button. Set it and the window becomes a real dated countdown — “Fri, Sep 11 at 12:30, date you set” — with the same two branches under it. The clock counts to that instant, not to a guess. It is kept for that month only, so locking September’s CPI says nothing about October’s, and one button puts it back to a window. The label always says where the date came from: “date you set”, never dressed up as something the engine worked out. The release time was never the unknown — the BLS publishes at 08:30 Eastern every time — only the day was, and now there is somewhere to put it. Previously: PPI gets its own countdown and its own two branches. Market Intelligence had one hero and showed one release, so when CPI and PPI are both open through mid-month — which is most of any month — the second one got no headline, no clock and nothing about which way it would push price. It was on the card list in small type and read as absent. There is a section under the hero now with a row for every window that is open today, each carrying its own live countdown and its own beat-and-miss lines: a beat on inflation lifts the dollar and takes gold down, a miss does the reverse, both shown because which one lands is not knowable until it prints. And the countdown is a real one. The unknown was never the time — the BLS publishes at 08:30 Eastern every single time — it is the DAY. So the clock counts to today’s release hour and the line says what that means: if it lands today it lands then, and it may equally be any other day inside the window, and nothing here knows which. Once the hour has gone by it says so instead of quietly rolling into a number that means tomorrow. Previously: PPI was on the calendar and still read as missing, because two things on the same card contradicted each other. The countdown chip said “in 5d” directly above the line saying the window is open and it can print today — the chip was counting from the placeholder in the middle of the window, a date nobody ever published. An open window has no number of days to give, so it says “open now” instead, and the big clock on Market Intelligence says OPEN rather than ticking down to a guess. The honest limit stays what it was: the exact day is not derivable from a rule, and only the live feed knows it — start celestial_bridge.py and the real date arrives and overrides all of this. And the Time Engine stops pushing content off the right edge. Two columns were being handed to a chapter without checking whether its blocks actually fit in one: the Moon chapter’s columns are 443px wide and two of its blocks need 472 and 555, so 93px hung off the page at 1200px, 53 at 1280, 10 at 1366 and nothing at 1440 — which is exactly why checking only at 1500 and 412 never caught it, and 1366 is an ordinary laptop. A chapter now gets a second column only if every block in it fits, measured after layout rather than assumed. Checked at eleven widths from 360 to 1920: the Time Engine is clean at every one. Previously: The pre-news read — the direction, the confidence and the bull/chop/bear split — moved from the Time Engine to Market Intelligence, directly under the next-release countdown. It was in the wrong tab: the Time Engine is about planetary time, hours and days and months, and a macro release is a news event. Market Intelligence already carried the countdown, the forecast against the last print and the calendar, so the measured read now sits with the rest of its own subject. Same card, same engine, same numbers. The Time Engine is seven chapters again. Two layout faults there are fixed as well. Things were hanging off the right edge of the page: the four readouts carry a negative side margin, cut to bleed into the masthead’s padding, and they have not lived in the masthead since the last build — inside a chapter that margin simply pushed them 14px past the edge. And the empty space in the middle: two columns place blocks, they do not pack them, so a chapter holding one tall card and one short one was as tall as the tall card with the rest of the second column blank — 727px of nothing in The working. Columns are now decided after the layout is measured rather than assumed: a chapter gets two only if two actually fill, and if more than a quarter of the result comes out blank it goes back to one. Nothing hangs off the edge and nothing has a hole in it. Previously: PPI shows up. It was invisible for three separate reasons and all three are fixed. Its window ran the 13th to the 18th, which assumes producer prices always follow consumer prices — they often come first, so a release on the 10th fell outside the window and the app had nothing to show. The window runs the 9th to the 18th now. It was also rated Medium, and every surface that answers “what is the next release” filters for High, so PPI was excluded from all of them by definition whatever its date said; it is a top-tier US inflation print and it is rated High. And a windowed release used to disappear the moment its guessed date passed, even though the window was still open — the window’s end decides that now, not the placeholder. Most of all, when today falls inside a release window the calendar says so out loud: “Sep 9–18 — window OPEN, it can print today”, instead of printing a date four days out as though it were settled. Also: CPI was being placed on whatever the 12th happened to be, which this month is a Saturday — a day the BLS has never released on, shown with a confident weekday beside it. Window placeholders are nudged to a weekday. One thing worth knowing: the exact day is never derivable from a rule. With celestial_bridge.py running, the ForexFactory feed supplies the real date and overrides all of this guessing. Previously: The Time Engine is one page again — the windows are gone, every chapter is back in the flow in order, nothing behind a click. What stays from that round is the part that helped: four cards at the top for the month, the week, today and this hour, so the answer arrives before the working does. The month and the week now carry a real directional bias, not just a phase: every day in the span is scored the way the month map already scores one — benefic soft aspects pull up, malefic hard aspects pull down, weighted by orb and by whether they are applying — and the card states the count and the lean together, because nine up days against seven is a thin lead and nine against one is not. Where both sides are level it says BALANCED, which is a reading and not a shrug. On a wide screen each chapter’s blocks now sit two abreast instead of in one long column. And the chapter rail was a column this whole time: it is a <nav>, the sidebar’s own rule makes every nav a vertical stack, so the eight chips have been stacking since they were built — 321px tall on a desktop, 273 on a phone, reading as a list rather than a rail. It is one compact scrolling row now, 42px on a phone, and it sticks under the header so any chapter is one tap away from anywhere on the page. That is the honest answer to the length: the page is long because it has a lot to say, and two-up was measured on a phone and made it LONGER, not shorter — halving the width of a text block just makes it wrap. So the distance did not shrink much; what changed is that you no longer have to travel it. Previously: The build number is now under the CAELUS wordmark — top of the sidebar, top of the phone header — so you can see which copy you have without scrolling or opening anything. There was already a marker and it sat at the BOTTOM of the sidebar, under the member card, below the fold on a laptop: a version number you have to scroll to is not a version number. And a correction to what the last build told you. It said the download would always be called celestial_alpha.html so a new one replaced the old. Chrome does not replace it — it appends a counter, and the screenshot that showed this was opened from celestial_alpha (44).html, forty-four copies deep. The build is in the filename again, so sorting your Downloads by name puts the newest last. Previously: If you ever open an older copy of this file again, it will say so. A build below the highest one this browser has already run is, with certainty, an older copy — that needs no server to work out, which matters because this page is usually opened from disk with nothing to ask. A red bar names both builds and tells you what to open, and it does not fade, because a message that disappears is no use to someone who looks up ten seconds later. The download is called celestial_alpha.html every single time, so a new one replaces the old one in your Downloads folder instead of sitting beside it — that was the rule and the last four builds were handed over with per-build names instead, which is exactly how an old file ended up on screen. Previously: The Time Engine opens with four sentences instead of the whole engine. This month, this week, today, right now — the four sizes of the same question, in the order you actually ask them: what the month is doing astrologically, which day this week carries the most windows, whose planet rules today and which way it leans, and whether this hour is bullish, bearish or neither. Everything else is behind a window you click. All eight chapters are still there, still built by the same functions, byte for byte — they open one at a time in a sheet instead of lying end to end on one page with every one of them already expanded. Nothing was deleted to make this simpler; it was moved one click in. The masthead was the single biggest offender and is a header again: on a phone it filled the entire first screen on its own with a pill, a headline, three paragraphs, a quoted track record, a verdict, a date and twelve wrapped instrument chips. The prose and the four readouts moved into the first window, the chips are one scrolling row, and the whole landing went from roughly three phone screens to one and a half. Also fixed on the way: the timing pane was laying itself out 1096px wide inside a 412px phone — the right half of the headline and the date ran off the edge — because it is a flex item that had never been told it may shrink. It did not show up as page overflow because the clip added in b175 absorbs exactly that, so the check for it now lifts the clip first: a measurement taken through a clip reads zero however broken the layout is. Previously: The Timing Engine has a new chapter: The release. The next high-impact release, a direction, a confidence, a bull/chop/bear split and a countdown to the moment the read locks at T−5. Every figure in it is measured rather than asserted, and three things it deliberately will not do are the reason to trust the rest. It will not talk about the first three minutes: this page holds daily candles and nothing finer, so it says which side of the range the resting stops are on — which daily bars do support — and states the limit in the card. It will not invent event dates: the split comes from finding every past occurrence of the release and reading what your instrument’s candle actually did, which needs exact past dates, and only payrolls (first Friday of the month) and the published FOMC decisions have them. CPI and PPI have no fixed day of month, so when one of those is next the card says outright that it is not measuring that release and shows payroll days instead, labelled in the first line you read. And it will not print a percentage off a small sample: under twelve past releases no split is shown at all. The confidence is the winning share discounted for how many events it rests on, so sixty per cent off twelve and sixty off forty are not printed as the same claim. The yardstick is fixed before the event it grades — a release day’s own range never sets the threshold that classifies it. The study runs on its own deeper daily series and never touches the board’s history, so nothing else on the page moves. Previously: The assistant works. Four things were stopping it and they were all real. On a phone the what’s-new note you are reading was rendered unclamped — a card 1172px tall covering 85% of the screen, with a click handler on it — so for the first seconds after every new build EVERY tap in that area hit the toast instead of the page, the assistant button included. It is four lines now, and no toast can ever be taller than a third of the screen. The assistant had no memory: each question was sent alone with nothing before it, so a follow-up like “and what about silver” arrived with no idea what silver was being compared to. It sends the thread now. Its offline brain was matching triggers inside other words — “and who did they beat” was answered with the greeting menu, because “hey” sits inside “they” — so questions that should have gone to Claude never got there. And it needed you to paste an Anthropic key before it would answer anything outside this board, which almost nobody does; it can now go through your bridge, which holds the key server-side exactly as the price and news keys already are. Set CELESTIAL_ANTHROPIC_KEY on the bridge and it answers for everyone with nothing to configure. Also: the bridge default was http://127.0.0.1:8770 even on a live https site, where a browser blocks that call as mixed content before it is sent — on a domain it now assumes the same host. Previously: The chart now draws the same four levels the Liquidity Zones card lists, because they are the same four. The card takes every level scoring 5 or better and shows the top four; the chart was taking the highest-scoring ones that happened to fall inside a price window worked out without them. One array, two different rules, two panels on one screen disagreeing about what the levels are — and a level sitting outside the candle range was thrown away entirely, which is the other half of no level showing at all. The range is now stretched to hold them, the card’s rule is the only rule, and where two levels sit a few points apart both lines are drawn at their true prices with only the labels stepping aside — the old code dropped the second level rather than move its text. And one tab was zooming the whole page out on a phone: Trading Journal reported a 474px viewport on a 412px device, so the browser scaled everything down to fit, which reads as content shrunk and pushed to one side. It is not a margin problem, it is a zoom, and it is fixed without costing the phone its scroll. Previously: The chart labels are HTML now instead of text inside the drawing. The chart is stretched to fit its box by different amounts on each axis — on a phone every character was squeezed to two-fifths of its width while keeping its full height, which is why the level marks read as wrong however small the font was set. And the Timing tab’s chapter rail was pinned behind the phone header with a background that faded to transparent, so cards scrolled straight through it. Previously: the level marks were shouting over the price they annotate — smaller, lighter, fainter lines, and four rather than six. The chart is drawn stretched to fit its box, so type set to look right in the drawing comes out heavier on screen than it was written to be; these are sized against the real 1:1 rendering now. Previously: the levels are on the chart. The engine scores dozens of them and hands them over ranked, and the chart was drawing exactly one — the strongest above price, as a shaded band. Every support below price was computed, ranked and then thrown away at the last step. The strongest few in view are now drawn on both sides with their prices, R above and S below. Previously: the four Fear & Greed numbers sit on one baseline again — two of the labels were wrapping to a second line and pushing their numbers down. And the price tiles get their sparklines: they asked Polygon and nothing else, so one rate limit left all four permanently blank. They now fall back to Twelve Data and EODHD like the chart always has, and any instrument whose history is already in memory draws instantly. Previously: the Fear & Greed band was 211px of card around 64px of content — it is 82px now, and the height it gave up went to the ticker tiles, which finally have room for a real sparkline instead of a 32px thumbnail. On the chart, entry, stop and the three targets are solid colour chips with their prices on them rather than thin text over the candles. Previously: b168 shipped the new Time Engine headline but you would not have seen it: the check that makes it per-asset refused to run unless an analysis had been run first, because nothing recorded which asset the loaded bars belonged to. It does now, so the headline changes as soon as history is loaded. The Time Engine headline is no longer the same words on every Tuesday for every asset — it is built from what that asset’s own bars say the weekday does, and the window label is now checked against them rather than asserted. The chart draws the whole plan with prices on it, including levels that used to fall outside its range and vanish. New theme: Harbour, white with navy. Plus, from before: the dashboard scrolls on a phone again (html was pinned to the viewport AND made a scroll box, which iOS will not scroll with a finger); Jarvis shows your words as you speak them, stops talking the moment you interrupt, and keeps its ear open for a follow-up; and the Time Engine masthead no longer prints two different percentages side by side — the pill is today’s call, the measured record is stated underneath in words, including when it disagrees. Also: tablets get their own layout — iPad, Galaxy Tab, Surface, a folded-open Fold. Two columns instead of the phone stack, the ring beside the tickers instead of alone in an empty row, and the chart with a real height again. Also: a phone header: hamburger left, the CAELUS mark and name dead centre, bell and member badge right — the product had no name anywhere on a phone until you opened the drawer. The aspect ring is now the first thing on the dashboard there. Also: Market Pulse now says which weekday this instrument actually ranges most on — measured off its own bars, not folklore — and warns you when the day is a market holiday, today included. Also: Jarvis answers again. It had gone silent on every question that reached Claude — the token ceiling was being spent on thinking before the answer started, so the reply came back with nothing in it. An empty answer now says why it is empty instead of printing the same six words for every cause. Also: the dashboard hero is an aspect ring now. The slogan and the NEXT-window strip are gone; in their place, the ten bodies at their real longitudes with the day’s tightest angle read out in the middle — how exact it is, which way it is moving, how long it holds, and its lean on the asset in view. When the angle widens past orb the ring moves to the next one on its own.';
 var JRNL_KEY='ca_journal';
 function jrnlLoad(){
   try{ var raw=localStorage.getItem(JRNL_KEY);
@@ -43459,12 +43567,13 @@ var _fxMarket='psx', _fxTab='stock', _fxCache={};
 
 function fxTab(which){
   _fxTab=which;
-  ['stock','index'].forEach(function(k){
+  ['stock','index','books'].forEach(function(k){
     var pane=document.getElementById('fx_'+k), tab=document.getElementById('fx_t_'+k);
     if(pane)pane.classList.toggle('hidden',k!==which);
     if(tab)tab.classList.toggle('on',k===which);
   });
   if(which==='index')renderIndex();
+  if(which==='books'){ try{ renderBooks(); }catch(e){} }
 }
 function fxMarket(m){
   _fxMarket=m;
@@ -43585,6 +43694,818 @@ function fxOpenStock(sym){
   fxTab('stock');
   try{renderFundamentals();}catch(err){}
 }
+/* ══════════════════════════════════════════════════════════════════════
+   THE BOOKS · READING A REPORT YOU HAND IT
+   ══════════════════════════════════════════════════════════════════════
+   Asked for PSX and US companies to be analysable from the reports the
+   reader downloads themselves, entirely inside this page: "sab kaam
+   celestial me hoga". So nothing here calls out to a service, and nothing
+   here is a library — this file is opened from disk and a CDN script would
+   simply not load.
+
+   It turns out a browser already ships everything needed. An .xlsx is a ZIP
+   of XML, a PDF's text sits in FlateDecode streams, and DecompressionStream
+   inflates both natively — measured working in this Chromium before a line
+   of this was written. So the three real formats are read here, and the one
+   that CANNOT be read says so instead of guessing.
+
+   WHAT IT WILL NOT DO, which is the part that makes the rest trustworthy:
+   it never invents a figure. A label it cannot find is left empty and shown
+   as empty. Every figure it does find carries where it came from — the
+   sheet cell, the PDF page, or "you typed it" — and you see all of them
+   before anything is saved.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── the numbers the analysis actually needs ──────────────────────────
+   Each carries the words PSX and US filings really use for it. Order
+   matters: the most specific phrasing is tried first, so "profit after
+   taxation" is not captured by a loose "profit" rule. */
+var BK_FIELDS=[
+  {k:'revenue',   n:'Revenue',            pats:[
+    'net sales','turnover - net','turnover net','net turnover','total revenue',
+    'revenue from contracts','sales - net','revenue','turnover','net revenue']},
+  {k:'grossProfit',n:'Gross profit',      pats:['gross profit','gross margin']},
+  {k:'opProfit',  n:'Operating profit',   pats:[
+    'operating profit','profit from operations','operating income','results from operating']},
+  {k:'netProfit', n:'Profit after tax',   pats:[
+    'profit after taxation','profit after tax','net profit after tax','profit for the year',
+    'profit for the period','net income','net profit','earnings after tax']},
+  {k:'eps',       n:'Earnings per share', pats:[
+    'earnings per share - basic','basic earnings per share','earnings per share','eps']},
+  {k:'totalAssets',n:'Total assets',      pats:['total assets']},
+  {k:'equity',    n:'Shareholders equity',pats:[
+    "total shareholders' equity",'total shareholders equity','total equity',
+    "shareholders' equity",'shareholders equity','share capital and reserves']},
+  {k:'debt',      n:'Total debt',         pats:[
+    'total borrowings','long term financing','long-term financing','total debt','borrowings']},
+  {k:'cashOps',   n:'Cash from operations',pats:[
+    'net cash generated from operating','cash generated from operations',
+    'net cash from operating activities','cash flows from operating activities',
+    'net cash used in operating']},
+  {k:'currentAssets',n:'Current assets',  pats:['total current assets']},
+  {k:'currentLiab',  n:'Current liabilities',pats:['total current liabilities']}
+];
+
+/* ── numbers as accountants write them ───────────────────────────────
+   "1,234,567" is a number. "(1,234)" is NEGATIVE — the brackets are the
+   minus sign in every statement ever filed, and reading them as positive
+   would flip a loss into a profit, which is the worst error this file
+   could make. "1,234 - " with a dash alone means nil. */
+function bkNum(s){
+  if(s==null)return null;
+  s=String(s).trim();
+  if(!s)return null;
+  if(/^[-–—]+$/.test(s))return 0;              /* a dash alone is nil */
+  var neg=/^\(.*\)$/.test(s);
+  s=s.replace(/[()]/g,'').replace(/[,\s]/g,'').replace(/[^\d.\-]/g,'');
+  if(!s||!/\d/.test(s))return null;
+  var v=parseFloat(s);
+  if(!isFinite(v))return null;
+  return neg?-v:v;
+}
+
+/* ── CSV, including the quoted-comma case that breaks naive splits ──── */
+function bkParseCsv(text){
+  var rows=[], row=[], cur='', q=false, i;
+  for(i=0;i<text.length;i++){
+    var c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; }
+      else cur+=c;
+    }else{
+      if(c==='"')q=true;
+      else if(c===','){row.push(cur);cur='';}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur='';}
+      else if(c!=='\r')cur+=c;
+    }
+  }
+  if(cur!==''||row.length){row.push(cur);rows.push(row);}
+  return rows;
+}
+
+/* ── ZIP, enough of it to open an .xlsx ──────────────────────────────
+   Read from the END: the central directory is authoritative about where
+   each entry starts, and scanning forward through local headers breaks on
+   the data-descriptor form that some writers emit. */
+async function bkUnzip(buf){
+  var dv=new DataView(buf), u8=new Uint8Array(buf), i, eocd=-1;
+  for(i=u8.length-22;i>=0&&i>u8.length-66000;i--){
+    if(dv.getUint32(i,true)===0x06054b50){eocd=i;break;}
+  }
+  if(eocd<0)throw new Error('not a zip');
+  var n=dv.getUint16(eocd+10,true), off=dv.getUint32(eocd+16,true);
+  var out={}, p=off;
+  for(i=0;i<n;i++){
+    if(dv.getUint32(p,true)!==0x02014b50)break;
+    var method=dv.getUint16(p+10,true),
+        csize=dv.getUint32(p+20,true),
+        nameLen=dv.getUint16(p+28,true),
+        extraLen=dv.getUint16(p+30,true),
+        cmtLen=dv.getUint16(p+32,true),
+        lho=dv.getUint32(p+42,true);
+    var name=new TextDecoder().decode(u8.subarray(p+46,p+46+nameLen));
+    /* the LOCAL header's own name/extra lengths decide where data starts —
+       the central copy of extra is a different field and often differs */
+    var lNameLen=dv.getUint16(lho+26,true), lExtraLen=dv.getUint16(lho+28,true);
+    var start=lho+30+lNameLen+lExtraLen;
+    var raw=u8.subarray(start,start+csize);
+    if(method===0)out[name]=raw;
+    else if(method===8)out[name]=await bkInflate(raw,'deflate-raw');
+    p+=46+nameLen+extraLen+cmtLen;
+  }
+  return out;
+}
+async function bkInflate(bytes,fmt){
+  var ds=new DecompressionStream(fmt);
+  var w=ds.writable.getWriter();
+  /* ══ BOTH SIDES OF THE STREAM CAN REJECT ══
+     A PDF holds streams this cannot inflate — a font, a colour profile, an
+     encoding not handled here — and every caller already catches that. But
+     write() and close() return promises of their OWN, and when the stream
+     errors those reject with nobody holding them, which Chrome reports as an
+     unhandled rejection: two red page errors on a file that was read
+     perfectly. Caught here, where the caller's catch cannot reach. */
+  w.write(bytes).catch(function(){});
+  w.close().catch(function(){});
+  return new Uint8Array(await new Response(ds.readable).arrayBuffer());
+}
+
+/* ── .xlsx → rows of text, first worksheet ───────────────────────────
+   Values live either inline or as indexes into sharedStrings; both forms
+   appear in the same file, so both are resolved. */
+async function bkParseXlsx(buf){
+  var z=await bkUnzip(buf), dec=new TextDecoder();
+  var shared=[];
+  if(z['xl/sharedStrings.xml']){
+    var sx=dec.decode(z['xl/sharedStrings.xml']);
+    shared=(sx.match(/<si>[\s\S]*?<\/si>/g)||[]).map(function(si){
+      return (si.match(/<t[^>]*>([\s\S]*?)<\/t>/g)||[])
+        .map(function(t){return t.replace(/<[^>]+>/g,'');}).join('')
+        .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+        .replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+    });
+  }
+  var sheetName=Object.keys(z).filter(function(k){return /^xl\/worksheets\/sheet\d+\.xml$/.test(k);}).sort()[0];
+  if(!sheetName)throw new Error('no worksheet');
+  var xml=dec.decode(z[sheetName]);
+  var rows=[];
+  (xml.match(/<row[\s\S]*?<\/row>|<row[^>]*\/>/g)||[]).forEach(function(r){
+    var cells=[];
+    (r.match(/<c[^>]*>[\s\S]*?<\/c>|<c[^>]*\/>/g)||[]).forEach(function(c){
+      var ref=(c.match(/r="([A-Z]+)\d+"/)||[])[1]||'';
+      var col=0, j; for(j=0;j<ref.length;j++)col=col*26+(ref.charCodeAt(j)-64);
+      col=col?col-1:cells.length;
+      var isStr=/t="s"/.test(c), inline=/t="inlineStr"/.test(c);
+      var v='';
+      if(inline)v=(c.match(/<t[^>]*>([\s\S]*?)<\/t>/)||[])[1]||'';
+      else{
+        var m=c.match(/<v>([\s\S]*?)<\/v>/);
+        v=m?m[1]:'';
+        if(isStr)v=shared[+v]!=null?shared[+v]:'';
+      }
+      while(cells.length<col)cells.push('');
+      cells[col]=String(v).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+    });
+    rows.push(cells);
+  });
+  return rows;
+}
+
+/* ── PDF → text, page by page ────────────────────────────────────────
+   Only the text-showing operators are read: Tj and ' take one string, TJ
+   takes an array where the numbers are kerning and must be dropped, not
+   read as digits — a kern of -250 between two glyphs would otherwise land
+   in the middle of a figure.
+
+   FILTERS COME IN CHAINS, and missing that produced zero pages on the very
+   first real PDF tested. A generator may write
+   /Filter [ /ASCII85Decode /FlateDecode ] — the bytes are ASCII85 text
+   wrapping compressed data, so inflating them directly fails and the page
+   silently yields nothing. Filters are applied in the order the file lists
+   them. Image filters are recognised and skipped rather than attempted,
+   because a JPEG is not text and pretending otherwise fills the extraction
+   with rubbish that looks like data. */
+function bkPdfDict(raw,at){
+  /* the stream's own dictionary is the one that ENDS just before it */
+  var gt=raw.lastIndexOf('>>',at);
+  if(gt<0)return '';
+  var depth=0,i;
+  for(i=gt;i>=0&&i>gt-8000;i--){
+    if(raw[i]==='>'&&raw[i-1]==='>'){depth++;i--;}
+    else if(raw[i]==='<'&&raw[i-1]==='<'){depth--;i--;if(depth===0)return raw.slice(i,gt+2);}
+  }
+  return raw.slice(Math.max(0,gt-1200),gt+2);
+}
+function bkFilters(dict){
+  var m=dict.match(/\/Filter\s*(\[[^\]]*\]|\/\w+)/);
+  if(!m)return [];
+  return (m[1].match(/\/(\w+)/g)||[]).map(function(x){return x.slice(1);});
+}
+function bkA85(txt){
+  txt=txt.replace(/^<~/,'').replace(/~>[\s\S]*$/,'').replace(/\s+/g,'');
+  var out=[], i=0, n=txt.length;
+  while(i<n){
+    if(txt[i]==='z'){ out.push(0,0,0,0); i++; continue; }
+    var chunk=txt.slice(i,i+5), pad=5-chunk.length;
+    while(chunk.length<5)chunk+='u';
+    var v=0,j;
+    for(j=0;j<5;j++)v=v*85+(chunk.charCodeAt(j)-33);
+    var b=[(v>>>24)&255,(v>>>16)&255,(v>>>8)&255,v&255];
+    for(j=0;j<4-pad;j++)out.push(b[j]);
+    i+=5;
+  }
+  return new Uint8Array(out);
+}
+function bkAHex(txt){
+  var h=txt.replace(/>[\s\S]*$/,'').replace(/[^0-9a-fA-F]/g,'');
+  if(h.length%2)h+='0';
+  var out=new Uint8Array(h.length/2), i;
+  for(i=0;i<out.length;i++)out[i]=parseInt(h.substr(i*2,2),16);
+  return out;
+}
+async function bkParsePdf(buf){
+  var u8=new Uint8Array(buf), dec=new TextDecoder('latin1');
+  var raw=dec.decode(u8);
+  var pages=[], re=/stream\r?\n?/g, m, guard=0;
+  var IMG=/^(DCT|JPX|CCITT|RunLength|LZW|JBIG2)Decode$/;
+  while((m=re.exec(raw))&&guard++<6000){
+    var start=m.index+m[0].length;
+    var end=raw.indexOf('endstream',start);
+    if(end<0)continue;
+    var dict=bkPdfDict(raw,m.index);
+    var filters=bkFilters(dict);
+    if(filters.some(function(f){return IMG.test(f);}))continue;
+    var bytes=u8.subarray(start,end), failed=false, k;
+    for(k=0;k<filters.length&&!failed;k++){
+      var f=filters[k];
+      try{
+        if(f==='ASCII85Decode')      bytes=bkA85(dec.decode(bytes));
+        else if(f==='ASCIIHexDecode')bytes=bkAHex(dec.decode(bytes));
+        else if(f==='FlateDecode')   bytes=await bkInflate(bytes,'deflate');
+        else if(f==='FlateDecode ')  bytes=await bkInflate(bytes,'deflate');
+        else failed=true;            /* an encoding not handled: skip, do not guess */
+      }catch(e){ failed=true; }
+    }
+    if(failed)continue;
+    var txt=dec.decode(bytes);
+    if(!/(Tj|TJ)/.test(txt))continue;
+    var out=[];
+    var tre=/\[((?:[^\[\]\\]|\\.)*)\]\s*TJ|\(((?:[^()\\]|\\.)*)\)\s*(?:Tj|')/g, t;
+    while((t=tre.exec(txt))){
+      if(t[1]!=null){
+        var parts=t[1].match(/\((?:[^()\\]|\\.)*\)/g)||[];
+        out.push(parts.map(function(p){return bkPdfStr(p.slice(1,-1));}).join(''));
+      } else out.push(bkPdfStr(t[2]));
+    }
+    var page=out.join(' ').replace(/\s+/g,' ').trim();
+    if(page)pages.push(page);
+  }
+  return pages;
+}
+function bkPdfStr(s){
+  return s.replace(/\\n/g,' ').replace(/\\r/g,' ').replace(/\\t/g,' ')
+          .replace(/\\([()\\])/g,'$1')
+          .replace(/\\([0-7]{1,3})/g,function(_,o){return String.fromCharCode(parseInt(o,8));});
+}
+
+/* ══ FINDING THE FIGURES, AND REMEMBERING WHERE EACH CAME FROM ═══════
+   A statement prints two columns: this year and last year, in that order,
+   under a header of two years. Both are taken, because growth needs last
+   year and asking for a second upload to get it would be silly when it is
+   already on the page. The header decides which column is which; where
+   there is no header the left-most number is taken as the current year and
+   the card says so, so a reversed layout is visible rather than silent.
+
+   Every hit records its own evidence — the sheet row, or the PDF page and
+   the sentence it sat in. Nothing is stored that cannot be pointed at. */
+function bkNorm(s){
+  return String(s||'').toLowerCase()
+    .replace(/[‘’']/g,"'").replace(/[–—]/g,'-')
+    .replace(/\s+/g,' ').trim();
+}
+function bkYearCols(rows){
+  var best=null;
+  rows.slice(0,25).forEach(function(r,ri){
+    var ys=[];
+    r.forEach(function(c,ci){
+      var m=bkNorm(c).match(/\b(19|20)\d{2}\b/);
+      if(m)ys.push({ci:ci,y:+m[0]});
+    });
+    if(ys.length>=1&&(!best||ys.length>best.ys.length))best={ri:ri,ys:ys};
+  });
+  if(!best)return null;
+  best.ys.sort(function(a,b){return b.y-a.y;});   /* newest first */
+  return best;
+}
+function bkMatchField(label){
+  var L=bkNorm(label), hit=null;
+  if(!L)return null;
+  BK_FIELDS.forEach(function(F){
+    F.pats.forEach(function(p){
+      if(L.indexOf(p)!==0&&L!==p&&L.indexOf(p)<0)return;
+      /* the LONGEST matching phrase wins, so "profit after taxation" is not
+         taken by the shorter "profit for the year" rule sitting elsewhere */
+      if(!hit||p.length>hit.plen)hit={k:F.k,n:F.n,plen:p.length};
+    });
+  });
+  return hit;
+}
+function bkExtractRows(rows,srcName){
+  var hdr=bkYearCols(rows), out={cur:{},prev:{},src:{},years:null,note:''};
+  if(hdr&&hdr.ys.length>=2)out.years=[hdr.ys[0].y,hdr.ys[1].y];
+  else if(hdr&&hdr.ys.length===1)out.years=[hdr.ys[0].y,null];
+  else out.note='No year header found — the first number in each row is read as the current year.';
+  rows.forEach(function(r,ri){
+    if(!r||!r.length)return;
+    var label='', li=0;
+    for(li=0;li<r.length;li++){ if(bkNorm(r[li])){label=r[li];break;} }
+    var f=bkMatchField(label);
+    if(!f)return;
+    if(out.cur[f.k]!=null)return;                 /* first hit wins */
+    var nums=[];
+    r.slice(li+1).forEach(function(c,ci){
+      var v=bkNum(c);
+      if(v!=null)nums.push({v:v,ci:li+1+ci});
+    });
+    if(!nums.length)return;
+    var cv=null,pv=null;
+    if(hdr&&hdr.ys.length>=1){
+      var want=hdr.ys[0].ci, w2=hdr.ys[1]?hdr.ys[1].ci:null;
+      nums.forEach(function(x){ if(x.ci===want)cv=x.v; if(w2!=null&&x.ci===w2)pv=x.v; });
+    }
+    if(cv==null)cv=nums[0].v;
+    if(pv==null&&nums.length>1)pv=nums[1].v;
+    out.cur[f.k]=cv;
+    if(pv!=null)out.prev[f.k]=pv;
+    out.src[f.k]=srcName+' row '+(ri+1)+': '+String(label).slice(0,42);
+  });
+  return out;
+}
+function bkExtractPdf(pages){
+  var out={cur:{},prev:{},src:{},years:null,note:''};
+  var all=pages.join(' \n ');
+  var ym=all.match(/\b(20\d{2})\b[^\d]{1,12}\b(20\d{2})\b/);
+  if(ym){
+    var a=+ym[1], b=+ym[2];
+    out.years=a>=b?[a,b]:[b,a];
+  }
+  BK_FIELDS.forEach(function(F){
+    var found=null;
+    F.pats.forEach(function(p){
+      if(found)return;
+      pages.forEach(function(page,pi){
+        if(found)return;
+        var L=bkNorm(page), at=L.indexOf(p);
+        if(at<0)return;
+        var tail=page.slice(at+p.length, at+p.length+160);
+        /* numbers only — a bare year in the tail is a column header, not a
+           figure, so four digits standing alone are not taken as a value */
+        var nums=(tail.match(/\(?-?[\d,]+(?:\.\d+)?\)?/g)||[])
+          .map(bkNum).filter(function(v){return v!=null;});
+        if(!nums.length)return;
+        found={cur:nums[0], prev:nums.length>1?nums[1]:null,
+               src:'PDF page '+(pi+1)+': '+page.slice(at,at+60).trim()};
+      });
+    });
+    if(found){
+      out.cur[F.k]=found.cur;
+      if(found.prev!=null)out.prev[F.k]=found.prev;
+      out.src[F.k]=found.src;
+    }
+  });
+  return out;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE BOOKS · WHAT THE NUMBERS MEAN
+   ══════════════════════════════════════════════════════════════════════
+   Five questions, because five is what a person can hold in their head and
+   because each one fails a company in a different way. Asked for the method
+   to be stated in terms already known rather than hidden behind a score —
+   so every pillar below prints its own arithmetic on the card, and the
+   thresholds are written here in one place rather than scattered.
+
+   THE SECTOR AVERAGE IS YOUR OWN. There is no free feed of PSX sector
+   aggregates; there is no paid one this page could reach either. So the
+   average is computed from the reports YOU have loaded, and the card says
+   how many companies that is. Three companies is not an industry and the
+   card will say "3 companies you loaded" rather than "the sector", because
+   the difference is the whole honesty of it.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* growth needs last year, so it is computed against the previous filing
+   rather than asserted from one snapshot */
+function bkRatios(y,prev){
+  var R={};
+  var n=function(v){ return (v==null||!isFinite(v))?null:+v; };
+  var rev=n(y.revenue), np=n(y.netProfit), eq=n(y.equity), dbt=n(y.debt),
+      ta=n(y.totalAssets), co=n(y.cashOps), ca=n(y.currentAssets), cl=n(y.currentLiab);
+
+  R.growth   = (prev&&n(prev.revenue)&&rev!=null&&prev.revenue!==0)
+               ? (rev-prev.revenue)/Math.abs(prev.revenue)*100 : null;
+  R.netMargin= (rev&&np!=null&&rev!==0) ? np/rev*100 : null;
+  R.roe      = (eq&&np!=null&&eq!==0)   ? np/eq*100 : null;
+  R.debtEq   = (eq&&dbt!=null&&eq!==0)  ? dbt/eq : null;
+  /* cash conversion: a profit nobody collected is an accounting entry, not
+     money. Only meaningful when the company actually made a profit — the
+     ratio of a cash inflow to a LOSS is a number with no reading. */
+  R.cashConv = (np!=null&&np>0&&co!=null) ? co/np*100 : null;
+  R.current  = (cl&&ca!=null&&cl!==0)   ? ca/cl : null;
+  R.assetTurn= (ta&&rev!=null&&ta!==0)  ? rev/ta : null;
+  return R;
+}
+
+/* the thresholds, in one place, each with the sentence it prints */
+var BK_PILLARS=[
+  {k:'growth',   n:'Is it growing?',       unit:'%',
+   how:'this year&rsquo;s revenue against last year&rsquo;s',
+   good:function(v){return v>=10;}, bad:function(v){return v<0;},
+   say:function(v){return v>=10?'growing well':v>=0?'flat to slow':'shrinking';}},
+  {k:'netMargin',n:'Does profit survive?', unit:'%',
+   how:'profit after tax &divide; revenue',
+   good:function(v){return v>=10;}, bad:function(v){return v<=0;},
+   say:function(v){return v<=0?'losing money':v>=10?'keeps a healthy share':'thin';}},
+  {k:'debtEq',   n:'How much is owed?',    unit:'x',
+   how:'total debt &divide; shareholders&rsquo; equity',
+   good:function(v){return v<=1;}, bad:function(v){return v>2;},
+   say:function(v){return v<=1?'comfortable':v<=2?'carrying a load':'heavily geared';},
+   lowerBetter:true},
+  {k:'cashConv', n:'Is the profit real?',  unit:'%',
+   how:'cash from operations &divide; profit after tax',
+   good:function(v){return v>=100;}, bad:function(v){return v<60;},
+   say:function(v){return v>=100?'cash backs the profit':v>=60?'partly collected':'profit is on paper';}},
+  {k:'roe',      n:'What does it earn on its own money?', unit:'%',
+   how:'profit after tax &divide; equity',
+   good:function(v){return v>=15;}, bad:function(v){return v<5;},
+   say:function(v){return v>=15?'strong return':v>=5?'modest':'weak';}}
+];
+
+function bkGrade(P,v){
+  if(v==null||!isFinite(v))return null;
+  if(P.bad(v))return 'bad';
+  if(P.good(v))return 'good';
+  return 'mid';
+}
+
+/* the sector average, from the reports in this browser and nothing else */
+function bkSectorStats(store,market,sector,exceptKey){
+  var vals={}, names=[];
+  Object.keys(store.companies||{}).forEach(function(key){
+    var c=store.companies[key];
+    if(!c||c.market!==market||c.sector!==sector)return;
+    if(key===exceptKey)return;
+    var yrs=Object.keys(c.years||{}).sort();
+    if(!yrs.length)return;
+    var last=c.years[yrs[yrs.length-1]];
+    var prev=yrs.length>1?c.years[yrs[yrs.length-2]]:null;
+    var R=bkRatios(last,prev);
+    names.push(c.sym||key);
+    BK_PILLARS.forEach(function(P){
+      var v=R[P.k];
+      if(v==null||!isFinite(v))return;
+      (vals[P.k]=vals[P.k]||[]).push(v);
+    });
+  });
+  var out={n:names.length, names:names, med:{}};
+  Object.keys(vals).forEach(function(k){
+    var a=vals[k].slice().sort(function(x,y){return x-y;});
+    /* MEDIAN, not mean: one company with a 900% swing would drag a mean
+       somewhere no member of the group actually is, and with three or four
+       companies that is not a rare case, it is the normal one */
+    out.med[k]=a.length%2?a[(a.length-1)/2]:(a[a.length/2-1]+a[a.length/2])/2;
+  });
+  return out;
+}
+
+
+/* ══ WHERE IT IS KEPT ═══════════════════════════════════════════════
+   The figures go to localStorage, which survives a reload and is a few
+   kilobytes per company. The FILES do not: a single annual report is
+   megabytes and localStorage is a five-megabyte cupboard for the whole
+   app, so storing two reports would evict the journal, the pins and the
+   theme without warning. The file is read, the numbers are taken, and the
+   file itself is let go — its name and size are remembered so the card can
+   say which document a figure came from. */
+var BK_KEY='ca_books_v1';
+function bkLoad(){
+  try{ var o=JSON.parse(localStorage.getItem(BK_KEY)||'{}');
+       o.companies=o.companies||{}; return o; }
+  catch(e){ return {companies:{}}; }
+}
+function bkSave(o){
+  try{ localStorage.setItem(BK_KEY,JSON.stringify(o)); return true; }
+  catch(e){
+    /* a quota failure must not look like a successful save */
+    try{ caToast('Could not save','The browser refused to store it — '
+      +(e&&e.message||'storage is full')+'. Remove a company and try again.','down'); }catch(e2){}
+    return false;
+  }
+}
+function bkKeyOf(market,sym){ return String(market||'').toUpperCase()+':'+String(sym||'').toUpperCase(); }
+
+/* the sectors PSX and the US actually sort companies into. A free-typed
+   sector would never group, and grouping is the whole point of a sector. */
+var BK_SECTORS=['Cement','Banks','Oil & Gas','Fertiliser','Power','Textile',
+  'Autos','Chemicals','Food','Pharma','Technology','Insurance','Steel',
+  'Refinery','Telecom','Retail','Industrials','Other'];
+
+var BK_PENDING=null;   /* what the last read produced, before you approve it */
+
+/* ── reading whatever was dropped ───────────────────────────────────── */
+function bkOnFile(input){
+  var f=input&&input.files&&input.files[0];
+  if(!f)return;
+  var host=document.getElementById('bk_stage');
+  if(host)host.innerHTML='<div class="qv-empty">Reading '+escHtml(f.name)+'&hellip;</div>';
+  var ext=(f.name.split('.').pop()||'').toLowerCase();
+  var rd=new FileReader();
+  rd.onerror=function(){ bkStageErr(f,'The file could not be read.'); };
+  if(ext==='csv'||ext==='txt'){
+    rd.onload=function(){
+      try{ bkStage(f, bkExtractRows(bkParseCsv(String(rd.result)),'csv'), 'CSV'); }
+      catch(e){ bkStageErr(f,e.message); }
+    };
+    rd.readAsText(f);
+    return;
+  }
+  rd.onload=function(){
+    var buf=rd.result;
+    if(ext==='xlsx'||ext==='xlsm'){
+      bkParseXlsx(buf).then(function(rows){ bkStage(f, bkExtractRows(rows,'sheet'), 'Excel'); })
+        .catch(function(e){ bkStageErr(f,'This did not open as a spreadsheet — '+e.message); });
+    } else if(ext==='pdf'){
+      bkParsePdf(buf).then(function(pages){
+        if(!pages.length){
+          /* the honest end of the road: a PDF whose pages are pictures has
+             no text to find, and no amount of cleverness here changes that */
+          bkStageErr(f,'This PDF has no readable text — it is a scan, a picture of a page. '
+            +'Nothing can pull figures out of an image. Type them in below and they are saved '
+            +'exactly the same way.', true);
+          return;
+        }
+        bkStage(f, bkExtractPdf(pages), 'PDF, '+pages.length+' page'+(pages.length>1?'s':''));
+      }).catch(function(e){ bkStageErr(f,'This did not open as a PDF — '+e.message); });
+    } else {
+      bkStageErr(f,'Images cannot be read for figures — this is a picture, not a document. '
+        +'Type the numbers in below instead.', true);
+    }
+  };
+  rd.readAsArrayBuffer(f);
+}
+function bkStageErr(f,msg,allowManual){
+  BK_PENDING={file:{name:f.name,size:f.size}, cur:{}, prev:{}, src:{}, years:null, how:'typed in'};
+  var host=document.getElementById('bk_stage');
+  if(!host)return;
+  host.innerHTML='<div class="bk-warn">'+escHtml(msg)+'</div>'
+    +(allowManual?bkFormHtml():'');
+}
+function bkStage(f,got,how){
+  BK_PENDING={file:{name:f.name,size:f.size}, cur:got.cur||{}, prev:got.prev||{},
+              src:got.src||{}, years:got.years||null, note:got.note||'', how:how};
+  var host=document.getElementById('bk_stage');
+  if(host)host.innerHTML=bkFormHtml();
+}
+
+/* ── the review form: every figure, and where it came from ──────────── */
+function bkFormHtml(){
+  var P=BK_PENDING||{cur:{},prev:{},src:{}};
+  var yr=(P.years&&P.years[0])||new Date().getFullYear();
+  var py=(P.years&&P.years[1])||'';
+  var found=BK_FIELDS.filter(function(F){return P.cur[F.k]!=null;}).length;
+  return '<div class="bk-form">'
+    +'<div class="bk-fh"><b>'+found+' of '+BK_FIELDS.length+' figures found</b>'
+      +'<s>'+(P.file?escHtml(P.file.name)+' · ':'')+escHtml(P.how||'')
+      +(P.note?' · '+escHtml(P.note):'')
+      +'. Check them — anything wrong or missing, type over it. Nothing is saved until you press Save.</s></div>'
+    +'<div class="bk-ids">'
+      +'<label>Market<select id="bk_mkt"><option value="PSX">PSX (Pakistan)</option>'
+        +'<option value="US">US</option></select></label>'
+      +'<label>Symbol<input id="bk_sym" type="text" placeholder="LUCK" autocomplete="off"></label>'
+      +'<label>Company<input id="bk_name" type="text" placeholder="Lucky Cement" autocomplete="off"></label>'
+      +'<label>Sector<select id="bk_sec">'
+        +BK_SECTORS.map(function(s){return '<option>'+s+'</option>';}).join('')+'</select></label>'
+      +'<label>Year<input id="bk_yr" type="number" value="'+yr+'"></label>'
+      +'<label>Prior year<input id="bk_py" type="number" value="'+py+'" placeholder="optional"></label>'
+    +'</div>'
+    +'<div class="bk-rows">'+BK_FIELDS.map(function(F){
+        var v=P.cur[F.k], pv=P.prev[F.k], s=P.src[F.k];
+        return '<div class="bk-r'+(v==null?' miss':'')+'">'
+          +'<div class="bk-k">'+escHtml(F.n)+'</div>'
+          +'<input class="bk-v" id="bk_f_'+F.k+'" type="text" value="'+(v==null?'':v)+'" placeholder="not found">'
+          +'<input class="bk-v prev" id="bk_p_'+F.k+'" type="text" value="'+(pv==null?'':pv)+'" placeholder="prior year">'
+          +'<div class="bk-src">'+(s?escHtml(s):'<em>not in the document — type it if you have it</em>')+'</div>'
+        +'</div>';
+      }).join('')+'</div>'
+    +'<div class="bk-act"><button class="btn btn-a btn-sm" onclick="bkCommit()">Save this report</button>'
+      +'<button class="btn btn-g btn-sm" onclick="bkCancel()">Cancel</button></div>'
+  +'</div>';
+}
+function bkCancel(){ BK_PENDING=null; var h=document.getElementById('bk_stage'); if(h)h.innerHTML=''; renderBooks(); }
+
+function bkCommit(){
+  var g=function(id){ var e=document.getElementById(id); return e?e.value.trim():''; };
+  var mkt=g('bk_mkt')||'PSX', sym=g('bk_sym').toUpperCase(), name=g('bk_name')||sym;
+  var sec=g('bk_sec')||'Other', yr=parseInt(g('bk_yr'),10), py=parseInt(g('bk_py'),10);
+  if(!sym){ alert('A symbol is needed — it is how the company is found again.'); return; }
+  if(!isFinite(yr)){ alert('Which year is this report for?'); return; }
+  var cur={}, prev={}, src={}, P=BK_PENDING||{src:{}};
+  BK_FIELDS.forEach(function(F){
+    var v=bkNum((document.getElementById('bk_f_'+F.k)||{}).value);
+    var pv=bkNum((document.getElementById('bk_p_'+F.k)||{}).value);
+    if(v!=null)cur[F.k]=v;
+    if(pv!=null)prev[F.k]=pv;
+    /* a figure the reader typed over is theirs now, and the card should say
+       so rather than crediting a page that did not contain it */
+    var was=P.cur&&P.cur[F.k];
+    src[F.k]=(v!=null&&was!=null&&Math.abs(was-v)<1e-9&&P.src[F.k])?P.src[F.k]:'you typed it';
+  });
+  var store=bkLoad(), key=bkKeyOf(mkt,sym);
+  var c=store.companies[key]||{market:mkt,sym:sym,name:name,sector:sec,years:{},files:[]};
+  c.market=mkt; c.sym=sym; c.name=name; c.sector=sec;
+  c.years=c.years||{};
+  c.years[yr]=Object.assign({},cur,{_src:src,_from:(P.file&&P.file.name)||'typed',_at:Date.now()});
+  if(isFinite(py)&&Object.keys(prev).length&&!c.years[py])
+    c.years[py]=Object.assign({},prev,{_src:{},_from:(P.file&&P.file.name)||'typed',
+                                       _at:Date.now(),_prior:true});
+  c.files=(c.files||[]);
+  if(P.file)c.files.push({name:P.file.name,size:P.file.size,at:Date.now(),year:yr});
+  store.companies[key]=c;
+  if(!bkSave(store))return;
+  BK_PENDING=null;
+  var h=document.getElementById('bk_stage'); if(h)h.innerHTML='';
+  var fi=document.getElementById('bk_file'); if(fi)fi.value='';
+  renderBooks(key);
+}
+function bkRemove(key){
+  if(!confirm('Remove this company and every report saved for it?'))return;
+  var store=bkLoad(); delete store.companies[key]; bkSave(store); renderBooks();
+}
+
+
+/* ══ THE CARD ═══════════════════════════════════════════════════════
+   Five pillars, each printing its own arithmetic, then the same five
+   against the median of the other companies loaded in that sector, then
+   year on year. A missing figure blanks its pillar and says which number
+   is missing, rather than scoring it zero — a zero is a reading and an
+   absence is not. */
+function bkFmt(v,unit){
+  if(v==null||!isFinite(v))return '—';
+  if(unit==='x')return v.toFixed(2)+'x';
+  if(unit==='%')return (v>=0?'':'')+v.toFixed(1)+'%';
+  return v.toFixed(2);
+}
+function bkBig(v){
+  if(v==null||!isFinite(v))return '—';
+  var a=Math.abs(v);
+  if(a>=1e9)return (v/1e9).toFixed(2)+'bn';
+  if(a>=1e6)return (v/1e6).toFixed(2)+'m';
+  if(a>=1e3)return (v/1e3).toFixed(1)+'k';
+  return String(v);
+}
+function bkNeedFor(k){
+  return {growth:'revenue for two years', netMargin:'revenue and profit after tax',
+          debtEq:'total debt and equity', cashConv:'cash from operations and profit after tax',
+          roe:'profit after tax and equity'}[k]||'more of the statement';
+}
+function bkCompanyHtml(store,key){
+  var c=store.companies[key];
+  if(!c)return '<div class="qv-empty">Pick a company.</div>';
+  var yrs=Object.keys(c.years||{}).map(Number).sort(function(a,b){return b-a;});
+  if(!yrs.length)return '<div class="qv-empty">No report saved for '+escHtml(c.sym)+' yet.</div>';
+  var y=c.years[yrs[0]], prev=yrs[1]?c.years[yrs[1]]:null;
+  var R=bkRatios(y,prev);
+  var S=bkSectorStats(store,c.market,c.sector,key);
+  var prevR=(yrs[1]&&yrs[2])?bkRatios(c.years[yrs[1]],c.years[yrs[2]]):null;
+
+  var good=0,bad=0,known=0;
+  BK_PILLARS.forEach(function(P){
+    var g=bkGrade(P,R[P.k]); if(!g)return; known++;
+    if(g==='good')good++; else if(g==='bad')bad++;
+  });
+
+  var h='<div class="bk-co">'
+   +'<div class="bk-coh"><div><b>'+escHtml(c.name)+'</b>'
+     +'<span>'+escHtml(c.sym)+' · '+escHtml(c.market)+' · '+escHtml(c.sector)
+     +' · report for '+yrs[0]+'</span></div>'
+     +'<button class="btn btn-g btn-sm" onclick="bkRemove(\''+key+'\')">Remove</button></div>';
+
+  h+='<div class="bk-sum">'+(known
+     ? '<b>'+good+' of '+known+' green, '+bad+' red.</b> '
+       +(known<BK_PILLARS.length?'('+(BK_PILLARS.length-known)+' could not be read — the figures they need are missing.) ':'')
+       +'Every line below shows the sum it was worked out from.'
+     : '<b>Nothing can be judged yet.</b> None of the five tests has the figures it needs.')
+   +'</div>';
+
+  h+='<div class="bk-pil">'+BK_PILLARS.map(function(P){
+      var v=R[P.k], g=bkGrade(P,v), med=S.med[P.k];
+      var vs=null;
+      if(v!=null&&med!=null&&S.n>0)
+        vs=P.lowerBetter ? (v<med?'better':v>med?'worse':'level')
+                         : (v>med?'better':v<med?'worse':'level');
+      var was=prevR?prevR[P.k]:null;
+      return '<div class="bk-p '+(g||'na')+'">'
+        +'<div class="bk-pn">'+P.n+'</div>'
+        +'<div class="bk-pv">'+bkFmt(v,P.unit)+'</div>'
+        +'<div class="bk-pw">'+(v==null?'needs '+bkNeedFor(P.k):P.say(v))+'</div>'
+        +'<div class="bk-ph">'+P.how+'</div>'
+        /* "level than" is not English. The comparison word and the
+           preposition have to agree, so they are chosen together. */
+        +(vs?'<div class="bk-pc '+vs+'">'+(vs==='level'?'level with':vs+' than')+' the '+S.n+' other '
+            +(S.n===1?'company':'companies')+' you loaded in '+escHtml(c.sector)
+            +' ('+bkFmt(med,P.unit)+')</div>':'')
+        +(was!=null&&v!=null?'<div class="bk-py">last year '+bkFmt(was,P.unit)+'</div>':'')
+      +'</div>';
+    }).join('')+'</div>';
+
+  /* the figures themselves, with their evidence */
+  h+='<details class="bk-raw"><summary>The figures, and where each one came from</summary><div>'
+    +BK_FIELDS.map(function(F){
+      var v=y[F.k], s=(y._src||{})[F.k];
+      return '<div class="bk-rr"><i>'+escHtml(F.n)+'</i><b>'+bkBig(v)+'</b>'
+        +'<span>'+(v==null?'not in the document':escHtml(s||'—'))+'</span></div>';
+    }).join('')
+    +'<p class="bk-note">Saved from '+escHtml(y._from||'—')+'. '
+    +'Figures are in whatever unit the statement used — thousands, millions — so the '
+    +'ratios above are unit-free on purpose: a ratio of two figures from the same '
+    +'statement is correct whatever the unit, while a raw total is not comparable '
+    +'across companies that reported differently.</p>'
+    +'</div></details>';
+
+  if(yrs.length>1){
+    h+='<div class="bk-hist"><div class="bk-hh">Year on year</div><table class="bk-t"><tr><th></th>'
+      +yrs.map(function(yy){return '<th>'+yy+'</th>';}).join('')+'</tr>'
+      +BK_FIELDS.map(function(F){
+         return '<tr><td>'+escHtml(F.n)+'</td>'
+           +yrs.map(function(yy){return '<td>'+bkBig(c.years[yy][F.k])+'</td>';}).join('')+'</tr>';
+       }).join('')+'</table></div>';
+  }
+  return h+'</div>';
+}
+
+/* ── the sector page: the group, and who is in it ────────────────────── */
+function bkSectorHtml(store,market){
+  var by={};
+  Object.keys(store.companies).forEach(function(k){
+    var c=store.companies[k];
+    if(c.market!==market)return;
+    (by[c.sector]=by[c.sector]||[]).push(k);
+  });
+  var secs=Object.keys(by).sort();
+  if(!secs.length)
+    return '<div class="qv-empty">No '+escHtml(market)+' reports loaded yet. '
+      +'Add one above and its sector appears here.</div>';
+  return '<div class="bk-secs">'+secs.map(function(sec){
+    var S=bkSectorStats(store,market,sec,null);
+    return '<div class="bk-sec">'
+      +'<div class="bk-sech"><b>'+escHtml(sec)+'</b><span>'+S.n+' '
+        +(S.n===1?'company':'companies')+' · '+escHtml(S.names.join(', '))+'</span></div>'
+      +'<div class="bk-secr">'+BK_PILLARS.map(function(P){
+          var m=S.med[P.k];
+          return '<div class="bk-secp"><i>'+P.n+'</i><b>'+bkFmt(m,P.unit)+'</b></div>';
+        }).join('')+'</div>'
+      +'<s class="bk-secn">Median of the reports YOU loaded — not an index, not the whole sector. '
+      +(S.n<3?'With '+S.n+' '+(S.n===1?'company':'companies')+' this is a sample, not an average; '
+              +'load more before reading much into it.':'')+'</s>'
+    +'</div>';
+  }).join('')+'</div>';
+}
+
+var BK_VIEW={key:null, market:'PSX', tab:'co'};
+function bkPick(key){ BK_VIEW.key=key; renderBooks(key); }
+function bkTab(t){ BK_VIEW.tab=t; renderBooks(BK_VIEW.key); }
+function bkMkt(m){ BK_VIEW.market=m; renderBooks(BK_VIEW.key); }
+
+function renderBooks(pick){
+  var host=document.getElementById('bk_body');
+  if(!host)return;
+  var store=bkLoad();
+  if(pick)BK_VIEW.key=pick;
+  var keys=Object.keys(store.companies).sort();
+  if(!BK_VIEW.key||!store.companies[BK_VIEW.key])BK_VIEW.key=keys[0]||null;
+
+  var list=keys.length
+    ? '<div class="bk-list">'+keys.map(function(k){
+        var c=store.companies[k], n=Object.keys(c.years||{}).length;
+        return '<span class="bk-chip'+(k===BK_VIEW.key?' on':'')+'" onclick="bkPick(\''+k+'\')">'
+          +escHtml(c.sym)+'<i>'+escHtml(c.market)+' · '+n+' yr'+(n>1?'s':'')+'</i></span>';
+      }).join('')+'</div>'
+    : '';
+
+  var body = BK_VIEW.tab==='sector'
+    ? '<div class="bk-mk"><span class="'+(BK_VIEW.market==='PSX'?'on':'')+'" onclick="bkMkt(\'PSX\')">PSX</span>'
+      +'<span class="'+(BK_VIEW.market==='US'?'on':'')+'" onclick="bkMkt(\'US\')">US</span></div>'
+      +bkSectorHtml(store,BK_VIEW.market)
+    : (BK_VIEW.key ? bkCompanyHtml(store,BK_VIEW.key)
+        : '<div class="qv-empty">No reports yet. Drop an annual or quarterly report above — '
+          +'PDF, Excel or CSV — and the five tests are run on it.</div>');
+
+  caSetHtml(host,
+    '<div class="bk-tabs"><span class="'+(BK_VIEW.tab==='co'?'on':'')+'" onclick="bkTab(\'co\')">Company</span>'
+      +'<span class="'+(BK_VIEW.tab==='sector'?'on':'')+'" onclick="bkTab(\'sector\')">Sector</span></div>'
+    +list+body);
+}
+
+
 function renderFundamentals(){
   var host=document.getElementById('fund_body');
   if(!host)return;
