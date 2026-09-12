@@ -35177,16 +35177,48 @@ var PSX_RELAYS=[
   function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}
 ];
 var _psxSyms=null, _psxSymErr=null;
+/* THE SYMBOL LIST IS THE GATE, AND IT WAS THE THING THAT KEPT BREAKING.
+   /symbols does send Access-Control-Allow-Origin, so it was read straight
+   from Karachi and looked like the safe half of the PSX story. It is still
+   a direct call from the browser, and when it fails — measured here as
+   ERR_CONNECTION_RESET — _psxSymErr is set and NOTHING is recognised as a
+   PSX ticker. Not the chart, not the analysis, not CELESX. The bars were
+   reachable through the bridge the whole time; the page never got far
+   enough to ask, because it had already decided OGDC was not a symbol.
+
+   So the bridge is asked first, and the direct call is the fallback rather
+   than the only route. */
 function psxLoadSymbols(cb){
   if(_psxSyms){cb(_psxSyms);return;}
-  fetch('https://dps.psx.com.pk/symbols')
-    .then(function(r){return r.json();})
+  var direct=function(){
+    fetch('https://dps.psx.com.pk/symbols')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(!Array.isArray(d)){_psxSymErr='unreachable';cb(null);return;}
+        _psxSyms=d.filter(function(x){return !x.isDebt&&!x.isETF;});
+        cb(_psxSyms);
+      })
+      .catch(function(){_psxSymErr='unreachable';cb(null);});
+  };
+  /* FOUR SECONDS WAS TOO FEW, AND IT FAILED ONLY ON THE FIRST RUN.
+     The bridge scrapes the screener to build this list, which takes tens of
+     seconds cold and is then cached for twelve hours. A 4s abort therefore
+     passed every test after the first one and failed the one that matters —
+     the user's first PSX load — falling back to the direct call that does
+     not work. A bridge that is not running refuses the connection straight
+     away rather than timing out, so a long ceiling here costs nothing when
+     there is no bridge, and waits when there is one. */
+  var ctl=(typeof AbortController!=='undefined')?new AbortController():null;
+  var bail=setTimeout(function(){try{ctl&&ctl.abort();}catch(e){}},45000);
+  fetch(bridgeURL()+'/psx/symbols',ctl?{signal:ctl.signal}:undefined)
+    .then(function(r){return r.ok?r.json():null;})
     .then(function(d){
-      if(!Array.isArray(d)){cb(null);return;}
-      _psxSyms=d.filter(function(x){return !x.isDebt&&!x.isETF;});
+      clearTimeout(bail);
+      if(!d||!Array.isArray(d.symbols)||!d.symbols.length){direct();return;}
+      _psxSyms=d.symbols;
       cb(_psxSyms);
     })
-    .catch(function(){_psxSymErr='unreachable';cb(null);});
+    .catch(function(){clearTimeout(bail);direct();});
 }
 function psxIsSymbol(sym,cb){
   psxLoadSymbols(function(list){
@@ -35212,19 +35244,52 @@ function psxRelayFetch(path,cb){
     }).catch(function(){tried.push(name+' blocked');attempt();});
   })();
 }
-/* PSX rows are closes, not bars — flagged so the range estimators stand down */
+/* ══ THE BRIDGE FIRST, AND IT IS THE ONE THAT GIVES PSX A REAL BAR ══
+   Both caveats above are relay problems, and the bridge answers both.
+
+   The relay returns [time, close, volume, previous] — one price per day.
+   That is why the rows below fabricate open=high=low=close and raise
+   closeOnly, and why Parkinson, Garman-Klass and Rogers-Satchell have never
+   run on a Pakistani name: there is no high and no low to give them.
+
+   /psx/history reads the portal's OHLCV table instead of its EOD close
+   series, so it comes back with four different numbers. Measured on OGDC
+   for 2026-09-11 — open 314.50, high 322.97, low 311.40, close 320.83,
+   volume 2,941,107 — where the relay had 320.83 and nothing else. It also
+   sidesteps the CORS wall entirely, which matters because all three relays
+   are currently failing (cors.sh 403, allorigins and codetabs 5xx).
+
+   The relay stays as the fallback. A page with no bridge running keeps
+   exactly the behaviour it had, close-only flag and all. */
 function psxDaily(sym,cb){
-  psxRelayFetch('timeseries/eod/'+encodeURIComponent(String(sym).toUpperCase()),function(data,err,via){
-    if(!data){cb(null,err);return;}
-    var rows=data.map(function(x){
-      var c=+x[1];
-      return{date:ymd(new Date(x[0]*1000)),open:c,high:c,low:c,close:c,
-             volume:isFinite(+x[2])&&+x[2]>0?+x[2]:null,
-             volKind:'traded',closeOnly:true};
-    }).filter(function(r){return isFinite(r.close)&&r.close>0;});
-    rows.sort(function(a,b){return a.date<b.date?-1:1;});
-    cb(rows,null,via);
-  });
+  var S=String(sym).toUpperCase();
+  var relay=function(){
+    psxRelayFetch('timeseries/eod/'+encodeURIComponent(S),function(data,err,via){
+      if(!data){cb(null,err);return;}
+      var rows=data.map(function(x){
+        var c=+x[1];
+        return{date:ymd(new Date(x[0]*1000)),open:c,high:c,low:c,close:c,
+               volume:isFinite(+x[2])&&+x[2]>0?+x[2]:null,
+               volKind:'traded',closeOnly:true};
+      }).filter(function(r){return isFinite(r.close)&&r.close>0;});
+      rows.sort(function(a,b){return a.date<b.date?-1:1;});
+      cb(rows,null,via);
+    });
+  };
+  var ctl=(typeof AbortController!=='undefined')?new AbortController():null;
+  /* generous for the same reason psxLoadSymbols is: a cold scrape is slow,
+     a warm one is instant, and no bridge at all refuses immediately rather
+     than sitting here burning the ceiling */
+  var bail=setTimeout(function(){try{ctl&&ctl.abort();}catch(e){}},30000);
+  fetch(bridgeURL()+'/psx/history/'+encodeURIComponent(S)+'?days=1500',
+        ctl?{signal:ctl.signal}:undefined)
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){
+      clearTimeout(bail);
+      if(!d||!d.rows||!d.rows.length){relay();return;}
+      cb(d.rows,null,'bridge');
+    })
+    .catch(function(){clearTimeout(bail);relay();});
 }
 function psxQuote(sym,cb){
   psxDaily(sym,function(rows,err){
@@ -37711,8 +37776,17 @@ function loadHistory(assetName,cb){
   var el=document.getElementById('plot');
   var hasTD=!!twelveSymbol(sym),hasEOD=!!eodhdSymbol(sym),hasPoly=!!polygonSymbol(sym);
   var hasPsx=!!(_psxSyms&&_psxSyms.some(function(x){return x.symbol.toUpperCase()===sym;}));
-  if(!hasTD&&!hasEOD&&!hasPoly&&!hasPsx){
-    if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No daily history mapped for "'+escHtml(assetName)+'" \u2014 supported: metals, major FX, top crypto and US stocks</div>';
+  /* AND THIS GUARD RAN BEFORE ANY OF THAT COULD BE FOUND OUT.
+     hasPsx is false whenever the symbol list has not loaded, so an unknown
+     name was refused here \u2014 "No daily history mapped" \u2014 before the PSX
+     branch below ever got to fetch the list and look. Fixing the branch
+     alone changed nothing, because this line returned first. A name that
+     matches nothing western is only genuinely unmapped once PSX has
+     actually been asked; until then it is undecided, and undecided has to
+     fall through rather than be reported as absent. */
+  var psxUntried=!_psxSyms&&!_psxSymErr;
+  if(!hasTD&&!hasEOD&&!hasPoly&&!hasPsx&&!psxUntried){
+    if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No daily history mapped for "'+escHtml(assetName)+'" \u2014 supported: metals, major FX, top crypto, US stocks and PSX</div>';
     if(cb)cb(null);return;
   }
   if(el&&!window.SCAN_QUIET)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px">Loading '+escHtml(assetName)+' daily history\u2026</div>';
@@ -37769,25 +37843,50 @@ function loadHistory(assetName,cb){
       eodhdDaily(sym,150,function(r2,err2){ r2?done(r2,'EODHD'):fail(err2||prevErr); });
     }else fail(prevErr);
   }
-  /* a PSX ticker is not in any of the western maps, so it is checked first */
-  if(_psxSyms&&_psxSyms.some(function(x){return x.symbol.toUpperCase()===sym;})){
-    psxDaily(sym,function(rows,err,via){
-      if(rows&&rows.length>1){done(rows,'PSX'+(via?' via '+via:''));return;}
-      if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">'
-        +'PSX data needs a relay and none answered — '+escHtml(err||'unavailable')+'</div>';
+  /* a PSX ticker is not in any of the western maps, so it is checked first.
+
+     THE LIST HAD TO BE LOADED ALREADY, AND FOR CELESX IT NEVER IS.
+     This read `_psxSyms && ...`. _psxSyms is null until something calls
+     psxLoadSymbols, so a Pakistani name asked for before that fell
+     straight through to Polygon and Twelve Data — neither has ever heard
+     of OGDC — and came back "no live feed for OGDC". A person browsing
+     rarely saw it, because opening the PSX market box loads the list as a
+     side effect. The headless reader CELESX drives opens no boxes, so for
+     it the list was ALWAYS null and every PSX name was unreadable, which
+     is why PSX could not go in ASSETS. The list is fetched once here
+     instead of being assumed, and _psxSymErr stops it being retried for
+     every asset in a sixteen-name pass. */
+  var psxThen=function(go){
+    if(_psxSyms||_psxSymErr){go();return;}
+    psxLoadSymbols(function(){go();});
+  };
+  psxThen(function(){
+    if(_psxSyms&&_psxSyms.some(function(x){return x.symbol.toUpperCase()===sym;})){
+      psxDaily(sym,function(rows,err,via){
+        if(rows&&rows.length>1){done(rows,'PSX'+(via?' via '+via:''));return;}
+        if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">'
+          +'PSX data unavailable — bridge and relays both failed ('+escHtml(err||'unavailable')+')</div>';
+        if(cb)cb(null);
+      });
+      return;
+    }
+    if(polygonSymbol(sym)){
+      polygonDaily(sym,220,function(rows,err,kind){
+        if(rows&&rows.length>1){
+          done(rows,'Polygon'+(kind==='ticks'?' · volume is tick activity':' · with volume'));
+          return;
+        }
+        tdThenEod(err);
+      });
+    }else if(!hasTD&&!hasEOD){
+      /* the guard at the top let this through as undecided. PSX has now
+         been asked and said no, so it can be answered honestly — without
+         this the name fell into tdThenEod and came back as fail()'s EODHD
+         cross-origin note, which has nothing to do with an unknown ticker */
+      if(el)el.innerHTML='<div style="height:280px;display:flex;align-items:center;justify-content:center;color:var(--ts);font-size:12px;text-align:center;padding:0 20px">No daily history mapped for "'+escHtml(assetName)+'" — supported: metals, major FX, top crypto, US stocks and PSX</div>';
       if(cb)cb(null);
-    });
-    return;
-  }
-  if(polygonSymbol(sym)){
-    polygonDaily(sym,220,function(rows,err,kind){
-      if(rows&&rows.length>1){
-        done(rows,'Polygon'+(kind==='ticks'?' · volume is tick activity':' · with volume'));
-        return;
-      }
-      tdThenEod(err);
-    });
-  }else tdThenEod(null);
+    }else tdThenEod(null);
+  });
 }
 
 /* ══════════════════════════════════════

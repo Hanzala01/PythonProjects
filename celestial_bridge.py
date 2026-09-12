@@ -1008,6 +1008,196 @@ def fred(series_id: str, start: str = "2020-01-01"):
 
 
 # ══════════════════════════════════════════════════════════════════════════
+# PSX — REAL BARS, AND NO RELAY
+#
+# The page already reads PSX and the comment above psxDaily() records both
+# reasons it barely works:
+#
+#   1. dps.psx.com.pk/timeseries/* sends no Access-Control-Allow-Origin, so
+#      the page goes through public CORS relays. All three are failing —
+#      cors.sh 403, allorigins and codetabs 5xx — and when they fail the
+#      page has nothing at all. This is the same shape as the FRED problem
+#      above, and it gets the same answer: this machine has no CORS rule, so
+#      it fetches and serves it back with the page's origin allowed.
+#
+#   2. The relayed endpoint returns [time, close, volume, previous] — a
+#      CLOSE, not a bar. psxDaily sets open=high=low=close and flags
+#      closeOnly, which is honest, and it costs the page every range
+#      estimator: Parkinson, Garman-Klass and Rogers-Satchell all stand
+#      down on a PSX name because there is no high and no low to feed them.
+#
+# The second one is the reason this endpoint exists rather than being a
+# plain proxy. psxdata scrapes the portal's OHLCV table, not the EOD close
+# series, so it returns a REAL bar. Measured on OGDC for 2026-09-11:
+# open 314.50, high 322.97, low 311.40, close 320.83, volume 2,941,107 —
+# four different numbers where the relay had one. Feed that to the page and
+# the range estimators work on Pakistani names for the first time.
+#
+# Rows come back in exactly the shape psxDaily already builds, so the page's
+# consumer does not change — only closeOnly is false, which is what turns
+# the estimators back on.
+PSX_TTL = 30 * 60          # the portal is end-of-day; half an hour is generous
+PSX_MAX_DAYS = 3650
+_PSX_CACHE: dict[str, tuple[float, list]] = {}
+
+
+def _psx_module():
+    """Import psx lazily so the bridge still boots where psxdata is absent.
+
+    The bridge runs on machines that may not have had `pip install -r
+    psx/requirements.txt` run on them. A missing scraper should cost the PSX
+    endpoints and nothing else, so this failure is reported at call time as
+    a 501 rather than killing the import and taking the journal with it."""
+    try:
+        import psx
+        return psx
+    except Exception:
+        return None
+
+
+@app.options("/psx/{rest:path}")
+def psx_preflight(rest: str):
+    return _public({"ok": True})
+
+
+@app.get("/psx/history/{symbol}")
+def psx_history(symbol: str, days: int = 730):
+    """Daily OHLCV for a PSX symbol, oldest first, in the page's row shape."""
+    psx = _psx_module()
+    if psx is None:
+        raise HTTPException(501, "psxdata is not installed here — "
+                                 "pip install -r psx/requirements.txt")
+
+    sym = str(symbol or "").strip().upper()
+    if not sym or not sym.replace(".", "").replace("-", "").isalnum():
+        raise HTTPException(400, f"not a symbol: {symbol!r}")
+    days = max(5, min(int(days), PSX_MAX_DAYS))
+
+    key = f"{sym}:{days}"
+    now = time.time()
+    hit = _PSX_CACHE.get(key)
+    if hit and now - hit[0] < PSX_TTL:
+        return _public({"symbol": sym, "cached": True, "closeOnly": False,
+                        "count": len(hit[1]), "rows": hit[1]})
+
+    try:
+        frame = psx.history(sym, days=days)
+    except Exception as e:
+        raise HTTPException(502, f"could not read PSX for {sym}: {e}")
+    if frame is None or frame.empty:
+        raise HTTPException(404, f"PSX returned no rows for {sym}")
+
+    rows = []
+    for r in frame.to_dict("records"):
+        try:
+            close = float(r["close"])
+        except (TypeError, ValueError):
+            continue
+        if not close > 0:
+            continue
+        volume = r.get("volume")
+        try:
+            volume = int(volume) if volume is not None and volume == volume else None
+        except (TypeError, ValueError):
+            volume = None
+        rows.append({
+            "date": str(r["date"])[:10],
+            "open": float(r.get("open") or close),
+            "high": float(r.get("high") or close),
+            "low": float(r.get("low") or close),
+            "close": close,
+            "volume": volume if volume and volume > 0 else None,
+            "volKind": "traded",
+            # THE POINT OF THIS ENDPOINT. The relay path has to say true
+            # here; this one does not, and that is what lets Parkinson,
+            # Garman-Klass and Rogers-Satchell run on a PSX name.
+            "closeOnly": False,
+        })
+
+    if not rows:
+        raise HTTPException(502, f"PSX rows for {sym} had no usable close")
+
+    _PSX_CACHE[key] = (now, rows)
+    return _public({"symbol": sym, "cached": False, "closeOnly": False,
+                    "count": len(rows), "rows": rows})
+
+
+_PSX_SYMS: tuple[float, list] | None = None
+PSX_SYMS_TTL = 12 * 3600
+
+
+@app.get("/psx/symbols")
+def psx_symbols():
+    """The tradeable PSX equity list, in the shape psxLoadSymbols expects.
+
+    THIS IS WHY PSX NEVER WORKED HEADLESS. The page recognises a Pakistani
+    ticker by fetching dps.psx.com.pk/symbols directly — that one endpoint
+    does send Access-Control-Allow-Origin, so it looked safe. It is still a
+    direct call to Karachi from the browser, and when it fails (measured
+    here: ERR_CONNECTION_RESET) _psxSymErr is set, no symbol is ever
+    recognised, and every PSX name is refused before any feed is tried. The
+    bars could have come from the bridge the whole time; the page just never
+    got far enough to ask for them.
+
+    Served from screener(), which is the ~745 equities — tickers() also
+    carries TFCs and bonds, and those are not what the asset box means."""
+    psx = _psx_module()
+    if psx is None:
+        raise HTTPException(501, "psxdata is not installed here — "
+                                 "pip install -r psx/requirements.txt")
+    global _PSX_SYMS
+    now = time.time()
+    if _PSX_SYMS and now - _PSX_SYMS[0] < PSX_SYMS_TTL:
+        return _public({"cached": True, "count": len(_PSX_SYMS[1]),
+                        "symbols": _PSX_SYMS[1]})
+    try:
+        frame = psx.screener()
+    except Exception as e:
+        raise HTTPException(502, f"could not read the PSX symbol list: {e}")
+
+    # A symbol whose sector code matched nothing carries NaN here, and NaN is
+    # TRUTHY — `value or ""` keeps it, and json then refuses the whole
+    # response with "Out of range float values are not JSON compliant". One
+    # unmatched sector took out the entire symbol list.
+    def _text(value) -> str:
+        if value is None or value != value:
+            return ""
+        return str(value)
+
+    out = []
+    for r in frame.to_dict("records"):
+        sym = _text(r.get("symbol")).strip().upper()
+        if not sym:
+            continue
+        out.append({"symbol": sym,
+                    "name": _text(r.get("sector_name")),
+                    "isDebt": False, "isETF": False})
+    if not out:
+        raise HTTPException(502, "PSX symbol list came back empty")
+    _PSX_SYMS = (now, out)
+    return _public({"cached": False, "count": len(out), "symbols": out})
+
+
+@app.get("/psx/quote/{symbol}")
+def psx_quote(symbol: str):
+    """Last close and the move into it, from the same bars as /psx/history."""
+    payload = psx_history(symbol, days=10)
+    rows = json.loads(bytes(payload.body).decode("utf-8"))["rows"]
+    if len(rows) < 1:
+        raise HTTPException(404, f"no PSX quote for {symbol}")
+    last = rows[-1]
+    prev = rows[-2]["close"] if len(rows) > 1 else None
+    return _public({
+        "symbol": str(symbol).strip().upper(),
+        "px": last["close"],
+        "prev": prev,
+        "chg": ((last["close"] - prev) / prev * 100) if prev else None,
+        "date": last["date"],
+        "src": "PSX portal via bridge",
+    })
+
+
+# ══════════════════════════════════════════════════════════════════════════
 # THE COMMUNITY, FOR REAL
 #
 # The page kept its "community" in localStorage. Posting a message wrote it

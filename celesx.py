@@ -95,6 +95,33 @@ ASSETS = [
     "EURUSD", "GBPUSD",
 ]
 
+# ── the Pakistani half ────────────────────────────────────────────────────
+# These could not be here before, for two reasons that were both in the page
+# rather than in this file.
+#
+#   The page recognised a PSX ticker only if dps.psx.com.pk/symbols had
+#   already been fetched by the browser. Opening the PSX market box does
+#   that, so a person clicking around never noticed. This reader opens
+#   nothing, so the list was always empty, and loadHistory refused OGDC as
+#   an unmapped name before trying any feed at all.
+#
+#   And the bars, when they did arrive, were closes — the relay publishes
+#   one price per day, so open, high and low were copies of the close and
+#   every range estimator stood down. The price vote leans on the major
+#   pair, which is built from highs and lows. A close-only series cannot
+#   produce one, so a PSX name would have abstained on price every single
+#   time and never reached agreement with anything.
+#
+# The bridge now serves the symbol list and real OHLCV, so both hold. Nine
+# of the most liquid KSE-100 names; this is a plain list, so trim it or add
+# to it — anything on PSX works, but a thin name gives a thin reading and
+# the weekend pass gets longer with every instrument added.
+PSX_ASSETS = [
+    "OGDC", "LUCK", "HBL", "ENGRO", "PSO", "MCB", "FFC", "PPL", "MARI",
+]
+
+ASSETS = ASSETS + PSX_ASSETS
+
 # A weekend that selects everything has selected nothing. Every qualifying
 # asset is still recorded and still reaches the message; this is only where
 # the fold goes, so the top of the message is readable on a phone.
