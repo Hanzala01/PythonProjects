@@ -1008,6 +1008,87 @@ def fred(series_id: str, start: str = "2020-01-01"):
 
 
 # ══════════════════════════════════════════════════════════════════════════
+# WHEN A RELEASE ACTUALLY CAME OUT, AND WHEN THE NEXT ONE IS
+#
+# The page's calendar was guessing. CPI and PPI have no published day of the
+# month, so it carried a rule-derived window — "the 10th to the 15th" — and a
+# window cannot know that the release already happened. On 13 September it was
+# still counting down to a CPI that came out on the 11th.
+#
+# FRED publishes the real thing and has for years: /fred/release/dates returns
+# every past release date AND the scheduled future ones. Checked against the
+# live API while writing this:
+#
+#     release 10 (Consumer Price Index)   last 2026-09-11
+#                                         next 2026-10-14, 2026-11-10, 2026-12-10
+#
+# The page cannot read it itself. api.stlouisfed.org sends no
+# Access-Control-Allow-Origin header — verified with a preflight against the
+# live endpoint, the response carries no access-control header of any kind —
+# so a browser drops the answer. That is the whole reason this endpoint exists
+# and the whole reason the calendar was guessing: not a missing key, not a
+# dead API, a CORS header that is not there.
+#
+# Only the three releases the calendar names are allowed through, for the same
+# reason the series whitelist exists: an open passthrough to someone else's
+# API with our key on it is not a bridge, it is a proxy.
+FRED_RELEASES = {
+    10: "Consumer Price Index",
+    46: "Producer Price Index",
+    50: "Employment Situation",
+}
+FRED_API_KEY = "de02d75bbc16d6f45d80aec1bb8239fd"
+_REL_CACHE: dict = {}
+REL_TTL = 6 * 3600
+
+
+@app.options("/fredrelease/{release_id}")
+def fred_release_preflight(release_id: int):
+    return _public({"ok": True})
+
+
+@app.get("/fredrelease/{release_id}")
+def fred_release(release_id: int):
+    if release_id not in FRED_RELEASES:
+        raise HTTPException(404, f"unknown release — this endpoint serves only {sorted(FRED_RELEASES)}")
+    now = time.time()
+    hit = _REL_CACHE.get(release_id)
+    if hit and now - hit[0] < REL_TTL:
+        return _public(dict(hit[1], cached=True))
+    import json as _json
+    import urllib.request
+    import datetime as _dt
+
+    today = _dt.date.today().isoformat()
+    # past dates (newest first) and future dates (soonest first) are two
+    # different queries, because realtime_start defaults to today and a plain
+    # call returns only what has already happened
+    def _get(url):
+        with urllib.request.urlopen(url, timeout=20) as f:
+            return _json.loads(f.read().decode("utf-8", "replace"))
+
+    base = ("https://api.stlouisfed.org/fred/release/dates?release_id="
+            f"{release_id}&api_key={FRED_API_KEY}&file_type=json")
+    try:
+        past = _get(base + "&sort_order=desc&limit=4")
+        ahead = _get(base + f"&sort_order=asc&realtime_start={today}"
+                            "&realtime_end=2100-01-01"
+                            "&include_release_dates_with_no_data=true&limit=8")
+    except Exception as e:
+        raise HTTPException(502, f"could not reach FRED: {e}")
+    pd = [r["date"] for r in past.get("release_dates", [])]
+    nd = [r["date"] for r in ahead.get("release_dates", [])]
+    # a date can appear in both lists when it is today
+    nd = [d for d in nd if d >= today]
+    out = {"release": release_id, "name": FRED_RELEASES[release_id],
+           "last": pd[0] if pd else None,
+           "next": nd[0] if nd else None,
+           "past": pd, "upcoming": nd, "cached": False}
+    _REL_CACHE[release_id] = (now, out)
+    return _public(out)
+
+
+# ══════════════════════════════════════════════════════════════════════════
 # THE COMMUNITY, FOR REAL
 #
 # The page kept its "community" in localStorage. Posting a message wrote it
