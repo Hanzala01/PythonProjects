@@ -393,6 +393,7 @@ FRED_SERIES = {
     # were allowed through, and none of them is CPI or payrolls. So the one
     # working route was closed for exactly the numbers that were missing.
     "CPIAUCSL": "US CPI, all items, seasonally adjusted",
+    "CPILFESL": "US core CPI, ex food and energy",   # the print the market trades
     "PAYEMS": "US total non-farm payrolls",
     "UNRATE": "US unemployment rate",
     "DFF": "US effective federal funds rate",
@@ -1093,6 +1094,82 @@ def fred_release(release_id: int):
            "past": pd, "upcoming": nd, "cached": False}
     _REL_CACHE[release_id] = (now, out)
     return _public(out)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# THE FED'S OWN CALENDAR
+#
+# FOMC dates were a literal array in the page, ending in December 2026 — after
+# which the app simply had no Fed on its calendar at all. The Federal Reserve
+# publishes its own schedule as JSON at federalreserve.gov/json/calendar.json:
+# meetings, press conferences and the minutes, with real dates and times.
+#
+# Same wall as FRED, checked the same way: federalreserve.gov sends no
+# Access-Control-Allow-Origin header either, so a browser can fetch it and not
+# read it. Hence this.
+#
+# Only the FOMC rows are returned. The file carries 2,583 events — speeches,
+# conferences, stress-test announcements — and a calendar of Fed speeches is a
+# different feature, not this one.
+_FED_CACHE: dict = {}
+FED_TTL = 12 * 3600
+
+
+@app.options("/fedcal")
+def fedcal_preflight():
+    return _public({"ok": True})
+
+
+@app.get("/fedcal")
+def fedcal():
+    now = time.time()
+    hit = _FED_CACHE.get("fomc")
+    if hit and now - hit[0] < FED_TTL:
+        return _public({"events": hit[1], "cached": True})
+    import json as _json
+    import urllib.request
+
+    req = urllib.request.Request(
+        "https://www.federalreserve.gov/json/calendar.json",
+        headers={"User-Agent": "celestial-bridge/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=25) as f:
+            raw = f.read().decode("utf-8-sig", "replace")
+        d = _json.loads(raw)
+    except Exception as e:
+        raise HTTPException(502, f"could not reach federalreserve.gov: {e}")
+    out = []
+    seen = set()
+    for e in d.get("events", []):
+        if e.get("type") != "FOMC":
+            continue
+        title = (e.get("title") or "").strip()
+        mo = (e.get("month") or "").strip()
+        dy = (e.get("days") or "").strip()
+        # a row with no month is the recurring template, not a dated event;
+        # "27-28" means a two-day meeting and the DECISION is the second day
+        if not mo or not dy:
+            continue
+        dy = dy.split("-")[-1].strip()
+        if not dy.isdigit():
+            continue
+        try:
+            date = f"{mo[:4]}-{mo[5:7]}-{int(dy):02d}"
+        except Exception:
+            continue
+        kind = ("minutes" if "minutes" in title.lower()
+                else "press" if "press conference" in title.lower()
+                else "meeting" if "meeting" in title.lower() else None)
+        if not kind:
+            continue
+        key = (date, kind)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"date": date, "kind": kind, "time": e.get("time") or ""})
+    out.sort(key=lambda r: (r["date"], r["kind"]))
+    _FED_CACHE["fomc"] = (now, out)
+    return _public({"events": out, "cached": False})
 
 
 # ══════════════════════════════════════════════════════════════════════════
