@@ -1036,6 +1036,13 @@ FRED_RELEASES = {
     10: "Consumer Price Index",
     46: "Producer Price Index",
     50: "Employment Situation",
+    54: "Personal Income and Outlays",           # PCE — the Fed's own gauge
+    9: "Advance Monthly Sales for Retail and Food Services",
+    53: "Gross Domestic Product",
+    180: "Unemployment Insurance Weekly Claims Report",
+    192: "Job Openings and Labor Turnover Survey",
+    51: "U.S. International Trade in Goods and Services",
+    13: "G.17 Industrial Production and Capacity Utilization",
 }
 FRED_API_KEY = "de02d75bbc16d6f45d80aec1bb8239fd"
 _REL_CACHE: dict = {}
