@@ -1173,6 +1173,66 @@ def fedcal():
 
 
 # ══════════════════════════════════════════════════════════════════════════
+# WHO HAS BEEN IN, AND WHO IS IN NOW
+#
+# The dashboard tile said "Active Users · Worldwide" and counted unexpired
+# invite keys on the owner's own machine — which is not users, not active,
+# and certainly not worldwide. With the PIN model there are no invite keys at
+# all, so it counted nothing.
+#
+# A browser cannot see other browsers. The only honest way to answer "how
+# many have come in and how many are here now" across devices is for each
+# one to say so to something they share, which is this bridge. Each device
+# sends a heartbeat carrying a random id it generated for itself, the role
+# the PIN gave it, and nothing else: no name, no address, no fingerprint.
+# Total is distinct ids ever seen; active is ids seen in the last five
+# minutes, which is a heartbeat and a half.
+#
+# Without the bridge the page falls back to counting itself, and says so
+# rather than passing one device off as a population.
+_SEEN: dict = {}
+SEEN_ACTIVE = 300
+
+
+@app.options("/seen")
+def seen_preflight():
+    return _public({"ok": True})
+
+
+@app.get("/seen")
+def seen(device: str = "", role: str = ""):
+    d = (device or "").strip()[:64]
+    if not d:
+        raise HTTPException(400, "device id required")
+    now = time.time()
+    rec = _SEEN.get(d) or {"first": now, "role": role}
+    rec["last"] = now
+    if role:
+        rec["role"] = role[:16]
+    _SEEN[d] = rec
+    return _public({"ok": True})
+
+
+@app.get("/who")
+def who():
+    now = time.time()
+    total = len(_SEEN)
+    active = 0
+    owners = 0
+    users = 0
+    for rec in _SEEN.values():
+        if now - rec.get("last", 0) <= SEEN_ACTIVE:
+            active += 1
+            if rec.get("role") == "owner":
+                owners += 1
+            else:
+                users += 1
+    return _public({"total": total, "active": active,
+                    "activeOwners": owners, "activeUsers": users,
+                    "window": SEEN_ACTIVE})
+
+
+# ══════════════════════════════════════════════════════════════════════════
 # THE COMMUNITY, FOR REAL
 #
 # The page kept its "community" in localStorage. Posting a message wrote it
